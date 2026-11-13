@@ -133,17 +133,18 @@ def _room_problems(room: dict) -> list[str]:
             problems.append(f"{bay['id']}: does not span consecutive piers of the ring")
         if bay["type"] not in BAY_TYPES_GENERATED:
             problems.append(f"{bay['id']}: bay type {bay['type']!r} is not generated yet")
-        if bay["apex_height_m"] < room["shape"]["eave_height_m"] + 0.3 or abs(bay["apex_shift"]) >= 0.9:
-            problems.append(f"{bay['id']}: apex must stand at least 0.3 m above the eave, with |apex_shift| below 0.9")
+        if bay["apex_height_m"] < room["shape"]["pier_height_m"] + 1.0 or abs(bay["apex_shift"]) >= 0.9:
+            problems.append(f"{bay['id']}: apex must stand at least 1 m above the springs, with |apex_shift| below 0.9")
     if problems:
         return problems
 
     crown = room["crown"]
     cx, cy = crown["centre_m"]
-    if crown["radius_m"] <= 0 or crown["height_m"] < room["shape"]["eave_height_m"] + 0.5:
-        problems.append(f"{rid}: crown needs a positive radius and must stand at least 0.5 m above the eave")
-    if room["shape"]["eave_height_m"] < room["shape"]["pier_height_m"] + 0.3:
-        problems.append(f"{rid}: the eave must stand at least 0.3 m above the springs")
+    shape = room["shape"]
+    if crown["radius_m"] <= 0 or crown["radius_m"] > shape["lantern_radius_m"] - 0.3:
+        problems.append(f"{rid}: the crown ring needs a positive radius at least 0.3 m inside the lantern's base ring")
+    if crown["height_m"] < shape["lantern_base_height_m"] + 0.5:
+        problems.append(f"{rid}: the crown must stand at least 0.5 m above the lantern's base ring")
     # Going round the ring pier, apex, pier, apex ... the bearing from the crown centre must keep
     # turning counter-clockwise and close after exactly one turn. That makes the footprint simple
     # and keeps groins and ridges from crossing on their way to the crown.
@@ -153,8 +154,8 @@ def _room_problems(room: dict) -> list[str]:
         stops.append((bay["id"] + " apex", apex_point(room, bay)))
     bearings = []
     for name, p in stops:
-        if math.hypot(p[0] - cx, p[1] - cy) < crown["radius_m"] + 0.1:
-            problems.append(f"{name}: lies inside or on the crown ring")
+        if math.hypot(p[0] - cx, p[1] - cy) < shape["lantern_radius_m"] + 0.8:
+            problems.append(f"{name}: lies inside the lantern or within 0.8 m of it")
         bearings.append(math.atan2(p[1] - cy, p[0] - cx))
     total = 0.0
     for k, (name, _) in enumerate(stops):

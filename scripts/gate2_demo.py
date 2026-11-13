@@ -37,8 +37,8 @@ def main() -> dict:
 
     before = shapes(base)
     edits = [
-        ("1_move_pier", "move_pier(R1.P3, [5.9, 0.3])", lambda d: topology.move_pier(d, "R1.P3", [5.9, 0.3])),
-        ("2_crown_height", "set_crown(R1, height_m=7.2), up from 6.0", lambda d: topology.set_crown(d, "R1", height_m=7.2)),
+        ("1_move_pier", "move_pier(R1.P3, [7.0, 0.3])", lambda d: topology.move_pier(d, "R1.P3", [7.0, 0.3])),
+        ("2_crown_height", "set_crown(R1, height_m=7.0), up from 6.3", lambda d: topology.set_crown(d, "R1", height_m=7.0)),
         ("3_add_bay", "add_bay(R1.B1): split the front bay", lambda d: topology.add_bay(d, "R1.B1")),
         ("4_remove_bay", "remove_bay(R1.B2): collapse the south-east bay", lambda d: topology.remove_bay(d, "R1.B2")),
     ]
@@ -58,6 +58,8 @@ def main() -> dict:
                 "members_reshaped": sum(1 for k in after if k in before and after[k] != before[k]),
                 "members_identical": sum(1 for k in after if k in before and after[k] == before[k]),
                 "families": timber["families"],
+                "joints": timber["joints"],
+                "lap_notches_cut": timber["lap_notches_cut"],
                 "collisions_estimated": timber["collisions_estimated"],
                 "mesh_intersections_in_scene": timber["mesh_intersections_in_scene"],
                 "meshes_closed": timber["meshes_closed"],

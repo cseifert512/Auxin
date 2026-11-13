@@ -33,13 +33,13 @@ def main() -> dict:
 
     def drag_pier_handle(design):
         """The direct-manipulation path: move the handle empty, then read handles back into the design."""
-        bpy.data.objects["H_R1.P3"].location.xy = (5.9, 0.3)
+        bpy.data.objects["H_R1.P3"].location.xy = (7.0, 0.3)
         after, changes = read_dragged_handles(design)
         return after, changes[0]
 
     steps = [
-        ("1_move_pier", "drag handle H_R1.P3 to (5.90, 0.30) and apply handles", drag_pier_handle, lambda d: topology.move_pier(d, "R1.P3", [5.9, 0.3])),
-        ("2_crown_height", "set_crown(R1, height_m=7.2), up from 6.0", None, lambda d: topology.set_crown(d, "R1", height_m=7.2)),
+        ("1_move_pier", "drag handle H_R1.P3 to (7.0, 0.3) and apply handles", drag_pier_handle, lambda d: topology.move_pier(d, "R1.P3", [7.0, 0.3])),
+        ("2_crown_height", "set_crown(R1, height_m=7.0), up from 6.3", None, lambda d: topology.set_crown(d, "R1", height_m=7.0)),
         ("3_add_bay", "add_bay(R1.B1): split the front bay with a new pier", None, lambda d: topology.add_bay(d, "R1.B1")),
         ("4_remove_bay", "remove_bay(R1.B2): collapse the south-east bay", None, lambda d: topology.remove_bay(d, "R1.B2")),
     ]

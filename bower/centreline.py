@@ -166,6 +166,11 @@ class BezierPath:
         count = max(1, math.ceil(self.length / max_spacing * (1 - 1e-6)))
         return [self._station(s, *self._locate(s)) for s in (self.length * j / count for j in range(count + 1))]
 
+    def station_at(self, s: float) -> Station:
+        """The frame at arc length `s` from the start."""
+        s = min(max(s, 0.0), self.length)
+        return self._station(s, *self._locate(s))
+
     def point_at(self, fraction: float) -> Vec:
         """The point at `fraction` of the path's arc length (0 is the start, 1 the end)."""
         return self.point(*self._locate(fraction * self.length))
@@ -194,6 +199,30 @@ class BezierPath:
             if k > worst:
                 worst, at = k, s
         return (1.0 / worst if worst > 1e-12 else None), at
+
+
+def plane_path(origin: Vec, direction: Vec, segments) -> BezierPath:
+    """A path in the vertical plane through `origin` along the horizontal unit vector `direction`.
+
+    `segments` are cubics in plane coordinates, four (distance, height) points each, every one
+    starting where the last ended. The section depth axis is the in-plane normal on the right of
+    travel, which is the underside of a rising rib.
+    """
+
+    def lift(p):
+        return (origin[0] + direction[0] * p[0], origin[1] + direction[1] * p[0], origin[2] + p[1])
+
+    def normal(a, b):
+        td, tz = b[0] - a[0], b[1] - a[1]
+        length = math.hypot(td, tz)
+        return (direction[0] * tz / length, direction[1] * tz / length, -td / length)
+
+    first = segments[0]
+    anchors = [Anchor(lift(first[0]), lift(first[0]), lift(first[1]), normal(first[0], first[1]))]
+    for k, (_, _, p2, p3) in enumerate(segments):
+        leaving = segments[k + 1][1] if k + 1 < len(segments) else p3
+        anchors.append(Anchor(lift(p3), lift(p2), lift(leaving), normal(p2, p3)))
+    return BezierPath(anchors)
 
 
 def arc_path(

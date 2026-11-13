@@ -1,0 +1,154 @@
+{
+  "design": "C:\\BOWER\\bower-blender\\design.json",
+  "shifts": [
+    {
+      "shift": "ribs lean 32 degrees at the lantern and sweep round to 62 degrees at the arches",
+      "timber": {
+        "lattice": {
+          "lean_deg": 32.0,
+          "lean_rim_deg": 62.0
+        }
+      },
+      "members": 106,
+      "families": {
+        "rib": {
+          "members": 24,
+          "length_m": 174.1,
+          "min_bend_radius_m": 0.6244
+        },
+        "fill": {
+          "members": 24,
+          "length_m": 132.55,
+          "min_bend_radius_m": 0.7909
+        },
+        "fine": {
+          "members": 31,
+          "length_m": 50.29,
+          "min_bend_radius_m": 0.5979
+        },
+        "crown": {
+          "members": 1,
+          "length_m": 6.28,
+          "min_bend_radius_m": 0.9995
+        },
+        "ring": {
+          "members": 2,
+          "length_m": 42.32,
+          "min_bend_radius_m": 0.8589
+        },
+        "arch": {
+          "members": 12,
+          "length_m": 72.4,
+          "min_bend_radius_m": 1.6201
+        },
+        "hoop": {
+          "members": 12,
+          "length_m": 145.79,
+          "min_bend_radius_m": 0.8241
+        }
+      },
+      "joints": {
+        "joints": 616,
+        "by_kind": {
+          "alongside": 5,
+          "base": 53,
+          "cross_lap": 379,
+          "crown_seat": 24,
+          "housing": 117,
+          "mitre": 6,
+          "paired_heads": 12,
+          "pier_mitre": 6,
+          "scarf": 14
+        },
+        "to_review": 55,
+        "laps_left_uncut": 26,
+        "laps_whose_walls_must_follow_a_turn": 24
+      },
+      "lap_notches_cut": 679,
+      "collisions_estimated": [],
+      "mesh_intersections_in_scene": {
+        "lattice_pairs_still_intersecting": 86,
+        "clashes": []
+      },
+      "meshes_closed": true,
+      "image": "gate2_shift_1_sweeping_ribs_overhead.png"
+    },
+    {
+      "shift": "ribs lean 25 degrees, 16 to a family instead of 12, one hoop 0.7 m inside each arch",
+      "timber": {
+        "lattice": {
+          "lean_deg": 25.0,
+          "ribs_per_family": 16
+        },
+        "arches": {
+          "hoops_m": [
+            0.7
+          ]
+        }
+      },
+      "members": 128,
+      "families": {
+        "rib": {
+          "members": 32,
+          "length_m": 221.41,
+          "min_bend_radius_m": 0.6903
+        },
+        "fill": {
+          "members": 32,
+          "length_m": 147.46,
+          "min_bend_radius_m": 0.8328
+        },
+        "fine": {
+          "members": 43,
+          "length_m": 65.63,
+          "min_bend_radius_m": 0.7198
+        },
+        "crown": {
+          "members": 1,
+          "length_m": 6.28,
+          "min_bend_radius_m": 0.9995
+        },
+        "ring": {
+          "members": 2,
+          "length_m": 39.1,
+          "min_bend_radius_m": 0.9988
+        },
+        "arch": {
+          "members": 12,
+          "length_m": 72.4,
+          "min_bend_radius_m": 1.6201
+        },
+        "hoop": {
+          "members": 6,
+          "length_m": 72.47,
+          "min_bend_radius_m": 1.2329
+        }
+      },
+      "joints": {
+        "joints": 657,
+        "by_kind": {
+          "alongside": 6,
+          "base": 44,
+          "cross_lap": 375,
+          "crown_seat": 32,
+          "housing": 162,
+          "mitre": 6,
+          "paired_heads": 16,
+          "pier_mitre": 6,
+          "scarf": 10
+        },
+        "to_review": 60,
+        "laps_left_uncut": 27,
+        "laps_whose_walls_must_follow_a_turn": 27
+      },
+      "lap_notches_cut": 676,
+      "collisions_estimated": [],
+      "mesh_intersections_in_scene": {
+        "lattice_pairs_still_intersecting": 72,
+        "clashes": []
+      },
+      "meshes_closed": true,
+      "image": "gate2_shift_2_upright_fine_weave_overhead.png"
+    }
+  ]
+}

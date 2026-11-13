@@ -1,9 +1,9 @@
 {
   "design": "C:\\BOWER\\bower-blender\\design.json",
-  "base_members": 54,
+  "base_members": 108,
   "edits": [
     {
-      "edit": "move_pier(R1.P3, [5.9, 0.3])",
+      "edit": "move_pier(R1.P3, [7.0, 0.3])",
       "change": {
         "op": "move_pier",
         "added": [],
@@ -14,51 +14,81 @@
           "R1.B3"
         ]
       },
-      "members": 54,
-      "members_added": [],
-      "members_removed": [],
-      "members_reshaped": 17,
-      "members_identical": 37,
+      "members": 108,
+      "members_added": [
+        "R1.fine.ccw.04"
+      ],
+      "members_removed": [
+        "R1.fine.ccw.05"
+      ],
+      "members_reshaped": 55,
+      "members_identical": 52,
       "families": {
-        "groin": {
-          "members": 6,
-          "length_m": 42.47,
-          "min_bend_radius_m": 3.3647
+        "rib": {
+          "members": 24,
+          "length_m": 181.67,
+          "min_bend_radius_m": 0.6759
         },
-        "ridge": {
-          "members": 6,
-          "length_m": 20.0,
-          "min_bend_radius_m": 5.6315
+        "fill": {
+          "members": 24,
+          "length_m": 127.14,
+          "min_bend_radius_m": 0.855
+        },
+        "fine": {
+          "members": 33,
+          "length_m": 57.13,
+          "min_bend_radius_m": 0.5754
+        },
+        "crown": {
+          "members": 1,
+          "length_m": 6.28,
+          "min_bend_radius_m": 0.9995
+        },
+        "ring": {
+          "members": 2,
+          "length_m": 41.49,
+          "min_bend_radius_m": 1.0102
         },
         "arch": {
           "members": 12,
-          "length_m": 62.26,
-          "min_bend_radius_m": 4.0059
+          "length_m": 72.94,
+          "min_bend_radius_m": 1.3531
         },
-        "sweep": {
+        "hoop": {
           "members": 12,
-          "length_m": 72.24,
-          "min_bend_radius_m": 5.0132
-        },
-        "lierne": {
-          "members": 12,
-          "length_m": 35.35,
-          "min_bend_radius_m": 3.3596
-        },
-        "crown": {
-          "members": 6,
-          "length_m": 9.43,
-          "min_bend_radius_m": 1.4998
+          "length_m": 146.69,
+          "min_bend_radius_m": 0.8067
         }
       },
+      "joints": {
+        "joints": 610,
+        "by_kind": {
+          "alongside": 2,
+          "base": 53,
+          "cross_lap": 371,
+          "crown_seat": 24,
+          "housing": 121,
+          "mitre": 6,
+          "paired_heads": 12,
+          "pier_mitre": 6,
+          "scarf": 15
+        },
+        "to_review": 57,
+        "laps_left_uncut": 29,
+        "laps_whose_walls_must_follow_a_turn": 26
+      },
+      "lap_notches_cut": 662,
       "collisions_estimated": [],
-      "mesh_intersections_in_scene": [],
+      "mesh_intersections_in_scene": {
+        "lattice_pairs_still_intersecting": 79,
+        "clashes": []
+      },
       "meshes_closed": true,
-      "max_centreline_deviation_m": 2.717281810767245e-06,
+      "max_centreline_deviation_m": 2.1908122551270574e-06,
       "image": "gate2_edit_1_move_pier_overhead.png"
     },
     {
-      "edit": "set_crown(R1, height_m=7.2), up from 6.0",
+      "edit": "set_crown(R1, height_m=7.0), up from 6.3",
       "change": {
         "op": "set_crown",
         "added": [],
@@ -67,47 +97,90 @@
           "R1.crown"
         ]
       },
-      "members": 54,
-      "members_added": [],
-      "members_removed": [],
-      "members_reshaped": 42,
+      "members": 109,
+      "members_added": [
+        "R1.fine.ccw.00",
+        "R1.fine.ccw.04",
+        "R1.fine.ccw.12",
+        "R1.fine.ccw.20",
+        "R1.fine.cw.10",
+        "R1.fine.cw.15",
+        "R1.fine.cw.18",
+        "R1.fine.cw.23"
+      ],
+      "members_removed": [
+        "R1.fine.ccw.05",
+        "R1.fine.ccw.09",
+        "R1.fine.ccw.13",
+        "R1.fine.ccw.21",
+        "R1.fine.cw.01",
+        "R1.fine.cw.09",
+        "R1.fine.cw.17"
+      ],
+      "members_reshaped": 89,
       "members_identical": 12,
       "families": {
-        "groin": {
-          "members": 6,
-          "length_m": 48.75,
-          "min_bend_radius_m": 2.3385
+        "rib": {
+          "members": 24,
+          "length_m": 209.09,
+          "min_bend_radius_m": 0.8113
         },
-        "ridge": {
-          "members": 6,
-          "length_m": 23.77,
-          "min_bend_radius_m": 7.6631
+        "fill": {
+          "members": 24,
+          "length_m": 112.05,
+          "min_bend_radius_m": 0.7167
+        },
+        "fine": {
+          "members": 34,
+          "length_m": 60.68,
+          "min_bend_radius_m": 0.6441
+        },
+        "crown": {
+          "members": 1,
+          "length_m": 6.28,
+          "min_bend_radius_m": 0.9995
+        },
+        "ring": {
+          "members": 2,
+          "length_m": 40.68,
+          "min_bend_radius_m": 1.1871
         },
         "arch": {
           "members": 12,
-          "length_m": 61.9,
-          "min_bend_radius_m": 5.002
+          "length_m": 72.4,
+          "min_bend_radius_m": 1.6201
         },
-        "sweep": {
+        "hoop": {
           "members": 12,
-          "length_m": 82.04,
-          "min_bend_radius_m": 7.4428
-        },
-        "lierne": {
-          "members": 12,
-          "length_m": 42.66,
-          "min_bend_radius_m": 1.4937
-        },
-        "crown": {
-          "members": 6,
-          "length_m": 9.43,
-          "min_bend_radius_m": 1.4998
+          "length_m": 145.33,
+          "min_bend_radius_m": 0.8099
         }
       },
+      "joints": {
+        "joints": 622,
+        "by_kind": {
+          "alongside": 2,
+          "base": 55,
+          "cross_lap": 384,
+          "crown_seat": 24,
+          "housing": 121,
+          "mitre": 6,
+          "paired_heads": 12,
+          "pier_mitre": 6,
+          "scarf": 12
+        },
+        "to_review": 52,
+        "laps_left_uncut": 21,
+        "laps_whose_walls_must_follow_a_turn": 29
+      },
+      "lap_notches_cut": 712,
       "collisions_estimated": [],
-      "mesh_intersections_in_scene": [],
+      "mesh_intersections_in_scene": {
+        "lattice_pairs_still_intersecting": 113,
+        "clashes": []
+      },
       "meshes_closed": true,
-      "max_centreline_deviation_m": 1.5521288485226424e-06,
+      "max_centreline_deviation_m": 2.1559512575869336e-06,
       "image": "gate2_edit_2_crown_height_overhead.png"
     },
     {
@@ -123,57 +196,82 @@
           "R1.B1"
         ]
       },
-      "members": 63,
+      "members": 109,
       "members_added": [
         "R1.B7.arch.L",
         "R1.B7.arch.R",
-        "R1.B7.crown",
-        "R1.B7.lierne.L",
-        "R1.B7.lierne.R",
-        "R1.B7.ridge",
-        "R1.B7.sweep.L",
-        "R1.B7.sweep.R",
-        "R1.P7.groin"
+        "R1.B7.hoop0",
+        "R1.B7.hoop1"
       ],
-      "members_removed": [],
-      "members_reshaped": 8,
-      "members_identical": 46,
+      "members_removed": [
+        "R1.fine.ccw.22",
+        "R1.fine.ccw.23",
+        "R1.fine.cw.12"
+      ],
+      "members_reshaped": 36,
+      "members_identical": 69,
       "families": {
-        "groin": {
-          "members": 7,
-          "length_m": 49.35,
-          "min_bend_radius_m": 3.3647
+        "rib": {
+          "members": 24,
+          "length_m": 185.6,
+          "min_bend_radius_m": 0.2461
         },
-        "ridge": {
-          "members": 7,
-          "length_m": 24.05,
-          "min_bend_radius_m": 5.4295
+        "fill": {
+          "members": 24,
+          "length_m": 135.39,
+          "min_bend_radius_m": 0.5227
+        },
+        "fine": {
+          "members": 30,
+          "length_m": 50.88,
+          "min_bend_radius_m": 0.548
+        },
+        "crown": {
+          "members": 1,
+          "length_m": 6.28,
+          "min_bend_radius_m": 0.9995
+        },
+        "ring": {
+          "members": 2,
+          "length_m": 41.48,
+          "min_bend_radius_m": 0.9947
         },
         "arch": {
           "members": 14,
-          "length_m": 70.7,
-          "min_bend_radius_m": 5.002
+          "length_m": 81.0,
+          "min_bend_radius_m": 1.6201
         },
-        "sweep": {
+        "hoop": {
           "members": 14,
-          "length_m": 82.09,
-          "min_bend_radius_m": 5.3369
-        },
-        "lierne": {
-          "members": 14,
-          "length_m": 41.05,
-          "min_bend_radius_m": 3.3596
-        },
-        "crown": {
-          "members": 7,
-          "length_m": 9.43,
-          "min_bend_radius_m": 1.4998
+          "length_m": 163.19,
+          "min_bend_radius_m": 0.2749
         }
       },
+      "joints": {
+        "joints": 592,
+        "by_kind": {
+          "alongside": 2,
+          "base": 62,
+          "cross_lap": 354,
+          "crown_seat": 24,
+          "housing": 112,
+          "mitre": 7,
+          "paired_heads": 12,
+          "pier_mitre": 7,
+          "scarf": 12
+        },
+        "to_review": 54,
+        "laps_left_uncut": 21,
+        "laps_whose_walls_must_follow_a_turn": 31
+      },
+      "lap_notches_cut": 645,
       "collisions_estimated": [],
-      "mesh_intersections_in_scene": [],
+      "mesh_intersections_in_scene": {
+        "lattice_pairs_still_intersecting": 77,
+        "clashes": []
+      },
       "meshes_closed": true,
-      "max_centreline_deviation_m": 1.7438880439349603e-06,
+      "max_centreline_deviation_m": 2.083408995060309e-06,
       "image": "gate2_edit_3_add_bay_overhead.png"
     },
     {
@@ -191,57 +289,87 @@
           "R1.B3"
         ]
       },
-      "members": 45,
-      "members_added": [],
+      "members": 108,
+      "members_added": [
+        "R1.fine.ccw.00",
+        "R1.fine.ccw.01",
+        "R1.fine.ccw.04",
+        "R1.fine.cw.14",
+        "R1.fine.cw.15",
+        "R1.fine.cw.18"
+      ],
       "members_removed": [
         "R1.B2.arch.L",
         "R1.B2.arch.R",
-        "R1.B2.crown",
-        "R1.B2.lierne.L",
-        "R1.B2.lierne.R",
-        "R1.B2.ridge",
-        "R1.B2.sweep.L",
-        "R1.B2.sweep.R",
-        "R1.P3.groin"
+        "R1.B2.hoop0",
+        "R1.B2.hoop1",
+        "R1.fine.ccw.02",
+        "R1.fine.cw.16"
       ],
-      "members_reshaped": 17,
-      "members_identical": 28,
+      "members_reshaped": 80,
+      "members_identical": 22,
       "families": {
-        "groin": {
-          "members": 5,
-          "length_m": 35.19,
-          "min_bend_radius_m": 3.3647
+        "rib": {
+          "members": 24,
+          "length_m": 155.02,
+          "min_bend_radius_m": 0.5427
         },
-        "ridge": {
-          "members": 5,
-          "length_m": 14.74,
-          "min_bend_radius_m": 6.4432
+        "fill": {
+          "members": 24,
+          "length_m": 111.93,
+          "min_bend_radius_m": 0.6251
+        },
+        "fine": {
+          "members": 37,
+          "length_m": 82.95,
+          "min_bend_radius_m": 0.546
+        },
+        "crown": {
+          "members": 1,
+          "length_m": 6.28,
+          "min_bend_radius_m": 0.9995
+        },
+        "ring": {
+          "members": 2,
+          "length_m": 36.02,
+          "min_bend_radius_m": 2.5117
         },
         "arch": {
           "members": 10,
-          "length_m": 54.58,
-          "min_bend_radius_m": 3.621
+          "length_m": 64.24,
+          "min_bend_radius_m": 1.1017
         },
-        "sweep": {
+        "hoop": {
           "members": 10,
-          "length_m": 62.58,
-          "min_bend_radius_m": 4.6934
-        },
-        "lierne": {
-          "members": 10,
-          "length_m": 28.23,
-          "min_bend_radius_m": 1.5147
-        },
-        "crown": {
-          "members": 5,
-          "length_m": 9.44,
-          "min_bend_radius_m": 1.4998
+          "length_m": 129.92,
+          "min_bend_radius_m": 0.8145
         }
       },
+      "joints": {
+        "joints": 650,
+        "by_kind": {
+          "alongside": 5,
+          "base": 43,
+          "cross_lap": 410,
+          "crown_seat": 24,
+          "housing": 133,
+          "mitre": 5,
+          "paired_heads": 12,
+          "pier_mitre": 5,
+          "scarf": 13
+        },
+        "to_review": 66,
+        "laps_left_uncut": 34,
+        "laps_whose_walls_must_follow_a_turn": 27
+      },
+      "lap_notches_cut": 718,
       "collisions_estimated": [],
-      "mesh_intersections_in_scene": [],
+      "mesh_intersections_in_scene": {
+        "lattice_pairs_still_intersecting": 99,
+        "clashes": []
+      },
       "meshes_closed": true,
-      "max_centreline_deviation_m": 1.7438880439349603e-06,
+      "max_centreline_deviation_m": 1.5237666131651609e-06,
       "image": "gate2_edit_4_remove_bay_overhead.png"
     }
   ]

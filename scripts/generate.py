@@ -17,21 +17,27 @@ REPO = Path(__file__).resolve().parents[1]
 DESIGN = REPO / "design.json"
 
 
-def write_schedule(design: dict, path) -> str:
-    """Write one row per primary member: joints, section, length, tightest bend, volume, neighbours."""
+def write_schedule(design: dict, path, joints_path=None) -> str:
+    """Write one row per primary member (section, length, tightest bend, volume, cuts, neighbours)
+    and, to `joints_path`, one row per joint (its members, place, angle and the cut in each)."""
     import csv
 
+    from bower.joints import find_joints, joint_rows
     from bower.timber import build_timber, clearances, schedule
 
-    rows = []
+    rows, joints = [], []
     for room in design["rooms"]:
         members = build_timber(room, design["timber"])
-        rows += schedule(members, design["timber"], clearances(members))
+        found, _ = find_joints(members, design["timber"])
+        rows += schedule(members, design["timber"], clearances(members), found)
+        joints += joint_rows(found)
     Path(path).parent.mkdir(exist_ok=True)
-    with open(path, "w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
-        writer.writeheader()
-        writer.writerows(rows)
+    for target, table in ((path, rows), (joints_path, joints)):
+        if target is not None and table:
+            with open(target, "w", newline="", encoding="utf-8") as handle:
+                writer = csv.DictWriter(handle, fieldnames=list(table[0]))
+                writer.writeheader()
+                writer.writerows(table)
     return str(path)
 
 
@@ -52,7 +58,7 @@ def main(design_path=DESIGN, views_dir=None, view_prefix="") -> dict:
     design = topology.load(design_path)
     report = {"blender": bpy.app.version_string, "design": str(design_path), **build_design(scene, design)}
     if "timber" in design:
-        report["member_schedule"] = write_schedule(design, REPO / "output" / "member_schedule.csv")
+        report["member_schedule"] = write_schedule(design, REPO / "output" / "member_schedule.csv", REPO / "output" / "joint_schedule.csv")
     if views_dir is not None:
         report["views"] = render_views(scene, design, views_dir, view_prefix)
     return report

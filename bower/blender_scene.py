@@ -21,11 +21,12 @@ from mathutils import Matrix, Vector
 from . import topology
 from .centreline import norm, sub
 from .envelope import CREASE_KINDS, build_envelope, check_envelope
+from .joints import find_joints, joint_summary
 from .member import Member, diagnostics, sweep
-from .timber import build_timber, clearances
+from .timber import LATTICE, build_timber, clearances
 
 ROOT_COLLECTION = "BOWER_V1"
-CONTROLS, ENVELOPES, CONTEXT, CAMERAS = "00_CONTROLS", "10_ENVELOPES", "60_CONTEXT", "70_CAMERAS"
+CONTROLS, ENVELOPES, CONTEXT, CAMERAS, DIAGNOSTICS = "00_CONTROLS", "10_ENVELOPES", "60_CONTEXT", "70_CAMERAS", "80_DIAGNOSTICS"
 CENTRELINE_COLLECTION = {
     "primary": "20_PRIMARY_CENTERLINES",
     "secondary": "30_SECONDARY_CENTERLINES",
@@ -39,13 +40,15 @@ MESH_COLLECTION = {
 # Flat viewport colours that tell the layers apart; not materials in any finished sense.
 COLOURS = {
     "timber": (0.72, 0.52, 0.30, 1.0),
-    # one tint per family, darkest for the heaviest members, so the hierarchy reads in a flat render
-    "timber_arch": (0.50, 0.32, 0.16, 1.0),
-    "timber_groin": (0.62, 0.42, 0.22, 1.0),
-    "timber_ridge": (0.70, 0.50, 0.28, 1.0),
-    "timber_sweep": (0.80, 0.60, 0.36, 1.0),
-    "timber_lierne": (0.88, 0.72, 0.48, 1.0),
-    "timber_crown": (0.44, 0.28, 0.14, 1.0),
+    # one timber, in close tints: a little darker for the heavier members, so the structure reads as one thing
+    "timber_arch": (0.66, 0.46, 0.25, 1.0),
+    "timber_inner": (0.70, 0.50, 0.28, 1.0),
+    "timber_crown": (0.66, 0.46, 0.25, 1.0),
+    "timber_hoop": (0.72, 0.52, 0.30, 1.0),
+    "timber_ring": (0.72, 0.52, 0.30, 1.0),
+    "timber_rib": (0.76, 0.56, 0.33, 1.0),
+    "timber_fill": (0.79, 0.59, 0.36, 1.0),
+    "timber_fine": (0.82, 0.62, 0.39, 1.0),
     "envelope": (0.87, 0.85, 0.80, 1.0),
     "arch": (0.05, 0.05, 0.05, 1.0),
     "pier": (0.05, 0.05, 0.05, 1.0),
@@ -120,10 +123,8 @@ def _remove_stale(keep: set, **tags) -> int:
 
 def _material(key: str):
     name = f"BOWER_{key}"
-    material = bpy.data.materials.get(name)
-    if material is None:
-        material = bpy.data.materials.new(name)
-        material.diffuse_color = COLOURS[key]
+    material = bpy.data.materials.get(name) or bpy.data.materials.new(name)
+    material.diffuse_color = COLOURS.get(key, COLOURS["timber"])  # set every time, so a change of colour here reaches the scene
     return material
 
 
@@ -163,8 +164,8 @@ def _prism(name: str, centre, radius: float, z0: float, z1: float, sides: int, m
 # --- Level C: members (Gate 0) ---------------------------------------------------
 
 
-def _member_mesh(member: Member, stations):
-    verts, faces = sweep(member, stations)
+def _member_mesh(member: Member, stations, notches=()):
+    verts, faces = sweep(member, stations, notches)
     mesh = bpy.data.meshes.new(member.id)
     mesh.from_pydata(verts, [], faces)
     mesh.update()
@@ -201,8 +202,8 @@ def _member_mesh_check(member: Member, obj) -> dict:
     return check
 
 
-def build_member(scene, member: Member, sampling: dict, tags: dict | None = None) -> dict:
-    """Write one member as a centreline curve plus a separate swept mesh; return its report."""
+def build_member(scene, member: Member, sampling: dict, tags: dict | None = None, notches=()) -> dict:
+    """Write one member as a centreline curve plus a separate swept mesh, cut with its lap notches; return its report."""
     props = {
         **(tags or {}),
         "bower_family": member.family,
@@ -211,6 +212,7 @@ def build_member(scene, member: Member, sampling: dict, tags: dict | None = None
         "bower_role": member.role,
         "bower_width_m": member.width,
         "bower_depth_m": member.depth,
+        "bower_lap_notches": len(notches),
     }
     resolution_u = sampling["curve_resolution_u"]
     centreline = _place(
@@ -223,7 +225,7 @@ def build_member(scene, member: Member, sampling: dict, tags: dict | None = None
     stations = member.path.stations(sampling["mesh_station_spacing_m"])
     timber = _place(
         f"TM_{member.id}",
-        _member_mesh(member, stations),
+        _member_mesh(member, stations, notches),
         _collection(scene, MESH_COLLECTION[member.role]),
         {**props, "bower_kind": "timber_preview", "bower_centreline": centreline.name},
     )
@@ -312,8 +314,8 @@ def build_room(scene, design: dict, room: dict) -> dict:
     for edge in env.edges.values():
         if edge.kind == "crown":
             key = f"{rid}.crown"
-        elif edge.kind in ("arch", "eave", "groin"):
-            key = edge.id.rsplit(".", 1)[0]  # the .L/.R or .lower/.upper parts share one object
+        elif edge.kind == "arch":
+            key = edge.id.rsplit(".", 1)[0]  # the two halves of an arch share one object
         else:
             key = edge.id
         guides.setdefault(key, (edge.kind, []))[1].append(edge.path)
@@ -358,21 +360,40 @@ def build_room(scene, design: dict, room: dict) -> dict:
     }
 
 
-def _mesh_intersections(objects) -> list:
-    """Pairs of member meshes that really intersect, leaving out members jointed at a shared node."""
+def _mesh_intersections(objects) -> dict:
+    """Pairs of member meshes that really intersect, leaving out members jointed at a shared node.
+
+    Two lattice members that still intersect are a lap that was not cut cleanly (or not cut at
+    all) and are counted; any other pair is listed as a clash.
+    """
     from mathutils.bvhtree import BVHTree
 
-    trees = [
-        (o["bower_id"], set(o["bower_nodes"].split(",")), BVHTree.FromPolygons([v.co[:] for v in o.data.vertices], [p.vertices[:] for p in o.data.polygons]))
-        for o in objects
-    ]
-    return [[a, b] for i, (a, nodes_a, tree_a) in enumerate(trees) for b, nodes_b, tree_b in trees[i + 1 :] if not nodes_a & nodes_b and tree_a.overlap(tree_b)]
+    trees = []
+    for o in objects:
+        points = [v.co[:] for v in o.data.vertices]
+        box = tuple((min(p[k] for p in points), max(p[k] for p in points)) for k in range(3))
+        trees.append((o["bower_id"], o["bower_family"] in LATTICE, set(o["bower_nodes"].split(",")), BVHTree.FromPolygons(points, [p.vertices[:] for p in o.data.polygons]), box))
+    found = {"lattice_pairs_still_intersecting": 0, "clashes": []}
+    for i, (a, lattice_a, nodes_a, tree_a, box_a) in enumerate(trees):
+        for b, lattice_b, nodes_b, tree_b, box_b in trees[i + 1 :]:
+            if nodes_a & nodes_b or any(box_a[k][0] > box_b[k][1] or box_b[k][0] > box_a[k][1] for k in range(3)):
+                continue
+            if not tree_a.overlap(tree_b):
+                continue
+            if lattice_a and lattice_b:
+                found["lattice_pairs_still_intersecting"] += 1
+            else:
+                found["clashes"].append([a, b])
+    return found
 
 
 def _build_room_timber(scene, design: dict, room: dict, tags: dict, built: list) -> dict:
     """Write a room's primary members and return what was checked: source geometry, scene geometry, clearances."""
     members = build_timber(room, design["timber"])
-    reports = [build_member(scene, m, design["timber"]["sampling"], tags) for m in members]
+    joints, notches = find_joints(members, design["timber"])
+    if not design["timber"].get("joints", {}).get("cut_meshes", True):
+        notches = {}
+    reports = [build_member(scene, m, design["timber"]["sampling"], tags, notches.get(m.id, ())) for m in members]
     meshes = [bpy.data.objects[r["objects"]["timber"]] for r in reports]
     built.extend(meshes)
     built.extend(bpy.data.objects[r["objects"]["centreline"]] for r in reports)
@@ -385,15 +406,23 @@ def _build_room_timber(scene, design: dict, room: dict, tags: dict, built: list)
         if radius is not None and (f["min_bend_radius_m"] is None or radius < f["min_bend_radius_m"]):
             f["min_bend_radius_m"] = radius
     estimate = clearances(members)
+    # the joints as points, for finding them in the scene: one vertex each, tagged with its kind
+    kinds = sorted({j.kind for j in joints})
+    points = bpy.data.meshes.new(f"{room['id']}.joints")
+    points.from_pydata([j.at_m for j in joints], [], [])
+    points.attributes.new("bower_joint_kind", "INT", "POINT").data.foreach_set("value", [kinds.index(j.kind) for j in joints])
+    built.append(_place(f"JT_{room['id']}", points, _collection(scene, DIAGNOSTICS), {**tags, "bower_kind": "joints", "bower_joint_kinds": ",".join(kinds)}))
     return {
         "members": len(members),
+        "joints": joint_summary(joints),
+        "lap_notches_cut": sum(len(v) for v in notches.values()),
         "families": families,
         "total_length_m": round(sum(r["length_m"] for r in reports), 1),
         "total_volume_m3": round(sum(r["volume_m3"] for r in reports), 2),
         "max_centreline_deviation_m": max(r["centreline_check"]["max_deviation_m"] for r in reports),
         "meshes_closed": all(r["mesh_check"]["closed_manifold"] for r in reports),
         "collisions_estimated": estimate["collisions"],
-        "laps_and_close_neighbours": len(estimate["close"]),
+        "notches_estimated": len(estimate["notches"]),
         "mesh_intersections_in_scene": _mesh_intersections(meshes),
     }
 
