@@ -54,12 +54,16 @@ def reject(v: Vec, axis: Vec) -> Vec:
 
 @dataclass(frozen=True)
 class Anchor:
-    """One Bezier anchor: a point, its two handles and the section depth direction there."""
+    """One Bezier anchor: a point, its two handles and the section depth direction there.
+
+    `depth_axis` is only needed by paths that carry a section (members); envelope
+    boundary curves leave it unset.
+    """
 
     co: Vec
     handle_left: Vec
     handle_right: Vec
-    depth_axis: Vec
+    depth_axis: Vec | None = None
 
 
 @dataclass(frozen=True)
@@ -147,6 +151,8 @@ class BezierPath:
     def _station(self, s: float, seg: int, t: float) -> Station:
         tangent = unit(self.velocity(seg, t))
         a, b = self.anchors[seg].depth_axis, self.anchors[seg + 1].depth_axis
+        if a is None or b is None:
+            raise ValueError("this path has no depth axes, so it cannot give section frames")
         hint = add(mul(a, 1.0 - t), mul(b, t))
         depth = unit(reject(hint, tangent))
         return Station(s, self.point(seg, t), tangent, depth, cross(depth, tangent))
@@ -159,6 +165,14 @@ class BezierPath:
         """
         count = max(1, math.ceil(self.length / max_spacing * (1 - 1e-6)))
         return [self._station(s, *self._locate(s)) for s in (self.length * j / count for j in range(count + 1))]
+
+    def point_at(self, fraction: float) -> Vec:
+        """The point at `fraction` of the path's arc length (0 is the start, 1 the end)."""
+        return self.point(*self._locate(fraction * self.length))
+
+    def reversed(self) -> "BezierPath":
+        """The same curve traversed from its end to its start."""
+        return BezierPath(Anchor(a.co, a.handle_right, a.handle_left, a.depth_axis) for a in reversed(self.anchors))
 
     def points_uniform_parameter(self, resolution: int) -> list[Vec]:
         """Points at `resolution` equal parameter steps per segment, as Blender evaluates a Bezier spline."""

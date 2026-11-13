@@ -1,0 +1,55 @@
+{
+  "schema": "bower.design/1",
+  "note": "Authored control topology for Bower V1. Dimensions are provisional design values, not engineered sizes.",
+  "units": "m",
+  "axes": {"up": "+Z", "north": "+Y"},
+  "sampling": {"across": 8, "fan_up": 6, "fan_across": 4, "roof_up": 10, "curve_resolution_u": 16},
+  "rooms": [
+    {
+      "id": "R1",
+      "floor_z_m": 0.0,
+      "crown": {"centre_m": [0.2, 0.25], "height_m": 6.0, "radius_m": 1.5},
+      "shape": {
+        "pier_height_m": 2.2,
+        "eave_height_m": 3.3,
+        "arch_shoulder": 0.5,
+        "arch_point_deg": 32.0,
+        "arch_reach": 0.6,
+        "groin_rise": 0.45,
+        "groin_reach": 0.5,
+        "ridge_pitch_deg": 0.0,
+        "ridge_run": 0.4,
+        "ridge_reach": 0.35,
+        "crown_arrival_deg": 42.0
+      },
+      "piers": [
+        {"id": "R1.P1", "position_m": [-3.26, -4.18]},
+        {"id": "R1.P2", "position_m": [2.55, -4.42]},
+        {"id": "R1.P3", "position_m": [5.37, -0.56]},
+        {"id": "R1.P4", "position_m": [2.74, 4.06]},
+        {"id": "R1.P5", "position_m": [-2.12, 4.75]},
+        {"id": "R1.P6", "position_m": [-5.5, 0.19]}
+      ],
+      "bays": [
+        {"id": "R1.B1", "from": "R1.P1", "to": "R1.P2", "type": "open", "apex_height_m": 4.9, "apex_shift": 0.0, "apex_out_m": 0.0},
+        {"id": "R1.B2", "from": "R1.P2", "to": "R1.P3", "type": "open", "apex_height_m": 4.2, "apex_shift": 0.0, "apex_out_m": 0.0},
+        {"id": "R1.B3", "from": "R1.P3", "to": "R1.P4", "type": "open", "apex_height_m": 4.6, "apex_shift": 0.0, "apex_out_m": 0.0},
+        {"id": "R1.B4", "from": "R1.P4", "to": "R1.P5", "type": "open", "apex_height_m": 4.3, "apex_shift": 0.0, "apex_out_m": 0.0},
+        {"id": "R1.B5", "from": "R1.P5", "to": "R1.P6", "type": "open", "apex_height_m": 4.8, "apex_shift": 0.0, "apex_out_m": 0.0},
+        {"id": "R1.B6", "from": "R1.P6", "to": "R1.P1", "type": "open", "apex_height_m": 4.3, "apex_shift": 0.0, "apex_out_m": 0.0}
+      ],
+      "next_pier": 7,
+      "next_bay": 7
+    }
+  ],
+  "context": {
+    "ground_radius_m": 40.0,
+    "scale_figure": {"position_m": [1.4, -5.3], "height_m": 1.75}
+  },
+  "views": [
+    {"id": "plan", "projection": "ortho", "location_m": [0.0, 0.0, 30.0], "target_m": [0.0, 0.0, 0.0], "ortho_scale_m": 20.0},
+    {"id": "front", "projection": "persp", "location_m": [0.6, -17.5, 1.7], "target_m": [0.1, 0.0, 3.0], "lens_mm": 35.0},
+    {"id": "interior", "projection": "persp", "location_m": [0.6, -3.9, 1.65], "target_m": [0.0, 1.0, 3.9], "lens_mm": 16.0},
+    {"id": "overhead", "projection": "persp", "location_m": [10.5, -13.5, 12.5], "target_m": [0.0, 0.0, 2.2], "lens_mm": 35.0}
+  ]
+}
