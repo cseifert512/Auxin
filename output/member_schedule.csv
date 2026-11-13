@@ -1,0 +1,55 @@
+id,family,parent,start_node,end_node,width_m,depth_m,length_m,min_bend_radius_m,min_radius_at_m,radius_over_depth,volume_m3,review,collides_with,passes_close_to
+R1.P1.groin,groin,R1.P1,R1.P1.groin.foot,R1.P1.crown,0.14,0.3,7.24,5.18,0.51,17.3,0.3041,,,R1.B1.sweep.L R1.B6.sweep.R
+R1.P2.groin,groin,R1.P2,R1.P2.groin.foot,R1.P2.crown,0.14,0.3,7.026,5.85,0.3,19.5,0.2951,,,
+R1.P3.groin,groin,R1.P3,R1.P3.groin.foot,R1.P3.crown,0.14,0.3,7.028,5.84,0.3,19.5,0.2952,,,R1.B3.sweep.L
+R1.P4.groin,groin,R1.P4,R1.P4.groin.foot,R1.P4.crown,0.14,0.3,6.703,3.36,6.7,11.2,0.2815,,,
+R1.P5.groin,groin,R1.P5,R1.P5.groin.foot,R1.P5.crown,0.14,0.3,6.94,6.14,6.94,20.5,0.2915,,,R1.B4.sweep.R
+R1.P6.groin,groin,R1.P6,R1.P6.groin.foot,R1.P6.crown,0.14,0.3,7.285,5.06,0.62,16.9,0.306,,,R1.B5.sweep.R R1.B6.sweep.L
+R1.B1.ridge,ridge,R1.B1,R1.B1.apex,R1.B1.crown,0.12,0.26,3.173,5.63,1.55,21.7,0.099,,,
+R1.B1.arch.L,arch,R1.B1,R1.B1.arch.L.foot,R1.B1.apex,0.16,0.36,5.661,5.65,5.66,15.7,0.3261,,,
+R1.B1.sweep.L,sweep,R1.B1,R1.B1.sweep.L.foot,R1.B1.knot,0.12,0.26,6.29,5.4,0.3,20.8,0.1962,,,R1.B1.lierne.L R1.P1.groin
+R1.B1.lierne.L,lierne,R1.B1,R1.B1.apex,R1.P1.knot,0.1,0.22,2.791,342.45,2.79,1556.6,0.0614,,,R1.B1.sweep.L
+R1.B1.arch.R,arch,R1.B1,R1.B1.arch.R.foot,R1.B1.apex,0.16,0.36,5.661,5.65,5.66,15.7,0.3261,,,
+R1.B1.sweep.R,sweep,R1.B1,R1.B1.sweep.R.foot,R1.B1.knot,0.12,0.26,6.143,5.83,0.3,22.4,0.1917,,,R1.B1.lierne.R
+R1.B1.lierne.R,lierne,R1.B1,R1.B1.apex,R1.P2.knot,0.1,0.22,2.905,18.21,0.0,82.8,0.0639,,,R1.B1.sweep.R
+R1.B1.crown,crown,R1.B1,R1.P1.crown,R1.P2.crown,0.14,0.3,1.694,1.5,1.53,5.0,0.0711,tight radius,,
+R1.B2.ridge,ridge,R1.B2,R1.B2.apex,R1.B2.crown,0.12,0.26,3.505,19.46,0.0,74.8,0.1094,,,
+R1.B2.arch.L,arch,R1.B2,R1.B2.arch.L.foot,R1.B2.apex,0.16,0.36,4.751,5.0,2.21,13.9,0.2737,,,
+R1.B2.sweep.L,sweep,R1.B2,R1.B2.sweep.L.foot,R1.B2.knot,0.12,0.26,5.813,6.1,0.3,23.5,0.1814,,,R1.B2.lierne.L
+R1.B2.lierne.L,lierne,R1.B2,R1.B2.apex,R1.P2.knot,0.1,0.22,3.038,8.19,3.04,37.2,0.0668,,,R1.B2.sweep.L
+R1.B2.arch.R,arch,R1.B2,R1.B2.arch.R.foot,R1.B2.apex,0.16,0.36,4.751,5.0,2.21,13.9,0.2737,,,
+R1.B2.sweep.R,sweep,R1.B2,R1.B2.sweep.R.foot,R1.B2.knot,0.12,0.26,5.815,6.09,5.82,23.4,0.1814,,,R1.B2.lierne.R
+R1.B2.lierne.R,lierne,R1.B2,R1.B2.apex,R1.P3.knot,0.1,0.22,3.037,8.12,3.04,36.9,0.0668,,,R1.B2.sweep.R
+R1.B2.crown,crown,R1.B2,R1.P2.crown,R1.P3.crown,0.14,0.3,1.424,1.5,0.58,5.0,0.0598,tight radius,,
+R1.B3.ridge,ridge,R1.B3,R1.B3.apex,R1.B3.crown,0.12,0.26,2.86,12.29,0.0,47.3,0.0892,,,
+R1.B3.arch.L,arch,R1.B3,R1.B3.arch.L.foot,R1.B3.apex,0.16,0.36,5.254,5.42,2.19,15.1,0.3026,,,R1.B3.sweep.L
+R1.B3.sweep.L,sweep,R1.B3,R1.B3.sweep.L.foot,R1.B3.knot,0.12,0.26,6.118,5.92,6.12,22.8,0.1909,,,R1.B3.arch.L R1.B3.lierne.L R1.P3.groin
+R1.B3.lierne.L,lierne,R1.B3,R1.B3.apex,R1.P3.knot,0.1,0.22,2.541,4.9,2.54,22.3,0.0559,,,R1.B3.sweep.L
+R1.B3.arch.R,arch,R1.B3,R1.B3.arch.R.foot,R1.B3.apex,0.16,0.36,5.254,5.42,2.19,15.1,0.3026,,,
+R1.B3.sweep.R,sweep,R1.B3,R1.B3.sweep.R.foot,R1.B3.knot,0.12,0.26,5.908,6.65,3.1,25.6,0.1843,,,R1.B3.lierne.R
+R1.B3.lierne.R,lierne,R1.B3,R1.B3.apex,R1.P4.knot,0.1,0.22,2.717,20.12,2.72,91.5,0.0598,,,R1.B3.sweep.R
+R1.B3.crown,crown,R1.B3,R1.P3.crown,R1.P4.crown,0.14,0.3,1.707,1.5,0.69,5.0,0.0717,tight radius,,
+R1.B4.ridge,ridge,R1.B4,R1.B4.apex,R1.B4.crown,0.12,0.26,3.029,45.1,0.0,173.5,0.0945,,,
+R1.B4.arch.L,arch,R1.B4,R1.B4.arch.L.foot,R1.B4.apex,0.16,0.36,4.875,5.11,2.26,14.2,0.2808,,,
+R1.B4.sweep.L,sweep,R1.B4,R1.B4.sweep.L.foot,R1.B4.knot,0.12,0.26,5.777,6.72,3.04,25.8,0.1802,,,R1.B4.lierne.L
+R1.B4.lierne.L,lierne,R1.B4,R1.B4.apex,R1.P4.knot,0.1,0.22,2.797,6.33,2.8,28.8,0.0615,,,R1.B4.sweep.L
+R1.B4.arch.R,arch,R1.B4,R1.B4.arch.R.foot,R1.B4.apex,0.16,0.36,4.875,5.11,2.26,14.2,0.2808,,,
+R1.B4.sweep.R,sweep,R1.B4,R1.B4.sweep.R.foot,R1.B4.knot,0.12,0.26,5.931,6.25,5.84,24.0,0.185,,,R1.B4.lierne.R R1.P5.groin
+R1.B4.lierne.R,lierne,R1.B4,R1.B4.apex,R1.P5.knot,0.1,0.22,2.685,3.36,2.68,15.3,0.0591,,,R1.B4.sweep.R
+R1.B4.crown,crown,R1.B4,R1.P4.crown,R1.P5.crown,0.14,0.3,1.596,1.5,0.95,5.0,0.067,tight radius,,
+R1.B5.ridge,ridge,R1.B5,R1.B5.apex,R1.B5.crown,0.12,0.26,3.201,6.44,1.57,24.8,0.0999,,,
+R1.B5.arch.L,arch,R1.B5,R1.B5.arch.L.foot,R1.B5.apex,0.16,0.36,5.533,5.57,5.53,15.5,0.3187,,,
+R1.B5.sweep.L,sweep,R1.B5,R1.B5.sweep.L.foot,R1.B5.knot,0.12,0.26,6.04,6.07,0.3,23.3,0.1884,,,R1.B5.lierne.L
+R1.B5.lierne.L,lierne,R1.B5,R1.B5.apex,R1.P5.knot,0.1,0.22,2.946,20.01,0.0,90.9,0.0648,,,R1.B5.sweep.L
+R1.B5.arch.R,arch,R1.B5,R1.B5.arch.R.foot,R1.B5.apex,0.16,0.36,5.533,5.57,5.53,15.5,0.3187,,,
+R1.B5.sweep.R,sweep,R1.B5,R1.B5.sweep.R.foot,R1.B5.knot,0.12,0.26,6.277,5.34,0.3,20.5,0.1958,,,R1.B5.lierne.R R1.P6.groin
+R1.B5.lierne.R,lierne,R1.B5,R1.B5.apex,R1.P6.knot,0.1,0.22,2.768,21.57,2.77,98.0,0.0609,,,R1.B5.sweep.R
+R1.B5.crown,crown,R1.B5,R1.P5.crown,R1.P6.crown,0.14,0.3,1.658,1.5,0.16,5.0,0.0696,tight radius,,
+R1.B6.ridge,ridge,R1.B6,R1.B6.apex,R1.B6.crown,0.12,0.26,3.866,11.19,1.91,43.0,0.1206,,,
+R1.B6.arch.L,arch,R1.B6,R1.B6.arch.L.foot,R1.B6.apex,0.16,0.36,4.876,5.11,2.26,14.2,0.2808,,,
+R1.B6.sweep.L,sweep,R1.B6,R1.B6.sweep.L.foot,R1.B6.knot,0.12,0.26,5.908,5.48,0.3,21.1,0.1843,,,R1.B6.lierne.L R1.P6.groin
+R1.B6.lierne.L,lierne,R1.B6,R1.B6.apex,R1.P6.knot,0.1,0.22,3.259,20.43,3.26,92.9,0.0717,,,R1.B6.sweep.L
+R1.B6.arch.R,arch,R1.B6,R1.B6.arch.R.foot,R1.B6.apex,0.16,0.36,4.876,5.11,2.26,14.2,0.2808,,,
+R1.B6.sweep.R,sweep,R1.B6,R1.B6.sweep.R.foot,R1.B6.knot,0.12,0.26,5.874,5.59,0.3,21.5,0.1833,,,R1.B6.lierne.R R1.P1.groin
+R1.B6.lierne.R,lierne,R1.B6,R1.B6.apex,R1.P1.knot,0.1,0.22,3.277,25.98,3.28,118.1,0.0721,,,R1.B6.sweep.R
+R1.B6.crown,crown,R1.B6,R1.P6.crown,R1.P1.crown,0.14,0.3,1.346,1.5,0.8,5.0,0.0565,tight radius,,

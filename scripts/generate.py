@@ -17,6 +17,24 @@ REPO = Path(__file__).resolve().parents[1]
 DESIGN = REPO / "design.json"
 
 
+def write_schedule(design: dict, path) -> str:
+    """Write one row per primary member: joints, section, length, tightest bend, volume, neighbours."""
+    import csv
+
+    from bower.timber import build_timber, clearances, schedule
+
+    rows = []
+    for room in design["rooms"]:
+        members = build_timber(room, design["timber"])
+        rows += schedule(members, design["timber"], clearances(members))
+    Path(path).parent.mkdir(exist_ok=True)
+    with open(path, "w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+    return str(path)
+
+
 def main(design_path=DESIGN, views_dir=None, view_prefix="") -> dict:
     import bpy
 
@@ -33,6 +51,8 @@ def main(design_path=DESIGN, views_dir=None, view_prefix="") -> dict:
         raise RuntimeError(f"scene units are {units.system} x {units.scale_length}; bower geometry is in metres at scale 1.0")
     design = topology.load(design_path)
     report = {"blender": bpy.app.version_string, "design": str(design_path), **build_design(scene, design)}
+    if "timber" in design:
+        report["member_schedule"] = write_schedule(design, REPO / "output" / "member_schedule.csv")
     if views_dir is not None:
         report["views"] = render_views(scene, design, views_dir, view_prefix)
     return report

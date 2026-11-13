@@ -143,6 +143,45 @@ def _steps(a: float, b: float, n: int) -> list:
     return [a + (b - a) * k / n for k in range(1, n)]
 
 
+def arch_profile(span: float, rise: float, shape: dict) -> tuple:
+    """A half-arch in its own vertical plane, as (distance toward the apex, height above the spring).
+
+    It meets the apex at `arch_point_deg`, or more steeply where the bay is narrow for its
+    height: a tall narrow arch becomes a sharper lancet instead of turning tightly at the top.
+    """
+    point = math.tan(max(math.radians(shape["arch_point_deg"]), math.pi / 2.0 - 2.0 * math.atan2(span, rise)))
+    shoulder = shape["arch_shoulder"] * rise
+    reach = min(shape["arch_reach"] * span, 0.9 * (rise - shoulder) / point)  # keeps the arch rising
+    return ((0.0, 0.0), (0.0, shoulder), (span - reach, rise - reach * point), (span, rise))
+
+
+def groin_profile(run: float, rise: float, shape: dict) -> tuple:
+    """A groin in its own vertical plane, as (distance toward the crown, height above the spring)."""
+    arrival = math.tan(math.radians(shape["crown_arrival_deg"]))
+    upright = shape["groin_rise"] * rise
+    reach = min(shape["groin_reach"] * run, 0.9 * (rise - upright) / arrival)  # keeps the groin rising
+    return ((0.0, 0.0), (0.0, upright), (run - reach, rise - reach * arrival), (run, rise))
+
+
+def ridge_profile(run: float, rise: float, shape: dict) -> tuple:
+    """A ridge in its own vertical plane, as (distance toward the crown, height above the apex).
+
+    It leaves the apex at `ridge_pitch_deg`, or more steeply where the climb to the crown needs
+    it: the steeper start is the one that makes the ridge a single even arc, not a level run
+    followed by a tight turn.
+    """
+    arrival = math.radians(shape["crown_arrival_deg"])
+    fair = min(2.0 * math.atan2(rise, run) - arrival, math.radians(60.0))
+    pitch = math.tan(max(math.radians(shape["ridge_pitch_deg"]), fair))
+    out, back = shape["ridge_run"] * run, shape["ridge_reach"] * run
+    return ((0.0, 0.0), (out, out * pitch), (run - back, rise - back * math.tan(arrival)), (run, rise))
+
+
+def lift(profile, origin: Vec, direction: Vec) -> tuple:
+    """Stand a (distance, height) profile up in the vertical plane through `origin` along `direction`."""
+    return tuple((origin[0] + direction[0] * d, origin[1] + direction[1] * d, origin[2] + z) for d, z in profile)
+
+
 def boundary(room: dict) -> tuple[dict, dict]:
     """The named nodes and boundary curves of a room."""
     shape, crown = room["shape"], room["crown"]
@@ -150,9 +189,6 @@ def boundary(room: dict) -> tuple[dict, dict]:
     cx, cy = crown["centre_m"]
     radius, height = crown["radius_m"], crown["height_m"]
     shaft, eave_z = shape["pier_height_m"], z0 + shape["eave_height_m"]
-    arrival = math.tan(math.radians(shape["crown_arrival_deg"]))
-    pitch = math.tan(math.radians(shape["ridge_pitch_deg"]))
-    point = math.tan(math.radians(shape["arch_point_deg"]))
     nodes, edges = {}, {}
 
     def landing(x: float, y: float):
@@ -162,10 +198,6 @@ def boundary(room: dict) -> tuple[dict, dict]:
         inward = (dx / distance, dy / distance, 0.0)
         return (cx - radius * inward[0], cy - radius * inward[1], z0 + height), inward, distance - radius
 
-    def arrive(at: Vec, inward: Vec, reach: float) -> Vec:
-        """The Bezier control point that brings a curve into the crown at the arrival slope."""
-        return sub(at, add(mul(inward, reach), _up(reach * arrival)))
-
     def edge(edge_id: str, kind: str, start: str, end: str, path: BezierPath) -> None:
         edges[edge_id] = Edge(edge_id, kind, start, end, path)
 
@@ -174,9 +206,7 @@ def boundary(room: dict) -> tuple[dict, dict]:
         base = (pier["position_m"][0], pier["position_m"][1], z0)
         spring = add(base, _up(shaft))
         top, inward, run = landing(base[0], base[1])
-        rise = shape["groin_rise"] * (height - shaft)
-        reach = min(shape["groin_reach"] * run, 0.9 * (height - shaft - rise) / arrival)  # keeps the groin rising
-        controls = (spring, add(spring, _up(rise)), arrive(top, inward, reach), top)
+        controls = lift(groin_profile(run, height - shaft, shape), spring, inward)
         lower, upper = _split(*controls, _parameter_at_height(controls, eave_z))
         nodes[pid + ".base"], nodes[pid + ".spring"] = base, spring
         nodes[pid + ".eave"], nodes[pid + ".crown"] = upper.anchors[0].co, top
@@ -189,18 +219,15 @@ def boundary(room: dict) -> tuple[dict, dict]:
         apex = apex_point(room, bay)
         top, inward, run = landing(apex[0], apex[1])
         nodes[bid + ".apex"], nodes[bid + ".crown"] = apex, top
-        out = shape["ridge_run"] * run
-        path = _cubic(apex, add(apex, add(mul(inward, out), _up(out * pitch))), arrive(top, inward, shape["ridge_reach"] * run), top)
+        path = _cubic(*lift(ridge_profile(run, top[2] - apex[2], shape), apex, inward))
         edge(bid + ".ridge", "ridge", bid + ".apex", bid + ".crown", path)
 
         for side, pid in (("L", bay["from"]), ("R", bay["to"])):
             spring = nodes[pid + ".spring"]
             dx, dy = apex[0] - spring[0], apex[1] - spring[1]
             span = math.hypot(dx, dy)
-            rise = shape["arch_shoulder"] * (apex[2] - spring[2])
-            reach = min(shape["arch_reach"] * span, 0.9 * (apex[2] - spring[2] - rise) / point)  # keeps the arch rising
-            haunch = sub(apex, (dx / span * reach, dy / span * reach, reach * point))
-            edge(f"{bid}.arch.{side}", "arch", pid + ".spring", bid + ".apex", _cubic(spring, add(spring, _up(rise)), haunch, apex))
+            half = lift(arch_profile(span, apex[2] - spring[2], shape), spring, (dx / span, dy / span, 0.0))
+            edge(f"{bid}.arch.{side}", "arch", pid + ".spring", bid + ".apex", _cubic(*half))
 
         edge(f"{bid}.eave.L", "eave", bay["from"] + ".eave", bid + ".apex", _line(nodes[bay["from"] + ".eave"], apex))
         edge(f"{bid}.eave.R", "eave", bid + ".apex", bay["to"] + ".eave", _line(apex, nodes[bay["to"] + ".eave"]))

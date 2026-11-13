@@ -20,6 +20,8 @@ class Member:
     depth: float  # m, along the section depth axis
     path: BezierPath
     parent: str | None = None
+    family: str = ""  # arch | groin | ridge | sweep | crown for generated primaries
+    nodes: tuple = ()  # named points this member is jointed at, start first and end last
 
 
 def _path_from_spec(spec: dict) -> BezierPath:

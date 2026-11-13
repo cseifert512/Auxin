@@ -22,6 +22,7 @@ from . import topology
 from .centreline import norm, sub
 from .envelope import CREASE_KINDS, build_envelope, check_envelope
 from .member import Member, diagnostics, sweep
+from .timber import build_timber, clearances
 
 ROOT_COLLECTION = "BOWER_V1"
 CONTROLS, ENVELOPES, CONTEXT, CAMERAS = "00_CONTROLS", "10_ENVELOPES", "60_CONTEXT", "70_CAMERAS"
@@ -38,6 +39,13 @@ MESH_COLLECTION = {
 # Flat viewport colours that tell the layers apart; not materials in any finished sense.
 COLOURS = {
     "timber": (0.72, 0.52, 0.30, 1.0),
+    # one tint per family, darkest for the heaviest members, so the hierarchy reads in a flat render
+    "timber_arch": (0.50, 0.32, 0.16, 1.0),
+    "timber_groin": (0.62, 0.42, 0.22, 1.0),
+    "timber_ridge": (0.70, 0.50, 0.28, 1.0),
+    "timber_sweep": (0.80, 0.60, 0.36, 1.0),
+    "timber_lierne": (0.88, 0.72, 0.48, 1.0),
+    "timber_crown": (0.44, 0.28, 0.14, 1.0),
     "envelope": (0.87, 0.85, 0.80, 1.0),
     "arch": (0.05, 0.05, 0.05, 1.0),
     "pier": (0.05, 0.05, 0.05, 1.0),
@@ -162,7 +170,7 @@ def _member_mesh(member: Member, stations):
     mesh.update()
     mesh.shade_smooth()
     mesh.set_sharp_from_angle(angle=radians(30))
-    mesh.materials.append(_material("timber"))
+    mesh.materials.append(_material(f"timber_{member.family}" if member.family else "timber"))
     return mesh
 
 
@@ -193,9 +201,12 @@ def _member_mesh_check(member: Member, obj) -> dict:
     return check
 
 
-def build_member(scene, member: Member, sampling: dict) -> dict:
+def build_member(scene, member: Member, sampling: dict, tags: dict | None = None) -> dict:
     """Write one member as a centreline curve plus a separate swept mesh; return its report."""
     props = {
+        **(tags or {}),
+        "bower_family": member.family,
+        "bower_nodes": ",".join(member.nodes),
         "bower_id": member.id,
         "bower_role": member.role,
         "bower_width_m": member.width,
@@ -327,16 +338,63 @@ def build_room(scene, design: dict, room: dict) -> dict:
     crown = room["crown"]
     built.append(_handle(scene, "crown", rid, (*crown["centre_m"], z0 + crown["height_m"]), tags))
 
+    show_envelope = design.get("display", {}).get("envelope", True)
+    for obj in built:
+        if obj.get("bower_kind") in ("envelope", "guide"):
+            obj.hide_viewport = obj.hide_render = not show_envelope
+
+    timber = _build_room_timber(scene, design, room, tags, built) if "timber" in design else None
     removed = _remove_stale({o.name for o in built}, bower_room=rid)
     bpy.context.view_layer.update()
     return {
         "room": rid,
+        "timber": timber,
         "piers": [p["id"] for p in room["piers"]],
         "bays": [b["id"] for b in room["bays"]],
         "objects": len(built),
         "stale_objects_removed": removed,
         "envelope": envelope_check,
         "scene_check": _envelope_scene_check(env, surface),
+    }
+
+
+def _mesh_intersections(objects) -> list:
+    """Pairs of member meshes that really intersect, leaving out members jointed at a shared node."""
+    from mathutils.bvhtree import BVHTree
+
+    trees = [
+        (o["bower_id"], set(o["bower_nodes"].split(",")), BVHTree.FromPolygons([v.co[:] for v in o.data.vertices], [p.vertices[:] for p in o.data.polygons]))
+        for o in objects
+    ]
+    return [[a, b] for i, (a, nodes_a, tree_a) in enumerate(trees) for b, nodes_b, tree_b in trees[i + 1 :] if not nodes_a & nodes_b and tree_a.overlap(tree_b)]
+
+
+def _build_room_timber(scene, design: dict, room: dict, tags: dict, built: list) -> dict:
+    """Write a room's primary members and return what was checked: source geometry, scene geometry, clearances."""
+    members = build_timber(room, design["timber"])
+    reports = [build_member(scene, m, design["timber"]["sampling"], tags) for m in members]
+    meshes = [bpy.data.objects[r["objects"]["timber"]] for r in reports]
+    built.extend(meshes)
+    built.extend(bpy.data.objects[r["objects"]["centreline"]] for r in reports)
+    families = {}
+    for m, r in zip(members, reports):
+        f = families.setdefault(m.family, {"members": 0, "length_m": 0.0, "min_bend_radius_m": None})
+        f["members"] += 1
+        f["length_m"] = round(f["length_m"] + r["length_m"], 2)
+        radius = r["min_bend_radius_m"]
+        if radius is not None and (f["min_bend_radius_m"] is None or radius < f["min_bend_radius_m"]):
+            f["min_bend_radius_m"] = radius
+    estimate = clearances(members)
+    return {
+        "members": len(members),
+        "families": families,
+        "total_length_m": round(sum(r["length_m"] for r in reports), 1),
+        "total_volume_m3": round(sum(r["volume_m3"] for r in reports), 2),
+        "max_centreline_deviation_m": max(r["centreline_check"]["max_deviation_m"] for r in reports),
+        "meshes_closed": all(r["mesh_check"]["closed_manifold"] for r in reports),
+        "collisions_estimated": estimate["collisions"],
+        "laps_and_close_neighbours": len(estimate["close"]),
+        "mesh_intersections_in_scene": _mesh_intersections(meshes),
     }
 
 
@@ -373,7 +431,7 @@ def read_dragged_handles(design: dict) -> tuple[dict, list]:
 def build_context(scene, design: dict) -> None:
     """A ground disc and a figure for scale. Neither is architecture."""
     context, collection = design["context"], _collection(scene, CONTEXT)
-    ground = _prism("ground", (0.0, 0.0), context["ground_radius_m"], -0.02, -0.02, 96, "ground")
+    ground = _prism("ground", (0.0, 0.0), context["ground_radius_m"], -0.08, -0.02, 96, "ground")  # closed, so it can take shadows
     figure = context["scale_figure"]
     person = _prism("scale_figure", figure["position_m"], 0.22, 0.0, figure["height_m"], 8, "figure")
     built = [
@@ -415,13 +473,16 @@ def render_views(scene, design: dict, out_dir, prefix: str = "", only=None, size
         render.resolution_percentage = 100
         shading.light, shading.color_type = "STUDIO", "MATERIAL"
         shading.show_cavity = shading.show_object_outline = True
-        shading.show_shadows = False  # Workbench shadows misbehave on open surfaces
+        # Workbench shadows misbehave on open surfaces, so they are on only when the envelope is not drawn
+        shadows = not design.get("display", {}).get("envelope", True)
+        shading.shadow_intensity = 0.3
         if world:
             world.color = (0.80, 0.83, 0.86)
         for view in design["views"]:
             if only and view["id"] not in only:
                 continue
             scene.camera = bpy.data.objects[f"CAM_{view['id']}"]
+            shading.show_shadows = shadows and view["projection"] == "persp"  # drawings stay unshadowed
             render.filepath = str(Path(out_dir) / f"{prefix}{view['id']}.png")
             bpy.ops.render.render(write_still=True)
             paths.append(render.filepath)
