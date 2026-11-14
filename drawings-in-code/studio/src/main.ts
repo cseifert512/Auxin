@@ -36,7 +36,8 @@ const runs = new Map(Object.entries(grown).map(([file, href]) => [file.split('/'
 const RUN_NAMES: Record<string, string> = { 'trained-10y': 'Tended, ten years', 'untended-10y': 'Untended, ten years' };
 const run = runs.has(url.get('run') ?? '') ? url.get('run')! : runs.has('trained-10y') ? 'trained-10y' : [...runs.keys()][0];
 if (!run) throw new Error('no planting has been grown yet: npm run grow');
-const growthUrl = runs.get(run)!;
+// a turn through the forms (tour.ts) draws a planting grown on another building: it says where to read it
+const growthUrl = url.get('growth') ?? runs.get(run)!;
 // each run was grown on one version of the building: the snapshot as it is, or with cables added to try
 const setups = import.meta.glob('@scene/runs/*/run.json', { import: 'default', eager: true }) as Record<string, { bower?: string }>;
 const builtAs = Object.entries(setups).find(([file]) => file.split('/').at(-2) === run)?.[1].bower ?? 'bower.json';
@@ -93,7 +94,9 @@ paper.scene.add(assembly.group);
 
 
 // ---- the plants --------------------------------------------------------------------------------------------------
-const growth = (await (await fetch(growthUrl)).json()) as RenderData;
+const touring = url.has('tour') ? await import('./tour.ts') : null;
+const grownWhole = (await (await fetch(growthUrl)).json()) as RenderData;
+const growth = touring ? touring.inSeason(grownWhole, url.get('days')) : grownWhole;
 // a ring on the ground where each plant of this planting goes in
 const bower = (await (await fetch(bowerUrl)).json()) as { stations: { id: string; position: number[] }[]; cables?: { id: string; points: number[][] }[] };
 const bedsUsed = new Set(growth.plants.map((p) => p.stationId));
@@ -104,7 +107,8 @@ const steel = drawCables(bower.cables ?? [], url.get('lines') === 'marked');
 const steelM = (bower.cables ?? []).reduce((sum, c) => sum + c.points.slice(1).reduce((d, p, i) => d + Math.hypot(p[0]! - c.points[i]![0]!, p[1]! - c.points[i]![1]!, p[2]! - c.points[i]![2]!), 0), 0);
 paper.scene.add(steel);
 await loadLooks([...new Set(growth.plants.map((p) => p.taxonId))]);
-const plants = new PlantView(growth, makePlantMaterials({ bark: (grain) => makeBarkTextures(grain), leafTex: makeLeafTexture(), ownLeafTex: makeOwnLeafTexture }));
+const plantMaterials = makePlantMaterials({ bark: (grain) => makeBarkTextures(grain), leafTex: makeLeafTexture(), ownLeafTex: makeOwnLeafTexture });
+const plants = new PlantView(growth, plantMaterials);
 paper.scene.add(plants.group);
 
 // ---- the line of time --------------------------------------------------------------------------------------------
@@ -417,3 +421,8 @@ Object.assign(window, {
     },
   },
 });
+// a turn through the forms: the same sheet, with the timber moved and this planting carried on it (tour.ts)
+if (touring) {
+  const tour = await touring.startTour({ url, paper, timber, growth, materials: plantMaterials, plants, stand: view('exterior'), planted });
+  Object.assign((window as unknown as { studio: object }).studio, { tour });
+}

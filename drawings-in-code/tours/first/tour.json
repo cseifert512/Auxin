@@ -1,0 +1,30 @@
+{
+  "name": "first",
+  "note": "A turn through forms the six-bay room can take, for one drawing. A form sets controls of bower-blender/bower/controls.py; what it does not set stays as designed. States are made by bower-blender/scripts/tour_states.py.",
+  "snapshot": "six-bay-radial-v2",
+  "room": "R1",
+  "between": 8,
+  "loop": true,
+  "film": {
+    "title": "One room, six forms",
+    "subtitle": "Six forms of the six-bay room that the generator builds, and the same trial planting grown for ten years on each",
+    "seconds": 36,
+    "fps": 24,
+    "turns": 1,
+    "hold": 1.5,
+    "dissolve": [0.35, 0.65],
+    "calendar": { "from": "2035-01-10", "to": "2036-01-10" },
+    "timber": "wood",
+    "view": "approach",
+    "back": 0.9,
+    "lift": 3
+  },
+  "forms": [
+    { "id": "lantern", "title": "A lantern", "set": {} },
+    { "id": "basket", "title": "A flared basket", "set": { "crown_height": 7.4, "crown_radius": 1.5, "top_slope": 118 } },
+    { "id": "oculus", "title": "An open oculus", "set": { "crown_height": 4.8, "crown_radius": 1.7, "top_slope": 0, "room_radius": 6.8, "arch_height": 4.0 } },
+    { "id": "funnel", "title": "The oculus turns down", "set": { "crown_height": 2.4, "crown_radius": 1.1, "top_slope": -45, "room_radius": 6.8, "arch_height": 4.0 } },
+    { "id": "trunk", "title": "A trunk on the floor", "set": { "crown_height": 0, "crown_radius": 0.6, "top_slope": -90 } },
+    { "id": "tall", "title": "Tall and close", "set": { "crown_height": 3.4, "crown_radius": 0.8, "top_slope": 0, "room_radius": 5.5, "arch_height": 5.3 } }
+  ]
+}

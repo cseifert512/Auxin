@@ -316,6 +316,24 @@ What the draft shows at `R1.P6`, and what it leaves open:
   slender piles in soft planting soil is not looked at; nothing is known of
   the soil; and root zones are not in snapshots.
 
+## A tour of forms
+
+`scripts/tour_states.py <tour.json>` builds every state between a list of forms of one room, for a drawing
+that moves through them (`drawings-in-code`, "A turn through the forms"). A form sets some controls of
+`bower/controls.py`; between two forms each control moves in a straight line. No Blender, about two seconds a
+state. It writes `states.json` beside the tour's description and a trial building under `../releases/trial-tour-*`
+for each form, for a planting to be grown on. Git ignores both.
+
+Two things it found about the generator, which any drawing of a changing room has to deal with:
+
+- **A member's name is its slot, not its place.** As the form changes, the rib of one slot comes to land on the
+  next pier round. The script follows each timber by where it stands, pairing it with the nearest centre line of
+  its family and hand in the next state.
+- **The lattice does not change smoothly.** A rib that passes within `gather_m` of a pier is drawn into it and
+  stands on the floor; one that passes wider lands on an arch. Which it does changes at once, and the rib is
+  then up to 5 m longer or shorter in the next state. On the first tour this happens at 24 of 54 steps. Ribs are
+  therefore measured from their heads, so that the part two states share is compared like for like.
+
 ## Regenerate the scene
 
 In Blender (5.1 or later), from the Python console, the Text Editor or the MCP connector:
@@ -396,6 +414,7 @@ bower/controls.py               what each slider reads from a design and changes
 bower/blender_scene.py          writes the design into Blender, at outline, draft or full detail
 bower/blender_ui.py             the panel: sliders, live handles, rebuild buttons
 scripts/                        entry points run inside Blender
+scripts/tour_states.py          every state between a list of forms, and a trial building at each (no Blender)
 tests/                          geometry, topology and timber tests
 output/bower_v1.blend           the scene as last saved
 output/member_schedule.csv      one row per primary member

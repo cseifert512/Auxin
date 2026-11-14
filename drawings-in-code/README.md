@@ -58,6 +58,41 @@ approach is walked on, to stand before the bay in front. A film ends on the last
 no film. The training lines are drawn as thin as they are, which is nearly not at all; `--lines=marked`, or
 `?lines=marked` in the studio, draws them in green to be looked at.
 
+## A turn through the forms
+
+```bash
+cd ../bower-blender && python scripts/tour_states.py ../drawings-in-code/tours/first/tour.json   # every state, and a trial building at each form
+cd ../drawings-in-code
+node pipeline/tour.mjs first grow              # the same planting, ten years, on each form: about 90 s a form
+node pipeline/tour.mjs first film              # exports/tour-first/tour-first.mp4
+node pipeline/tour.mjs first film --still=12.5 # one picture, 12.5 s into the film
+```
+
+A film of the room going from one form to another with a planting on it, while a year of seasons goes by and the
+camera goes round. A tour is described in `tours/<name>/tour.json`: the forms (each sets some of the building's
+controls, as its sliders do), and how the film is timed. `tours/first` goes from the lantern as designed to a flared
+basket, an open oculus, the oculus turned down, a trunk standing on the floor, a tall close room, and back.
+
+What it is, and is not:
+
+- **The timber is the generator's at every state.** Between two states a timber is moved point by point. The
+  meshes moved are the snapshot's milled ones, so only the snapshot's own form has its joints where the mill
+  would cut them.
+- **The lattice re-forms as the form changes**, and that is the generator's doing: a rib is drawn into a pier
+  and stands on the floor, or lands on an arch, and which it does changes at once (`bower-blender`, README, "A
+  tour of forms"). The film shows such a rib running out to its new foot or drawing back from its old one.
+- **A planting is grown on each form, and on nothing between.** Away from its form a planting is carried: every
+  stem point that lies on a timber keeps its place along that timber and its side of it, and what stands on it
+  goes with it; shoots that hang free keep their shape. Across the middle of the way from one form to the next,
+  one planting is dissolved into the other, picture into picture. So the film is taken once for each form and
+  the takes are laid over each other.
+- It is a picture of the forms one room can take, each with the same planting grown on it. No building moves, and
+  nothing grew on the states in between. The line under the film says so.
+
+A take draws the plants afresh for every picture in which the form has moved, so a film takes about as long as
+its pictures number in seconds, several times over. `--fps`, `--scale` and `--size` make a quicker one to judge
+the movement by.
+
 ## Plates for the presentation
 
 ```bash
@@ -171,6 +206,8 @@ port 5313.
   `pipeline/solids.mjs` is the timber as solids, which this and the lines both ask.
 - `pipeline/compare.mjs` sets the runs of a scene side by side: timber held, how, and what a visitor sees.
 - `pipeline/film.mjs` makes the films.
+- `pipeline/tour.mjs` grows a planting on each form of a tour and makes the film of it. `studio/src/tour.ts`
+  is what moves the timber and carries the plants; the studio reads it only when asked for a tour.
 - `studio/` is the drawing.
 - `sketches/` is for trying things, and nothing in it is a drawing for the deck. `sketches/design-space/` moves
   one control of the building through a few values and draws the timber going from one to the next, with what
