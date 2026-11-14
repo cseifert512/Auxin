@@ -1,0 +1,50 @@
+{
+  "name": "06-grown-again",
+  "for": "Slide 6 of the presentation, in place of the two side-by-side checks. Not placed in the deck yet.",
+  "statement": "A growth scenario on stated assumptions, not a forecast. Concept geometry; trial planting.",
+  "words": {
+    "title": "Grown three times",
+    "steps": [
+      "Grow it once",
+      "Grow it again",
+      "And again"
+    ],
+    "now": [
+      "One corner of the room, grown on a computer.",
+      "The same room, grown again. We changed nothing.",
+      "And a third time. Watch the timber, then the plants."
+    ],
+    "card": [
+      [
+        "What happens",
+        "The same room is grown three times: the same timber, the same plants in the same beds, the same gardener. The timber comes out the same. The plants do not."
+      ],
+      [
+        "What is Bower's",
+        "Designing the timber for plants we cannot control."
+      ],
+      [
+        "Still to prove",
+        "How much real plants vary. The plant numbers in the simulator are assumptions."
+      ]
+    ],
+    "alt": "One pier of a timber room with climbing plants on it. The picture turns between three growings: the timber stays exactly where it is, and the plants are different in each."
+  },
+  "paper": "#EEF3EA",
+  "ink": "#102820",
+  "slot": [
+    1280,
+    600
+  ],
+  "size": [
+    792,
+    476
+  ],
+  "hold": 1800,
+  "band": 0.34,
+  "runs": [
+    "frames/run-0.webp",
+    "frames/run-1.webp",
+    "frames/run-2.webp"
+  ]
+}

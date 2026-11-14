@@ -98,22 +98,19 @@ shows is the floor and the shade on it) and `round`.
 
 ```bash
 node pipeline/again.mjs                 # deck/grown-again/piece.json -> exports/deck/06-grown-again/
-node pipeline/again.mjs --frames=keep   # measure and lay out again from the pictures already made
+node pipeline/again.mjs --frames=keep   # lay out again from the pictures already made
 ```
 
 One view on one day from several grown runs of the same planting: the same building, the same plants in the same
-beds, the same care, and another seed. It is for the slide that joins making and growing: of everything in the
-picture, what is the same every time was decided by us, and what is not was decided by the plant. The maker draws
-each run (one studio at a time, stopped between runs, on a port of its own), then sets the pictures against each
-other: `stayed` is what every run draws alike, `differs` is the rest, in the one red. For each place marked in the
-description (`regions`, as shares of the picture) it measures, of what any run draws there, the share that
-differs. Those shares fill the bars of the scale under the picture, from decided by us to decided by the plant;
-the places on that scale this picture cannot measure (the forest, the factory) are left as dashed outlines.
+beds, the same care, and another seed. The page turns one picture from one run to the next, so the timber holds
+still and the plants do not. It is laid out as a station page of the factory drawings is: a name, one short line
+for what is happening now, the steps, and the same plain questions beside it (what happens, what is Bower's, still
+to prove). `?embed` shows only the drawing; `?print` shows the same band of each run one above another, which is
+also saved as `still.png`.
 
-The page (`deck/grown-again/index.html`, copied beside the pictures) plays by itself: each run in turn, the three
-quickly one after another, then together. `?embed` shows only the drawing, `?print` the last step complete, which
-is also saved as `still.png`. The measure is of these pictures, not of plants: it says how far three runs of one
-scenario agree, on the simulator's assumptions.
+A first version set the runs against each other in red, with a measured bar for each of four marked places and a
+scale of eight steps under the picture. It showed too many things at once to be read and was taken out (it is in
+commit `8e53829`).
 
 ## Vignettes
 

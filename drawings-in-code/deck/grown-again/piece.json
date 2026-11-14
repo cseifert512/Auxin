@@ -1,13 +1,23 @@
 {
   "for": "Slide 6 of the presentation, in place of the two side-by-side checks. Not placed in the deck yet.",
-  "shows": "One pier of the room on one summer day, from three grown runs of the same planting on the same building with the same care, differing only in the simulator's chance. Shown one after another, then together: what is the same in all three in ink, what is not in red. Beneath, the scale from decided by us to decided by the plant, with a bar wherever this picture can measure it: of what is drawn in each marked place, the share that differs between the three.",
+  "shows": "One pier of the room on one summer day, from three grown runs of the same planting on the same building with the same care, differing only in the simulator's chance. Playing, one picture turns from one run to the next: the timber does not move and the plants do. On paper the same band of each picture stands one above another.",
   "statement": "A growth scenario on stated assumptions, not a forecast. Concept geometry; trial planting.",
+  "words": {
+    "title": "Grown three times",
+    "steps": ["Grow it once", "Grow it again", "And again"],
+    "now": ["One corner of the room, grown on a computer.", "The same room, grown again. We changed nothing.", "And a third time. Watch the timber, then the plants."],
+    "card": [
+      ["What happens", "The same room is grown three times: the same timber, the same plants in the same beds, the same gardener. The timber comes out the same. The plants do not."],
+      ["What is Bower's", "Designing the timber for plants we cannot control."],
+      ["Still to prove", "How much real plants vary. The plant numbers in the simulator are assumptions."]
+    ],
+    "alt": "One pier of a timber room with climbing plants on it. The picture turns between three growings: the timber stays exactly where it is, and the plants are different in each."
+  },
   "as": "06-grown-again",
   "snapshot": "six-bay-radial-v1",
   "runs": ["trained-10y-new-growth", "trained-10y-new-growth-seed8", "trained-10y-new-growth-seed9"],
   "paper": "EEF3EA",
   "ink": "102820",
-  "red": "B4492F",
   "timber": "ink",
   "slot": [1280, 600],
   "size": [792, 476],
@@ -17,22 +27,6 @@
   "zoom": 2.6,
   "at": "date:2036-06-21",
   "sun": [172, 14],
-  "room": { "size": [500, 376], "ring": [0.515, 0.7, 0.1] },
-  "tolerance": 28,
-  "regions": [
-    { "id": "joint", "name": "Pier, milled and fitted", "box": [0.473, 0.725, 0.067, 0.262] },
-    { "id": "stem", "name": "Stems tied in", "box": [0.417, 0.126, 0.177, 0.294] },
-    { "id": "flower", "name": "Flowers", "box": [0.461, 0.473, 0.101, 0.168] },
-    { "id": "shoot", "name": "Free shoots", "box": [0.025, 0.315, 0.126, 0.336] }
-  ],
-  "scale_of_control": [
-    { "name": "Forest", "verb": "it grows" },
-    { "name": "Sawn", "verb": "we grade" },
-    { "name": "Pressed", "verb": "we correct" },
-    { "name": "Milled", "verb": "we specify", "region": "joint" },
-    { "name": "Assembled", "verb": "we fit", "region": "joint" },
-    { "name": "Tied in", "verb": "we guide", "region": "stem" },
-    { "name": "Free shoot", "verb": "we invite", "region": "shoot" },
-    { "name": "Flower", "verb": "we wait", "region": "flower" }
-  ]
+  "hold": 1800,
+  "band": 0.34
 }

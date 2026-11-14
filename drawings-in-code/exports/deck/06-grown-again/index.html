@@ -3,214 +3,135 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Bower drawing: grown again</title>
+    <title>Bower drawing: grown three times</title>
     <!--
-      One pier on one summer day, from three grown runs of the same planting. It plays by itself: each run in turn,
-      the three quickly one after another, then together, with what they do not agree on in red. Nothing is worked
-      out here: the pictures and the measures were made beforehand by pipeline/again.mjs.
+      One thing happening: the same room is grown three times. The timber comes out the same; the plants do not.
+      Laid out as a station page of the factory drawings is (bower-factory): the thing itself large and moving, a
+      name, one short line for what is happening now, the steps, and the same plain questions beside it.
+      The pictures were made beforehand by pipeline/again.mjs; nothing is worked out here.
 
-      Set into a slide with ?embed it shows only the drawing. ?print (or reduced motion) shows the last step,
-      complete; ?step=1 opens on a step and holds it. From a slide:
-        window.__play(on)      play or pause
-        window.__step(i)       stop, and show that step (0 to 4)
-        postMessage({ type: 'bower:play' | 'bower:step', value })   the same, from outside a frame
-      In the manner of the factory drawings: named steps, one red for what is at issue, a pause, nothing to hover over.
+      ?embed shows only the drawing. ?print (or reduced motion) shows the three growings one above another.
+      From a slide:  window.__play(on)   or   postMessage({ type: 'bower:play', value })
     -->
     <style>
-      :root { --paper: #eef3ea; --ink: #102820; --red: #b4492f; --muted: #4d6559; --rule: rgba(16, 40, 32, 0.22); --same: rgba(16, 40, 32, 0.16); }
+      :root { --paper: #eef3ea; --ink: #102820; --muted: #4d6559; --rule: rgba(16, 40, 32, 0.22); --soft: rgba(16, 40, 32, 0.07); }
       html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: Safiro, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; }
       body { padding: 28px; }
       body.embed { padding: 0; overflow: hidden; }
       .piece { container-type: inline-size; position: relative; width: 100%; aspect-ratio: 1280 / 600; margin: 0; outline: none; user-select: none; }
-      .grid { position: absolute; inset: 0; display: grid; grid-template-columns: 19.53cqw 61.875cqw 14.84cqw; column-gap: 1.875cqw; }
-      p { margin: 0; }
-      img { display: block; }
+      .grid { position: absolute; inset: 0; display: grid; grid-template-columns: 23.1cqw 75cqw; column-gap: 1.9cqw; align-items: center; }
+      p, h1, h2, ol { margin: 0; padding: 0; font-weight: 400; }
 
-      /* left: where we are in the room, and what is being said */
-      .left { display: flex; flex-direction: column; min-height: 0; }
-      .room { position: relative; aspect-ratio: 500 / 376; overflow: hidden; }
-      /* the room is drawn with air round it; brought closer here, with its ring */
-      .room .closer { position: absolute; inset: 0; transform: scale(1.5); transform-origin: 50% 56%; }
-      .room img { width: 100%; height: 100%; }
-      .ring { position: absolute; border: 0.14cqw solid var(--red); border-radius: 50%; aspect-ratio: 1; transform: translate(-50%, -50%); }
-      .step { font-size: 1.72cqw; line-height: 1.15; margin-top: 1.4cqw; letter-spacing: -0.01em; }
-      .line { font-size: 1.02cqw; line-height: 1.45; margin-top: 0.7cqw; color: var(--muted); }
-      .key { margin-top: auto; font-size: 0.86cqw; line-height: 1.5; color: var(--muted); }
-      .key i { display: inline-block; width: 0.8cqw; height: 0.8cqw; margin-right: 0.45cqw; vertical-align: -0.06cqw; background: var(--same); outline: 0.07cqw solid var(--rule); }
-      .key i.unlike { background: var(--red); outline-color: var(--red); }
-      .statement { font-size: 0.8cqw; line-height: 1.4; margin-top: 0.6cqw; color: var(--muted); }
+      .words { display: flex; flex-direction: column; height: 100%; }
+      h1 { font-size: 2.2cqw; line-height: 1.15; letter-spacing: -0.01em; font-weight: 500; margin-top: 1.6cqw; }
+      .now { font-size: 1.25cqw; line-height: 1.4; margin-top: 0.8cqw; min-height: 3.5cqw; }
+      .steps { list-style: none; margin-top: 1.2cqw; display: flex; flex-direction: column; gap: 0.25cqw; }
+      .steps li { font-size: 1.02cqw; line-height: 1; padding: 0.55cqw 0.9cqw; border-radius: 0.8cqw; color: var(--muted); }
+      .steps li.on { background: var(--soft); color: var(--ink); }
+      .card { margin-top: 1.8cqw; }
+      .card h2 { font-size: 0.95cqw; line-height: 1.4; font-weight: 600; }
+      .card p { font-size: 1.02cqw; line-height: 1.45; margin: 0.25cqw 0 1.1cqw; }
+      .foot { margin-top: auto; padding-bottom: 0.4cqw; display: flex; flex-direction: column; align-items: flex-start; gap: 0.7cqw; }
+      #pause { all: unset; cursor: pointer; font-size: 0.9cqw; padding: 0.3cqw 0.8cqw; border: 0.08cqw solid var(--rule); }
+      #pause:focus-visible { border-color: var(--ink); }
 
-      /* middle: the picture, and the scale beneath it */
-      .main { display: flex; flex-direction: column; min-height: 0; }
+      /* playing: one picture, turning from one growing to the next */
+      .pictures { position: relative; }
       .sheet { position: relative; aspect-ratio: 792 / 476; overflow: hidden; }
-      .sheet img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.35s ease; }
+      .sheet img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.3s linear; }
       .sheet img.on { opacity: 1; }
-      .piece.quick .sheet img { transition: none; }
-      .region { position: absolute; border: 0.08cqw solid var(--ink); opacity: 0; transition: opacity 0.4s ease 0.3s; }
-      .region span { position: absolute; left: -0.08cqw; bottom: 100%; padding: 0.12cqw 0.45cqw; font-size: 0.86cqw; line-height: 1.3; white-space: nowrap; background: var(--paper); border: 0.08cqw solid var(--ink); border-bottom: 0; }
-      .region.under span { bottom: auto; top: 100%; border-bottom: 0.08cqw solid var(--ink); border-top: 0; }
-      .piece[data-step='4'] .region { opacity: 1; }
+      .bands { display: none; }
+      .statement { font-size: 0.8cqw; line-height: 1.4; color: var(--muted); }
 
-      .scale { display: grid; grid-template-columns: repeat(8, 1fr); margin-top: auto; height: 8.75cqw; }
-      .col { display: flex; flex-direction: column; align-items: center; min-width: 0; }
-      .col .verb { font-size: 0.9cqw; line-height: 1.4; color: var(--muted); white-space: nowrap; }
-      .col .name { font-size: 0.9cqw; line-height: 1.5; white-space: nowrap; }
-      .col .bar { position: relative; flex: 1; width: 62%; margin: 0.25cqw 0; border: 0.08cqw dashed var(--rule); }
-      .col.measured .bar { border: 0.08cqw solid var(--ink); transition: background 0.5s ease 0.3s; }
-      .piece[data-step='4'] .col.measured .bar { background: var(--same); }
-      .col.measured .verb { color: var(--ink); }
-      .col .unlike { position: absolute; left: 0; right: 0; top: 0; height: 0; background: var(--red); transition: height 0.9s cubic-bezier(0.3, 0.7, 0.2, 1) 0.5s; }
-      .piece[data-step='4'] .col .unlike { height: var(--share); }
-
-      /* right: the steps, which are also the three runs */
-      .right { display: flex; flex-direction: column; gap: 0.75cqw; min-height: 0; }
-      .right button { all: unset; cursor: pointer; display: block; font: inherit; color: var(--muted); }
-      .thumb .frame { display: block; position: relative; aspect-ratio: 792 / 476; outline: 0.08cqw solid var(--rule); }
-      .thumb .frame img { position: absolute; inset: 0; width: 100%; height: 100%; }
-      .thumb b { display: block; font-weight: 400; font-size: 0.9cqw; line-height: 1.6; }
-      .thumb[aria-pressed='true'] { color: var(--ink); }
-      .thumb[aria-pressed='true'] .frame { outline: 0.14cqw solid var(--ink); }
-      .thumb:focus-visible .frame, #pause:focus-visible { outline: 0.14cqw solid var(--red); }
-      #pause { margin-top: auto; align-self: flex-start; font-size: 0.9cqw; padding: 0.3cqw 0.8cqw; border: 0.08cqw solid var(--rule); color: var(--ink); }
-
-      /* on paper, or held still: the last step, complete, and nothing to press */
-      .piece.still #pause { display: none; }
-      .piece.still .col .unlike, .piece.still .col .bar, .piece.still .region, .piece.still .sheet img { transition: none; }
-      @media print { body { padding: 0; } #pause { display: none; } }
+      /* on paper, or held still: the three one above another, so the timber lines up and the plants do not */
+      .piece.still .sheet, .piece.still #pause, .piece.still .steps, .piece.still .now { display: none; }
+      .piece.still .bands { display: flex; flex-direction: column; gap: 0.9cqw; }
+      .band { position: relative; aspect-ratio: 960 / 180; overflow: hidden; }
+      .band img { position: absolute; left: 0; width: 100%; top: var(--lift); }
+      .band b { position: absolute; left: 0; top: 0; padding: 0.25cqw 0.7cqw; font-weight: 400; font-size: 1cqw; background: var(--paper); border-right: 0.08cqw solid var(--rule); border-bottom: 0.08cqw solid var(--rule); }
+      @media print { body { padding: 0; } }
     </style>
   </head>
   <body>
     <figure class="piece" id="piece" tabindex="0" aria-roledescription="drawing">
       <div class="grid">
-        <div class="left">
-          <div class="room"><div class="closer"><img id="room" alt="The whole room, with the pier drawn close to ringed." /><span class="ring" id="ring"></span></div></div>
-          <p class="step" id="step" aria-live="polite"></p>
-          <p class="line" id="line"></p>
-          <p class="key"><i></i>the same in all three<br /><i class="unlike"></i>not the same</p>
-          <p class="statement" id="statement"></p>
+        <div class="words">
+          <h1 id="title"></h1>
+          <p class="now" id="now" aria-live="polite"></p>
+          <ol class="steps" id="steps"></ol>
+          <div class="card" id="card"></div>
+          <div class="foot"><button id="pause" type="button">Pause</button><p class="statement" id="statement"></p></div>
         </div>
-        <div class="main">
+        <div class="pictures">
           <div class="sheet" id="sheet"></div>
-          <div class="scale" id="scale" aria-label="From decided by us to decided by the plant"></div>
+          <div class="bands" id="bands"></div>
         </div>
-        <div class="right" id="right"></div>
       </div>
     </figure>
-    <!-- the same as measures.json, as a script, so that the page also opens straight from a folder -->
-    <script src="measures.js"></script>
+    <!-- the same as piece.json, as a script, so that the page also opens straight from a folder -->
+    <script src="piece.js"></script>
     <script>
       (() => {
         const D = window.GROWN_AGAIN;
+        const W = D.words;
         const q = new URLSearchParams(location.search);
         const $ = (id) => document.getElementById(id);
-        const el = (tag, cls, html) => Object.assign(document.createElement(tag), cls ? { className: cls } : {}, html !== undefined ? { innerHTML: html } : {});
+        const el = (tag, props) => Object.assign(document.createElement(tag), props);
         const piece = $('piece');
         if (q.has('embed')) document.body.classList.add('embed');
         const still = q.has('print') || matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (still) piece.classList.add('still');
-        for (const [name, value] of Object.entries({ paper: D.paper, ink: D.ink, red: D.red })) document.documentElement.style.setProperty(`--${name}`, value);
-
-        const STEPS = [
-          { title: 'Grown once.', line: 'One pier of the room on a summer day, once the planting is established.', shows: [0], hold: 2600 },
-          { title: 'Grown again.', line: 'The same building, the same plants in the same beds, the same care. Only chance is different.', shows: [1], hold: 2600 },
-          { title: 'And again.', line: 'A third time, changing nothing.', shows: [2], hold: 2600 },
-          { title: 'Three times over.', line: 'What holds still was decided by us. What moves was decided by the plant.', shows: [0], hold: 3800, blink: 380 },
-          { title: 'What stayed, and what did not.', line: 'Red is where the three do not agree. Each bar is how much of what is drawn in that place differs.', shows: ['stayed', 'differs'], hold: 7000 },
-        ];
-        const NAMES = ['Once', 'Again', 'And again'];
-
-        // the pictures
-        const pictures = {};
-        const sheet = $('sheet');
-        for (const [id, src] of [...D.runs.map((s, i) => [i, s]), ['stayed', D.stayed], ['differs', D.differs]]) {
-          pictures[id] = Object.assign(el('img'), { src, alt: '' });
-          sheet.append(pictures[id]);
-        }
-        for (const r of D.regions) {
-          const box = el('div', `region${r.under ? ' under' : ''}`, `<span>${r.name}</span>`);
-          Object.assign(box.style, { left: `${r.box[0] * 100}%`, top: `${r.box[1] * 100}%`, width: `${r.box[2] * 100}%`, height: `${r.box[3] * 100}%` });
-          sheet.append(box);
-        }
-        if (D.room) {
-          $('room').src = D.room.src;
-          Object.assign($('ring').style, { left: `${D.room.ring[0] * 100}%`, top: `${D.room.ring[1] * 100}%`, width: `${D.room.ring[2] * 200}%` });
-        }
+        document.documentElement.style.setProperty('--paper', D.paper);
+        document.documentElement.style.setProperty('--ink', D.ink);
+        $('title').textContent = W.title;
         $('statement').textContent = D.statement;
+        for (const [asks, says] of W.card) $('card').append(el('h2', { textContent: asks }), el('p', { textContent: says }));
 
-        // the scale: a bar wherever this picture can measure it
-        for (const c of D.scale) {
-          const r = D.regions.find((x) => x.id === c.region);
-          const col = el('div', `col${r ? ' measured' : ''}`, `<span class="verb">${c.verb}</span><span class="bar"><span class="unlike"></span></span><span class="name">${c.name}</span>`);
-          if (r) col.style.setProperty('--share', `${Math.round(r.share * 100)}%`);
-          $('scale').append(col);
+        const frames = D.runs.map((src, i) => {
+          const img = el('img', { src, alt: i ? '' : W.alt });
+          $('sheet').append(img);
+          const step = el('li', { textContent: W.steps[i] });
+          $('steps').append(step);
+          // for paper: the same band of each picture, one above another
+          const band = el('div', { className: 'band', innerHTML: `<img src="${src}" alt=""><b>${W.steps[i]}</b>` });
+          band.style.setProperty('--lift', `${-D.band * 100}%`);
+          $('bands').append(band);
+          return { img, step };
+        });
+
+        const state = { at: 0, playing: !still, seen: true, timer: 0 };
+        function show(i) {
+          state.at = ((i % frames.length) + frames.length) % frames.length;
+          frames.forEach((f, k) => {
+            f.img.classList.toggle('on', k === state.at);
+            f.step.classList.toggle('on', k === state.at);
+          });
+          $('now').textContent = W.now[state.at];
         }
-
-        // the steps
-        const thumbs = [];
-        const thumb = (step, label, srcs) => {
-          const b = el('button', 'thumb', `<span class="frame">${srcs.map((s) => `<img src="${s}" alt="">`).join('')}</span><b>${label}</b>`);
-          b.type = 'button';
-          b.addEventListener('click', () => go(step, false));
-          $('right').append(b);
-          thumbs.push([step, b]);
-        };
-        D.runs.forEach((src, i) => thumb(i, NAMES[i] ?? `Run ${i + 1}`, [src]));
-        thumb(4, 'Together', [D.stayed, D.differs]);
-        const pause = el('button', '', 'Pause');
-        pause.id = 'pause';
-        pause.type = 'button';
-        pause.addEventListener('click', () => play(!state.playing));
-        $('right').append(pause);
-
-        const state = { step: 0, playing: !still, seen: true, timer: 0, blinker: 0 };
-        const show = (ids) => { for (const [id, img] of Object.entries(pictures)) img.classList.toggle('on', ids.map(String).includes(id)); };
-        function go(i, keepPlaying = state.playing) {
+        function run() {
           clearTimeout(state.timer);
-          clearInterval(state.blinker);
-          state.step = ((i % STEPS.length) + STEPS.length) % STEPS.length;
-          const s = STEPS[state.step];
-          piece.dataset.step = String(state.step);
-          piece.classList.toggle('quick', Boolean(s.blink));
-          $('step').textContent = s.title;
-          $('line').textContent = s.line;
-          for (const [step, b] of thumbs) b.setAttribute('aria-pressed', String(step === state.step));
-          show(s.shows);
-          if (s.blink) {
-            let k = 0;
-            state.blinker = setInterval(() => {
-              k = (k + 1) % D.runs.length;
-              show([k]);
-              for (const [step, b] of thumbs) b.setAttribute('aria-pressed', String(step === k));
-            }, s.blink);
-          }
-          state.playing = keepPlaying;
-          pause.textContent = state.playing ? 'Pause' : 'Play';
-          if (state.playing && state.seen && !document.hidden) state.timer = setTimeout(() => go(state.step + 1), s.hold);
+          $('pause').textContent = state.playing ? 'Pause' : 'Play';
+          if (state.playing && state.seen && !document.hidden) state.timer = setTimeout(() => { show(state.at + 1); run(); }, D.hold ?? 1800);
         }
         function play(on) {
           state.playing = Boolean(on) && !still;
-          go(state.step);
+          run();
         }
         window.__play = play;
-        window.__step = (i) => go(Number(i), false);
-        addEventListener('message', (e) => {
-          const m = e.data ?? {};
-          if (m.type === 'bower:play') play(m.value);
-          else if (m.type === 'bower:step') window.__step(m.value);
-        });
+        addEventListener('message', (e) => { if (e.data?.type === 'bower:play') play(e.data.value); });
+        $('pause').addEventListener('click', () => play(!state.playing));
         piece.addEventListener('keydown', (e) => {
           if (e.key === ' ') play(!state.playing);
-          else if (e.key === 'ArrowRight') go(state.step + 1, false);
-          else if (e.key === 'ArrowLeft') go(state.step - 1, false);
+          else if (e.key === 'ArrowRight') { play(false); show(state.at + 1); }
+          else if (e.key === 'ArrowLeft') { play(false); show(state.at - 1); }
           else return;
           e.preventDefault();
         });
         // nothing moves while nobody can see it
-        new IntersectionObserver(([entry]) => { state.seen = entry.isIntersecting; go(state.step); }).observe(piece);
-        document.addEventListener('visibilitychange', () => go(state.step));
-        // ?step=1 opens on a step and holds it
-        if (q.has('step')) state.playing = false;
-        go(still ? STEPS.length - 1 : Number(q.get('step') ?? 0));
+        new IntersectionObserver(([entry]) => { state.seen = entry.isIntersecting; run(); }).observe(piece);
+        document.addEventListener('visibilitychange', run);
+        show(Number(q.get('time') ?? 1) - 1);
+        run();
       })();
     </script>
   </body>
