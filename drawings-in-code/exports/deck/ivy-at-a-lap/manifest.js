@@ -1,0 +1,1 @@
+window.VIGNETTE = {"name":"ivy-at-a-lap","statement":"Schematic. The members and both cuts are the building model's own. That a stem in a gap forces it is general knowledge of clinging plants, not something the plant simulator shows.","paper":"EEF3EA","ink":"102820","views":{},"sets":{}};

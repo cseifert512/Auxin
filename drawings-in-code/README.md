@@ -118,20 +118,30 @@ scenario agree, on the simulator's assumptions.
 ## Vignettes
 
 ```bash
-node pipeline/vignette.mjs found-the-joints       # deck/found-the-joints/ -> exports/deck/found-the-joints/
+node pipeline/vignette.mjs ivy-at-a-lap           # deck/ivy-at-a-lap/ -> exports/deck/ivy-at-a-lap/
 node pipeline/vignette.mjs shaded-at-the-pier
-node pipeline/vignette.mjs found-the-joints --only=page    # the page and its numbers again, drawing nothing
+node pipeline/vignette.mjs shaded-at-the-pier --only=page   # the page and its numbers again, drawing nothing
 ```
 
-A vignette is one finding from growing a planting on the building, and the change to the building it led to,
-as a drawing that plays by itself: the whole room, one place in it close to, four named steps, and a few words.
-Its pictures are the studio's own, made beforehand, from one snapshot and one grown run at a time; its page
-shows them in turn and draws the marks and leaders over them, knowing from the studio where each place falls in
-each view. `deck/<name>/` holds what it is made from: `piece.json` (the views, and the sets of moments),
-`data.mjs` (its numbers, worked out from the runs) and `index.html` (the page). It opens from its folder in
-`exports/deck/`; `.claude/launch.json` serves that folder as `pieces` on port 5313.
+A vignette shows one thing happening, so that seeing it is the explanation. The measure is the factory
+drawings' station pages (`bower-factory`, `review/<nn>/`): the thing itself drawn large and moving, one red
+for what is moving or forced, labels of a few words on the parts they are about, steps named for what happens,
+a caption of one short line, and no paragraphs.
 
-Keep the words few. The pictures carry it; a caption is one short line and a label a few words.
+`deck/ivy-at-a-lap` is drawn that way, and is worked out afresh for every moment: one lap of the roof, from
+the two members as Blender mills them (`bower-blender/scripts/joint_detail.py`), with the view turning. It
+comes in from the whole room, an ivy stem creeps along a member into the gap beside the one that crosses it,
+thickens and forces the lap; the lap is milled open; the stem has room; and the view goes back out to the room
+with the laps cut this way marked. It has no studio pictures: its `piece.json` asks for none.
+
+`deck/shaded-at-the-pier` is the older kind: studio pictures of the room and one pier, made beforehand and
+shown in turn, with marks and labels drawn over them where the studio says each place falls. It does not yet
+show its cause happening, and is to be drawn again in the manner of the first.
+
+`deck/<name>/` holds what a vignette is made from: `piece.json` (views and sets of moments, if it uses studio
+pictures), `data.mjs` (what it is drawn from, worked out from the model and the runs) and `index.html` (the
+page). It opens from its folder in `exports/deck/`; `.claude/launch.json` serves that folder as `pieces` on
+port 5313.
 
 ## What is where
 

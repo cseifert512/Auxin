@@ -47,7 +47,7 @@
   <div id="bar"><div id="fill"></div></div>
   <ol id="steps"></ol>
   <footer>
-    <p>A growth scenario on stated assumptions, not a forecast. The light model is provisional.</p>
+    <p>Schematic of a simulated scenario.</p>
   </footer>
 </div>
 <script src="manifest.js"></script>
@@ -66,10 +66,10 @@
   // ---- the loop -------------------------------------------------------------------------------
   const DUR = 32, BND = [0, 7, 13, 21, 32], STATIC_T = 29, DAYS = V.sets["grown-was"].days.at(-1);
   const STEPS = [
-    ["We want", "A room in leaf within a few years."],
-    ["We ask", "At a tight pier the plants shade each other."],
-    ["We reconsider", "So the piers open. Each way through narrows."],
-    ["We ask again", "The same planting again: more of it in the sun."],
+    ["Planted", "A room in leaf within a few years."],
+    ["Shaded", "At a tight pier the plants shade each other."],
+    ["Piers open", "So the piers open. Each way through narrows."],
+    ["Grown again", "The same planting again: more of it in the sun."],
   ];
   const stepOf = (t) => Math.max(0, BND.findIndex((b, i) => t >= b && t < BND[i + 1]));
   const end = (t) => 1 - seg(t, 31.2, 32);

@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ivy at a lap</title>
+<!--
+  Why a lap that a clinging plant reaches is cut differently, drawn as the thing itself: one lap of
+  the roof, large, from the two members as Blender mills them, with the view turning. In the
+  manner of the factory drawings (bower-factory, docs/STYLE.md): the drawing is worked out afresh
+  for every moment, one red is kept for what is moving or forced, labels are a few words, the
+  steps are named for what happens, and there is nothing to hover over.
+
+  Everything drawn comes from data.js, which `node pipeline/vignette.mjs ivy-at-a-lap` writes from
+  the building model's own joint and the room's centre lines. The stem is drawn by this page: its
+  path follows the side of the upper member into the gap that the model leaves beside it.
+  Hooks: __setT(seconds), __play(), __duration, __ready.
+-->
+<style>
+  :root { --paper: #EEF3EA; --ink: #102820; --red: #B4492F; --rule: rgba(16, 40, 32, .18); --soft: rgba(16, 40, 32, .6); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--paper); color: var(--ink); font: 15px/1.4 "Segoe UI", system-ui, sans-serif; }
+  #page { display: grid; grid-template-columns: 290px minmax(0, 1fr); height: 100%; max-width: 1500px; margin: 0 auto; }
+  #side { padding: 26px 8px 20px 26px; display: flex; flex-direction: column; }
+  h1 { font: 400 26px/1.15 "Segoe UI", system-ui, sans-serif; margin: 0 0 12px; }
+  #cap { font-size: 16px; min-height: 4.3em; margin: 0 0 14px; }
+  #steps { list-style: none; margin: 0; padding: 0; }
+  #steps button { font: inherit; font-size: 13px; color: var(--soft); background: none; border: 0; border-radius: 7px; padding: 4px 10px; margin: 1px 0; width: 100%; text-align: left; cursor: pointer; }
+  #steps .on button { color: var(--ink); background: rgba(16, 40, 32, .07); font-size: 15px; padding: 6px 10px; }
+  #note { margin-top: auto; font-size: 11px; color: var(--soft); }
+  #pp { font: inherit; font-size: 12px; color: var(--soft); background: none; border: 0; padding: 0; margin-top: 8px; text-align: left; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  #stage { position: relative; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #bar { position: absolute; left: 20px; right: 26px; bottom: 12px; height: 14px; cursor: pointer; touch-action: none; }
+  #bar::before { content: ""; position: absolute; left: 0; right: 0; top: 6px; height: 1px; background: var(--rule); }
+  #fill { position: absolute; left: 0; top: 5px; height: 3px; width: 0; background: var(--ink); }
+  @media (max-width: 820px) {
+    #page { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+    #side { padding: 14px 18px 4px; }
+    h1 { font-size: 21px; margin-bottom: 4px; }
+    #cap { min-height: 2.9em; margin-bottom: 6px; }
+    #steps { display: flex; flex-wrap: wrap; gap: 2px 4px; }
+    #steps button, #steps .on button { width: auto; font-size: 12px; padding: 3px 8px; }
+    #note { display: none; }
+    #pp { position: absolute; right: 18px; top: 16px; margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div id="page">
+  <div id="side">
+    <h1>Ivy at a lap</h1>
+    <p id="cap"></p>
+    <ol id="steps"></ol>
+    <button id="pp" aria-pressed="false">Pause</button>
+    <p id="note">Schematic. The push on the lap is drawn larger than life.</p>
+  </div>
+  <div id="stage"><canvas id="c"></canvas><div id="bar"><div id="fill"></div></div></div>
+</div>
+<script src="data.js"></script>
+<script>
+(() => {
+  const D = window.VIGNETTE_DATA;
+  const $ = (id) => document.getElementById(id);
+  const INK = "16,40,32", RED = "180,73,47", PAPER = "#EEF3EA", GREEN = "#3F7D3A", LEAF = "#5C9A4B";
+  const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]], sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  const mul = (a, k) => [a[0] * k, a[1] * k, a[2] * k], dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const unit = (a) => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+  const mix = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
+  const seg = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+  const ease = (u) => u * u * (3 - 2 * u);
+  const win = (t, a, b, f = 0.35) => Math.min(seg(t, a, a + f), 1 - seg(t, b - f, b));
+  const mm = (x) => Math.round(x * 1000);
+  const J = D.at;
+
+  // ---- the loop: what happens, in the order it happens ---------------------------------------------
+  const DUR = 40, BND = [0, 10, 16, 22, 29, 35, 40], STATIC_T = 33.5;
+  const STEPS = [
+    ["Ivy creeps", "Ivy clings to the timber and creeps along it."],
+    ["Into the gap", `Where two members cross, a ${mm(D.gapM)} mm gap lies in its path.`],
+    ["It thickens", "The stem thickens every year. In the gap, it forces the joint."],
+    ["Cut open", "So this lap is milled open where the stem lies."],
+    ["Room to grow", "Now the stem has room, and the timbers bear on a short land."],
+    ["Where", `${D.cut.length} of the roof's ${D.laps} laps are cut this way: the ones the ivy reaches.`],
+  ];
+  const stepOf = (t) => Math.max(0, BND.findIndex((b, i) => t >= b && t < BND[i + 1]));
+
+  // ---- the two members by the joint: where each runs, and which way it faces ------------------------
+  function runOf(member) {
+    const f = member.frames;
+    let k0 = 0;
+    f.forEach((x, i) => { if (Math.hypot(...sub(x.p, J)) < Math.hypot(...sub(f[k0].p, J))) k0 = i; });
+    const s = f.map(() => 0);
+    for (let i = k0 + 1; i < f.length; i++) s[i] = s[i - 1] + Math.hypot(...sub(f[i].p, f[i - 1].p));
+    for (let i = k0 - 1; i >= 0; i--) s[i] = s[i + 1] - Math.hypot(...sub(f[i].p, f[i + 1].p));
+    const at = (v) => {   // the member's own frame a distance v along it from the joint
+      let i = 0;
+      while (i < f.length - 2 && s[i + 1] < v) i++;
+      const k = Math.max(-0.5, Math.min(1.5, (v - s[i]) / (s[i + 1] - s[i]))), tan = unit(sub(f[i + 1].p, f[i].p)), d = unit(mix(f[i].d, f[i + 1].d, k));
+      return { p: mix(f[i].p, f[i + 1].p, k), t: tan, d, w: unit(cross(tan, d)) };
+    };
+    return { ...member, at, from: s[0], to: s[f.length - 1] };
+  }
+  const OVER = runOf(D.over), UNDER = runOf(D.under);   // the upper member sits in the notch of the lower
+  const O0 = OVER.at(0), U0 = UNDER.at(0);
+  const OUT = unit(mul(add(O0.d, U0.d), -1));           // the way the roof faces here
+  const RIGHT0 = unit(cross([0, 0, 1], OUT)), UP0 = cross(OUT, RIGHT0);
+  const eyeAt = (yaw, pitch) => unit(add(add(mul(OUT, Math.cos(yaw) * Math.cos(pitch)), mul(RIGHT0, Math.sin(yaw) * Math.cos(pitch))), mul(UP0, Math.sin(pitch))));
+  const YAW0 = -0.5, PITCH0 = 0.5;
+  // the stem comes up the side of the upper member that the drawing looks at, from the lower end
+  const SIDE = dot(O0.w, eyeAt(YAW0, PITCH0)) >= 0 ? 1 : -1;
+  const COMES = OVER.at(0.3).p[2] < OVER.at(-0.3).p[2] ? 1 : -1;   // +1: from the +s end
+  const onSide = (v, off) => { const fr = OVER.at(v); return add(add(fr.p, mul(fr.w, SIDE * (OVER.widthM / 2 + off))), mul(fr.d, -OVER.depthM * 0.25)); };
+  // the gap: the stretch of the upper member's side that has the lower member's notch wall beside it
+  const beside = (v) => Math.abs(dot(sub(onSide(v, D.gapM / 2), U0.p), U0.w)) <= UNDER.widthM / 2;
+  let g0 = null, g1 = null;
+  for (let v = -0.4; v <= 0.4; v += 0.002) if (beside(v)) { if (g0 === null) g0 = v; g1 = v; }
+  const MOUTH = COMES > 0 ? g1 : g0, DEEP = COMES > 0 ? g0 : g1, MID = (g0 + g1) / 2;
+  const HINGE = MID + COMES * D.landM / 2;                          // where the short land begins, as it is now cut
+  const FLARE = Math.abs(MOUTH - HINGE), SPLAY = Math.min(Math.atan2(D.mouthM, Math.max(FLARE, 0.005)), Math.PI / 4);
+  const START = COMES * Math.min(0.46, Math.abs(COMES > 0 ? OVER.to : OVER.from) - 0.02);
+  const YOUNG = 0.004, OLD = 0.013;
+
+  // ---- the milled members, ready to draw from any side ----------------------------------------------
+  function solid(piece) {
+    const V = piece.verts, edges = new Map(), faces = [];
+    for (const idx of piece.faces) {
+      const q = idx.map((i) => V[i]);
+      let n = [0, 0, 0];
+      q.forEach((a, i) => { const b = q[(i + 1) % q.length]; n[0] += (a[1] - b[1]) * (a[2] + b[2]); n[1] += (a[2] - b[2]) * (a[0] + b[0]); n[2] += (a[0] - b[0]) * (a[1] + b[1]); });
+      const face = { q, idx, n: unit(n), c: mul(q.reduce((m, x) => add(m, x), [0, 0, 0]), 1 / q.length) };
+      idx.forEach((a, i) => { const b = idx[(i + 1) % idx.length], key = a < b ? a + ":" + b : b + ":" + a; if (!edges.has(key)) edges.set(key, []); edges.get(key).push(face); });
+      faces.push(face);
+    }
+    for (const face of faces) face.turn = face.idx.map((a, i) => { const b = face.idx[(i + 1) % face.idx.length], both = edges.get(a < b ? a + ":" + b : b + ":" + a); return both.length === 2 && dot(both[0].n, both[1].n) < 0.94; });
+    return faces;
+  }
+  const MESH = { was: { under: solid(D.was.under), over: solid(D.was.over) }, now: { under: solid(D.now.under), over: solid(D.now.over) } };
+  const ROOM = D.room.lines.map((l) => ({ closed: l.closed, wide: l.wide, p: Float32Array.from(l.mm, (v) => v / 1000) }));
+  const LIGHT = unit(add(add(mul(OUT, 0.55), mul(UP0, 0.75)), mul(RIGHT0, -0.4)));
+
+  // ---- one moment ----------------------------------------------------------------------------------
+  const canvas = $("c"), ctx = canvas.getContext("2d");
+  let W = 0, H = 0, U = 1;
+  function moment(t) {
+    const near = ease(seg(t, 0.4, 3.4)) - ease(seg(t, 35.2, 38.4));        // 0 the whole room, 1 the lap
+    const again = t >= 29;                                                  // the stem a second time, in the lap as it is now cut
+    return {
+      near,
+      yaw: YAW0 + 0.62 * (0.5 - 0.5 * Math.cos(2 * Math.PI * t / DUR)) + 0.25 * Math.sin(4 * Math.PI * t / DUR),
+      pitch: PITCH0 + 0.1 * Math.sin(2 * Math.PI * t / DUR),
+      lift: (ease(seg(t, 10.2, 11.3)) - ease(seg(t, 14.1, 15.2)) + ease(seg(t, 22.9, 24)) - ease(seg(t, 27.5, 28.6))) * 0.17,
+      push: ease(seg(t, 18.4, 20.4)) - ease(seg(t, 21.8, 22.6)),
+      recut: ease(seg(t, 24.2, 26.2)) * (1 - seg(t, 39.4, 40)),             // from the lap as every lap is cut to this one
+      cutting: Math.sin(Math.PI * seg(t, 24.2, 26.6)),
+      again,
+      front: again ? START + (HINGE - START) * ease(seg(t, 29.3, 32)) : t < 10 ? START + (MOUTH - START) * ease(seg(t, 4.2, 9.4)) : MOUTH + (DEEP + 0.25 * (MOUTH - DEEP) - MOUTH) * ease(seg(t, 11.5, 13.6)),
+      thick: again ? YOUNG + (OLD - YOUNG) * ease(seg(t, 31.6, 34.2)) : YOUNG + (OLD - YOUNG) * ease(seg(t, 16.3, 19.6)),
+      stem: again ? seg(t, 29.2, 29.6) * (1 - seg(t, 35, 36)) : seg(t, 4, 4.4) * (1 - seg(t, 22, 22.8)),
+      wedge: again ? 0 : ease(seg(t, 17.6, 19)) * (1 - seg(t, 22, 22.8)),
+    };
+  }
+  function frame(t) {
+    const m = moment(t);
+    const dpr = window.devicePixelRatio || 1;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    ctx.lineJoin = ctx.lineCap = "round";
+    // the view: it turns about the lap, and comes in from the room and goes back out
+    const eye = eyeAt(m.yaw, m.pitch), right = unit(cross(UP0, eye)), up = cross(eye, right);
+    const sRoom = Math.min(W / 14.5, H / 11), sLap = Math.min(W / 0.66, H / 0.56), S = sRoom * Math.pow(sLap / sRoom, m.near);
+    const target = mix([0, 0, 3.1], J, ease(seg(m.near, 0, 0.75))), cx = W * 0.5, cy = H * 0.5;
+    const P = (p) => { const v = sub(p, target); return [cx + dot(v, right) * S, cy - dot(v, up) * S, -dot(v, eye)]; };
+
+    // the room in line, while the lap is far off
+    const roomA = 1 - ease(seg(m.near, 0.5, 0.94));
+    if (roomA > 0.01) {
+      ctx.strokeStyle = `rgba(${INK},${roomA})`;
+      for (const l of ROOM) {
+        ctx.lineWidth = Math.max(0.7, Math.min(2.6, l.wide * S * 0.5));
+        ctx.beginPath();
+        for (let i = 0; i < l.p.length; i += 3) { const q = P([l.p[i], l.p[i + 1], l.p[i + 2]]); if (i) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }
+        if (l.closed) ctx.closePath();
+        ctx.stroke();
+      }
+    }
+    const lapA = ease(seg(m.near, 0.62, 0.97));
+    const items = [];
+    if (lapA > 0.01) {
+      // the upper member lifts out to show the gap, and is pushed aside when the stem thickens
+      const moved = add(mul(OUT, m.lift), mul(O0.w, -SIDE * m.push * 0.009));
+      for (const [variant, alpha] of [["was", 1 - m.recut], ["now", m.recut]]) {
+        if (alpha < 0.01) continue;
+        for (const [which, faces] of Object.entries(MESH[variant])) {
+          const shift = which === "over" ? moved : [0, 0, 0];
+          for (const face of faces) {
+            if (dot(face.n, eye) <= 0.02) continue;
+            const hot = which === "over" ? Math.max(m.push > 0.02 ? 1 : 0, Math.abs(m.lift) > 0.002 && m.lift < 0.168 ? 0.6 : 0) : 0;
+            items.push({ kind: "face", face, shift, alpha: alpha * lapA, red: Math.max(hot, variant === "now" ? m.cutting : 0), far: -dot(sub(add(face.c, shift), target), eye) });
+          }
+        }
+      }
+      // the stem: along the side of the upper member, as thick as it has grown or as the place allows
+      if (m.stem > 0.01) {
+        const step = 0.006, n = Math.max(1, Math.ceil(Math.abs(m.front - START) / step));
+        const room = (v) => {
+          const inGap = COMES > 0 ? v <= MOUTH : v >= MOUTH;
+          if (!inGap) return Infinity;
+          return m.again ? D.closeM + Math.max(0, COMES * (v - HINGE)) * Math.tan(SPLAY) : D.gapM;
+        };
+        let last = null;
+        for (let i = 0; i <= n; i++) {
+          const v = START + (m.front - START) * i / n, w = Math.min(m.thick, room(v)), p = onSide(v, w / 2);
+          const inGap = COMES > 0 ? v <= MOUTH : v >= MOUTH;
+          if (last) items.push({ kind: "stem", a: last.p, b: p, w: (last.w + w) / 2, alpha: m.stem * lapA, red: inGap ? m.wedge : 0, far: -dot(sub(mix(last.p, p, 0.5), target), eye) - 0.004 });
+          if (!inGap && i % 11 === 5) {   // a leaf every so often, lying on the face, on alternate sides
+            const fr = OVER.at(v), flip = (i / 11 | 0) % 2 ? 1 : -1, c = add(p, mul(fr.d, flip * 0.034));
+            items.push({ kind: "leaf", c, along: add(mul(fr.t, COMES * -0.5), mul(fr.d, flip)), alpha: m.stem * lapA, far: -dot(sub(c, target), eye) - 0.006 });
+          }
+          last = { p, w };
+        }
+      }
+    }
+    items.sort((a, b) => b.far - a.far);
+    for (const it of items) {
+      ctx.globalAlpha = it.alpha;
+      if (it.kind === "face") {
+        const sc = it.face.q.map((x) => P(add(x, it.shift)));
+        ctx.beginPath(); sc.forEach((x, i) => (i ? ctx.lineTo(x[0], x[1]) : ctx.moveTo(x[0], x[1]))); ctx.closePath();
+        ctx.fillStyle = PAPER; ctx.fill();
+        ctx.fillStyle = `rgba(${INK},${0.03 + 0.15 * (1 - Math.max(0, dot(it.face.n, LIGHT)))})`; ctx.fill();
+        if (it.red > 0.02) { ctx.fillStyle = `rgba(${RED},${0.1 * it.red})`; ctx.fill(); }
+        ctx.strokeStyle = it.red > 0.5 ? `rgb(${RED})` : `rgb(${INK})`; ctx.lineWidth = 1.25;
+        ctx.beginPath();
+        it.face.turn.forEach((on, i) => { if (on) { const a = sc[i], b = sc[(i + 1) % sc.length]; ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); } });
+        ctx.stroke();
+      } else if (it.kind === "stem") {
+        const a = P(it.a), b = P(it.b), w = Math.max(1.6, it.w * S);
+        ctx.lineCap = "butt";   // the outline runs along the stem's two sides only, so the stem is one line and not a string of beads
+        ctx.strokeStyle = `rgb(${INK})`; ctx.lineWidth = w + 1.8; ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+        ctx.lineCap = "round";
+        ctx.strokeStyle = it.red > 0.5 ? `rgb(${RED})` : GREEN; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+      } else {
+        const c = P(it.c), tip = P(add(it.c, mul(unit(it.along), 0.03))), ang = Math.atan2(tip[1] - c[1], tip[0] - c[0]);
+        ctx.beginPath(); ctx.ellipse(c[0], c[1], 0.023 * S, 0.013 * S, ang, 0, Math.PI * 2);
+        ctx.fillStyle = LEAF; ctx.fill(); ctx.strokeStyle = `rgb(${INK})`; ctx.lineWidth = 0.9; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+    // the line the upper member is lifted along
+    if (lapA > 0.5 && m.lift > 0.004) {
+      ctx.setLineDash([5, 4]); ctx.strokeStyle = `rgba(${INK},.55)`; ctx.lineWidth = 0.8;
+      for (const v of [-0.17, 0.17]) { const a = P(OVER.at(v).p), b = P(add(OVER.at(v).p, mul(OUT, m.lift))); ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); }
+      ctx.setLineDash([]);
+    }
+    // the push, when the stem thickens in the gap
+    if (m.push > 0.05 && lapA > 0.5) {
+      const from = P(onSide((MOUTH + DEEP) / 2, 0)), dir = unit([dot(mul(O0.w, -SIDE), right), -dot(mul(O0.w, -SIDE), up), 0]);
+      ctx.globalAlpha = m.push; ctx.strokeStyle = `rgb(${RED})`; ctx.lineWidth = 2;
+      for (const way of [1, -1]) {
+        const a = [from[0] + dir[0] * way * 10, from[1] + dir[1] * way * 10], b = [from[0] + dir[0] * way * 40, from[1] + dir[1] * way * 40];
+        ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]);
+        ctx.moveTo(b[0] - dir[0] * way * 8 - dir[1] * 5, b[1] - dir[1] * way * 8 + dir[0] * 5); ctx.lineTo(b[0], b[1]); ctx.lineTo(b[0] - dir[0] * way * 8 + dir[1] * 5, b[1] - dir[1] * way * 8 - dir[0] * 5);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+    // where: the laps cut this way, on the room
+    const where = win(t, 36.9, 39.8, 0.5);
+    if (where > 0.01) for (const p of D.cut) { const q = P(p); ctx.globalAlpha = where; ctx.fillStyle = `rgb(${RED})`; ctx.beginPath(); ctx.arc(q[0], q[1], 3.6 * U, 0, Math.PI * 2); ctx.fill(); }
+    ctx.globalAlpha = 1;
+    if (roomA > 0.2 && t < 5) { const q = P(J); ctx.globalAlpha = roomA * seg(t, 0.2, 0.7); ctx.strokeStyle = `rgb(${RED})`; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(q[0], q[1], 9 * U, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1; }
+
+    // a few words, on the parts they are about
+    const tip = P(onSide(m.front, m.thick / 2));
+    label(tip, 46, -40, "ivy stem", win(t, 5.4, 9.6) * lapA, false);
+    label(P(onSide(MOUTH, D.gapM / 2)), -52, 54, `${mm(D.gapM)} mm gap`, win(t, 11.5, 15.4) * lapA, true);
+    label(P(add(O0.p, mul(OUT, O0 ? OVER.depthM / 2 : 0))), 58, -46, "forced apart", win(t, 18.6, 21.7) * lapA, true);
+    label(P(add(onSide((MOUTH + HINGE) / 2, D.mouthM * 0.45), mul(OUT, m.lift * 0))), -56, 58, "milled open", win(t, 24.6, 28.6) * lapA, m.cutting > 0.3);
+    label(P(onSide(MID, 0)), 60, 50, "bears here", win(t, 25.8, 28.6) * lapA, false);
+    label(P(onSide((MOUTH + HINGE) / 2, m.thick / 2)), -52, 54, "room to thicken", win(t, 32.2, 34.9) * lapA, false);
+    if (D.cut.length) label(P(D.cut[0]), 40, -44, `${D.cut.length} of ${D.laps} laps`, win(t, 37.3, 39.7), true);
+  }
+  function label(p, dx, dy, text, alpha, red) {
+    if (alpha <= 0.01) return;
+    const size = 13.5 * U, pad = 3, x = Math.max(8, Math.min(W - 8, p[0] + dx * U)), y = Math.max(16, Math.min(H - 30, p[1] + dy * U));
+    ctx.font = `${size}px "Segoe UI", system-ui, sans-serif`;
+    const w = ctx.measureText(text).width, x0 = Math.max(4, Math.min(W - w - 4 - 2 * pad, dx < 0 ? x - w - 2 * pad : x));
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = red ? `rgb(${RED})` : `rgb(${INK})`; ctx.fillStyle = ctx.strokeStyle; ctx.lineWidth = 0.9;
+    ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(x, y); ctx.stroke();
+    ctx.beginPath(); ctx.arc(p[0], p[1], 2.2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = PAPER; ctx.fillRect(x0, y - size * 0.7 - pad, w + 2 * pad, size * 1.3 + 2 * pad);
+    ctx.fillStyle = red ? `rgb(${RED})` : `rgb(${INK})`; ctx.textBaseline = "middle"; ctx.fillText(text, x0 + pad, y);
+    ctx.globalAlpha = 1;
+  }
+
+  // ---- page: steps, caption, playing ----------------------------------------------------------------
+  let shown = -1, paused = false, tp = 0, t0 = performance.now();
+  function ui(t) {
+    const k = stepOf(t);
+    if (k !== shown) {
+      shown = k;
+      $("cap").textContent = STEPS[k][1];
+      [...$("steps").children].forEach((li, i) => li.classList.toggle("on", i === k));
+    }
+    $("fill").style.width = (100 * t / DUR) + "%";
+  }
+  function loop(ms) {
+    if (!paused) tp = ((ms - t0) / 1000) % DUR;
+    frame(tp); ui(tp);
+    requestAnimationFrame(loop);
+  }
+  function seek(t, play) {
+    tp = Math.max(0, Math.min(DUR - 0.01, t));
+    paused = !play; t0 = performance.now() - tp * 1000;
+    $("pp").textContent = paused ? "Play" : "Pause"; $("pp").setAttribute("aria-pressed", paused);
+    frame(tp); ui(tp);
+  }
+  STEPS.forEach(([name], i) => {
+    const li = document.createElement("li"), b = document.createElement("button");
+    b.textContent = name;
+    b.onclick = () => seek(BND[i] + 0.01, true);
+    li.append(b); $("steps").append(li);
+  });
+  $("pp").onclick = () => seek(tp, paused);
+  const bar = $("bar"), scrub = (e) => { const r = bar.getBoundingClientRect(); seek(DUR * (e.clientX - r.left) / r.width, false); };
+  bar.onpointerdown = (e) => { bar.setPointerCapture(e.pointerId); scrub(e); bar.onpointermove = scrub; };
+  bar.onpointerup = () => { bar.onpointermove = null; };
+  function resize() {
+    const dpr = window.devicePixelRatio || 1, r = canvas.getBoundingClientRect();
+    W = r.width; H = r.height; U = Math.max(0.85, Math.min(1.25, W / 900));
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    frame(tp);
+  }
+  new ResizeObserver(resize).observe(canvas);
+  resize();
+  ui(0);
+  window.__duration = DUR;
+  window.__setT = (t) => seek(t, false);
+  window.__play = () => seek(tp, true);
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { seek(STATIC_T, false); $("pp").hidden = true; }
+  else requestAnimationFrame(loop);
+  window.__ready = true;
+})();
+</script>
+</body>
+</html>

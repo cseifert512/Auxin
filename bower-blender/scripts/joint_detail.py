@@ -18,7 +18,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 LOG = REPO / "output" / "joint_detail.log"
 OUT = REPO.parent / "drawings-in-code" / "sketches" / "design-space" / "joint-detail.js"
-NEAR_M = 0.42  # how much of each member is kept, either side of the joint
+NEAR_M = 0.5  # how much of each member is kept, either side of the joint
 DESIGN = "design/six_bay_radial.json"
 
 
@@ -65,7 +65,7 @@ def main(joint_id: str) -> dict:
                 for v in poly.vertices:
                     if v not in index:
                         index[v] = len(verts)
-                        verts.append([round(c * 1000) / 1000 for c in mesh.vertices[v].co])
+                        verts.append([round(c, 4) for c in mesh.vertices[v].co])  # to a tenth of a millimetre: the gap of a lap is three
                     face.append(index[v])
                 faces.append(face)
             pieces[obj["bower_id"]] = {"verts_m": verts, "faces": faces, "cutters": len(cutters[obj["bower_id"]])}
