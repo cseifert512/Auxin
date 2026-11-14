@@ -16,7 +16,9 @@
 //
 // A description says which space it is for (`slot`, in the page's pixels; pictures are made at `scale` times
 // that), the page's `paper` and `ink`, and how the space is filled:
-//   row     panels side by side, each a view at a moment:  { view, at, sun, timber, shade, run, lines, lookAt, zoom }
+//   row     panels side by side, each a view at a moment:  { view, at, sun, timber, shade, run, lines, lookAt, zoom, from, snapshot }
+//           (`snapshot` draws that panel from another building than the one in snapshot.json, so that two versions
+//           of the building can stand side by side; one studio runs at a time, so keep such panels together)
 //           (in a piece a panel may also have a `label`, which the player writes at its head)
 //   round   the whole room unrolled, as seen turning on the spot in the middle of it: `slices` upright strips, each
 //           what is seen in one direction. Every strip can be drawn at its own moment, so that a turn of the room
@@ -43,10 +45,19 @@ const out = resolve(root, 'exports/deck');
 const work = resolve(out, '.work');
 mkdirSync(work, { recursive: true });
 
-const studio = await startStudio();
+/** One studio at a time, drawing one building: asking for another stops it and starts that one. */
+let studio = null, drawing = null;
+async function studioFor(snapshot) {
+  if (studio && drawing === snapshot) return studio;
+  studio?.stop();
+  pages.clear();
+  [studio, drawing] = [await startStudio(5318, snapshot || null), snapshot];
+  return studio;
+}
 /** Pages are kept open and used again: reading ten years of growth is the slow part. */
 const pages = new Map();
 async function pageFor(spec, panel, size) {
+  const studio = await studioFor(panel.snapshot ?? spec.snapshot ?? '');
   const query = { plate: '', paper: spec.paper ?? 'FDFCF9', ink: spec.ink ?? '1D1D1B', timber: panel.timber ?? spec.timber ?? 'ink', build: '1', ...(panel.run ?? spec.run ? { run: panel.run ?? spec.run } : {}), ...(panel.lines ? { lines: panel.lines } : {}) };
   const key = JSON.stringify(query);
   if (!pages.has(key)) pages.set(key, await studio.open(query, { ...size, scale: spec.scale ?? 2 }));
@@ -55,7 +66,7 @@ async function pageFor(spec, panel, size) {
   return page;
 }
 const ask = (panel, extra = {}) => {
-  const p = { view: panel.view, timber: panel.timber, sun: panel.sun, shade: panel.shade, lookAt: panel.lookAt, zoom: panel.zoom, ...extra };
+  const p = { view: panel.view, timber: panel.timber, sun: panel.sun, shade: panel.shade, lookAt: panel.lookAt, zoom: panel.zoom, from: panel.from, ...extra };
   return `window.studio.plate({ ...${JSON.stringify(p)}, at: window.studio.moment(${JSON.stringify(panel.at ?? 'build:1')}) })`;
 };
 const run = (args) => execFileSync(ffmpeg, ['-y', '-loglevel', 'error', ...args]);
@@ -186,5 +197,5 @@ for (const described of wanted) {
   console.log(`${name}: a piece of ${manifest.modes.map((m) => `${m.frames.length} ${m.id}`).join(', ')} frames in ${((performance.now() - began) / 60000).toFixed(1)} min`);
 }
 rmSync(work, { recursive: true, force: true });
-studio.stop();
+studio?.stop();
 process.exit(0);

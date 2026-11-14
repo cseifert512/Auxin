@@ -236,11 +236,18 @@ export function makePaper(
   }
 
   const home = new THREE.Vector3();
-  /** Bring one place in the building to the middle of the drawing and come closer to it; with no place, go back to the whole. */
-  function focus(at: readonly number[] | null, zoom = 1): void {
+  const homeOffset = new THREE.Vector3();
+  let lookedFrom = false;   // whether the drawing was last set up to look at a place from a given side
+  /**
+   * Bring one place in the building to the middle of the drawing and come closer to it; with no place, go back to the whole.
+   * With `from`, a direction in the building's own axes, the place is looked at from that side: a joint is seen squarely
+   * from along the way its roof faces. Without it the drawing's own direction is kept, or gone back to.
+   */
+  function focus(at: readonly number[] | null, zoom = 1, from: readonly number[] | null = null): void {
     const c = controls.drawing!;
     const target = at ? toThree(at) : home.clone();
-    const offset = drawing.position.clone().sub(c.target);
+    const offset = from ? toThree(from).normalize().multiplyScalar(120) : lookedFrom ? homeOffset.clone() : drawing.position.clone().sub(c.target);
+    lookedFrom = !!from;
     c.target.copy(target);
     drawing.position.copy(target).add(offset);
     drawing.zoom = zoom;
@@ -255,6 +262,7 @@ export function makePaper(
     home.copy(centre);
     const forward = new THREE.Vector3(Math.sin(TURN) * Math.cos(DIP), -Math.sin(DIP), -Math.cos(TURN) * Math.cos(DIP));
     drawing.position.copy(centre).addScaledVector(forward, -120);
+    homeOffset.copy(drawing.position).sub(centre);
     drawing.lookAt(centre);
     drawing.updateMatrixWorld(true);
     controls.drawing!.target.copy(centre);

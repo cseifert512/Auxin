@@ -1,6 +1,6 @@
 {
-  "for": "Not placed in the deck yet. A trial of the joints finding in the studio's own drawing, to see what it has to work with: the room, and one joint close to.",
-  "shows": "Left: the room after ten tended years. Middle: the lap between R1.fine.cw.03 and R1.fill.ccw.06 early in the fifth year, when the ivy reaches it. Right: the same joint after ten years.",
+  "for": "Not placed in the deck yet. The joints finding in the studio's own drawing: a joint a clinging plant reaches, as every lap is cut and as it is now cut.",
+  "shows": "The lap between R1.fine.cw.03 and R1.fill.ccw.06 three times, looked at squarely from outside, along the way the roof faces there: bare, as every lap is cut (snapshot six-bay-radial-v1); bare, cut splayed (six-bay-radial-v2); and the splayed lap after ten tended years, with the ivy on it. Last, the whole room after those ten years, on the building as it is now cut.",
   "statement": "A growth scenario on stated assumptions, not a forecast. Concept geometry; trial planting.",
   "slot": [
     1117,
@@ -11,23 +11,44 @@
   "ink": "102820",
   "timber": "ink",
   "gutter": 14,
-  "run": "trained-10y-new-growth",
   "row": [
     {
+      "snapshot": "six-bay-radial-v1",
+      "run": "trained-10y-new-growth",
       "view": "drawing",
-      "at": "day:3579"
-    },
-    {
-      "view": "drawing",
-      "at": "day:1560",
+      "at": "build:1",
       "lookAt": [
         -2.659,
         4.158,
         3.776
       ],
-      "zoom": 9
+      "zoom": 30,
+      "from": [
+        -0.426,
+        0.641,
+        0.639
+      ]
     },
     {
+      "snapshot": "six-bay-radial-v2",
+      "run": "trained-10y",
+      "view": "drawing",
+      "at": "build:1",
+      "lookAt": [
+        -2.659,
+        4.158,
+        3.776
+      ],
+      "zoom": 30,
+      "from": [
+        -0.426,
+        0.641,
+        0.639
+      ]
+    },
+    {
+      "snapshot": "six-bay-radial-v2",
+      "run": "trained-10y",
       "view": "drawing",
       "at": "day:3579",
       "lookAt": [
@@ -35,7 +56,18 @@
         4.158,
         3.776
       ],
-      "zoom": 9
+      "zoom": 30,
+      "from": [
+        -0.426,
+        0.641,
+        0.639
+      ]
+    },
+    {
+      "snapshot": "six-bay-radial-v2",
+      "run": "trained-10y",
+      "view": "drawing",
+      "at": "day:3579"
     }
   ]
 }

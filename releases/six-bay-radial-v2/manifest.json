@@ -1,0 +1,158 @@
+{
+  "schema": "bower.snapshot/1",
+  "name": "six-bay-radial-v2",
+  "created": "2026-11-14",
+  "source_commit": "17eff3e",
+  "generated_from": "design.json in this folder, by scripts/export_snapshot.py",
+  "units": "m",
+  "axes": {
+    "up": "+Z",
+    "north": "+Y",
+    "bower.glb": "glTF convention: +Y up, metres"
+  },
+  "status": "Concept geometry. Sections, joint depths and clearances are provisional; nothing here is a structural, fabrication or horticultural check.",
+  "model": {
+    "rooms": [
+      {
+        "id": "R1",
+        "bays": 6,
+        "piers": 6
+      }
+    ],
+    "members": 111,
+    "members_by_family": {
+      "arch": 12,
+      "crown": 1,
+      "fill": 24,
+      "fine": 36,
+      "hoop": 12,
+      "rib": 24,
+      "ring": 2
+    },
+    "total_length_m": 621.6,
+    "total_volume_m3": 17.12,
+    "joints": {
+      "joints": 631,
+      "by_kind": {
+        "base": 48,
+        "cross_lap": 390,
+        "crown_seat": 24,
+        "housing": 132,
+        "mitre": 6,
+        "paired_heads": 12,
+        "pier_mitre": 6,
+        "scarf": 13
+      },
+      "third_depth_laps": 72,
+      "to_review": 22,
+      "reached_by_plants": 22,
+      "splayed_laps": 18,
+      "laps_left_uncut": 0,
+      "laps_whose_walls_must_follow_a_turn": 0
+    },
+    "bounds_m": {
+      "min": [
+        -6.15,
+        -5.37,
+        0.0
+      ],
+      "max": [
+        6.15,
+        5.37,
+        6.32
+      ]
+    }
+  },
+  "checks_at_export": [
+    {
+      "room": "R1",
+      "meshes_closed": true,
+      "collisions_estimated": 0,
+      "milled": {
+        "members_milled": 111,
+        "cutters": 1128,
+        "volume_removed_m3": 1.442,
+        "left_open": []
+      },
+      "mesh_intersections_in_scene": {
+        "pairs_touching_under_1mm": 18,
+        "lattice_pairs_still_intersecting": 7,
+        "laps_not_clean": [
+          [
+            "R1.fine.ccw.02",
+            "R1.B2.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.ccw.06",
+            "R1.B3.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.ccw.08",
+            "R1.B3.hoop1",
+            1.8
+          ],
+          [
+            "R1.fine.ccw.10",
+            "R1.B4.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.ccw.14",
+            "R1.B5.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.ccw.18",
+            "R1.B6.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.ccw.22",
+            "R1.B1.hoop0",
+            1.7
+          ]
+        ],
+        "clashes": []
+      },
+      "max_centreline_deviation_m": 1.9892685507069636e-06
+    }
+  ],
+  "tools": {
+    "blender": "5.3.0",
+    "bower.blend": "library of the collection BOWER_V1 and everything in it",
+    "bower.glb": "glTF binary of collection 21_PRIMARY_MESHES"
+  },
+  "files": {
+    "bower.blend": {
+      "bytes": 2234011,
+      "sha256": "4ed09ab6e18d811015174fc2edcf210d958dae74af74d00dcc48d420928d44d3"
+    },
+    "bower.glb": {
+      "bytes": 4570520,
+      "sha256": "0a018be738c75b769de2e17bc6451d23e51f4cefbe47efd1a03a5654e2b56469"
+    },
+    "centrelines.json": {
+      "bytes": 441006,
+      "sha256": "81d61384654489bbc152401706f6259e917c87fdcd8b84ce032700c421cc3d36"
+    },
+    "design.json": {
+      "bytes": 14761,
+      "sha256": "1948928b0d1dd4af009a04a34dbde845da8fc89b84e06b25c672e95614c1b1b9"
+    },
+    "joints.csv": {
+      "bytes": 98787,
+      "sha256": "2bbbc112d93d94c727cfcb70b0df857e6f9436ae659a192cc1c93021a9b2855a"
+    },
+    "members.csv": {
+      "bytes": 17202,
+      "sha256": "447a4d041c4baf2bcf7aaa06158750be55a63abe8280dfb6ec8aae247078d80b"
+    }
+  },
+  "use": {
+    "blender": "File > Link > bower.blend > Collection. Link 21_PRIMARY_MESHES for the timber, 20_PRIMARY_CENTERLINES for the centreline curves, or BOWER_V1 for everything generated.",
+    "other tools": "bower.glb holds the timber meshes; each mesh carries its member ID.",
+    "data": "centrelines.json, members.csv and joints.csv are keyed by member ID."
+  }
+}

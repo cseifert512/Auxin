@@ -391,15 +391,16 @@ Object.assign(window, {
      */
     /**
      * One plate: the picture set up as asked, then drawn. `at` is a place on the line of time; `sun` a day of the
-     * year and an hour; `yaw` and `up` turn the view from the middle of the room; `shade` is how dark shade is drawn.
+     * year and an hour; `yaw` and `up` turn the view from the middle of the room; `shade` is how dark shade is drawn;
+     * `lookAt` and `zoom` bring one place close, and `from` is the side it is looked at from, in the building's axes.
      */
-    async plate(p: { view?: ViewId; at?: number; timber?: TimberLook; sun?: [number, number]; yaw?: number; up?: number; shade?: number; lookAt?: number[]; zoom?: number }) {
+    async plate(p: { view?: ViewId; at?: number; timber?: TimberLook; sun?: [number, number]; yaw?: number; up?: number; shade?: number; lookAt?: number[]; zoom?: number; from?: number[] }) {
       if (p.timber) setLook(p.timber);
       if (p.sun) paper.setSun(sunAt(p.sun[0], p.sun[1]));
       if (p.shade !== undefined) paper.setShade(p.shade);
       if (p.view) setView(p.view);
       if (p.yaw !== undefined) paper.turnTo(p.yaw, p.up ?? 80);
-      if (p.view === 'drawing') paper.focus(p.lookAt ?? null, p.zoom ?? 1);
+      if (p.view === 'drawing') paper.focus(p.lookAt ?? null, p.zoom ?? 1, p.from ?? null);
       else if (p.view && p.view !== 'round') paper.zoom(p.view, p.zoom ?? 1);
       organsFrom = null;
       state.drawnAt = Number.NaN;

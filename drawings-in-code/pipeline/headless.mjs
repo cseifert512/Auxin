@@ -18,15 +18,18 @@ const BROWSERS = [
   '/usr/bin/chromium',
 ];
 
-/** Start the studio on a port of its own and a browser to look at it with. Returns how to open pages, and how to stop. */
-export async function startStudio(port = 5318) {
+/**
+ * Start the studio on a port of its own and a browser to look at it with. Returns how to open pages, and how to stop.
+ * With `snapshot`, it draws that building and not the one named in snapshot.json.
+ */
+export async function startStudio(port = 5318, snapshot = null) {
   const exe = process.env.BROWSER_EXE ?? BROWSERS.find((p) => existsSync(p));
   if (!exe) throw new Error('no Chrome or Edge found: set BROWSER_EXE to a Chromium browser');
   const horti = resolve(process.env.HORTI_DIR ?? resolve(root, '../Horti-code-ture'));
   const server = spawn(process.execPath, [resolve(horti, 'node_modules/vite/bin/vite.js'), '--config', resolve(root, 'studio/vite.config.js'), '--port', String(port), '--strictPort'], {
     cwd: root,
     stdio: 'ignore',
-    env: { ...process.env, STUDIO_CACHE: '.vite-film' },
+    env: { ...process.env, STUDIO_CACHE: snapshot ? `.vite-film-${snapshot}` : '.vite-film', ...(snapshot ? { BOWER_SNAPSHOT: snapshot } : {}) },
   });
   const profile = mkdtempSync(join(tmpdir(), 'bower-studio-'));
   const debugPort = 9400 + Math.floor(Math.random() * 300);
