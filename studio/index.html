@@ -14,11 +14,18 @@
       <p id="subtitle">Six-bay room</p>
     </header>
 
-    <nav class="views" role="group" aria-label="View">
-      <button type="button" data-view="drawing" aria-pressed="true">Drawing</button>
-      <button type="button" data-view="approach" aria-pressed="false">Approach</button>
-      <button type="button" data-view="inside" aria-pressed="false">Inside</button>
-    </nav>
+    <div class="tools">
+      <select id="run" aria-label="Planting"></select>
+      <nav class="switch" role="group" aria-label="Timber">
+        <button type="button" data-timber="wood" aria-pressed="true">Timber</button>
+        <button type="button" data-timber="ink" aria-pressed="false">Ink</button>
+      </nav>
+      <nav class="switch" role="group" aria-label="View">
+        <button type="button" data-view="drawing" aria-pressed="true">Drawing</button>
+        <button type="button" data-view="approach" aria-pressed="false">Approach</button>
+        <button type="button" data-view="inside" aria-pressed="false">Inside</button>
+      </nav>
+    </div>
 
     <p id="loading" class="loading">Reading the building and ten years of growth…</p>
 

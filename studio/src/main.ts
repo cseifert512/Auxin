@@ -15,10 +15,9 @@ import design from '../../releases/six-bay-v1/design.json';
 import timberUrl from '../../releases/six-bay-v1/bower.glb?url';
 import plan from '../../scenes/six-bay-v1/assembly.json';
 import bowerUrl from '../../scenes/six-bay-v1/bower.json?url';
-import growthUrl from '../../scenes/six-bay-v1/runs/trained-10y/growth.json?url';
 import { type AssemblyPlan, type AssemblyState, DESIGN_SHARE, makeAssembly } from './assembly.ts';
 import { type Standpoint, type ViewId, makePaper } from './paper.ts';
-import { drawBeds, loadTimber } from './timber.ts';
+import { type TimberLook, drawBeds, loadTimber } from './timber.ts';
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
 const url = new URL(location.href).searchParams;
@@ -29,6 +28,15 @@ const faces = import.meta.glob('../../../Bower_Web/public/designx/4/assets/fonts
 for (const [file, href] of Object.entries(faces)) {
   void new FontFace('Safiro', `url(${href})`, { weight: file.includes('semibold') ? '600' : '400' }).load().then((f) => document.fonts.add(f));
 }
+
+// ---- which planting ------------------------------------------------------------------------------------------------
+// Every run of the simulator that has been grown on this machine (scenes/<snapshot>/runs/<name>/growth.json).
+const grown = import.meta.glob('../../scenes/six-bay-v1/runs/*/growth.json', { query: '?url', import: 'default', eager: true }) as Record<string, string>;
+const runs = new Map(Object.entries(grown).map(([file, href]) => [file.split('/').at(-2)!, href]));
+const RUN_NAMES: Record<string, string> = { 'trained-10y': '12 young plants', 'specimens-10y': '12 specimens, 2 m', 'specimens-24-10y': '24 specimens, 2 m' };
+const run = runs.has(url.get('run') ?? '') ? url.get('run')! : (['specimens-24-10y', 'specimens-10y', 'trained-10y'].find((r) => runs.has(r)) ?? [...runs.keys()][0]);
+if (!run) throw new Error('no planting has been grown yet: npm run grow');
+const growthUrl = runs.get(run)!;
 
 // ---- the sheet ---------------------------------------------------------------------------------------------------
 const view = (id: string): Standpoint => {
@@ -47,11 +55,13 @@ paper.frame(timber.bounds);
 const assembly = makeAssembly(timber, plan as AssemblyPlan);
 paper.scene.add(assembly.group);
 
-const bower = (await (await fetch(bowerUrl)).json()) as { stations: { id: string; position: number[] }[] };
-paper.scene.add(drawBeds(bower.stations));
 
 // ---- the plants --------------------------------------------------------------------------------------------------
 const growth = (await (await fetch(growthUrl)).json()) as RenderData;
+// a ring on the ground where each plant of this planting goes in
+const bower = (await (await fetch(bowerUrl)).json()) as { stations: { id: string; position: number[] }[] };
+const bedsUsed = new Set(growth.plants.map((p) => p.stationId));
+paper.scene.add(drawBeds(bower.stations.filter((s) => bedsUsed.has(s.id))));
 await loadLooks([...new Set(growth.plants.map((p) => p.taxonId))]);
 const plants = new PlantView(growth, makePlantMaterials({ bark: (grain) => makeBarkTextures(grain), leafTex: makeLeafTexture(), ownLeafTex: makeOwnLeafTexture }));
 paper.scene.add(plants.group);
@@ -127,14 +137,14 @@ function describe(): void {
     el.age.textContent = `year ${Math.floor((state.at - planted) / 365.25) + 1} · ${SEASONS[when.getUTCMonth()]}`;
     el.key1.textContent = 'in leaf';
     el.key2.textContent = 'in flower';
-    el.statement.textContent = `${growth.statement} The timber is concept geometry.`;
+    el.statement.textContent = `${growth.statement} The timber is concept geometry${look === 'wood' ? '; its colour and weathering are illustrative' : ''}.`;
     return;
   }
   el.key1.textContent = 'members';
   el.key2.textContent = 'joints made';
   el.value1.textContent = `${built.placed} / ${built.of}`;
   el.value2.textContent = `${built.jointsMade} / ${built.joints}`;
-  el.statement.textContent = `${assembly.note} The timber is concept geometry.`;
+  el.statement.textContent = `${assembly.note} The timber is concept geometry${look === 'wood' ? '; its colour is illustrative' : ''}.`;
   el.date.textContent = built.phase === 'design' ? 'The design' : 'Assembly';
   el.age.textContent = built.phase === 'design' ? `${built.of} centre lines` : (FAMILIES[built.family] ?? built.family);
 }
@@ -166,8 +176,33 @@ function setView(id: ViewId): void {
 for (const b of viewButtons) b.addEventListener('click', () => setView(b.dataset['view'] as ViewId));
 if (['drawing', 'approach', 'inside'].includes(url.get('view') ?? '')) setView(url.get('view') as ViewId);
 
+// ---- timber, and which planting ----------------------------------------------------------------------------------
+let look: TimberLook = url.get('timber') === 'ink' ? 'ink' : 'wood';
+const lookButtons = [...document.querySelectorAll<HTMLButtonElement>('button[data-timber]')];
+function setLook(next: TimberLook): void {
+  look = next;
+  timber.setLook(look);
+  for (const b of lookButtons) b.setAttribute('aria-pressed', String(b.dataset['timber'] === look));
+  state.drawnAt = Number.NaN;
+}
+for (const b of lookButtons) b.addEventListener('click', () => setLook(b.dataset['timber'] as TimberLook));
+
+const chooser = $<HTMLSelectElement>('run');
+for (const name of runs.keys()) chooser.add(new Option(RUN_NAMES[name] ?? name, name, false, name === run));
+chooser.hidden = runs.size < 2;
+chooser.addEventListener('change', () => {
+  const next = new URL(location.href);
+  next.searchParams.set('run', chooser.value);
+  next.searchParams.set(growing() ? 'day' : 'build', growing() ? String(Math.round(state.at)) : String(clamp01((state.at - lineStart) / BUILD_SPAN)));
+  next.searchParams.delete(growing() ? 'build' : 'day');
+  next.searchParams.set('view', paper.view());
+  next.searchParams.set('timber', look);
+  location.href = next.href;
+});
+
 // ---- what goes with the picture ----------------------------------------------------------------------------------
 $('subtitle').textContent = `${design.rooms[0]!.bays.length}-bay room · ${plan.members.length} timber members · trial planting of ${growth.plants.length} climbers, tended`;
+setLook(look);
 $('loading').hidden = true;
 document.querySelector<HTMLElement>('.time')!.hidden = false;
 if (url.has('bare')) document.body.classList.add('bare');
@@ -178,8 +213,9 @@ describe();
 // ---- drawing -----------------------------------------------------------------------------------------------------
 // Stems lengthen and thicken on the graphics card, from the day alone, so they are right in every frame. Leaves,
 // flowers and fruit are worked out one by one, which for ten years of twelve plants takes about a tenth of a
-// second: while time is moving that is done a few times a second, and once more, with the shade, when it rests.
-const ORGANS_EVERY_MS = 220;
+// second and for twenty-four about two: while time is moving that is done as often as leaves a good four fifths
+// of the time for drawing, and once more, with the shade, when it rests.
+let organsEveryMs = 220;
 const SHADE_EVERY_MS = 700;
 const sunInView = new THREE.Vector3();
 let before = performance.now();
@@ -213,6 +249,7 @@ function draw(now: number): void {
       paper.shadeChanged();
     }
     plants.group.visible = growing();
+    timber.setAge((state.at - planted) / 365.25);
     describe();
     state.drawnAt = state.at;
   }
@@ -229,8 +266,10 @@ function draw(now: number): void {
     const reach = organsFrom ? Math.hypot(from.x - organsFrom.x, from.y - organsFrom.y, from.z - organsFrom.z) : Infinity;
     const viewChanged = !organsFrom || organsFrom.view !== paper.view() || reach > 0.12 * Math.max(1, from.length());
     const dayChanged = state.at !== state.drawnDay;
-    if ((dayChanged || viewChanged) && (now - organsAt > ORGANS_EVERY_MS || (!state.playing && now - organsAt > 60))) {
+    if ((dayChanged || viewChanged) && (now - organsAt > organsEveryMs || (!state.playing && now - organsAt > 60))) {
+      const began = performance.now();
       plants.update(paper.detailFrom(), state.at, 1);
+      organsEveryMs = Math.min(900, Math.max(220, (performance.now() - began) * 4));
       organsAt = now;
       organsFrom = { x: from.x, y: from.y, z: from.z, view: paper.view() };
       if (dayChanged) shadeOwed = true;
@@ -272,6 +311,7 @@ Object.assign(window, {
       setAt(atBuild(share));
       if (id) setView(id);
     },
-    state: () => ({ at: state.at, built }),
+    look: setLook,
+    state: () => ({ at: state.at, built, run, look }),
   },
 });

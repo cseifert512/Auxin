@@ -17,7 +17,9 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const horti = resolve(process.env.HORTI_DIR ?? resolve(root, '../Horti-code-ture'));
 const core = (file) => import(pathToFileURL(resolve(horti, 'packages/core/src', file)).href);
 
-const [snapshot = 'six-bay-v1', careArg = 'trained', yearsArg = '10', seedArg = '7'] = process.argv.slice(2);
+// options: --plan=<file in the scene folder>  --specimen=<metres each plant stands when it goes in>  --name=<run folder>
+const options = Object.fromEntries(process.argv.slice(2).filter((a) => a.startsWith('--')).map((a) => a.slice(2).split('=')));
+const [snapshot = 'six-bay-v1', careArg = 'trained', yearsArg = '10', seedArg = '7'] = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 const care = careArg === 'untended' ? 'untended' : 'trained';
 const years = Number(yearsArg);
 const seed = Number(seedArg);
@@ -27,18 +29,25 @@ const read = (file) => JSON.parse(readFileSync(file, 'utf8'));
 const { readBower } = await core('bower/description.ts');
 const { loadGrowable } = await core('node/load-taxa.ts');
 const { Simulation } = await core('sim/engine.ts');
+const { withParam } = await core('sim/model.ts');
 const { toRenderData } = await core('sim/render-data.ts');
 const { parsePlantingPlan, plantingOn } = await core('sim/planting.ts');
 const { designReport, formatDesignReport } = await core('sim/report.ts');
 
 const bowerFile = resolve(scene, 'bower.json');
-const plantingFile = resolve(scene, 'planting.json');
+const plantingFile = resolve(scene, options.plan ?? 'planting.json');
 let t0 = performance.now();
 const design = readBower(read(bowerFile), bowerFile);
 console.log(`read ${snapshot} in ${(performance.now() - t0).toFixed(0)} ms: ${Object.entries(design.bower.facts).filter(([k]) => k !== 'source').map(([k, v]) => `${k} ${v}`).join(', ')}`);
 for (const w of design.warnings) console.log(`  to check: ${w}`);
 
-const taxa = loadGrowable(resolve(horti, 'species'));
+// The simulator plants every climber as a 0.6 m nursery cane. A specimen is the same plant with a longer stem on
+// the day it goes in; how fast it then grows, and the two slow years after planting, are left as the model has them.
+const specimenM = options.specimen ? Number(options.specimen) : null;
+const stock = loadGrowable(resolve(horti, 'species'));
+const taxa = specimenM
+  ? new Map([...stock].map(([id, t]) => [id, { ...t, model: withParam(t.model, 'architecture.nurseryCaneM', specimenM, `planted as a nursery specimen standing ${specimenM} m, not a young plant`) }]))
+  : stock;
 const scenario = plantingOn(design.bower, parsePlantingPlan(read(plantingFile), plantingFile), { taxa, care, years, seed, viewpoints: design.viewpoints });
 t0 = performance.now();
 const sim = new Simulation(scenario).runUntil(`${2027 + years - 1}-12-31`);
@@ -56,7 +65,7 @@ console.log(`\nre-seated on the real timber faces: ${seated.summary}`);
 const thinned = thin(growth);
 console.log(`thinned for drawing at the scale of a room: ${thinned.summary}`);
 
-const out = resolve(scene, 'runs', `${care}-${years}y`);
+const out = resolve(scene, 'runs', options.name ?? `${care}-${years}y`);
 mkdirSync(out, { recursive: true });
 const commit = (() => {
   try {
@@ -71,7 +80,7 @@ writeFileSync(resolve(out, 'report.json'), JSON.stringify(report, null, 2));
 writeFileSync(resolve(out, 'report.txt'), `${text}\n`);
 writeFileSync(
   resolve(out, 'run.json'),
-  `${JSON.stringify({ snapshot, care, years, seed, simulator: { repository: 'horti-code-ture', commit }, toCheck: design.warnings, notModelledOrAssumed: notes, reseated: seated.summary, thinned: thinned.summary }, null, 2)}\n`,
+  `${JSON.stringify({ snapshot, plan: options.plan ?? 'planting.json', specimenM, care, years, seed, simulator: { repository: 'horti-code-ture', commit }, toCheck: design.warnings, notModelledOrAssumed: notes, reseated: seated.summary, thinned: thinned.summary }, null, 2)}\n`,
 );
 console.log(`\n${text}`);
 console.log(`\nwritten: ${out}`);

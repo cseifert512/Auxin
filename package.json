@@ -11,6 +11,7 @@
     "convert": "node pipeline/convert.mjs",
     "assemble": "node pipeline/assemble.mjs",
     "grow": "node pipeline/grow.mjs",
+    "compare": "node pipeline/compare.mjs",
     "studio": "node ../Horti-code-ture/node_modules/vite/bin/vite.js --config studio/vite.config.js",
     "studio:build": "node ../Horti-code-ture/node_modules/vite/bin/vite.js build --config studio/vite.config.js"
   }

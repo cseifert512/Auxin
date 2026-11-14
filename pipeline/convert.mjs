@@ -5,7 +5,7 @@
 //
 // The snapshot says what is built. This adds the two things a planting needs
 // that the building model does not hold yet: where plants go into the ground
-// (two beds at the foot of each pier, one towards each neighbouring bay) and
+// (four beds at the foot of each pier, two towards each neighbouring bay) and
 // where a visitor stands. Both are this project's assumptions, not the model's.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -23,9 +23,12 @@ if (centrelines.units !== 'm' || centrelines.axes?.up !== '+Z' || centrelines.ax
   throw new Error(`${snapshot}: centrelines.json is not in metres with Z up and Y north`);
 }
 
-/** Beds stand this far inside the line of the arches, and this far to either side of the pier. */
+/** Beds stand this far inside the line of the arches, and this far to either side of the pier: a near one and a far one. */
 const BED_INSIDE_M = 0.5;
-const BED_ASIDE_M = 0.8;
+const BEDS_ASIDE_M = [
+  ['', 0.8],
+  ['.far', 1.35],
+];
 
 const round = (v, places = 4) => Number(v.toFixed(places));
 const members = centrelines.members.map((m) => ({
@@ -49,11 +52,13 @@ for (const room of design.rooms) {
     const ends = room.bays.find((b) => b.to === pier.id);
     for (const [bay, side] of [[starts, 1], [ends, -1]]) {
       if (!bay) continue;
-      stations.push({
-        id: `bed.${pier.id}.${bay.id.split('.').pop()}`,
-        position: [round(px - out[0] * BED_INSIDE_M + along[0] * BED_ASIDE_M * side, 3), round(py - out[1] * BED_INSIDE_M + along[1] * BED_ASIDE_M * side, 3), room.floor_z_m ?? 0],
-        note: `at the foot of pier ${pier.id}, on the side of bay ${bay.id}`,
-      });
+      for (const [suffix, aside] of BEDS_ASIDE_M) {
+        stations.push({
+          id: `bed.${pier.id}.${bay.id.split('.').pop()}${suffix}`,
+          position: [round(px - out[0] * BED_INSIDE_M + along[0] * aside * side, 3), round(py - out[1] * BED_INSIDE_M + along[1] * aside * side, 3), room.floor_z_m ?? 0],
+          note: `${aside} m from pier ${pier.id}, on the side of bay ${bay.id}`,
+        });
+      }
     }
   }
 }
