@@ -144,6 +144,12 @@ shows is the floor and the shade on it) and `round`.
   A trial is centre lines only, written into `../releases/trial-*/` because that is where the steps above read
   from. It is not a snapshot: no milled meshes, no manifest, not in git, and the studio cannot draw it.
 
+  `sketches/design-space/pier-opens.html` is that one change as a vignette: a loop of five named steps that
+  plays by itself, annotated, with the whole room and one pier drawn together. It follows the factory drawings'
+  rules (`bower-factory`, `docs/STYLE.md`): one red for what is moving or at issue, at most two leaders and one
+  dimension at once, a pause button, nothing to hover over. The page with the sliders is the workbench; this
+  is the form a drawing for the deck would take. It is still a sketch: centre lines and stems.
+
 ## What this is not
 
 The growth is a scenario on stated assumptions, not a forecast: the statement under the drawing travels with every
