@@ -12,7 +12,7 @@ from bower.envelope import build_envelope, check_envelope  # noqa: E402
 from bower.joints import find_joints  # noqa: E402
 from bower.timber import build_timber, clearances  # noqa: E402
 
-SIX = T.load(REPO / "releases" / "six-bay-v1" / "design.json")  # a frozen design to lay out afresh
+SIX = T.load(REPO.parent / "releases" / "six-bay-v1" / "design.json")  # a frozen design to lay out afresh
 NOW = T.load(REPO / "design.json")  # the design as it stands
 
 
@@ -50,7 +50,7 @@ def test_the_ring_can_be_laid_out_with_any_number_of_bays():
         assert ids(laid, "piers")[:kept] == ids(SIX, "piers")[:kept] and ids(laid, "bays")[:kept] == ids(SIX, "bays")[:kept]
         assert change["added"] == [f"R1.P{n}" for n in range(7, count + 1)] + [f"R1.B{n}" for n in range(7, count + 1)]
         assert change["removed"] == ids(SIX, "piers")[count:] + ids(SIX, "bays")[count:]
-    assert SIX == T.load(REPO / "releases" / "six-bay-v1" / "design.json")  # the operation is pure
+    assert SIX == T.load(REPO.parent / "releases" / "six-bay-v1" / "design.json")  # the operation is pure
 
 
 def test_ids_are_not_reused_when_the_count_goes_down_and_up_again():

@@ -108,7 +108,7 @@ Worth adding:
 
 ## How to score a snapshot
 
-From `C:\BOWER\drawings-in-code`, with a snapshot copied into `releases/<name>/`:
+From `drawings-in-code`, with the snapshot in `../releases/<name>/`:
 
 ```bash
 npm run convert -- <name>

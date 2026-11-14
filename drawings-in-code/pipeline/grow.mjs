@@ -67,12 +67,12 @@ const text = formatDesignReport(report);
 // The simulator's input has no way to say which way a timber section is turned, and takes its deep side to face up.
 // The snapshot knows. Each stem and what grows on it is turned about its member on to the faces that are really there.
 const growth = toRenderData(sim);
-const seated = reseat(growth, read(resolve(root, 'releases', snapshot, 'centrelines.json')));
+const seated = reseat(growth, read(resolve(root, '..', 'releases', snapshot, 'centrelines.json')));
 console.log(`\nre-seated on the real timber faces: ${seated.summary}`);
 const thinned = thin(growth);
 console.log(`thinned for drawing at the scale of a room: ${thinned.summary}`);
 // The simulator takes no account of the members that cross the one a stem is on. Nothing grows through wood.
-const cleared = clear(growth, read(resolve(root, 'releases', snapshot, 'centrelines.json')));
+const cleared = clear(growth, read(resolve(root, '..', 'releases', snapshot, 'centrelines.json')));
 console.log(`kept out of the timber: ${cleared.summary}`);
 
 const out = resolve(scene, 'runs', options.name ?? `${care}-${years}y`);

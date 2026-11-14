@@ -14,7 +14,7 @@ from bower.lines import DEFAULTS, MIN_SPACING_M, _floor, check_lines, design_lin
 from bower.timber import build_design_timber  # noqa: E402
 
 NOW = T.load(REPO / "design.json")  # the design as it stands
-SIX = T.load(REPO / "releases" / "six-bay-v1" / "design.json")  # a frozen design, made before there were lines
+SIX = T.load(REPO.parent / "releases" / "six-bay-v1" / "design.json")  # a frozen design, made before there were lines
 PAIR = T.load(REPO / "design" / "two_rooms.json")  # two rooms joined through a bay
 LATTICE_LEGS = ("rib", "fill", "fine", "hoop")
 

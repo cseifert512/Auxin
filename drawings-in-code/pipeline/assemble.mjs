@@ -1,6 +1,6 @@
 // The order the timber can go together in, read from the joint schedule.
 //   node pipeline/assemble.mjs [snapshot]
-// Reads  releases/<snapshot>/joints.csv, centrelines.json and design.json
+// Reads  ../releases/<snapshot>/joints.csv, centrelines.json and design.json
 // Writes scenes/<snapshot>/assembly.json
 //
 // Three kinds of joint say that one member has to be in place before another:
@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const snapshot = process.argv[2] ?? JSON.parse(readFileSync(new URL('../snapshot.json', import.meta.url), 'utf8')).snapshot;
-const from = resolve(root, 'releases', snapshot);
+const from = resolve(root, '..', 'releases', snapshot);
 const to = resolve(root, 'scenes', snapshot);
 
 const centrelines = JSON.parse(readFileSync(resolve(from, 'centrelines.json'), 'utf8'));

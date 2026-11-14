@@ -16,7 +16,7 @@ from bower.timber import build_timber, clearances  # noqa: E402
 SCRIPT = runpy.run_path(str(REPO / "scripts" / "gate2_forms.py"))
 FORMS = {name: changes for name, _, changes in SCRIPT["FORMS"]}
 NOW = T.load(REPO / "design.json")
-SIX = T.load(REPO / "releases" / "six-bay-v1" / "design.json")
+SIX = T.load(REPO.parent / "releases" / "six-bay-v1" / "design.json")
 
 
 def room(design):

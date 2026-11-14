@@ -4,11 +4,11 @@ Bower's building and its plants, drawn together through time. One line of time r
 building going together, into ten years of growth. The timber is drawn as the factory drawings are, in their
 projection and line, or in its own colour; the plants are in colour.
 
-This repository joins three others and changes none of them:
+This folder reads from three others and changes none of them. The first two are beside it in this repository:
 
 | It reads | From | For |
 |---|---|---|
-| a frozen snapshot of the building | `releases/<snapshot>/`, made in `bower-blender` | the timber: one mesh and one centre line per member |
+| a frozen snapshot of the building | `../releases/<snapshot>/`, made by `../bower-blender` | the timber: one mesh and one centre line per member |
 | the plant simulator and its viewer | `../Horti-code-ture` (or `HORTI_DIR`) | growing a planting, and drawing each plant |
 | the factory drawings' projection | `bower-factory`, `engine/projection.js` | the view the drawing is set up in |
 
@@ -18,11 +18,11 @@ Needs Node 24 and `npm install` done once in `Horti-code-ture`. `npm install` he
 brings ffmpeg.
 
 Which building is drawn is one setting: the snapshot named in `snapshot.json`. Every command below reads it, and
-so does the studio. To draw another building, copy its snapshot into `releases/`, name it there, and run the same
+so does the studio. To draw another building, name its snapshot there (snapshots are in `../releases/`) and run the same
 commands again.
 
 ```bash
-npm run convert                         # releases/<snapshot> -> scenes/<snapshot>/bower.json
+npm run convert                         # ../releases/<snapshot> -> scenes/<snapshot>/bower.json
 npm run plant                           # the planting, from its rule -> scenes/<snapshot>/planting.json
 npm run assemble                        # the order the joints allow -> scenes/<snapshot>/assembly.json
 npm run grow -- <snapshot> trained 10 7 --specimen=3    # ten tended years -> scenes/<snapshot>/runs/trained-10y/

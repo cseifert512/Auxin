@@ -15,7 +15,7 @@ from bower.lines import Bodies, check_lines, design_lines, line_rows, standoff_j
 from bower.timber import build_design_timber  # noqa: E402
 
 NOW = T.load(REPO / "design.json")  # the design as it stands
-SIX = T.load(REPO / "releases" / "six-bay-v1" / "design.json")  # a frozen design, made before any of this
+SIX = T.load(REPO.parent / "releases" / "six-bay-v1" / "design.json")  # a frozen design, made before any of this
 PIER = "R1.P6"
 PAD = {"footings": {"type": "pad"}}  # the earlier footing, kept as an option
 

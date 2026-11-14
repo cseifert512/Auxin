@@ -1,2 +1,0 @@
-# Snapshot files are frozen and hashed in their manifest: no line-ending conversion on checkout.
-releases/** -text

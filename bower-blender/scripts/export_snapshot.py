@@ -1,4 +1,4 @@
-"""Write a named snapshot of the model to releases/<name>/ for other work to build on.
+"""Write a named snapshot of the model to releases/<name>/, at the top of the repository, for other work to build on.
 
 The scene is first rebuilt from design.json, so the snapshot is what the source
 generates, not whatever happens to be open. See bower/snapshot.py for what the
@@ -32,7 +32,7 @@ def main(name: str, commit: str | None = None, design_path=DESIGN, rebuild: bool
 
     if not name or any(c in name for c in '\\/:*?"<>| '):
         raise ValueError(f"snapshot name {name!r} must be usable as a folder name, without spaces")
-    folder = REPO / "releases" / name
+    folder = REPO.parent / "releases" / name
     if folder.exists() and any(folder.iterdir()):
         raise FileExistsError(f"{folder} already holds a snapshot; snapshots are not overwritten, give the new one a new name")
     scene = bpy.context.scene

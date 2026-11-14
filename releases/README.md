@@ -1,5 +1,8 @@
 # Snapshots
 
+This folder is at the top of the repository. `bower-blender` writes it and
+`drawings-in-code` reads it in place, so there is one copy of each snapshot.
+
 Each folder here is one named, frozen copy of the generated model, for other
 work (drawings, the plant simulator) to build on while the geometry keeps
 changing. A snapshot is never edited or overwritten: a refined model is a new
@@ -53,11 +56,11 @@ it. The old snapshot stays here, so earlier drawings still open as they were.
 
 ## Making one
 
-In Blender, with this repo's scene:
+In Blender, with the building model's scene:
 
 ```python
 import runpy
-runpy.run_path(r"C:\BOWER\bower-blender\scripts\export_snapshot.py")["main"]("eight-bay-v1", commit="<git commit>")
+runpy.run_path(r"C:\BOWER\project-auxin\bower-blender\scripts\export_snapshot.py")["main"]("eight-bay-v1", commit="<git commit>")
 ```
 
 The script rebuilds the scene from `design.json` first, so a snapshot is what

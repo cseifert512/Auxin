@@ -1,6 +1,6 @@
 """Snapshots: a named, self-contained copy of a design's generated model, for other work to build on.
 
-A snapshot is a folder, releases/<name>/, written by scripts/export_snapshot.py:
+A snapshot is a folder, releases/<name>/ at the top of the repository, written by scripts/export_snapshot.py:
 
     bower.blend        the generated collections only, for linking into another Blender file
     bower.glb          the milled timber meshes, for any other tool (glTF: metres, Y up)

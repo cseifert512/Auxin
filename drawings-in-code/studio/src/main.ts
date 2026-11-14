@@ -1,7 +1,7 @@
 // A room through time: the timber as an ink drawing, the plants in colour, and one line of time to draw along.
 // The line runs from the design (centre lines), through the building going together, into ten years of growth.
 //
-// What is drawn comes from frozen things: a snapshot of the building (releases/), the order its joints let it go
+// What is drawn comes from frozen things: a snapshot of the building (releases/, at the top of the repository), the order its joints let it go
 // together in, and a run of the plant simulator on it (scenes/<snapshot>/). The plants are drawn by the
 // simulator's own viewer code, read in place; nothing here decides when a leaf opens or a flower falls.
 import * as THREE from 'three';
@@ -24,7 +24,7 @@ const url = new URL(location.href).searchParams;
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
 
 // the deck's own face, where its files are beside this repository; otherwise the stack in style.css
-const faces = import.meta.glob('../../../Bower_Web/public/designx/4/assets/fonts/safiro-{regular,semibold}-webfont.woff2', { query: '?url', import: 'default', eager: true }) as Record<string, string>;
+const faces = import.meta.glob('../../../../Bower_Web/public/designx/4/assets/fonts/safiro-{regular,semibold}-webfont.woff2', { query: '?url', import: 'default', eager: true }) as Record<string, string>;
 for (const [file, href] of Object.entries(faces)) {
   void new FontFace('Safiro', `url(${href})`, { weight: file.includes('semibold') ? '600' : '400' }).load().then((f) => document.fonts.add(f));
 }

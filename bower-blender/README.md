@@ -11,7 +11,7 @@ Blender with sliders and live handles (`scripts/panel.py`). The same code also b
 room whose crown is a line instead of a point (`views/gate2_hall.jpg`), and
 rooms joined to each other through a shared arch: `design/two_rooms.json` is
 the first pair (`views/gate3_rooms.jpg`). The earlier six-bay model is frozen
-as the snapshot `releases/six-bay-v1`. No planting. Dimensions, sections and clearances are provisional concept
+as the snapshot `../releases/six-bay-v1`. No planting. Dimensions, sections and clearances are provisional concept
 values; nothing here is a structural, fabrication or horticultural check.
 
 ## Working on the model in Blender
@@ -20,7 +20,7 @@ The panel is how the model is played with. Open it once per Blender session:
 
 ```python
 import runpy
-runpy.run_path(r"C:\BOWER\bower-blender\scripts\panel.py")["main"]()
+runpy.run_path(r"C:\BOWER\project-auxin\bower-blender\scripts\panel.py")["main"]()
 ```
 
 then press N in the 3D viewport and choose the **Bower** tab
@@ -273,7 +273,7 @@ In Blender (5.1 or later), from the Python console, the Text Editor or the MCP c
 
 ```python
 import runpy
-runpy.run_path(r"C:\BOWER\bower-blender\scripts\generate.py")["main"]()
+runpy.run_path(r"C:\BOWER\project-auxin\bower-blender\scripts\generate.py")["main"]()
 ```
 
 | Script | What it does |
@@ -287,7 +287,7 @@ runpy.run_path(r"C:\BOWER\bower-blender\scripts\generate.py")["main"]()
 | `scripts/gate3_rooms.py` | Joins a second, smaller room to the first through one bay, writes the pair to `design/two_rooms.json`, then resizes the second room, moves its crown and moves a shared pier, checking the first room each time; last it builds the pair with every joint milled (`views/gate3_*.png`, `output/gate3_rooms.json`). Leaves the scene as the pair. |
 | `scripts/gate2_notches_view.py` | Renders a close view with the ribs of one hand left out, so the lap notches can be seen. |
 | `scripts/training_lines.py` | Builds the design with its training lines, measures every cable against the timber meshes as milled, and renders them: close views at true size (`views/lines_*.png`), and diagrams of where the cables run, each drawn as a plain line thick enough to follow with its standoffs left out: training lines blue, feeders red, hand-overs green (`views/lines_diagram_*.png`). Writes `output/training_lines.json`. Runs without a window too: `blender --background --factory-startup --python scripts/training_lines.py`. |
-| `scripts/export_snapshot.py` | Writes a named, frozen copy of the model to `releases/<name>/` for other work to link or read. See `releases/README.md`. |
+| `scripts/export_snapshot.py` | Writes a named, frozen copy of the model to `../releases/<name>/` for other work to link or read. See `../releases/README.md`. |
 | `scripts/gate1_demo.py` | The same four edits, reported at envelope level. |
 | `scripts/gate0.py` | Rebuilds the Gate 0 test member from `design/gate0_member.json`. |
 
@@ -321,7 +321,7 @@ python tests/survey_envelope_validity.py     # slower: random walks of edits
 ```
 
 The room and timber tests name particular piers and bays, so they run on the
-frozen design in `releases/six-bay-v1`: they also show that an old snapshot
+frozen design in `../releases/six-bay-v1`: they also show that an old snapshot
 still builds. `test_bay_count.py` and `test_snapshot.py` run on `design.json`
 as it stands.
 
@@ -340,7 +340,7 @@ bower/ground.py                 the ground at a pier: root zones, footings, feed
 bower/blender_lines.py          writes the lines into Blender and measures them against the timber there
 bower/blender_ground.py         writes root zones, footings and hand-overs into Blender
 bower/snapshot.py               what a snapshot carries: centrelines, schedules, manifest
-releases/                       named snapshots of the model for other work to build on
+../releases/                    named snapshots of the model, at the top of the repository
 bower/centreline.py             Bezier paths, sampling, frames
 bower/member.py                 member data and section sweep
 bower/controls.py               what each slider reads from a design and changes in it

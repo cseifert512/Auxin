@@ -1,6 +1,6 @@
 // The planting, written from a rule instead of by hand, so that it follows the building when the building changes.
 //   node pipeline/plant.mjs [snapshot]
-// Reads  releases/<snapshot>/design.json and scenes/<snapshot>/bower.json
+// Reads  ../releases/<snapshot>/design.json and scenes/<snapshot>/bower.json
 // Writes scenes/<snapshot>/planting.json
 //
 // The rule: every bed in the ring round a pier takes a plant, and which plants a pier takes depends on the side
@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const snapshot = process.argv.slice(2).find((a) => !a.startsWith('--')) ?? JSON.parse(readFileSync(new URL('../snapshot.json', import.meta.url), 'utf8')).snapshot;
-const design = JSON.parse(readFileSync(resolve(root, 'releases', snapshot, 'design.json'), 'utf8'));
+const design = JSON.parse(readFileSync(resolve(root, '..', 'releases', snapshot, 'design.json'), 'utf8'));
 const bower = JSON.parse(readFileSync(resolve(root, 'scenes', snapshot, 'bower.json'), 'utf8'));
 
 /** By the side of the room a pier stands on: taxon folders in the plant library, outermost bed first. */
