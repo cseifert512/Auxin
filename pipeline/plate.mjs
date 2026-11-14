@@ -1,5 +1,10 @@
 // Drawings for a page that is not ours: made to fit a space in the presentation, on that page's paper.
 //   node pipeline/plate.mjs [name ...]          (every description in plates/, if none is named)
+//     --timber=wood       the same drawings with the timber in its own colour and grain, written beside the
+//                         others as <name>-timber
+//     --mode=space,light  only those modes of a piece, leaving its others as they were made
+//     --moments=0,7       only those frames of each mode (to look at one before making them all)
+//     --as=<name>         written under another name
 // Reads  plates/<name>.json
 // Writes exports/deck/<name>.png and .webp                  for a plate: one still picture
 //        exports/deck/<name>/ (index.html, frames, posters)  for a piece: a drawing to turn, scrub and play
@@ -12,6 +17,7 @@
 // A description says which space it is for (`slot`, in the page's pixels; pictures are made at `scale` times
 // that), the page's `paper` and `ink`, and how the space is filled:
 //   row     panels side by side, each a view at a moment:  { view, at, sun, timber, shade, run, lines, lookAt, zoom }
+//           (in a piece a panel may also have a `label`, which the player writes at its head)
 //   round   the whole room unrolled, as seen turning on the spot in the middle of it: `slices` upright strips, each
 //           what is seen in one direction. Every strip can be drawn at its own moment, so that a turn of the room
 //           is also a passage of time: `at` for one moment, or `sectors`, a list of moments shared out round the turn.
@@ -22,13 +28,14 @@
 // scrubbed and played through. The player (deck/player) is copied in beside them. A piece carries no heavy
 // machinery to the page it goes to: pictures, and a few hundred lines of script.
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import { root, startStudio } from './headless.mjs';
 
 const ffmpeg = createRequire(import.meta.url)('ffmpeg-static');
 const names = process.argv.slice(2).filter((a) => !a.startsWith('--'));
+const options = Object.fromEntries(process.argv.slice(2).filter((a) => a.startsWith('--')).map((a) => a.slice(2).split('=')));
 const all = readdirSync(resolve(root, 'plates')).filter((f) => f.endsWith('.json')).map((f) => f.slice(0, -5));
 const wanted = names.length ? names : all;
 const out = resolve(root, 'exports/deck');
@@ -130,8 +137,10 @@ function atMoment(mode, moment) {
   throw new Error('a mode is filled by a "row" of panels or the room "round"');
 }
 
-for (const name of wanted) {
-  const spec = JSON.parse(readFileSync(resolve(root, 'plates', `${name}.json`), 'utf8'));
+for (const described of wanted) {
+  const written = JSON.parse(readFileSync(resolve(root, 'plates', `${described}.json`), 'utf8'));
+  const spec = { ...written, ...(options.timber ? { timber: options.timber } : {}) };
+  const name = options.as ?? (spec.timber !== (written.timber ?? 'ink') ? `${described}-${spec.timber === 'wood' ? 'timber' : spec.timber}` : described);
   const began = performance.now();
 
   if (!spec.piece) {
@@ -143,21 +152,31 @@ for (const name of wanted) {
 
   // ---- a piece: frames for each mode, a poster for print, and the player beside them ---------------------------------
   const dir = resolve(out, name);
-  rmSync(dir, { recursive: true, force: true });
+  const only = options.mode?.split(',');
+  const before = only && existsSync(resolve(dir, 'manifest.json')) ? JSON.parse(readFileSync(resolve(dir, 'manifest.json'), 'utf8')).modes : [];
+  if (!before.length) rmSync(dir, { recursive: true, force: true });
   mkdirSync(resolve(dir, 'frames'), { recursive: true });
   const manifest = { name, for: spec.for, slot: spec.slot, paper: `#${spec.paper ?? 'FDFCF9'}`, ink: `#${spec.ink ?? '1D1D1B'}`, statement: spec.statement ?? '', modes: [] };
   for (const [id, mode] of Object.entries(spec.piece.modes)) {
+    if (only && !only.includes(id)) {
+      const was = before.find((m) => m.id === id);
+      if (was) manifest.modes.push(was);
+      continue;
+    }
+    for (const f of readdirSync(resolve(dir, 'frames'))) if (f.startsWith(`${id}-`)) rmSync(resolve(dir, 'frames', f));
     const frames = [];
-    for (const [i, moment] of mode.moments.entries()) {
+    const picked = options.moments ? options.moments.split(',').map(Number).filter((i) => i < mode.moments.length) : mode.moments.map((_, i) => i);
+    for (const [i, moment] of picked.map((k) => mode.moments[k]).entries()) {
       const png = resolve(work, `${name}-${id}-${i}.png`);
       await drawSlot(spec, atMoment(mode, moment), png, `${name}-${id}-${i}`);
       const src = `frames/${id}-${String(i).padStart(2, '0')}.webp`;
       run(['-i', png, '-c:v', 'libwebp', '-quality', '84', resolve(dir, src)]);
-      if (moment.poster || mode.moments.length === 1) copyFileSync(png, resolve(dir, `poster-${id}.png`));
+      if (moment.poster || picked.length === 1) copyFileSync(png, resolve(dir, `poster-${id}.png`));
       frames.push({ src, stage: moment.stage ?? '' });
-      console.log(`  ${name} ${id} ${i + 1}/${mode.moments.length} (${((performance.now() - began) / 60000).toFixed(1)} min)`);
+      console.log(`  ${name} ${id} ${i + 1}/${picked.length} (${((performance.now() - began) / 60000).toFixed(1)} min)`);
     }
-    manifest.modes.push({ id, label: mode.label ?? id, line: mode.line ?? '', turns: Boolean(mode.round), seconds: mode.seconds ?? 24, frames });
+    const panels = (mode.row ?? []).map((panel) => panel.label ?? '');
+    manifest.modes.push({ id, label: mode.label ?? id, line: mode.line ?? '', turns: Boolean(mode.round), seconds: mode.seconds ?? 24, ...(mode.hint ? { hint: mode.hint } : {}), ...(panels.some(Boolean) ? { panels, gutter: (spec.gutter ?? 12) / spec.slot[0] } : {}), frames });
   }
   writeFileSync(resolve(dir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
   // and as a script, so that the piece opens from a folder with no server

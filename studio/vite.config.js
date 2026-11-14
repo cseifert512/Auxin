@@ -2,6 +2,7 @@
 // read in place from the Horti-code-ture checkout beside this repository (or at
 // HORTI_DIR). One copy of three.js for both: the plants' shaders are spliced
 // into that release's materials, and two copies would not share a renderer.
+import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -10,6 +11,8 @@ const root = resolve(here, '..');
 const slashed = (p) => p.replaceAll('\\', '/');
 const horti = slashed(resolve(process.env.HORTI_DIR ?? resolve(root, '../Horti-code-ture')));
 const three = `${horti}/node_modules/three`;
+// which building is drawn: the snapshot named in snapshot.json (or BOWER_SNAPSHOT)
+const snapshot = process.env.BOWER_SNAPSHOT ?? JSON.parse(readFileSync(resolve(root, 'snapshot.json'), 'utf8')).snapshot;
 
 export default {
   root: here,
@@ -19,6 +22,8 @@ export default {
     alias: [
       { find: /^three\/addons\/(.*)$/, replacement: `${three}/examples/jsm/$1` },
       { find: /^three$/, replacement: `${three}/build/three.module.js` },
+      { find: /^@snapshot\/(.*)$/, replacement: `${slashed(root)}/releases/${snapshot}/$1` },
+      { find: /^@scene\/(.*)$/, replacement: `${slashed(root)}/scenes/${snapshot}/$1` },
       { find: /^@horti\/viewer\/(.*)$/, replacement: `${horti}/packages/viewer/src/$1` },
       { find: /^@horti\/core$/, replacement: `${horti}/packages/core/src/index.ts` },
     ],

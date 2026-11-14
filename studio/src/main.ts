@@ -11,12 +11,13 @@ import { loadLooks } from '@horti/viewer/plant/registry.ts';
 import { shared } from '@horti/viewer/plant/shaders.ts';
 import { PlantView, makePlantMaterials } from '@horti/viewer/plant/view.ts';
 import { makeBarkTextures, makeLeafTexture, makeOwnLeafTexture } from '@horti/viewer/textures.ts';
-import design from '../../releases/six-bay-v1/design.json';
-import timberUrl from '../../releases/six-bay-v1/bower.glb?url';
-import plan from '../../scenes/six-bay-v1/assembly.json';
+import design from '@snapshot/design.json';
+import timberUrl from '@snapshot/bower.glb?url';
+import centrelinesUrl from '@snapshot/centrelines.json?url';
+import plan from '@scene/assembly.json';
 import { type AssemblyPlan, type AssemblyState, DESIGN_SHARE, makeAssembly } from './assembly.ts';
 import { PAPER, type Standpoint, type ViewId, makePaper } from './paper.ts';
-import { type TimberLook, drawBeds, drawCables, loadTimber } from './timber.ts';
+import { type Centreline, type TimberLook, drawBeds, drawCables, drawOverhead, loadTimber } from './timber.ts';
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
 const url = new URL(location.href).searchParams;
@@ -30,16 +31,16 @@ for (const [file, href] of Object.entries(faces)) {
 
 // ---- which planting ------------------------------------------------------------------------------------------------
 // Every run of the simulator that has been grown on this machine (scenes/<snapshot>/runs/<name>/growth.json).
-const grown = import.meta.glob('../../scenes/six-bay-v1/runs/*/growth.json', { query: '?url', import: 'default', eager: true }) as Record<string, string>;
+const grown = import.meta.glob('@scene/runs/*/growth.json', { query: '?url', import: 'default', eager: true }) as Record<string, string>;
 const runs = new Map(Object.entries(grown).map(([file, href]) => [file.split('/').at(-2)!, href]));
 const RUN_NAMES: Record<string, string> = { 'trained-10y': 'Tended, ten years', 'untended-10y': 'Untended, ten years' };
 const run = runs.has(url.get('run') ?? '') ? url.get('run')! : runs.has('trained-10y') ? 'trained-10y' : [...runs.keys()][0];
 if (!run) throw new Error('no planting has been grown yet: npm run grow');
 const growthUrl = runs.get(run)!;
 // each run was grown on one version of the building: the snapshot as it is, or with cables added to try
-const setups = import.meta.glob('../../scenes/six-bay-v1/runs/*/run.json', { import: 'default', eager: true }) as Record<string, { bower?: string }>;
+const setups = import.meta.glob('@scene/runs/*/run.json', { import: 'default', eager: true }) as Record<string, { bower?: string }>;
 const builtAs = Object.entries(setups).find(([file]) => file.split('/').at(-2) === run)?.[1].bower ?? 'bower.json';
-const buildings = import.meta.glob('../../scenes/six-bay-v1/bower*.json', { query: '?url', import: 'default', eager: true }) as Record<string, string>;
+const buildings = import.meta.glob('@scene/bower*.json', { query: '?url', import: 'default', eager: true }) as Record<string, string>;
 const bowerUrl = Object.entries(buildings).find(([file]) => file.endsWith(`/${builtAs}`))?.[1];
 if (!bowerUrl) throw new Error(`${run} was grown on ${builtAs}, which is not in the scene: npm run convert`);
 
@@ -80,7 +81,11 @@ const sunAsked = (url.get('sun') ?? '').split(',').map(Number);
 paper.setSun(sunAsked.length === 2 && sunAsked.every(Number.isFinite) ? sunAt(sunAsked[0]!, sunAsked[1]!) : new THREE.Vector3(-0.609, 0.669, 0.426));
 paper.resize();
 
-const timber = await loadTimber(timberUrl);
+const centrelines = (await (await fetch(centrelinesUrl)).json()).members as Centreline[];
+const timber = await loadTimber(timberUrl, centrelines);
+// in plan, the arches, the rings and the crown overhead, so that the shade has something to be read against
+paper.planOnly.add(drawOverhead(centrelines, ['arch', 'ring', 'crown']));
+if (url.has('grain')) timber.setGrain(Number(url.get('grain')));
 paper.scene.add(timber.group);
 paper.frame(timber.bounds);
 const assembly = makeAssembly(timber, plan as AssemblyPlan);
@@ -395,6 +400,7 @@ Object.assign(window, {
       if (p.view) setView(p.view);
       if (p.yaw !== undefined) paper.turnTo(p.yaw, p.up ?? 80);
       if (p.view === 'drawing') paper.focus(p.lookAt ?? null, p.zoom ?? 1);
+      else if (p.view && p.view !== 'round') paper.zoom(p.view, p.zoom ?? 1);
       organsFrom = null;
       state.drawnAt = Number.NaN;
       await this.film(p.at ?? state.at, 0);

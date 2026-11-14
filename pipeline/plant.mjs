@@ -18,7 +18,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const snapshot = process.argv.slice(2).find((a) => !a.startsWith('--')) ?? 'six-bay-v1';
+const snapshot = process.argv.slice(2).find((a) => !a.startsWith('--')) ?? JSON.parse(readFileSync(new URL('../snapshot.json', import.meta.url), 'utf8')).snapshot;
 const design = JSON.parse(readFileSync(resolve(root, 'releases', snapshot, 'design.json'), 'utf8'));
 const bower = JSON.parse(readFileSync(resolve(root, 'scenes', snapshot, 'bower.json'), 'utf8'));
 

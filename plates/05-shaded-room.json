@@ -10,6 +10,6 @@
   "row": [
     { "view": "plan", "at": "date:2036-06-21", "sun": [172, 12.5], "shade": 0.36 },
     { "view": "drawing", "at": "build:1", "lines": "marked", "sun": [172, 14] },
-    { "view": "drawing", "at": "date:2029-07-10", "lines": "marked", "lookAt": [-3.9, -4.6, 2.3], "zoom": 2.6, "sun": [172, 14] }
+    { "view": "drawing", "at": "date:2029-07-10", "lines": "marked", "lookAt": [-3.1, -5.2, 2.3], "zoom": 2.6, "sun": [172, 14] }
   ]
 }

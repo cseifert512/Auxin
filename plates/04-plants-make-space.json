@@ -1,6 +1,6 @@
 {
-  "for": "Slide 4, Plants make space. One drawing with three modes, one for each tab on the slide.",
-  "shows": "Space: the whole room unrolled, as seen turning on the spot in the middle of it; drag to turn, and scrub or play from installation to an established room and on through a year of seasons. Light: the floor in plan with the shade on it, the frame alone beside the established room, through a midsummer day. Time: one turn of the room in which each bay is drawn at a later moment.",
+  "for": "Slide 4, Plants make space. One drawing with three modes, one for each tab on the slide. It opens on Time: the first sight of the building.",
+  "shows": "Time: the whole building from three places (from above, on the approach, standing inside), from the design through assembly, planting and establishment and on through a year of seasons. Space: the whole room unrolled, as seen turning on the spot in the middle of it; drag to turn, and scrub or play from installation to an established room and on through a year of seasons. Light: the floor in plan with the shade on it at installation, establishing and established, through a midsummer day; the arches, rings and crown overhead are drawn broken, and a red mark on the circle round each plan is where the sun stands.",
   "statement": "A growth scenario on stated assumptions, not a forecast. Concept geometry; trial planting.",
   "slot": [
     1117,
@@ -13,6 +13,303 @@
   "gutter": 14,
   "piece": {
     "modes": {
+      "time": {
+        "label": "Time",
+        "line": "A place that develops after installation.",
+        "seconds": 40,
+        "row": [
+          {
+            "view": "drawing",
+            "label": "From above",
+            "zoom": 1.06
+          },
+          {
+            "view": "approach",
+            "label": "On the approach",
+            "zoom": 1.28
+          },
+          {
+            "view": "inside",
+            "label": "Inside"
+          }
+        ],
+        "moments": [
+          {
+            "at": "build:0.05",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "The design"
+          },
+          {
+            "at": "build:0.11",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "The design"
+          },
+          {
+            "at": "build:0.17",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "Assembly"
+          },
+          {
+            "at": "build:0.23",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "Assembly"
+          },
+          {
+            "at": "build:0.29",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "Assembly"
+          },
+          {
+            "at": "build:0.35",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "Assembly"
+          },
+          {
+            "at": "build:0.41",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "Assembly"
+          },
+          {
+            "at": "build:0.47",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "Assembly"
+          },
+          {
+            "at": "build:0.53",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "Assembly"
+          },
+          {
+            "at": "build:0.59",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "Assembly"
+          },
+          {
+            "at": "build:0.65",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "Assembly"
+          },
+          {
+            "at": "build:0.71",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "Assembly"
+          },
+          {
+            "at": "build:0.77",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "Assembly"
+          },
+          {
+            "at": "build:0.83",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "Assembly"
+          },
+          {
+            "at": "build:0.89",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "Assembly"
+          },
+          {
+            "at": "build:0.95",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "Assembly"
+          },
+          {
+            "at": "build:1.0",
+            "sun": [
+              80,
+              13
+            ],
+            "stage": "At installation"
+          },
+          {
+            "at": "date:2027-05-01",
+            "sun": [
+              121,
+              13.5
+            ],
+            "stage": "Planting"
+          },
+          {
+            "at": "date:2027-07-10",
+            "sun": [
+              191,
+              14
+            ],
+            "stage": "Establishing"
+          },
+          {
+            "at": "date:2028-07-10",
+            "sun": [
+              191,
+              14
+            ],
+            "stage": "Establishing"
+          },
+          {
+            "at": "date:2029-07-10",
+            "sun": [
+              191,
+              14
+            ],
+            "stage": "Establishing"
+          },
+          {
+            "at": "date:2030-07-10",
+            "sun": [
+              191,
+              14
+            ],
+            "stage": "Establishing"
+          },
+          {
+            "at": "date:2031-07-10",
+            "sun": [
+              191,
+              14
+            ],
+            "stage": "Establishing"
+          },
+          {
+            "at": "date:2032-07-10",
+            "sun": [
+              191,
+              14
+            ],
+            "stage": "Establishing"
+          },
+          {
+            "at": "date:2033-07-10",
+            "sun": [
+              191,
+              14
+            ],
+            "stage": "Establishing"
+          },
+          {
+            "at": "date:2034-07-10",
+            "sun": [
+              191,
+              14
+            ],
+            "stage": "Established"
+          },
+          {
+            "at": "date:2035-07-10",
+            "sun": [
+              191,
+              14
+            ],
+            "stage": "Established · summer",
+            "poster": true
+          },
+          {
+            "at": "date:2035-09-20",
+            "sun": [
+              263,
+              13.5
+            ],
+            "stage": "Established · early autumn"
+          },
+          {
+            "at": "date:2035-10-25",
+            "sun": [
+              298,
+              13
+            ],
+            "stage": "Established · autumn"
+          },
+          {
+            "at": "date:2035-11-25",
+            "sun": [
+              329,
+              12.5
+            ],
+            "stage": "Established · leaf fall"
+          },
+          {
+            "at": "date:2036-01-15",
+            "sun": [
+              15,
+              12.5
+            ],
+            "stage": "Established · winter"
+          },
+          {
+            "at": "date:2036-03-25",
+            "sun": [
+              84,
+              13
+            ],
+            "stage": "Established · early spring"
+          },
+          {
+            "at": "date:2036-05-18",
+            "sun": [
+              138,
+              14
+            ],
+            "stage": "Established · spring"
+          },
+          {
+            "at": "date:2036-06-21",
+            "sun": [
+              172,
+              14
+            ],
+            "stage": "Established · summer"
+          }
+        ],
+        "hint": "drag to move through time"
+      },
       "space": {
         "label": "Space",
         "line": "Planting becomes part of the room.",
@@ -144,7 +441,8 @@
             ],
             "stage": "Established · summer"
           }
-        ]
+        ],
+        "hint": "drag to turn"
       },
       "light": {
         "label": "Light",
@@ -154,12 +452,20 @@
           {
             "view": "plan",
             "at": "build:1",
-            "shade": 0.36
+            "shade": 0.36,
+            "label": "At installation"
+          },
+          {
+            "view": "plan",
+            "at": "date:2029-06-21",
+            "shade": 0.36,
+            "label": "Establishing"
           },
           {
             "view": "plan",
             "at": "date:2036-06-21",
-            "shade": 0.36
+            "shade": 0.36,
+            "label": "Established"
           }
         ],
         "moments": [
@@ -423,71 +729,8 @@
             ],
             "stage": "Midsummer · 6 pm"
           }
-        ]
-      },
-      "time": {
-        "label": "Time",
-        "line": "A place that develops after installation.",
-        "round": {
-          "from": 34,
-          "slices": 72,
-          "raise": 0.2,
-          "sectors": [
-            {
-              "until": 63,
-              "at": "build:1",
-              "sun": [
-                80,
-                13
-              ]
-            },
-            {
-              "until": 116,
-              "at": "date:2027-07-10",
-              "sun": [
-                191,
-                14
-              ]
-            },
-            {
-              "until": 184,
-              "at": "date:2029-07-10",
-              "sun": [
-                191,
-                14
-              ]
-            },
-            {
-              "until": 238,
-              "at": "date:2035-05-18",
-              "sun": [
-                138,
-                14
-              ]
-            },
-            {
-              "until": 302,
-              "at": "date:2035-10-25",
-              "sun": [
-                298,
-                13
-              ]
-            },
-            {
-              "until": 360,
-              "at": "date:2036-01-15",
-              "sun": [
-                15,
-                12.5
-              ]
-            }
-          ]
-        },
-        "moments": [
-          {
-            "stage": "Each bay a later moment: installation, establishing, then established in spring, autumn and winter"
-          }
-        ]
+        ],
+        "hint": "drag to move through the day"
       }
     }
   }

@@ -71,7 +71,11 @@
     for (const b of tabs.children) b.setAttribute('aria-pressed', String(b.dataset.mode === mode.id));
     $('line').textContent = mode.line ?? '';
     $('poster').src = `poster-${mode.id}.png`;
-    $('hint').textContent = mode.turns ? 'drag to turn' : 'drag to move through the day';
+    $('hint').textContent = mode.hint ?? (mode.turns ? 'drag to turn' : 'drag to move through time');
+    // what each panel of a row is, written at its head
+    const heads = $('panels');
+    heads.replaceChildren(...(mode.panels ?? []).map((text) => Object.assign(document.createElement('span'), { textContent: text })));
+    heads.style.columnGap = `${(mode.gutter ?? 0) * 100}%`;
     window.__duration = mode.seconds;
     // the first picture now, the rest behind it
     for (const f of mode.frames) picture(f.src);

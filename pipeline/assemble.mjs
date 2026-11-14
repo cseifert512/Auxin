@@ -17,7 +17,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const snapshot = process.argv[2] ?? 'six-bay-v1';
+const snapshot = process.argv[2] ?? JSON.parse(readFileSync(new URL('../snapshot.json', import.meta.url), 'utf8')).snapshot;
 const from = resolve(root, 'releases', snapshot);
 const to = resolve(root, 'scenes', snapshot);
 

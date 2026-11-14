@@ -6,7 +6,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const [snapshot = 'six-bay-v1', ...named] = process.argv.slice(2);
+const [snapshot = JSON.parse(readFileSync(new URL('../snapshot.json', import.meta.url), 'utf8')).snapshot, ...named] = process.argv.slice(2);
 const runsDir = resolve(root, 'scenes', snapshot, 'runs');
 const runs = (named.length ? named : readdirSync(runsDir)).filter((r) => existsSync(resolve(runsDir, r, 'report.json')));
 const pct = (x) => `${Math.round(100 * x)}%`.padStart(4);

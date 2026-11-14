@@ -17,11 +17,15 @@ This repository joins three others and changes none of them:
 Needs Node 24 and `npm install` done once in `Horti-code-ture`. `npm install` here is needed only for films: it
 brings ffmpeg.
 
+Which building is drawn is one setting: the snapshot named in `snapshot.json`. Every command below reads it, and
+so does the studio. To draw another building, copy its snapshot into `releases/`, name it there, and run the same
+commands again.
+
 ```bash
-npm run convert                         # releases/six-bay-v1 -> scenes/six-bay-v1/bower.json
-npm run plant                           # the planting, from its rule -> scenes/six-bay-v1/planting.json
-npm run assemble                        # the order the joints allow -> scenes/six-bay-v1/assembly.json
-npm run grow -- six-bay-v1 trained 10 7 --specimen=3    # ten tended years -> scenes/six-bay-v1/runs/trained-10y/
+npm run convert                         # releases/<snapshot> -> scenes/<snapshot>/bower.json
+npm run plant                           # the planting, from its rule -> scenes/<snapshot>/planting.json
+npm run assemble                        # the order the joints allow -> scenes/<snapshot>/assembly.json
+npm run grow -- <snapshot> trained 10 7 --specimen=3    # ten tended years -> scenes/<snapshot>/runs/trained-10y/
 npm run compare                         # the runs of a scene side by side
 npm run studio                          # the drawing, on http://localhost:5310
 npm run film                            # exports/approach-ink/: the line of time as a film, wide and upright
@@ -29,7 +33,9 @@ npm run film                            # exports/approach-ink/: the line of tim
 
 In the studio: **Play** or drag the line of time; Space plays, the arrow keys step along it (further with Shift).
 Drag to turn the drawing, scroll to come closer. **Timber / Left to silver / Ink** draws the timber in its own
-colour, held by a finish that is kept up; the same left bare to weather; or as plain ink on paper.
+colour, held by a finish that is kept up; the same left bare to weather; or as plain ink on paper. Coloured
+timber is drawn glue-laminated: boards stacked through each member's depth, the glue lines on its sides, and each
+board's grain drawn as a few lines at a distance and more of the real rings close to (`?grain=0` for flat colour).
 `?day=3363&view=inside` opens on a day of growth and a view, `?build=0.5` half-way through the assembly,
 `?timber=ink` in ink, and `?bare` hides the controls for a still. A planting grown while the studio is running
 shows after it is restarted.
@@ -56,7 +62,9 @@ no film. The training lines are drawn as thin as they are, which is nearly not a
 
 ```bash
 npm run plate                     # every plate described in plates/ -> exports/deck/<name>.png and .webp
-npm run plate -- 04-time          # one of them
+npm run plate -- 05-shaded-room   # one of them
+npm run plate -- 04-plants-make-space --timber=wood    # the same with the timber in its colour: <name>-timber
+npm run plate -- 04-plants-make-space --mode=light     # one mode of a piece again, leaving the others
 ```
 
 A plate is a drawing made to fit one space in the presentation, on that page's paper and in its ink, with
@@ -75,7 +83,7 @@ drive it (`__setMode`, `__setT`, `__play`, or the same by `postMessage`), as it 
 
 | Description | For |
 |---|---|
-| `04-plants-make-space` (piece) | Slide 4. Space: the room unrolled, from installation to established and through a year. Light: the floor in plan with its shade, frame alone beside established, through a midsummer day. Time: one turn of the room, each bay a later moment. |
+| `04-plants-make-space` (piece) | Slide 4. Time, which it opens on: the whole building from above, on the approach and from inside, through design, assembly, planting, establishment and a year of seasons. Space: the room unrolled, from installation to established and through a year. Light: the floor in plan with its shade, frame alone beside established, through a midsummer day. Made in ink and, as `04-plants-make-space-timber`, in timber. |
 | `05-shaded-room` (plate) | Slide 5, Shaded room: the shade wanted, the ways up from the soil, a pier with its lines |
 
 The views a plate can use beyond the studio's three: `plan` (from straight above, cut 1.2 m up, so that what

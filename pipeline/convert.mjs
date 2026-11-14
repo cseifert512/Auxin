@@ -23,7 +23,7 @@ import { trainingLines } from './lines.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const options = Object.fromEntries(process.argv.slice(2).filter((a) => a.startsWith('--')).map((a) => a.slice(2).split('=')));
-const snapshot = process.argv.slice(2).find((a) => !a.startsWith('--')) ?? 'six-bay-v1';
+const snapshot = process.argv.slice(2).find((a) => !a.startsWith('--')) ?? JSON.parse(readFileSync(new URL('../snapshot.json', import.meta.url), 'utf8')).snapshot;
 const from = resolve(root, 'releases', snapshot);
 const to = resolve(root, 'scenes', snapshot);
 const read = (name) => JSON.parse(readFileSync(resolve(from, name), 'utf8'));

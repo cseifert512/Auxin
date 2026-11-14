@@ -113,6 +113,7 @@ export function makePaper(
     scene.environment = skyTarget.texture;
     scene.environmentIntensity = 0.9;
     renderer.shadowMap.needsUpdate = true;
+    placeSunMark();
   }
 
   // the ground is paper: all it shows is where shade falls
@@ -122,6 +123,23 @@ export function makePaper(
   ground.rotation.x = -Math.PI / 2;
   ground.receiveShadow = true;
   scene.add(ground);
+
+  // In plan only: what explains the shade. A circle round the building with a mark on it where the sun stands,
+  // in the factory drawings' red for what moves; and whatever else is put here (the frame overhead, in main.ts).
+  const planOnly = new THREE.Group();
+  planOnly.visible = false;
+  scene.add(planOnly);
+  const sunTrack = new THREE.Mesh(new THREE.RingGeometry(0.992, 1, 240), new THREE.MeshBasicMaterial({ color: MUTED, transparent: true, opacity: 0.5, toneMapped: false }));
+  sunTrack.rotation.x = -Math.PI / 2;
+  const sunMark = new THREE.Mesh(new THREE.CircleGeometry(1, 48), new THREE.MeshBasicMaterial({ color: 0xb4492f, toneMapped: false }));
+  sunMark.rotation.x = -Math.PI / 2;
+  planOnly.add(sunTrack, sunMark);
+  const sunRing = { x: 0, z: 0, radius: 9 };
+  function placeSunMark(): void {
+    const flat = Math.hypot(sunDir.x, sunDir.z) || 1;
+    sunMark.position.set(sunRing.x + (sunDir.x / flat) * sunRing.radius, 0.03, sunRing.z + (sunDir.z / flat) * sunRing.radius);
+    sunMark.visible = sunDir.y > 0;
+  }
 
   // ---- the places to look from ---------------------------------------------------------------------------------
   const drawing = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.5, 400);
@@ -198,6 +216,11 @@ export function makePaper(
     plan.left = -halfH * aspect;
     plan.right = halfH * aspect;
     plan.updateProjectionMatrix();
+    // the circle the sun's mark goes round: just inside the sheet
+    sunRing.radius = Math.min(halfH, halfH * aspect) * 0.95;
+    sunTrack.scale.setScalar(sunRing.radius);
+    sunMark.scale.setScalar(sunRing.radius * 0.034);
+    placeSunMark();
   }
 
   /** Stand in the middle of the room and face `yawDeg` round from north, taking in `upDeg` from top to bottom. */
@@ -253,6 +276,8 @@ export function makePaper(
     plan.up.set(0, 0, -1);
     plan.lookAt(centre.x, 0, centre.z);
     controls.plan!.target.set(centre.x, 0, centre.z);
+    Object.assign(sunRing, { x: centre.x, z: centre.z });
+    sunTrack.position.set(centre.x, 0.02, centre.z);
     fitPlan();
     turnTo(turned.yawDeg, turned.upDeg);
 
@@ -273,6 +298,7 @@ export function makePaper(
   let active: ViewId = 'drawing';
   function setView(id: ViewId): void {
     active = id;
+    planOnly.visible = id === 'plan';
     for (const [key, c] of Object.entries(controls)) c.enabled = key === id;
     moved = true;
   }
@@ -340,6 +366,14 @@ export function makePaper(
     setView,
     turnTo,
     focus,
+    planOnly,
+    /** Come closer in a view that is looked through a lens or down from above: 1 is the whole of it. */
+    zoom(id: ViewId, by: number): void {
+      const camera = cameras[id] as THREE.PerspectiveCamera | THREE.OrthographicCamera;
+      camera.zoom = by;
+      camera.updateProjectionMatrix();
+      moved = true;
+    },
     /** How dark the shade on the ground is drawn: 0 none, 1 solid. */
     setShade(opacity: number): void {
       shade.opacity = opacity;

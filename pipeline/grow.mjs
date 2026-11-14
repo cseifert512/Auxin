@@ -20,7 +20,7 @@ const core = (file) => import(pathToFileURL(resolve(horti, 'packages/core/src', 
 
 // options: --bower=<file in the scene folder>  --plan=<file in the scene folder>  --specimen=<metres each plant stands when it goes in>  --name=<run folder>
 const options = Object.fromEntries(process.argv.slice(2).filter((a) => a.startsWith('--')).map((a) => a.slice(2).split('=')));
-const [snapshot = 'six-bay-v1', careArg = 'trained', yearsArg = '10', seedArg = '7'] = process.argv.slice(2).filter((a) => !a.startsWith('--'));
+const [snapshot = JSON.parse(readFileSync(new URL('../snapshot.json', import.meta.url), 'utf8')).snapshot, careArg = 'trained', yearsArg = '10', seedArg = '7'] = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 const care = careArg === 'untended' ? 'untended' : 'trained';
 const years = Number(yearsArg);
 const seed = Number(seedArg);
