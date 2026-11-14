@@ -1,0 +1,1 @@
+function e(e,t){return(t!==void 0&&t!=="default"?e[t]:void 0)??e.default}var t=.45;export{e as n,t};

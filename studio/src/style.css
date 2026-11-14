@@ -309,3 +309,40 @@ html:has(body.plate),
 body.plate {
   background: transparent !important;
 }
+
+/* set into a slide (?embed): the slide has its own title and its own words, and there is one planting to show */
+body.embed .title,
+body.embed #run,
+body.embed .statement {
+  display: none;
+}
+
+/* the still under the drawing: seen while it is made ready, and kept where it cannot be made */
+.poster {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+body.still .loading,
+body.still .tools,
+body.film .poster,
+body.plate .poster {
+  display: none;
+}
+
+/* the drawing is not shown until it is ready: until then it would be a blank sheet over the still */
+#sheet {
+  opacity: 0;
+}
+body.ready #sheet {
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+body.film #sheet,
+body.plate #sheet {
+  opacity: 1;
+  transition: none;
+}

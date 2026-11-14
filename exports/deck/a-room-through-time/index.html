@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bower: a room through time</title>
+    <script type="module" crossorigin src="./assets/index-8RC2qwKq.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/src-CneYl6Zq.js">
+    <link rel="modulepreload" crossorigin href="./assets/kit-DELrSr2q.js">
+    <link rel="modulepreload" crossorigin href="./assets/look-B2uy2zkF.js">
+    <link rel="modulepreload" crossorigin href="./assets/stand-in-BCeLU1aa.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-8yarxccI.css">
+  </head>
+  <body>
+    <!-- A still of the room, made beforehand (npm run live). It is what is seen until the drawing is ready, and all
+         that is seen if this machine cannot draw it. -->
+    <img id="poster" class="poster" src="./poster.webp" alt="" onerror="this.remove()" />
+    <canvas id="sheet"></canvas>
+
+    <header class="title">
+      <h1>A room through time</h1>
+      <p id="subtitle">Six-bay room</p>
+    </header>
+
+    <div class="tools">
+      <select id="run" aria-label="Planting"></select>
+      <nav class="switch" role="group" aria-label="Timber">
+        <button type="button" data-timber="wood" aria-pressed="true">Timber</button>
+        <button type="button" data-timber="bare" aria-pressed="false">Left to silver</button>
+        <button type="button" data-timber="ink" aria-pressed="false">Ink</button>
+      </nav>
+      <nav class="switch" role="group" aria-label="View">
+        <button type="button" data-view="drawing" aria-pressed="true">Drawing</button>
+        <button type="button" data-view="approach" aria-pressed="false">Approach</button>
+        <button type="button" data-view="inside" aria-pressed="false">Inside</button>
+        <button type="button" data-view="plan" aria-pressed="false">Plan</button>
+      </nav>
+    </div>
+
+    <p id="loading" class="loading">Reading the building and ten years of growth…</p>
+
+    <footer class="time" hidden>
+      <button type="button" id="play" aria-label="Play">Play</button>
+      <div class="when">
+        <strong id="date">—</strong>
+        <span id="age">—</span>
+      </div>
+      <div class="track">
+        <input id="scrub" type="range" min="0" max="1" step="1" value="0" aria-label="Day" />
+        <div id="years" class="years" aria-hidden="true"></div>
+      </div>
+      <dl class="reading">
+        <div><dt id="key1">members</dt><dd id="value1">0</dd></div>
+        <div><dt id="key2">joints made</dt><dd id="value2">0</dd></div>
+      </dl>
+    </footer>
+    <p id="statement" class="statement"></p>
+
+    <script>
+      // if the drawing cannot be made here (no graphics card to speak of, an old browser), the still stays and nothing is said
+      for (const kind of ['error', 'unhandledrejection']) addEventListener(kind, () => document.getElementById('loading').hidden || document.body.classList.add('still'));
+    </script>
+  </body>
+</html>

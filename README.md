@@ -58,6 +58,40 @@ approach is walked on, to stand before the bay in front. A film ends on the last
 no film. The training lines are drawn as thin as they are, which is nearly not at all; `--lines=marked`, or
 `?lines=marked` in the studio, draws them in green to be looked at.
 
+## The live drawing, for the presentation
+
+```bash
+npm run live        # -> exports/deck/a-room-through-time/: the studio as plain files, about 12 MB
+```
+
+The room through time is the one drawing that goes to the presentation live: turned by hand, played, scrubbed,
+changed from view to view. Drawn from the whole record of a run it is far too heavy for that (a hundred megabytes
+to read, eight and a half million triangles a frame, most of them thinner than a pixel). `npm run live` makes it
+light without changing what is seen:
+
+- `pipeline/lighten.mjs` writes a light copy of each run, `scenes/<snapshot>/light/<run>.growth`: stems kept only
+  where they bend, twigs too fine to see left out with the thorns and rootlets, and, where a plant is a crowd of
+  leaves, fewer of them, each a little larger. About 5 MB, from about 100.
+- the studio, when it draws live, draws a leaf far across the room as the outline of each blade
+  (`studio/src/coarsen.ts`) and keeps the plants' own models for the leaves nearest the eye; it brings the leaves
+  up to the day a few kinds at a time while it plays, so that no frame waits for all of them.
+- a still of the established room is made first. The page shows it at once, brings the drawing up over it when
+  it is ready, and keeps it if the machine cannot draw at all.
+
+What comes out is plain files. It needs a web server (any: the presentation's own) and nothing else: nothing to
+install, nothing to run first. Set into a slide:
+
+```html
+<iframe src="a-room-through-time/index.html?embed&paper=EEF3EA&ink=102820&view=approach"></iframe>
+```
+
+`embed` leaves out the title and the words under the drawing; `paper` and `ink` are the slide's; `view` is where
+it opens (`drawing`, `approach`, `inside`, `plan`); `play` starts it by itself. On this machine's built-in
+graphics it plays at fifty to sixty frames a second, where the whole record gave fifteen.
+
+Pictures made beforehand (plates, pieces, films) still take the whole record, and so does the studio with
+`?whole`. `window.studio.bench()` and `.pools()` in the studio say what a frame costs and what is in it.
+
 ## Plates for the presentation
 
 ```bash
@@ -74,10 +108,6 @@ and an hour), or the room `round`: the whole room unrolled as seen turning on th
 each bay can be drawn at its own moment, so a turn of the room is also a passage of time. `shows` in each
 description says what the plate shows, for the caption.
 
-Nothing that goes to the presentation works anything out when it is shown. The studio does (it reads ten years
-of growth and draws every leaf), so the studio is for making drawings, not for showing them: what is shown is
-pictures made from it beforehand, and a page that turns through them.
-
 A description with `modes` makes a **piece** instead: a drawing to turn, scrub and play. Each mode is drawn at a
 list of moments, and those frames go into `exports/deck/<name>/` with a small player (`deck/player/`): an
 `index.html` that needs nothing but the files beside it. Dragging turns the room or moves along the day, the line
@@ -88,7 +118,6 @@ drive it (`__setMode`, `__setT`, `__play`, or the same by `postMessage`), as it 
 | Description | For |
 |---|---|
 | `04-plants-make-space` (piece) | Slide 4. Time, which it opens on: the whole building from above, on the approach and from inside, through design, assembly, planting, establishment and a year of seasons. Space: the room unrolled, from installation to established and through a year. Light: the floor in plan with its shade, frame alone beside established, through a midsummer day. Made in ink and, as `04-plants-make-space-timber`, in timber. |
-| `a-room-through-time` (piece) | A slide of its own, 16:9. What the studio draws, made beforehand as pictures so that nothing is worked out when it is shown: the building on the approach, from above and from inside, along one line of time (design, assembly, planting, establishment season by season). Changing view keeps the moment. In ink and, as `a-room-through-time-timber`, in timber. |
 | `05-shaded-room` (plate) | Slide 5, Shaded room: the shade wanted, the ways up from the soil, a pier with its lines |
 
 The views a plate can use beyond the studio's three: `plan` (from straight above, cut 1.2 m up, so that what

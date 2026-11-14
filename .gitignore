@@ -4,6 +4,7 @@ studio/.vite*/
 
 # made by `npm run grow` in about twenty seconds; run.json beside it says from what
 scenes/*/runs/*/growth.json
+scenes/*/light/
 scenes/*/runs/*.log
 scenes/*/*.log
 
@@ -17,3 +18,6 @@ exports/**/*.mp4
 
 # scratch pictures while plates are made
 exports/deck/.work/
+
+# the still the live drawing opens on: made by npm run live
+studio/public/

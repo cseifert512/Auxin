@@ -83,7 +83,9 @@ export function makePaper(
   // ---- light: the plants are lit as the viewer lights them, so their colours are the ones they were made with ----
   const sun = new THREE.DirectionalLight(0xfff0dc, 3.4);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(4096, 4096);
+  // a picture made beforehand takes shade as fine as it comes; drawn live, half that each way is a quarter of the work
+  const whole = asked.has('whole') || asked.has('plate') || asked.has('film');
+  sun.shadow.mapSize.set(whole ? 4096 : 2048, whole ? 4096 : 2048);
   sun.shadow.bias = -0.0003;
   sun.shadow.normalBias = 0.012;
   sun.shadow.radius = 2.5;
@@ -307,7 +309,7 @@ export function makePaper(
   function resize(): boolean {
     const width = Math.max(1, canvas.clientWidth);
     const height = Math.max(1, canvas.clientHeight);
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, asked.has('whole') || asked.has('plate') || asked.has('film') ? 2 : 1.5);
     if (width === size.width && height === size.height && pixelRatio === renderer.getPixelRatio()) return false;
     size.width = width;
     size.height = height;
