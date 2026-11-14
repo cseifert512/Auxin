@@ -66,12 +66,17 @@ and an hour), or the room `round`: the whole room unrolled as seen turning on th
 each bay can be drawn at its own moment, so a turn of the room is also a passage of time. `shows` in each
 description says what the plate shows, for the caption.
 
-| Plate | For |
+A description with `modes` makes a **piece** instead: a drawing to turn, scrub and play. Each mode is drawn at a
+list of moments, and those frames go into `exports/deck/<name>/` with a small player (`deck/player/`): an
+`index.html` that needs nothing but the files beside it. Dragging turns the room or moves along the day, the line
+of time scrubs, and left alone it plays. On paper, or with `?print`, it shows one still for the mode, which is
+also saved as `poster-<mode>.png`. Set into a slide with `?embed` it shows only the drawing, and the slide can
+drive it (`__setMode`, `__setT`, `__play`, or the same by `postMessage`), as it does the factory drawings.
+
+| Description | For |
 |---|---|
-| `04-space` | Slide 4, Space: the room unrolled at installation, and established in midsummer |
-| `04-light` | Slide 4, Light: the floor in plan with its shade, frame alone, established summer, winter |
-| `04-time` | Slide 4, Time: one turn of the room, each bay at a later moment and season |
-| `05-shaded-room` | Slide 5, Shaded room: the shade wanted, the ways up from the soil, a pier with its lines |
+| `04-plants-make-space` (piece) | Slide 4. Space: the room unrolled, from installation to established and through a year. Light: the floor in plan with its shade, frame alone beside established, through a midsummer day. Time: one turn of the room, each bay a later moment. |
+| `05-shaded-room` (plate) | Slide 5, Shaded room: the shade wanted, the ways up from the soil, a pier with its lines |
 
 The views a plate can use beyond the studio's three: `plan` (from straight above, cut 1.2 m up, so that what
 shows is the floor and the shade on it) and `round`.

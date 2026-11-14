@@ -1,0 +1,252 @@
+{
+  "name": "04-plants-make-space",
+  "for": "Slide 4, Plants make space. One drawing with three modes, one for each tab on the slide.",
+  "slot": [
+    1117,
+    326
+  ],
+  "paper": "#EEF3EA",
+  "ink": "#102820",
+  "statement": "A growth scenario on stated assumptions, not a forecast. Concept geometry; trial planting.",
+  "modes": [
+    {
+      "id": "space",
+      "label": "Space",
+      "line": "Planting becomes part of the room.",
+      "turns": true,
+      "seconds": 30,
+      "frames": [
+        {
+          "src": "frames/space-00.webp",
+          "stage": "At installation"
+        },
+        {
+          "src": "frames/space-01.webp",
+          "stage": "Establishing"
+        },
+        {
+          "src": "frames/space-02.webp",
+          "stage": "Establishing"
+        },
+        {
+          "src": "frames/space-03.webp",
+          "stage": "Establishing"
+        },
+        {
+          "src": "frames/space-04.webp",
+          "stage": "Establishing"
+        },
+        {
+          "src": "frames/space-05.webp",
+          "stage": "Establishing"
+        },
+        {
+          "src": "frames/space-06.webp",
+          "stage": "Established"
+        },
+        {
+          "src": "frames/space-07.webp",
+          "stage": "Established · summer"
+        },
+        {
+          "src": "frames/space-08.webp",
+          "stage": "Established · early autumn"
+        },
+        {
+          "src": "frames/space-09.webp",
+          "stage": "Established · autumn"
+        },
+        {
+          "src": "frames/space-10.webp",
+          "stage": "Established · leaf fall"
+        },
+        {
+          "src": "frames/space-11.webp",
+          "stage": "Established · winter"
+        },
+        {
+          "src": "frames/space-12.webp",
+          "stage": "Established · early spring"
+        },
+        {
+          "src": "frames/space-13.webp",
+          "stage": "Established · spring"
+        },
+        {
+          "src": "frames/space-14.webp",
+          "stage": "Established · summer"
+        }
+      ]
+    },
+    {
+      "id": "light",
+      "label": "Light",
+      "line": "Growth changes the light we inhabit.",
+      "turns": false,
+      "seconds": 22,
+      "frames": [
+        {
+          "src": "frames/light-00.webp",
+          "stage": "Midsummer · 6 am"
+        },
+        {
+          "src": "frames/light-01.webp",
+          "stage": "Midsummer · 6:20 am"
+        },
+        {
+          "src": "frames/light-02.webp",
+          "stage": "Midsummer · 6:40 am"
+        },
+        {
+          "src": "frames/light-03.webp",
+          "stage": "Midsummer · 7 am"
+        },
+        {
+          "src": "frames/light-04.webp",
+          "stage": "Midsummer · 7:20 am"
+        },
+        {
+          "src": "frames/light-05.webp",
+          "stage": "Midsummer · 7:40 am"
+        },
+        {
+          "src": "frames/light-06.webp",
+          "stage": "Midsummer · 8 am"
+        },
+        {
+          "src": "frames/light-07.webp",
+          "stage": "Midsummer · 8:20 am"
+        },
+        {
+          "src": "frames/light-08.webp",
+          "stage": "Midsummer · 8:40 am"
+        },
+        {
+          "src": "frames/light-09.webp",
+          "stage": "Midsummer · 9 am"
+        },
+        {
+          "src": "frames/light-10.webp",
+          "stage": "Midsummer · 9:20 am"
+        },
+        {
+          "src": "frames/light-11.webp",
+          "stage": "Midsummer · 9:40 am"
+        },
+        {
+          "src": "frames/light-12.webp",
+          "stage": "Midsummer · 10 am"
+        },
+        {
+          "src": "frames/light-13.webp",
+          "stage": "Midsummer · 10:20 am"
+        },
+        {
+          "src": "frames/light-14.webp",
+          "stage": "Midsummer · 10:40 am"
+        },
+        {
+          "src": "frames/light-15.webp",
+          "stage": "Midsummer · 11 am"
+        },
+        {
+          "src": "frames/light-16.webp",
+          "stage": "Midsummer · 11:20 am"
+        },
+        {
+          "src": "frames/light-17.webp",
+          "stage": "Midsummer · 11:40 am"
+        },
+        {
+          "src": "frames/light-18.webp",
+          "stage": "Midsummer · noon"
+        },
+        {
+          "src": "frames/light-19.webp",
+          "stage": "Midsummer · 12:20 pm"
+        },
+        {
+          "src": "frames/light-20.webp",
+          "stage": "Midsummer · 12:40 pm"
+        },
+        {
+          "src": "frames/light-21.webp",
+          "stage": "Midsummer · 1 pm"
+        },
+        {
+          "src": "frames/light-22.webp",
+          "stage": "Midsummer · 1:20 pm"
+        },
+        {
+          "src": "frames/light-23.webp",
+          "stage": "Midsummer · 1:40 pm"
+        },
+        {
+          "src": "frames/light-24.webp",
+          "stage": "Midsummer · 2 pm"
+        },
+        {
+          "src": "frames/light-25.webp",
+          "stage": "Midsummer · 2:20 pm"
+        },
+        {
+          "src": "frames/light-26.webp",
+          "stage": "Midsummer · 2:40 pm"
+        },
+        {
+          "src": "frames/light-27.webp",
+          "stage": "Midsummer · 3 pm"
+        },
+        {
+          "src": "frames/light-28.webp",
+          "stage": "Midsummer · 3:20 pm"
+        },
+        {
+          "src": "frames/light-29.webp",
+          "stage": "Midsummer · 3:40 pm"
+        },
+        {
+          "src": "frames/light-30.webp",
+          "stage": "Midsummer · 4 pm"
+        },
+        {
+          "src": "frames/light-31.webp",
+          "stage": "Midsummer · 4:20 pm"
+        },
+        {
+          "src": "frames/light-32.webp",
+          "stage": "Midsummer · 4:40 pm"
+        },
+        {
+          "src": "frames/light-33.webp",
+          "stage": "Midsummer · 5 pm"
+        },
+        {
+          "src": "frames/light-34.webp",
+          "stage": "Midsummer · 5:20 pm"
+        },
+        {
+          "src": "frames/light-35.webp",
+          "stage": "Midsummer · 5:40 pm"
+        },
+        {
+          "src": "frames/light-36.webp",
+          "stage": "Midsummer · 6 pm"
+        }
+      ]
+    },
+    {
+      "id": "time",
+      "label": "Time",
+      "line": "A place that develops after installation.",
+      "turns": true,
+      "seconds": 24,
+      "frames": [
+        {
+          "src": "frames/time-00.webp",
+          "stage": "Each bay a later moment: installation, establishing, then established in spring, autumn and winter"
+        }
+      ]
+    }
+  ]
+}

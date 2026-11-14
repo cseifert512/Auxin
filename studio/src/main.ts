@@ -255,7 +255,8 @@ const filming = url.has('film') || url.has('plate');
 if (url.has('film')) document.body.classList.add('film');
 // a plate is the drawing alone, on the paper of the page it is going to: no title, no line of time, no words
 if (url.has('plate')) document.body.classList.add('plate');
-document.body.style.background = `#${PAPER.toString(16).padStart(6, '0')}`;
+document.body.style.background = url.has('plate') ? 'transparent' : `#${PAPER.toString(16).padStart(6, '0')}`;
+if (url.has('plate')) document.documentElement.style.background = 'transparent';
 setPlaying(state.playing);
 setAt(state.at);
 describe();

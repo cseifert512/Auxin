@@ -304,3 +304,8 @@ body.plate .statement,
 body.plate .loading {
   display: none !important;
 }
+
+html:has(body.plate),
+body.plate {
+  background: transparent !important;
+}

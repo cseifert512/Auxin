@@ -70,8 +70,10 @@ export function makePaper(
   canvas: HTMLCanvasElement,
   standpoints: { approach: Standpoint; inside: Standpoint; approachTall: { eye: readonly number[]; target: readonly number[]; acrossDeg: number }; middle: readonly number[] },
 ) {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: true });
-  renderer.setClearColor(PAPER, 1);
+  // A plate is drawn on nothing: where there is no drawing the sheet is clear, so it can be laid on any page.
+  const clear = asked.has('plate');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: clear, powerPreference: 'high-performance', preserveDrawingBuffer: true });
+  renderer.setClearColor(PAPER, clear ? 0 : 1);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.shadowMap.autoUpdate = false;

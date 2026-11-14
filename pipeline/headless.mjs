@@ -97,6 +97,8 @@ export async function startStudio(port = 5318) {
     await send('Runtime.enable');
     await send('Page.enable');
     await size(width, height);
+    // a plate is taken on a clear ground, to be laid on whatever page it is for
+    if ('plate' in query) await send('Emulation.setDefaultBackgroundColorOverride', { color: { r: 0, g: 0, b: 0, a: 0 } });
     await send('Page.navigate', { url: `http://localhost:${port}/?${new URLSearchParams(query)}` });
     let ready = false;
     for (let i = 0; i < 1200 && !ready; i++) {

@@ -8,7 +8,7 @@ scenes/*/runs/*.log
 scenes/*/*.log
 
 # films are made by `npm run film`; the still beside each is kept
-exports/**/frames/
+exports/*/frames/
 exports/**/*.mp4
 
 .claude/settings.local.json
