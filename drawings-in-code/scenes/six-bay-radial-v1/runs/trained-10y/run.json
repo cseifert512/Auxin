@@ -7,8 +7,8 @@
   "years": 10,
   "seed": 7,
   "simulator": {
-    "repository": "horti-code-ture",
-    "commit": "39b42c5c8e020f6fae14f6ded4eb3fdaede662a8"
+    "repository": "project-auxin/Horti-code-ture",
+    "commit": "c27c5f76d2421d072502300fd61c47d79bbbb613"
   },
   "toCheck": [],
   "notModelledOrAssumed": [

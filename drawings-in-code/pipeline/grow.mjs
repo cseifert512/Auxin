@@ -4,8 +4,8 @@
 // Writes scenes/<snapshot>/runs/<care>-<years>y/growth.json  (every stem, leaf and flower with its days)
 //                                              report.json, report.txt, run.json
 //
-// The simulator is the one in the Horti-code-ture checkout beside this
-// repository (or at HORTI_DIR). It is read in place and nothing is written there.
+// The simulator is the one in the Horti-code-ture folder beside this one
+// (or at HORTI_DIR). It is read in place and nothing is written there.
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -79,7 +79,8 @@ const out = resolve(scene, 'runs', options.name ?? `${care}-${years}y`);
 mkdirSync(out, { recursive: true });
 const commit = (() => {
   try {
-    return execFileSync('git', ['-C', horti, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+    // the last commit that changed the simulator's folder: the repository's HEAD moves for other reasons too
+    return execFileSync('git', ['-C', horti, 'log', '-1', '--format=%H', '--', '.'], { encoding: 'utf8' }).trim() || 'unknown';
   } catch {
     return 'unknown';
   }
@@ -90,7 +91,7 @@ writeFileSync(resolve(out, 'report.json'), JSON.stringify(report, null, 2));
 writeFileSync(resolve(out, 'report.txt'), `${text}\n`);
 writeFileSync(
   resolve(out, 'run.json'),
-  `${JSON.stringify({ snapshot, bower: options.bower ?? 'bower.json', plan: options.plan ?? 'planting.json', specimenM, care, years, seed, simulator: { repository: 'horti-code-ture', commit }, toCheck: design.warnings, notModelledOrAssumed: notes, reseated: seated.summary, thinned: thinned.summary, cleared: cleared.summary }, null, 2)}\n`,
+  `${JSON.stringify({ snapshot, bower: options.bower ?? 'bower.json', plan: options.plan ?? 'planting.json', specimenM, care, years, seed, simulator: { repository: 'project-auxin/Horti-code-ture', commit }, toCheck: design.warnings, notModelledOrAssumed: notes, reseated: seated.summary, thinned: thinned.summary, cleared: cleared.summary }, null, 2)}\n`,
 );
 console.log(`\n${text}`);
 console.log(`\nwritten: ${out}`);
