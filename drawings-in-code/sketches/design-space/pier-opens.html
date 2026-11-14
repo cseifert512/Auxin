@@ -416,6 +416,7 @@
   }
   new ResizeObserver(resize).observe(canvas);
   resize();
+  ui(0);   // the caption and step are there before the first frame, which a hidden tab never gets
   window.__duration = DUR;
   window.__setT = (t) => seek(t, false);
   window.__play = () => seek(tp, true);
