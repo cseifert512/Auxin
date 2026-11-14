@@ -1,0 +1,112 @@
+id,family,parent,start_node,end_node,width_m,depth_m,length_m,min_bend_radius_m,min_radius_at_m,radius_over_depth,volume_m3,planar,laps_cut_on_outer_face,laps_cut_on_inner_face,housings,other_cuts,joints_to_review,review,collides_with,passes_close_to
+R1.rib.ccw.00,rib,R1,R1.rib.ccw.00.foot,R1.top.00,0.08,0.22,6.469,0.68,6.15,3.1,0.1139,no (0.47 m out of plane),0,11,0,2,0,tight radius,,
+R1.rib.cw.00,rib,R1,R1.rib.cw.00.foot,R1.top.00,0.08,0.22,6.469,0.68,6.15,3.1,0.1139,no (0.47 m out of plane),7,4,0,2,0,tight radius,,
+R1.rib.ccw.01,rib,R1,R1.rib.ccw.01.foot,R1.top.01,0.08,0.22,5.901,0.68,5.59,3.1,0.1039,no (0.25 m out of plane),0,10,0,2,0,tight radius,,R1.fill.cw.08
+R1.rib.cw.01,rib,R1,R1.rib.cw.01.foot,R1.top.01,0.08,0.22,5.901,0.68,5.59,3.1,0.1039,no (0.25 m out of plane),6,4,0,2,0,tight radius,,R1.fill.ccw.05
+R1.rib.ccw.02,rib,R1,R1.rib.ccw.02.foot,R1.top.02,0.08,0.22,6.469,0.68,6.16,3.1,0.1139,no (0.47 m out of plane),0,11,0,2,0,tight radius,,
+R1.rib.cw.02,rib,R1,R1.rib.cw.02.foot,R1.top.02,0.08,0.22,6.469,0.68,6.16,3.1,0.1139,no (0.47 m out of plane),7,4,0,2,0,tight radius,,
+R1.rib.ccw.03,rib,R1,R1.rib.ccw.03.foot,R1.top.03,0.08,0.22,5.901,0.68,5.59,3.1,0.1039,no (0.25 m out of plane),0,10,0,2,0,tight radius,,R1.fill.cw.10
+R1.rib.cw.03,rib,R1,R1.rib.cw.03.foot,R1.top.03,0.08,0.22,5.901,0.68,5.59,3.1,0.1039,no (0.25 m out of plane),6,4,0,2,0,tight radius,,R1.fill.ccw.07
+R1.rib.ccw.04,rib,R1,R1.rib.ccw.04.foot,R1.top.04,0.08,0.22,6.469,0.68,6.16,3.1,0.1139,no (0.47 m out of plane),0,11,0,2,0,tight radius,,
+R1.rib.cw.04,rib,R1,R1.rib.cw.04.foot,R1.top.04,0.08,0.22,6.469,0.68,6.16,3.1,0.1139,no (0.47 m out of plane),7,4,0,2,0,tight radius,,
+R1.rib.ccw.05,rib,R1,R1.rib.ccw.05.foot,R1.top.05,0.08,0.22,5.901,0.68,5.59,3.1,0.1039,no (0.25 m out of plane),0,10,0,2,0,tight radius,,R1.fill.cw.00
+R1.rib.cw.05,rib,R1,R1.rib.cw.05.foot,R1.top.05,0.08,0.22,5.901,0.68,5.59,3.1,0.1039,no (0.25 m out of plane),6,4,0,2,0,tight radius,,R1.fill.ccw.09
+R1.rib.ccw.06,rib,R1,R1.rib.ccw.06.foot,R1.top.06,0.08,0.22,6.469,0.68,6.15,3.1,0.1139,no (0.47 m out of plane),0,11,0,2,0,tight radius,,
+R1.rib.cw.06,rib,R1,R1.rib.cw.06.foot,R1.top.06,0.08,0.22,6.469,0.68,6.15,3.1,0.1139,no (0.47 m out of plane),7,4,0,2,0,tight radius,,
+R1.rib.ccw.07,rib,R1,R1.rib.ccw.07.foot,R1.top.07,0.08,0.22,5.901,0.68,5.59,3.1,0.1039,no (0.25 m out of plane),0,10,0,2,0,tight radius,,R1.fill.cw.02
+R1.rib.cw.07,rib,R1,R1.rib.cw.07.foot,R1.top.07,0.08,0.22,5.901,0.68,5.59,3.1,0.1039,no (0.25 m out of plane),6,4,0,2,0,tight radius,,R1.fill.ccw.11
+R1.rib.ccw.08,rib,R1,R1.rib.ccw.08.foot,R1.top.08,0.08,0.22,6.469,0.68,6.16,3.1,0.1139,no (0.47 m out of plane),0,11,0,2,0,tight radius,,
+R1.rib.cw.08,rib,R1,R1.rib.cw.08.foot,R1.top.08,0.08,0.22,6.469,0.68,6.16,3.1,0.1139,no (0.47 m out of plane),7,4,0,2,0,tight radius,,
+R1.rib.ccw.09,rib,R1,R1.rib.ccw.09.foot,R1.top.09,0.08,0.22,5.901,0.68,5.59,3.1,0.1039,no (0.25 m out of plane),0,10,0,2,0,tight radius,,R1.fill.cw.04
+R1.rib.cw.09,rib,R1,R1.rib.cw.09.foot,R1.top.09,0.08,0.22,5.901,0.68,5.59,3.1,0.1039,no (0.25 m out of plane),6,4,0,2,0,tight radius,,R1.fill.ccw.01
+R1.rib.ccw.10,rib,R1,R1.rib.ccw.10.foot,R1.top.10,0.08,0.22,6.469,0.68,6.16,3.1,0.1139,no (0.47 m out of plane),0,11,0,2,0,tight radius,,
+R1.rib.cw.10,rib,R1,R1.rib.cw.10.foot,R1.top.10,0.08,0.22,6.469,0.68,6.16,3.1,0.1139,no (0.47 m out of plane),7,4,0,2,0,tight radius,,
+R1.rib.ccw.11,rib,R1,R1.rib.ccw.11.foot,R1.top.11,0.08,0.22,5.901,0.68,5.59,3.1,0.1039,no (0.25 m out of plane),0,10,0,2,0,tight radius,,R1.fill.cw.06
+R1.rib.cw.11,rib,R1,R1.rib.cw.11.foot,R1.top.11,0.08,0.22,5.901,0.68,5.59,3.1,0.1039,no (0.25 m out of plane),6,4,0,2,0,tight radius,,R1.fill.ccw.03
+R1.fill.ccw.00,fill,R1,R1.fill.ccw.00.foot,R1.fill.ccw.00.head,0.07,0.22,7.31,0.92,6.84,4.2,0.1126,no (0.20 m out of plane),0,7,0,2,1,tight radius,,R1.fine.ccw.00
+R1.fill.cw.00,fill,R1,R1.fill.cw.00.foot,R1.fill.cw.00.head,0.07,0.22,3.437,1.69,2.09,7.7,0.0529,no (0.09 m out of plane),3,3,0,2,0,tight radius,,R1.rib.ccw.05
+R1.fill.ccw.01,fill,R1,R1.fill.ccw.01.foot,R1.fill.ccw.01.head,0.07,0.22,3.437,1.69,2.09,7.7,0.0529,no (0.09 m out of plane),0,6,0,2,0,tight radius,,R1.rib.cw.09
+R1.fill.cw.01,fill,R1,R1.fill.cw.01.foot,R1.fill.cw.01.head,0.07,0.22,7.311,0.92,6.84,4.2,0.1126,no (0.20 m out of plane),6,1,0,2,1,tight radius,,R1.fine.cw.03
+R1.fill.ccw.02,fill,R1,R1.fill.ccw.02.foot,R1.fill.ccw.02.head,0.07,0.22,7.311,0.92,6.84,4.2,0.1126,no (0.20 m out of plane),0,7,0,2,1,tight radius,,R1.fine.ccw.04
+R1.fill.cw.02,fill,R1,R1.fill.cw.02.foot,R1.fill.cw.02.head,0.07,0.22,3.437,1.69,2.09,7.7,0.0529,no (0.09 m out of plane),3,3,0,2,0,tight radius,,R1.rib.ccw.07
+R1.fill.ccw.03,fill,R1,R1.fill.ccw.03.foot,R1.fill.ccw.03.head,0.07,0.22,3.437,1.69,2.09,7.7,0.0529,no (0.09 m out of plane),0,6,0,2,0,tight radius,,R1.rib.cw.11
+R1.fill.cw.03,fill,R1,R1.fill.cw.03.foot,R1.fill.cw.03.head,0.07,0.22,7.311,0.92,6.84,4.2,0.1126,no (0.20 m out of plane),6,1,0,2,1,tight radius,,R1.fine.cw.07
+R1.fill.ccw.04,fill,R1,R1.fill.ccw.04.foot,R1.fill.ccw.04.head,0.07,0.22,7.311,0.92,6.84,4.2,0.1126,no (0.20 m out of plane),0,7,0,2,1,tight radius,,R1.fine.ccw.08
+R1.fill.cw.04,fill,R1,R1.fill.cw.04.foot,R1.fill.cw.04.head,0.07,0.22,3.437,1.69,2.09,7.7,0.0529,no (0.09 m out of plane),3,3,0,2,0,tight radius,,R1.rib.ccw.09
+R1.fill.ccw.05,fill,R1,R1.fill.ccw.05.foot,R1.fill.ccw.05.head,0.07,0.22,3.437,1.69,2.09,7.7,0.0529,no (0.09 m out of plane),0,6,0,2,0,tight radius,,R1.rib.cw.01
+R1.fill.cw.05,fill,R1,R1.fill.cw.05.foot,R1.fill.cw.05.head,0.07,0.22,7.31,0.92,6.84,4.2,0.1126,no (0.20 m out of plane),6,1,0,2,1,tight radius,,R1.fine.cw.11
+R1.fill.ccw.06,fill,R1,R1.fill.ccw.06.foot,R1.fill.ccw.06.head,0.07,0.22,7.31,0.92,6.84,4.2,0.1126,no (0.20 m out of plane),0,7,0,2,1,tight radius,,R1.fine.ccw.12
+R1.fill.cw.06,fill,R1,R1.fill.cw.06.foot,R1.fill.cw.06.head,0.07,0.22,3.437,1.69,2.09,7.7,0.0529,no (0.09 m out of plane),3,3,0,2,0,tight radius,,R1.rib.ccw.11
+R1.fill.ccw.07,fill,R1,R1.fill.ccw.07.foot,R1.fill.ccw.07.head,0.07,0.22,3.437,1.69,2.09,7.7,0.0529,no (0.09 m out of plane),0,6,0,2,0,tight radius,,R1.rib.cw.03
+R1.fill.cw.07,fill,R1,R1.fill.cw.07.foot,R1.fill.cw.07.head,0.07,0.22,7.311,0.92,6.84,4.2,0.1126,no (0.20 m out of plane),6,1,0,2,1,tight radius,,R1.fine.cw.15
+R1.fill.ccw.08,fill,R1,R1.fill.ccw.08.foot,R1.fill.ccw.08.head,0.07,0.22,7.311,0.92,6.84,4.2,0.1126,no (0.20 m out of plane),0,7,0,2,1,tight radius,,R1.fine.ccw.16
+R1.fill.cw.08,fill,R1,R1.fill.cw.08.foot,R1.fill.cw.08.head,0.07,0.22,3.437,1.69,2.09,7.7,0.0529,no (0.09 m out of plane),3,3,0,2,0,tight radius,,R1.rib.ccw.01
+R1.fill.ccw.09,fill,R1,R1.fill.ccw.09.foot,R1.fill.ccw.09.head,0.07,0.22,3.437,1.69,2.09,7.7,0.0529,no (0.09 m out of plane),0,6,0,2,0,tight radius,,R1.rib.cw.05
+R1.fill.cw.09,fill,R1,R1.fill.cw.09.foot,R1.fill.cw.09.head,0.07,0.22,7.311,0.92,6.84,4.2,0.1126,no (0.20 m out of plane),6,1,0,2,1,tight radius,,R1.fine.cw.19
+R1.fill.ccw.10,fill,R1,R1.fill.ccw.10.foot,R1.fill.ccw.10.head,0.07,0.22,7.311,0.92,6.84,4.2,0.1126,no (0.20 m out of plane),0,7,0,2,1,tight radius,,R1.fine.ccw.20
+R1.fill.cw.10,fill,R1,R1.fill.cw.10.foot,R1.fill.cw.10.head,0.07,0.22,3.437,1.69,2.09,7.7,0.0529,no (0.09 m out of plane),3,3,0,2,0,tight radius,,R1.rib.ccw.03
+R1.fill.ccw.11,fill,R1,R1.fill.ccw.11.foot,R1.fill.ccw.11.head,0.07,0.22,3.437,1.69,2.09,7.7,0.0529,no (0.09 m out of plane),0,6,0,2,0,tight radius,,R1.rib.cw.07
+R1.fill.cw.11,fill,R1,R1.fill.cw.11.foot,R1.fill.cw.11.head,0.07,0.22,7.31,0.92,6.84,4.2,0.1126,no (0.20 m out of plane),6,1,0,2,1,tight radius,,R1.fine.cw.23
+R1.fine.ccw.00,fine,R1,R1.fine.ccw.00.foot,R1.fine.ccw.00.head,0.06,0.22,2.843,0.76,0.42,3.5,0.0375,no (0.04 m out of plane),0,4,0,2,1,tight radius,,R1.B1.hoop1 R1.fill.ccw.00
+R1.fine.cw.00,fine,R1,R1.fine.cw.00.foot,R1.fine.cw.00.head,0.06,0.22,2.006,2.6,1.73,11.8,0.0265,no (0.01 m out of plane),2,2,0,2,0,tight radius,,
+R1.fine.cw.01,fine,R1,R1.fine.cw.01.foot,R1.fine.cw.01.head,0.06,0.22,1.607,1.49,0.32,6.8,0.0212,no (0.01 m out of plane),1,2,0,2,0,tight radius,,
+R1.fine.ccw.02,fine,R1,R1.fine.ccw.02.foot,R1.fine.ccw.02.head,0.06,0.22,1.607,1.49,0.32,6.8,0.0212,no (0.01 m out of plane),0,3,0,2,0,tight radius,,
+R1.fine.ccw.03,fine,R1,R1.fine.ccw.03.foot,R1.fine.ccw.03.head,0.06,0.22,2.006,2.6,1.73,11.8,0.0265,no (0.01 m out of plane),0,4,0,2,0,tight radius,,
+R1.fine.cw.03,fine,R1,R1.fine.cw.03.foot,R1.fine.cw.03.head,0.06,0.22,2.843,0.76,0.42,3.5,0.0375,no (0.04 m out of plane),4,0,0,2,1,tight radius,,R1.B5.hoop1 R1.fill.cw.01
+R1.fine.ccw.04,fine,R1,R1.fine.ccw.04.foot,R1.fine.ccw.04.head,0.06,0.22,2.843,0.76,0.42,3.5,0.0375,no (0.04 m out of plane),0,4,0,2,1,tight radius,,R1.B2.hoop1 R1.fill.ccw.02
+R1.fine.cw.04,fine,R1,R1.fine.cw.04.foot,R1.fine.cw.04.head,0.06,0.22,2.006,2.6,1.73,11.8,0.0265,no (0.01 m out of plane),2,2,0,2,0,tight radius,,
+R1.fine.cw.05,fine,R1,R1.fine.cw.05.foot,R1.fine.cw.05.head,0.06,0.22,1.607,1.49,0.32,6.8,0.0212,no (0.01 m out of plane),1,2,0,2,0,tight radius,,
+R1.fine.ccw.06,fine,R1,R1.fine.ccw.06.foot,R1.fine.ccw.06.head,0.06,0.22,1.607,1.49,0.32,6.8,0.0212,no (0.01 m out of plane),0,3,0,2,0,tight radius,,
+R1.fine.ccw.07,fine,R1,R1.fine.ccw.07.foot,R1.fine.ccw.07.head,0.06,0.22,2.006,2.6,1.73,11.8,0.0265,no (0.01 m out of plane),0,4,0,2,0,tight radius,,
+R1.fine.cw.07,fine,R1,R1.fine.cw.07.foot,R1.fine.cw.07.head,0.06,0.22,2.843,0.76,0.42,3.5,0.0375,no (0.04 m out of plane),4,0,0,2,1,tight radius,,R1.B6.hoop1 R1.fill.cw.03
+R1.fine.ccw.08,fine,R1,R1.fine.ccw.08.foot,R1.fine.ccw.08.head,0.06,0.22,2.843,0.76,0.42,3.5,0.0375,no (0.04 m out of plane),0,4,0,2,1,tight radius,,R1.B3.hoop1 R1.fill.ccw.04
+R1.fine.cw.08,fine,R1,R1.fine.cw.08.foot,R1.fine.cw.08.head,0.06,0.22,2.006,2.6,1.73,11.8,0.0265,no (0.01 m out of plane),2,2,0,2,0,tight radius,,
+R1.fine.cw.09,fine,R1,R1.fine.cw.09.foot,R1.fine.cw.09.head,0.06,0.22,1.607,1.49,0.32,6.8,0.0212,no (0.01 m out of plane),1,2,0,2,0,tight radius,,
+R1.fine.ccw.10,fine,R1,R1.fine.ccw.10.foot,R1.fine.ccw.10.head,0.06,0.22,1.607,1.49,0.32,6.8,0.0212,no (0.01 m out of plane),0,3,0,2,0,tight radius,,
+R1.fine.ccw.11,fine,R1,R1.fine.ccw.11.foot,R1.fine.ccw.11.head,0.06,0.22,2.006,2.6,1.73,11.8,0.0265,no (0.01 m out of plane),0,4,0,2,0,tight radius,,
+R1.fine.cw.11,fine,R1,R1.fine.cw.11.foot,R1.fine.cw.11.head,0.06,0.22,2.843,0.76,0.42,3.5,0.0375,no (0.04 m out of plane),4,0,0,2,1,tight radius,,R1.B1.hoop1 R1.fill.cw.05
+R1.fine.ccw.12,fine,R1,R1.fine.ccw.12.foot,R1.fine.ccw.12.head,0.06,0.22,2.843,0.76,0.42,3.5,0.0375,no (0.04 m out of plane),0,4,0,2,1,tight radius,,R1.B4.hoop1 R1.fill.ccw.06
+R1.fine.cw.12,fine,R1,R1.fine.cw.12.foot,R1.fine.cw.12.head,0.06,0.22,2.006,2.6,1.73,11.8,0.0265,no (0.01 m out of plane),2,2,0,2,0,tight radius,,
+R1.fine.cw.13,fine,R1,R1.fine.cw.13.foot,R1.fine.cw.13.head,0.06,0.22,1.607,1.49,0.32,6.8,0.0212,no (0.01 m out of plane),1,2,0,2,0,tight radius,,
+R1.fine.ccw.14,fine,R1,R1.fine.ccw.14.foot,R1.fine.ccw.14.head,0.06,0.22,1.607,1.49,0.32,6.8,0.0212,no (0.01 m out of plane),0,3,0,2,0,tight radius,,
+R1.fine.ccw.15,fine,R1,R1.fine.ccw.15.foot,R1.fine.ccw.15.head,0.06,0.22,2.006,2.6,1.73,11.8,0.0265,no (0.01 m out of plane),0,4,0,2,0,tight radius,,
+R1.fine.cw.15,fine,R1,R1.fine.cw.15.foot,R1.fine.cw.15.head,0.06,0.22,2.843,0.76,0.42,3.5,0.0375,no (0.04 m out of plane),4,0,0,2,1,tight radius,,R1.B2.hoop1 R1.fill.cw.07
+R1.fine.ccw.16,fine,R1,R1.fine.ccw.16.foot,R1.fine.ccw.16.head,0.06,0.22,2.843,0.76,0.42,3.5,0.0375,no (0.04 m out of plane),0,4,0,2,1,tight radius,,R1.B5.hoop1 R1.fill.ccw.08
+R1.fine.cw.16,fine,R1,R1.fine.cw.16.foot,R1.fine.cw.16.head,0.06,0.22,2.006,2.6,1.73,11.8,0.0265,no (0.01 m out of plane),2,2,0,2,0,tight radius,,
+R1.fine.cw.17,fine,R1,R1.fine.cw.17.foot,R1.fine.cw.17.head,0.06,0.22,1.607,1.49,0.32,6.8,0.0212,no (0.01 m out of plane),1,2,0,2,0,tight radius,,
+R1.fine.ccw.18,fine,R1,R1.fine.ccw.18.foot,R1.fine.ccw.18.head,0.06,0.22,1.607,1.49,0.32,6.8,0.0212,no (0.01 m out of plane),0,3,0,2,0,tight radius,,
+R1.fine.ccw.19,fine,R1,R1.fine.ccw.19.foot,R1.fine.ccw.19.head,0.06,0.22,2.006,2.6,1.73,11.8,0.0265,no (0.01 m out of plane),0,4,0,2,0,tight radius,,
+R1.fine.cw.19,fine,R1,R1.fine.cw.19.foot,R1.fine.cw.19.head,0.06,0.22,2.843,0.76,0.42,3.5,0.0375,no (0.04 m out of plane),4,0,0,2,1,tight radius,,R1.B3.hoop1 R1.fill.cw.09
+R1.fine.ccw.20,fine,R1,R1.fine.ccw.20.foot,R1.fine.ccw.20.head,0.06,0.22,2.843,0.76,0.42,3.5,0.0375,no (0.04 m out of plane),0,4,0,2,1,tight radius,,R1.B6.hoop1 R1.fill.ccw.10
+R1.fine.cw.20,fine,R1,R1.fine.cw.20.foot,R1.fine.cw.20.head,0.06,0.22,2.006,2.6,1.73,11.8,0.0265,no (0.01 m out of plane),2,2,0,2,0,tight radius,,
+R1.fine.cw.21,fine,R1,R1.fine.cw.21.foot,R1.fine.cw.21.head,0.06,0.22,1.607,1.49,0.32,6.8,0.0212,no (0.01 m out of plane),1,2,0,2,0,tight radius,,
+R1.fine.ccw.22,fine,R1,R1.fine.ccw.22.foot,R1.fine.ccw.22.head,0.06,0.22,1.607,1.49,0.32,6.8,0.0212,no (0.01 m out of plane),0,3,0,2,0,tight radius,,
+R1.fine.ccw.23,fine,R1,R1.fine.ccw.23.foot,R1.fine.ccw.23.head,0.06,0.22,2.006,2.6,1.73,11.8,0.0265,no (0.01 m out of plane),0,4,0,2,0,tight radius,,
+R1.fine.cw.23,fine,R1,R1.fine.cw.23.foot,R1.fine.cw.23.head,0.06,0.22,2.843,0.76,0.42,3.5,0.0375,no (0.04 m out of plane),4,0,0,2,1,tight radius,,R1.B4.hoop1 R1.fill.cw.11
+R1.ring.top,crown,R1,R1.top.00,R1.top.11,0.26,0.1,6.283,1.0,3.78,10.0,0.1634,yes,0,0,24,2,0,tight radius,,
+R1.ring.fill,ring,R1,R1.fill.ccw.00.head,R1.fill.cw.11.head,0.1,0.22,15.909,2.51,8.64,11.4,0.35,yes,24,0,24,2,0,tight radius,,
+R1.ring.fine,ring,R1,R1.fine.ccw.00.head,R1.fine.cw.23.head,0.1,0.22,24.029,2.7,0.0,12.3,0.5286,yes,48,0,36,3,0,tight radius,,
+R1.B1.arch.L,arch,R1.B1,R1.B1.arch.L.foot,R1.B1.apex,0.26,0.4,6.039,1.67,2.03,4.2,0.628,yes,0,0,6,3,0,tight radius,,R1.B1.hoop0
+R1.B1.arch.R,arch,R1.B1,R1.B1.arch.R.foot,R1.B1.apex,0.26,0.4,6.039,1.67,2.03,4.2,0.628,yes,0,0,6,3,0,tight radius,,R1.B1.hoop0
+R1.B2.arch.L,arch,R1.B2,R1.B2.arch.L.foot,R1.B2.apex,0.26,0.4,6.039,1.67,2.03,4.2,0.628,yes,0,0,6,3,0,tight radius,,R1.B2.hoop0
+R1.B2.arch.R,arch,R1.B2,R1.B2.arch.R.foot,R1.B2.apex,0.26,0.4,6.039,1.67,2.03,4.2,0.628,yes,0,0,6,3,0,tight radius,,R1.B2.hoop0
+R1.B3.arch.L,arch,R1.B3,R1.B3.arch.L.foot,R1.B3.apex,0.26,0.4,6.039,1.67,2.03,4.2,0.628,yes,0,0,6,3,0,tight radius,,R1.B3.hoop0
+R1.B3.arch.R,arch,R1.B3,R1.B3.arch.R.foot,R1.B3.apex,0.26,0.4,6.039,1.67,2.03,4.2,0.628,yes,0,0,6,3,0,tight radius,,R1.B3.hoop0
+R1.B4.arch.L,arch,R1.B4,R1.B4.arch.L.foot,R1.B4.apex,0.26,0.4,6.039,1.67,2.03,4.2,0.628,yes,0,0,6,3,0,tight radius,,R1.B4.hoop0
+R1.B4.arch.R,arch,R1.B4,R1.B4.arch.R.foot,R1.B4.apex,0.26,0.4,6.039,1.67,2.03,4.2,0.628,yes,0,0,6,3,0,tight radius,,R1.B4.hoop0
+R1.B5.arch.L,arch,R1.B5,R1.B5.arch.L.foot,R1.B5.apex,0.26,0.4,6.039,1.67,2.03,4.2,0.628,yes,0,0,6,3,0,tight radius,,R1.B5.hoop0
+R1.B5.arch.R,arch,R1.B5,R1.B5.arch.R.foot,R1.B5.apex,0.26,0.4,6.039,1.67,2.03,4.2,0.628,yes,0,0,6,3,0,tight radius,,R1.B5.hoop0
+R1.B6.arch.L,arch,R1.B6,R1.B6.arch.L.foot,R1.B6.apex,0.26,0.4,6.039,1.67,2.03,4.2,0.628,yes,0,0,6,3,0,tight radius,,R1.B6.hoop0
+R1.B6.arch.R,arch,R1.B6,R1.B6.arch.R.foot,R1.B6.apex,0.26,0.4,6.039,1.67,2.03,4.2,0.628,yes,0,0,6,3,0,tight radius,,R1.B6.hoop0
+R1.B1.hoop0,hoop,R1.B1,R1.B1.hoop0.foot.L,R1.B1.hoop0.foot.R,0.09,0.22,11.345,0.82,3.59,3.7,0.2246,no (0.11 m out of plane),10,0,0,2,0,tight radius,,R1.B1.arch.L R1.B1.arch.R
+R1.B1.hoop1,hoop,R1.B1,R1.B1.hoop1.foot.L,R1.B1.hoop1.foot.R,0.09,0.22,11.864,0.73,7.66,3.3,0.2349,no (0.18 m out of plane),10,0,0,2,0,tight radius,,R1.fine.ccw.00 R1.fine.cw.11
+R1.B2.hoop0,hoop,R1.B2,R1.B2.hoop0.foot.L,R1.B2.hoop0.foot.R,0.09,0.22,11.345,0.82,3.59,3.7,0.2246,no (0.11 m out of plane),10,0,0,2,0,tight radius,,R1.B2.arch.L R1.B2.arch.R
+R1.B2.hoop1,hoop,R1.B2,R1.B2.hoop1.foot.L,R1.B2.hoop1.foot.R,0.09,0.22,11.864,0.73,7.66,3.3,0.2349,no (0.18 m out of plane),10,0,0,2,0,tight radius,,R1.fine.ccw.04 R1.fine.cw.15
+R1.B3.hoop0,hoop,R1.B3,R1.B3.hoop0.foot.L,R1.B3.hoop0.foot.R,0.09,0.22,11.345,0.82,3.59,3.7,0.2246,no (0.11 m out of plane),10,0,0,2,0,tight radius,,R1.B3.arch.L R1.B3.arch.R
+R1.B3.hoop1,hoop,R1.B3,R1.B3.hoop1.foot.L,R1.B3.hoop1.foot.R,0.09,0.22,11.864,0.73,7.66,3.3,0.2349,no (0.18 m out of plane),10,0,0,2,0,tight radius,,R1.fine.ccw.08 R1.fine.cw.19
+R1.B4.hoop0,hoop,R1.B4,R1.B4.hoop0.foot.L,R1.B4.hoop0.foot.R,0.09,0.22,11.345,0.82,3.59,3.7,0.2246,no (0.11 m out of plane),10,0,0,2,0,tight radius,,R1.B4.arch.L R1.B4.arch.R
+R1.B4.hoop1,hoop,R1.B4,R1.B4.hoop1.foot.L,R1.B4.hoop1.foot.R,0.09,0.22,11.864,0.73,7.66,3.3,0.2349,no (0.18 m out of plane),10,0,0,2,0,tight radius,,R1.fine.ccw.12 R1.fine.cw.23
+R1.B5.hoop0,hoop,R1.B5,R1.B5.hoop0.foot.L,R1.B5.hoop0.foot.R,0.09,0.22,11.345,0.82,3.59,3.7,0.2246,no (0.11 m out of plane),10,0,0,2,0,tight radius,,R1.B5.arch.L R1.B5.arch.R
+R1.B5.hoop1,hoop,R1.B5,R1.B5.hoop1.foot.L,R1.B5.hoop1.foot.R,0.09,0.22,11.864,0.73,7.66,3.3,0.2349,no (0.18 m out of plane),10,0,0,2,0,tight radius,,R1.fine.ccw.16 R1.fine.cw.03
+R1.B6.hoop0,hoop,R1.B6,R1.B6.hoop0.foot.L,R1.B6.hoop0.foot.R,0.09,0.22,11.345,0.82,3.59,3.7,0.2246,no (0.11 m out of plane),10,0,0,2,0,tight radius,,R1.B6.arch.L R1.B6.arch.R
+R1.B6.hoop1,hoop,R1.B6,R1.B6.hoop1.foot.L,R1.B6.hoop1.foot.R,0.09,0.22,11.864,0.73,7.66,3.3,0.2349,no (0.18 m out of plane),10,0,0,2,0,tight radius,,R1.fine.ccw.20 R1.fine.cw.07

@@ -94,6 +94,45 @@ drive it (`__setMode`, `__setT`, `__play`, or the same by `postMessage`), as it 
 The views a plate can use beyond the studio's three: `plan` (from straight above, cut 1.2 m up, so that what
 shows is the floor and the shade on it) and `round`.
 
+### The same view, grown again
+
+```bash
+node pipeline/again.mjs                 # deck/grown-again/piece.json -> exports/deck/06-grown-again/
+node pipeline/again.mjs --frames=keep   # measure and lay out again from the pictures already made
+```
+
+One view on one day from several grown runs of the same planting: the same building, the same plants in the same
+beds, the same care, and another seed. It is for the slide that joins making and growing: of everything in the
+picture, what is the same every time was decided by us, and what is not was decided by the plant. The maker draws
+each run (one studio at a time, stopped between runs, on a port of its own), then sets the pictures against each
+other: `stayed` is what every run draws alike, `differs` is the rest, in the one red. For each place marked in the
+description (`regions`, as shares of the picture) it measures, of what any run draws there, the share that
+differs. Those shares fill the bars of the scale under the picture, from decided by us to decided by the plant;
+the places on that scale this picture cannot measure (the forest, the factory) are left as dashed outlines.
+
+The page (`deck/grown-again/index.html`, copied beside the pictures) plays by itself: each run in turn, the three
+quickly one after another, then together. `?embed` shows only the drawing, `?print` the last step complete, which
+is also saved as `still.png`. The measure is of these pictures, not of plants: it says how far three runs of one
+scenario agree, on the simulator's assumptions.
+
+## Vignettes
+
+```bash
+node pipeline/vignette.mjs found-the-joints       # deck/found-the-joints/ -> exports/deck/found-the-joints/
+node pipeline/vignette.mjs shaded-at-the-pier
+node pipeline/vignette.mjs found-the-joints --only=page    # the page and its numbers again, drawing nothing
+```
+
+A vignette is one finding from growing a planting on the building, and the change to the building it led to,
+as a drawing that plays by itself: the whole room, one place in it close to, four named steps, and a few words.
+Its pictures are the studio's own, made beforehand, from one snapshot and one grown run at a time; its page
+shows them in turn and draws the marks and leaders over them, knowing from the studio where each place falls in
+each view. `deck/<name>/` holds what it is made from: `piece.json` (the views, and the sets of moments),
+`data.mjs` (its numbers, worked out from the runs) and `index.html` (the page). It opens from its folder in
+`exports/deck/`; `.claude/launch.json` serves that folder as `pieces` on port 5313.
+
+Keep the words few. The pictures carry it; a caption is one short line and a label a few words.
+
 ## What is where
 
 - `pipeline/convert.mjs` writes the simulator's input from a snapshot, and adds what the building model does not

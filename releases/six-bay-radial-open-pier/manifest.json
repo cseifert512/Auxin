@@ -1,0 +1,214 @@
+{
+  "schema": "bower.snapshot/1",
+  "name": "six-bay-radial-open-pier",
+  "created": "2026-11-14",
+  "source_commit": "1788fd0",
+  "generated_from": "design.json in this folder, by scripts/export_snapshot.py",
+  "units": "m",
+  "axes": {
+    "up": "+Z",
+    "north": "+Y",
+    "bower.glb": "glTF convention: +Y up, metres"
+  },
+  "status": "Concept geometry. Sections, joint depths and clearances are provisional; nothing here is a structural, fabrication or horticultural check.",
+  "model": {
+    "rooms": [
+      {
+        "id": "R1",
+        "bays": 6,
+        "piers": 6
+      }
+    ],
+    "members": 111,
+    "members_by_family": {
+      "arch": 12,
+      "crown": 1,
+      "fill": 24,
+      "fine": 36,
+      "hoop": 12,
+      "rib": 24,
+      "ring": 2
+    },
+    "total_length_m": 612.8,
+    "total_volume_m3": 16.96,
+    "joints": {
+      "joints": 613,
+      "by_kind": {
+        "alongside": 12,
+        "base": 48,
+        "cross_lap": 366,
+        "crown_seat": 24,
+        "housing": 132,
+        "mitre": 6,
+        "paired_heads": 12,
+        "pier_mitre": 6,
+        "scarf": 7
+      },
+      "third_depth_laps": 72,
+      "to_review": 12,
+      "reached_by_plants": 0,
+      "splayed_laps": 0,
+      "laps_left_uncut": 0,
+      "laps_whose_walls_must_follow_a_turn": 0
+    },
+    "bounds_m": {
+      "min": [
+        -6.15,
+        -5.37,
+        0.0
+      ],
+      "max": [
+        6.15,
+        5.37,
+        6.32
+      ]
+    }
+  },
+  "checks_at_export": [
+    {
+      "room": "R1",
+      "meshes_closed": true,
+      "collisions_estimated": 0,
+      "milled": {
+        "members_milled": 111,
+        "cutters": 936,
+        "volume_removed_m3": 1.414,
+        "left_open": []
+      },
+      "mesh_intersections_in_scene": {
+        "pairs_touching_under_1mm": 6,
+        "lattice_pairs_still_intersecting": 18,
+        "laps_not_clean": [
+          [
+            "R1.fill.ccw.00",
+            "R1.fine.cw.15",
+            7.5
+          ],
+          [
+            "R1.fill.cw.01",
+            "R1.fine.ccw.12",
+            32.5
+          ],
+          [
+            "R1.fill.ccw.02",
+            "R1.fine.cw.19",
+            7.3
+          ],
+          [
+            "R1.fill.cw.03",
+            "R1.fine.ccw.16",
+            32.5
+          ],
+          [
+            "R1.fill.ccw.04",
+            "R1.fine.cw.23",
+            7.2
+          ],
+          [
+            "R1.fill.cw.05",
+            "R1.fine.ccw.20",
+            32.1
+          ],
+          [
+            "R1.fill.ccw.06",
+            "R1.fine.cw.03",
+            7.5
+          ],
+          [
+            "R1.fill.cw.07",
+            "R1.fine.ccw.00",
+            32.5
+          ],
+          [
+            "R1.fill.ccw.08",
+            "R1.fine.cw.07",
+            7.3
+          ],
+          [
+            "R1.fill.cw.09",
+            "R1.fine.ccw.04",
+            32.5
+          ],
+          [
+            "R1.fill.ccw.10",
+            "R1.fine.cw.11",
+            7.2
+          ],
+          [
+            "R1.fill.cw.11",
+            "R1.fine.ccw.08",
+            32.1
+          ],
+          [
+            "R1.fine.ccw.02",
+            "R1.B2.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.ccw.06",
+            "R1.B3.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.ccw.10",
+            "R1.B4.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.ccw.14",
+            "R1.B5.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.ccw.18",
+            "R1.B6.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.ccw.22",
+            "R1.B1.hoop0",
+            1.7
+          ]
+        ],
+        "clashes": []
+      },
+      "max_centreline_deviation_m": 1.9892685507069636e-06
+    }
+  ],
+  "tools": {
+    "blender": "5.3.0",
+    "bower.blend": "library of the collection BOWER_V1 and everything in it",
+    "bower.glb": "glTF binary of collection 21_PRIMARY_MESHES"
+  },
+  "files": {
+    "bower.blend": {
+      "bytes": 2052790,
+      "sha256": "fad3564345b3d86f3707b6b29e5217c4a3021693c26bbd223b83a28c7e7c461c"
+    },
+    "bower.glb": {
+      "bytes": 4380332,
+      "sha256": "2326613820118e584f38111bf712e2a995fbd7d64572fadf5d4c95a4173ebdc8"
+    },
+    "centrelines.json": {
+      "bytes": 433950,
+      "sha256": "8f03b9f915ff0a79c171d6ea96ccf261b4e99d9b384e58028851042d7bf1182a"
+    },
+    "design.json": {
+      "bytes": 8653,
+      "sha256": "2537413e011f149a757659d2979d3d13d6f451750aceffe714ecff3ccaf29ceb"
+    },
+    "joints.csv": {
+      "bytes": 93154,
+      "sha256": "df46953287bf6798e494f232bf58bca134e1019a74bca2fe7c4c21f3dcd1d0f0"
+    },
+    "members.csv": {
+      "bytes": 17228,
+      "sha256": "17d29de158ef0bf7d20b46841be28985b03cc035f0adb1b97a281e72157bdac2"
+    }
+  },
+  "use": {
+    "blender": "File > Link > bower.blend > Collection. Link 21_PRIMARY_MESHES for the timber, 20_PRIMARY_CENTERLINES for the centreline curves, or BOWER_V1 for everything generated.",
+    "other tools": "bower.glb holds the timber meshes; each mesh carries its member ID.",
+    "data": "centrelines.json, members.csv and joints.csv are keyed by member ID."
+  }
+}

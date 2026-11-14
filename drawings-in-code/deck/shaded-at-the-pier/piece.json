@@ -1,0 +1,102 @@
+{
+  "for": "The presentation: a finding from growing a planting on the room, and the change to the building it led to. Not placed in the deck yet.",
+  "shows": "The room and one pier of it. The planting grows for five tended years on the room as it was drawn; the piers are marked, where each plant stands in the shade of its neighbours and of the timber; the piers open, and the way through each bay narrows; and the same planting grows for the same five years on the opened room.",
+  "statement": "A growth scenario on stated assumptions, not a forecast. Concept geometry; trial planting.",
+  "paper": "EEF3EA",
+  "ink": "102820",
+  "timber": "ink",
+  "scale": 2,
+  "points": {
+    "pier": [
+      -3.1,
+      -5.369,
+      0.9
+    ],
+    "bay": [
+      0,
+      -5.369,
+      0
+    ]
+  },
+  "views": {
+    "room": {
+      "size": [
+        760,
+        620
+      ],
+      "view": "drawing",
+      "zoom": 1.12
+    },
+    "close": {
+      "size": [
+        470,
+        620
+      ],
+      "view": "drawing",
+      "lookAt": [
+        -2.95,
+        -5.05,
+        1.35
+      ],
+      "zoom": 3.9
+    }
+  },
+  "sets": [
+    {
+      "id": "grown-was",
+      "snapshot": "six-bay-radial-v1",
+      "run": "trained-10y-new-growth",
+      "views": [
+        "room",
+        "close"
+      ],
+      "moments": {
+        "days": [
+          0,
+          1826
+        ],
+        "count": 24
+      }
+    },
+    {
+      "id": "bare-was",
+      "snapshot": "six-bay-radial-v1",
+      "run": "trained-10y-new-growth",
+      "views": [
+        "room",
+        "close"
+      ],
+      "moments": [
+        "build:1"
+      ]
+    },
+    {
+      "id": "bare-now",
+      "snapshot": "six-bay-radial-open-pier",
+      "run": "trained-10y",
+      "views": [
+        "room",
+        "close"
+      ],
+      "moments": [
+        "build:1"
+      ]
+    },
+    {
+      "id": "grown-now",
+      "snapshot": "six-bay-radial-open-pier",
+      "run": "trained-10y",
+      "views": [
+        "room",
+        "close"
+      ],
+      "moments": {
+        "days": [
+          0,
+          1826
+        ],
+        "count": 24
+      }
+    }
+  ]
+}

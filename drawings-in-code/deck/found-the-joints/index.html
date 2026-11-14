@@ -24,10 +24,10 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.45 "Segoe UI", system-ui, sans-serif; }
   #page { max-width: 1320px; margin: 0 auto; padding: 0 22px; }
-  header { display: flex; align-items: baseline; gap: 16px; padding-top: 20px; }
-  h1 { font: 400 30px/1.1 Georgia, "Times New Roman", serif; margin: 0; flex: 1; }
+  header { display: flex; align-items: baseline; gap: 16px; padding-top: 14px; }
+  h1 { font: 400 24px/1.1 Georgia, "Times New Roman", serif; margin: 0; flex: 1; }
   #pp { font: inherit; font-size: 12px; color: var(--soft); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
-  #cap { font-size: 16px; min-height: 2.9em; margin: 8px 0 4px; max-width: 62ch; }
+  #cap { font-size: 15px; min-height: 1.5em; margin: 4px 0 2px; color: var(--soft); }
   #stage { position: relative; width: 100%; aspect-ratio: 1260 / 640; overflow: hidden; }
   #stage img { position: absolute; opacity: 0; pointer-events: none; }
   #over { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 10; }   /* the annotation lies over the pictures */
@@ -37,7 +37,7 @@
   #steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); list-style: none; margin: 0; padding: 2px 0 0; gap: 8px; }
   #steps button { font: inherit; background: none; border: 0; padding: 4px 0; text-align: left; width: 100%; color: var(--soft); cursor: pointer; }
   #steps .on button { color: var(--ink); }
-  footer { font-size: 12px; color: var(--soft); max-width: 100ch; padding: 14px 0 20px; }
+  footer { font-size: 11px; color: var(--soft); padding: 10px 0 14px; }
   footer p { margin: 0 0 4px; }
   .embed footer { display: none; }
 </style>
@@ -50,9 +50,7 @@
   <div id="bar"><div id="fill"></div></div>
   <ol id="steps"></ol>
   <footer>
-    <p>Still to prove: that a stem in a gap wedges it is taken from what clinging plants are known to do to fences and cladding; the simulator does not show it and the plant library does not source it. The splayed lap is set out and cut in the model, not proved: its sizes are provisional and nobody has checked what it does to the strength of the lap.</p>
-    <p id="setup"></p>
-    <p id="statement"></p>
+    <p>A growth scenario on stated assumptions, not a forecast. The cut is set out, not proved.</p>
   </footer>
 </div>
 <script src="manifest.js"></script>
@@ -71,13 +69,13 @@
   // ---- the loop -------------------------------------------------------------------------------
   const DUR = 40, BND = [0, 8, 17, 31, 40], STATIC_T = 37, LAST = D.lastDay;
   const STEPS = [
-    ["We want", "Timber the plants hold for themselves. Some of the planting clings straight to the wood."],
-    ["We ask", `Where does that take them? In ten years, to ${D.inRun} of the room's ${D.total} joints.`],
-    ["We reconsider", "A stem follows the face it clings to, straight into the gap beside the crossing member. And it goes on thickening."],
-    ["We ask again", `Grown again, chance falls differently: ${D.always} joints are reached every time, ${D.sometimes} only sometimes. After planting, the room itself is the next run.`],
+    ["We want", "Timber the plants hold for themselves."],
+    ["We ask", `Where does that take them? To ${D.inRun} of the room's ${D.total} joints.`],
+    ["We reconsider", "A stem follows the timber into the gap, and thickens there."],
+    ["We ask again", `Grown again: ${D.always} joints every time, ${D.sometimes} only sometimes.`],
   ];
   const stepOf = (t) => Math.max(0, BND.findIndex((b, i) => t >= b && t < BND[i + 1]));
-  const captionAt = (t) => (t >= 24.2 && t < 31 ? `So ${D.laps} laps are cut open where the stem lies, and shut where the two members touch.` : STEPS[stepOf(t)][1]);
+  const captionAt = (t) => (t >= 24.2 && t < 31 ? `So ${D.laps} laps are cut open where the stem lies.` : STEPS[stepOf(t)][1]);
   const dayAt = (t) => (t < 8.15 ? ease(seg(t, 0.6, 7)) : ease(seg(t, 8.6, 15.5))) * LAST;
   let T_REACH = 15.5;   // the moment in "We ask" when the joint drawn close to is reached
   for (let t = 8.6; t <= 15.5; t += 0.05) if (dayAt(t) >= D.close.day) { T_REACH = t; break; }
@@ -126,6 +124,7 @@
     ctx.font = `${size}px "Segoe UI", system-ui, sans-serif`;
     const w = Math.max(...lines.map((l) => ctx.measureText(l).width)), h = lines.length * size * 1.3;
     const x0 = Math.max(4, Math.min(W - w - 4 - 2 * pad, anchor === "end" ? x - w - 2 * pad : x));
+    y = Math.max(h / 2 + pad + 2, Math.min(H - h / 2 - pad - 2, y));   // a label stays on the sheet
     ctx.globalAlpha = alpha;
     ctx.fillStyle = PAPER; ctx.fillRect(x0, y - h / 2 - pad, w + 2 * pad, h + 2 * pad);
     ctx.fillStyle = red ? `rgb(${RED})` : `rgb(${INK})`; ctx.textBaseline = "middle";
@@ -234,11 +233,11 @@
       note(p, (x - p[0]) / U, (y - p[1]) / U, text, a, red, "start");
     };
     const gap = X(wB / 2 + c0 / 2, sT - 0.3 * (sT - sB));
-    put(gap, -96, 84, `the gap: ${mm(c0)} mm wide, ${mm(depth)} mm deep,\nstraight on from the face`, alpha * win(t, 18.6, 21.2), true);
-    put(gap, -96, 84, "it thickens with timber on\nboth sides of it: a wedge", alpha * win(t, 21.4, 24.1), true);
+    put(gap, -96, 84, `a ${mm(c0)} mm gap`, alpha * win(t, 18.6, 21.2), true);
+    put(gap, -96, 84, "it thickens: a wedge", alpha * win(t, 21.4, 24.1), true);
     const pocket = X(wB / 2 + mouth * 0.3, hinge + flare * 0.75), bears = X(-wB / 2, -sM);
-    put(pocket, -70, -74, `open ${mm(mouth)} mm where the stem lies`, alpha * win(t, 26.2, 28.6), false);
-    put(bears, -40, 86, `shut on a ${mm(land)} mm land`, alpha * win(t, 26.6, 28.6), false);
+    put(pocket, -70, -74, "open where the stem lies", alpha * win(t, 26.2, 28.6), false);
+    put(bears, -40, 86, "shut where they bear", alpha * win(t, 26.6, 28.6), false);
   }
 
   // ---- one moment of the loop ---------------------------------------------------------------------
@@ -279,18 +278,18 @@
     section(t, cutThrough);
     ctx.strokeStyle = "rgba(16,40,32,.3)"; ctx.lineWidth = 0.8;
     ctx.strokeRect(R2.x, R2.y, R2.w, R2.h);
-    const head = cutThrough > 0.5 ? "The same joint, cut through, from above" : t >= 28.6 && t < 39.3 ? "The same patch, as it is now cut" : bare > 0.5 ? "As every lap is cut" : "One patch of the roof, seen squarely";
+    const head = cutThrough > 0.5 ? "One joint, cut through" : t >= 28.6 && t < 39.3 ? "As it is now cut" : bare > 0.5 ? "As every lap is cut" : "One patch of roof";
     small(R2.x, R2.y - 7, head);
-    small(RECT.room.x, RECT.room.y + 14 * U, `${(day / 365.25).toFixed(1)} years after planting`);
-    if (marks > 0.01) { const n = D.count.filter((c) => c.day <= day).pop(); small(RECT.room.x, RECT.room.y + 30 * U, `${n ? n.n : 0} of ${D.total} joints reached`); }
+    const reachedNow = marks > 0.01 ? D.count.filter((c) => c.day <= day).pop() : null;
+    small(RECT.room.x, RECT.room.y + 14 * U, `year ${Math.max(1, Math.ceil(day / 365.25 - 0.02))}` + (marks > 0.01 ? `  ·  ${reachedNow ? reachedNow.n : 0} of ${D.total} joints` : ""));
 
     // annotation: never more than two leaders at a time
-    note(at("close", here.close), 30, 92, `reached in year ${Math.ceil(D.close.day / 365.25)}\nby ${D.close.who}`, win(t, T_REACH, Math.max(T_REACH + 4, 16.2)) * (1 - cutThrough), true);
+    note(at("close", here.close), 30, 92, `year ${Math.ceil(D.close.day / 365.25)}: the ivy arrives`, win(t, T_REACH, Math.max(T_REACH + 4, 16.2)) * (1 - cutThrough), true);
     if (front) {
-      note(at("room", J.room[front.i]), -64, 62, `${D.laps} laps cut this way` + (D.others ? `;\n${D.others} housings still want a detail` : ""), win(t, 27, 30.8), false);
-      note(at("room", J.room[front.i]), -64, 62, `${D.always} joints reached in all ${D.runs.length} runs`, win(t, 32.2, 39.2), true);
+      note(at("room", J.room[front.i]), -64, 62, `${D.laps} laps cut this way`, win(t, 27, 30.8), false);
+      note(at("room", J.room[front.i]), -64, 62, `every run: ${D.always}`, win(t, 32.2, 39.2), true);
     }
-    if (high) note(at("room", J.room[high.i]), -44, -66, `${D.sometimes} more in only some of them`, win(t, 33.6, 39.2), false);
+    if (high) note(at("room", J.room[high.i]), -44, -66, `some runs: ${D.sometimes} more`, win(t, 33.6, 39.2), false);
   }
 
   // ---- page: steps, caption, playing ----------------------------------------------------------------
@@ -322,9 +321,6 @@
   const bar = $("bar"), scrub = (e) => { const r = bar.getBoundingClientRect(); seek(DUR * (e.clientX - r.left) / r.width, false); };
   bar.onpointerdown = (e) => { bar.setPointerCapture(e.pointerId); scrub(e); bar.onpointermove = scrub; };
   bar.onpointerup = () => { bar.onpointermove = null; };
-  const first = D.runs[0];
-  $("setup").textContent = `From ${D.runs.length} runs of the plant simulator (${first.simulator}), ${first.years} years each: the same room and planting, ${first.care}, planted standing ${first.specimenM} m, seeds ${D.runs.map((r) => r.seed).join(", ")}; seed ${first.seed} is the one drawn. The plants that cling: ${D.clingers.join(", ")}. A joint is counted where a place the simulator names has a row of the building's joint schedule; ${D.leftOut} places it names are in the piers, where nothing is milled, and are left out.`;
-  $("statement").textContent = D.statement;
 
   new ResizeObserver(() => { layout(); frame(tp); }).observe(stage);
   layout();

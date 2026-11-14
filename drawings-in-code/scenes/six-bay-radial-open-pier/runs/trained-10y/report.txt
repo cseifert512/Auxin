@@ -1,0 +1,530 @@
+Trial planting: a ring of climbers round each pier, chosen by the side of the room it stands on (24 plants) on the 6-bay room, snapshot six-bay-radial-open-pier, trained
+A scenario, not a forecast. Growth rates, dates and flowering chances are provisional assumptions that have not been measured on plants.
+
+STRUCTURE
+  glulam 613 m, timber sub-lattice 0 m, steel cable 235 m
+  plant route 1030 m, of which 31% is steel; highest point of any route 6.32 m
+
+PLANTS at the end of the run
+  P1.wisteria (Wisteria sinensis)
+    framework 139.1 m, shoots of the year 10.3 m, 669 spurs, framework reaches 6.34 m
+    holds 86 m of route (8%): 113 stretches by itself, 12 tied in by the gardener
+  P1.rose (Rosa 'The Generous Gardener')
+    framework 18.1 m, shoots of the year 0.0 m, 0 spurs, 227 flowering side shoots, framework reaches 4.25 m
+    holds 11 m of route (1%): 0 stretches by itself, 24 tied in by the gardener
+  P1.star-jasmine (Trachelospermum jasminoides)
+    framework 57.5 m, shoots of the year 15.0 m, 0 spurs, 522 flowering side shoots, framework reaches 4.91 m
+    holds 31 m of route (3%): 38 stretches by itself, 33 tied in by the gardener
+  P1.winter-clematis (Clematis cirrhosa 'Freckles')
+    framework 36.7 m, shoots of the year 55.9 m, 0 spurs, 396 flowering side shoots, framework reaches 4.33 m
+    holds 19 m of route (2%): 67 stretches by itself, 26 tied in by the gardener
+  P2.rose (Rosa 'The Generous Gardener')
+    framework 17.7 m, shoots of the year 0.0 m, 0 spurs, 223 flowering side shoots, framework reaches 3.98 m
+    holds 12 m of route (1%): 0 stretches by itself, 24 tied in by the gardener
+  P2.star-jasmine (Trachelospermum jasminoides)
+    framework 59.0 m, shoots of the year 13.7 m, 0 spurs, 538 flowering side shoots, framework reaches 4.91 m
+    holds 29 m of route (3%): 36 stretches by itself, 32 tied in by the gardener
+  P2.winter-clematis (Clematis cirrhosa 'Freckles')
+    framework 30.1 m, shoots of the year 55.0 m, 0 spurs, 338 flowering side shoots, framework reaches 3.55 m
+    holds 16 m of route (2%): 52 stretches by itself, 21 tied in by the gardener
+  P2.honeysuckle (Lonicera periclymenum 'Graham Thomas')
+    framework 145.2 m, shoots of the year 23.7 m, 0 spurs, 1795 flowering side shoots, framework reaches 6.36 m
+    holds 86 m of route (8%): 58 stretches by itself, 116 tied in by the gardener
+  P3.akebia (Akebia quinata)
+    framework 274.9 m, shoots of the year 81.8 m, 2349 spurs, framework reaches 5.31 m
+    holds 137 m of route (13%): 157 stretches by itself, 190 tied in by the gardener
+  P3.honeysuckle (Lonicera periclymenum 'Graham Thomas')
+    framework 74.5 m, shoots of the year 17.8 m, 0 spurs, 898 flowering side shoots, framework reaches 5.33 m
+    holds 44 m of route (4%): 35 stretches by itself, 49 tied in by the gardener
+  P3.summer-clematis (Clematis viticella 'Étoile Violette')
+    framework 21.3 m, shoots of the year 0.0 m, 0 spurs, framework reaches 2.25 m
+    holds 5 m of route (1%): 13 stretches by itself, 23 tied in by the gardener
+  P3.evergreen-honeysuckle (Lonicera henryi)
+    framework 46.3 m, shoots of the year 365.6 m, 0 spurs, 529 flowering side shoots, framework reaches 4.46 m
+    holds 29 m of route (3%): 70 stretches by itself, 31 tied in by the gardener
+  P4.hydrangea (Hydrangea anomala subsp. petiolaris)
+    framework 28.7 m, shoots of the year 0.0 m, 0 spurs, 305 flowering side shoots, framework reaches 4.57 m
+    holds 14 m of route (1%): 24 stretches by itself, 13 tied in by the gardener
+  P4.evergreen-honeysuckle (Lonicera henryi)
+    framework 60.8 m, shoots of the year 419.9 m, 0 spurs, 668 flowering side shoots, framework reaches 5.00 m
+    holds 53 m of route (5%): 63 stretches by itself, 41 tied in by the gardener
+  P4.ivy (Hedera helix)
+    framework 75.1 m, shoots of the year 154.1 m, 0 spurs, 108 flowering side shoots, framework reaches 4.94 m
+    holds 43 m of route (4%): 93 stretches by itself, 23 tied in by the gardener
+  P4.akebia (Akebia quinata)
+    framework 225.2 m, shoots of the year 82.5 m, 1912 spurs, framework reaches 6.37 m
+    holds 130 m of route (13%): 138 stretches by itself, 173 tied in by the gardener
+  P5.evergreen-honeysuckle (Lonicera henryi)
+    framework 59.0 m, shoots of the year 476.7 m, 0 spurs, 662 flowering side shoots, framework reaches 4.83 m
+    holds 38 m of route (4%): 59 stretches by itself, 40 tied in by the gardener
+  P5.ivy (Hedera helix)
+    framework 73.7 m, shoots of the year 145.1 m, 0 spurs, 77 flowering side shoots, framework reaches 4.96 m
+    holds 44 m of route (4%): 90 stretches by itself, 19 tied in by the gardener
+  P5.akebia (Akebia quinata)
+    framework 192.6 m, shoots of the year 56.9 m, 1621 spurs, framework reaches 6.34 m
+    holds 113 m of route (11%): 107 stretches by itself, 128 tied in by the gardener
+  P5.evergreen-honeysuckle.2 (Lonicera henryi)
+    framework 62.1 m, shoots of the year 508.0 m, 0 spurs, 722 flowering side shoots, framework reaches 4.91 m
+    holds 49 m of route (5%): 66 stretches by itself, 42 tied in by the gardener
+  P6.japanese-wisteria (Wisteria floribunda 'Macrobotrys')
+    framework 79.0 m, shoots of the year 5.4 m, 530 spurs, framework reaches 6.33 m
+    holds 50 m of route (5%): 68 stretches by itself, 9 tied in by the gardener
+  P6.spring-clematis (Clematis armandi)
+    framework 44.7 m, shoots of the year 209.6 m, 0 spurs, framework reaches 4.90 m
+    holds 42 m of route (4%): 55 stretches by itself, 29 tied in by the gardener
+  P6.trumpet-vine (Campsis × tagliabueana 'Madame Galen')
+    framework 32.0 m, shoots of the year 0.0 m, 0 spurs, 348 flowering side shoots, framework reaches 4.91 m
+    holds 26 m of route (2%): 29 stretches by itself, 6 tied in by the gardener
+  P6.vine (Vitis coignetiae)
+    framework 286.9 m, shoots of the year 7.1 m, 0 spurs, 1793 flowering side shoots, framework reaches 6.37 m
+    holds 132 m of route (13%): 48 stretches by itself, 231 tied in by the gardener
+  route held by any plant 80%; 203 m carries nothing
+
+OVER THE YEARS (at the end of each plant’s 1st, 3rd, 5th and 10th years, and of the run)
+  plant                        year  framework  route held  highest  flowers
+  P1.wisteria                     1      6.0 m          0%    2.7 m        0
+  P1.wisteria                     3     23.7 m          1%    4.6 m        0
+  P1.wisteria                     5     52.3 m          3%    4.9 m       18
+  P1.wisteria                    10    139.1 m          8%    6.3 m      231
+  P1.rose                         1      7.5 m          1%    3.6 m        0
+  P1.rose                         3     18.1 m          1%    4.3 m       95
+  P1.rose                         5     18.1 m          1%    4.3 m      102
+  P1.rose                        10     18.1 m          1%    4.3 m       50
+  P1.star-jasmine                 1      4.3 m          0%    2.7 m        0
+  P1.star-jasmine                 3     12.2 m          1%    3.6 m       44
+  P1.star-jasmine                 5     22.1 m          1%    4.0 m      126
+  P1.star-jasmine                10     57.5 m          3%    4.9 m      451
+  P1.winter-clematis              1      4.2 m          0%    0.7 m        3
+  P1.winter-clematis              3     13.8 m          1%    1.8 m       67
+  P1.winter-clematis              5     24.7 m          1%    2.9 m      170
+  P1.winter-clematis             10     36.7 m          2%    4.3 m      328
+  P2.rose                         1      7.0 m          0%    3.1 m        0
+  P2.rose                         3     16.3 m          1%    3.6 m       53
+  P2.rose                         5     17.7 m          1%    4.0 m      117
+  P2.rose                        10     17.7 m          1%    4.0 m      116
+  P2.star-jasmine                 1      4.3 m          0%    2.7 m        0
+  P2.star-jasmine                 3     10.5 m          1%    3.5 m       33
+  P2.star-jasmine                 5     20.3 m          1%    4.0 m      118
+  P2.star-jasmine                10     59.0 m          3%    4.9 m      481
+  P2.winter-clematis              1      3.0 m          0%    0.6 m        3
+  P2.winter-clematis              3     11.7 m          0%    1.6 m       48
+  P2.winter-clematis              5     19.2 m          1%    2.5 m       99
+  P2.winter-clematis             10     30.1 m          2%    3.6 m      280
+  P2.honeysuckle                  1      5.1 m          0%    1.6 m        0
+  P2.honeysuckle                  3     22.8 m          1%    3.6 m       82
+  P2.honeysuckle                  5     56.5 m          3%    4.9 m      382
+  P2.honeysuckle                 10    145.2 m          8%    6.4 m     1040
+  P3.akebia                       1      9.0 m          1%    3.6 m        0
+  P3.akebia                       3     58.7 m          4%    4.8 m       10
+  P3.akebia                       5    128.8 m          8%    4.9 m      146
+  P3.akebia                      10    274.9 m         13%    5.3 m      742
+  P3.honeysuckle                  1      4.7 m          0%    1.6 m        0
+  P3.honeysuckle                  3     19.1 m          1%    3.4 m       68
+  P3.honeysuckle                  5     33.2 m          1%    4.3 m      237
+  P3.honeysuckle                 10     74.5 m          4%    5.3 m      515
+  P3.summer-clematis              1      7.5 m          1%    3.1 m       19
+  P3.summer-clematis              3     25.6 m          1%    2.6 m       57
+  P3.summer-clematis              5     22.6 m          1%    2.3 m       36
+  P3.summer-clematis             10     21.3 m          1%    2.3 m       32
+  P3.evergreen-honeysuckle        1      5.5 m          0%    3.5 m        0
+  P3.evergreen-honeysuckle        3     27.0 m          2%    4.5 m       64
+  P3.evergreen-honeysuckle        5     36.5 m          3%    4.5 m      156
+  P3.evergreen-honeysuckle       10     46.3 m          3%    4.5 m      199
+  P4.hydrangea                    1      3.4 m          0%    2.8 m        0
+  P4.hydrangea                    3      6.4 m          1%    3.2 m        0
+  P4.hydrangea                    5     12.3 m          1%    3.6 m        2
+  P4.hydrangea                   10     28.7 m          1%    4.6 m       56
+  P4.evergreen-honeysuckle        1      6.2 m          0%    3.4 m        0
+  P4.evergreen-honeysuckle        3     29.9 m          2%    4.6 m       63
+  P4.evergreen-honeysuckle        5     42.6 m          3%    4.7 m      161
+  P4.evergreen-honeysuckle       10     60.8 m          5%    5.0 m      267
+  P4.ivy                          1      3.9 m          0%    2.8 m        0
+  P4.ivy                          3     12.3 m          1%    3.6 m        0
+  P4.ivy                          5     32.5 m          1%    4.4 m        0
+  P4.ivy                         10     75.1 m          4%    4.9 m       21
+  P4.akebia                       1      7.4 m          1%    3.7 m        0
+  P4.akebia                       3     43.8 m          3%    4.9 m        8
+  P4.akebia                       5    105.0 m          7%    6.3 m      116
+  P4.akebia                      10    225.2 m         13%    6.4 m      596
+  P5.evergreen-honeysuckle        1      6.6 m          1%    3.5 m        0
+  P5.evergreen-honeysuckle        3     39.9 m          3%    4.4 m       76
+  P5.evergreen-honeysuckle        5     49.4 m          4%    4.7 m      192
+  P5.evergreen-honeysuckle       10     59.0 m          4%    4.8 m      287
+  P5.ivy                          1      3.9 m          0%    2.8 m        0
+  P5.ivy                          3     10.4 m          1%    3.6 m        0
+  P5.ivy                          5     28.7 m          1%    4.5 m        0
+  P5.ivy                         10     73.7 m          4%    5.0 m       15
+  P5.akebia                       1      8.4 m          1%    3.7 m        0
+  P5.akebia                       3     42.9 m          2%    4.9 m        6
+  P5.akebia                       5     93.7 m          5%    5.0 m      114
+  P5.akebia                      10    192.6 m         11%    6.3 m      496
+  P5.evergreen-honeysuckle.2      1      5.3 m          1%    3.4 m        0
+  P5.evergreen-honeysuckle.2      3     32.5 m          2%    4.7 m       57
+  P5.evergreen-honeysuckle.2      5     50.6 m          3%    4.9 m      184
+  P5.evergreen-honeysuckle.2     10     62.1 m          5%    4.9 m      296
+  P6.japanese-wisteria            1      6.0 m          0%    2.8 m        0
+  P6.japanese-wisteria            3     28.5 m          1%    4.7 m        0
+  P6.japanese-wisteria            5     53.5 m          3%    4.9 m       59
+  P6.japanese-wisteria           10     79.0 m          5%    6.3 m      437
+  P6.spring-clematis              1      4.5 m          0%    3.1 m        0
+  P6.spring-clematis              3     12.4 m          1%    4.0 m       56
+  P6.spring-clematis              5     26.8 m          2%    4.7 m      214
+  P6.spring-clematis             10     44.7 m          4%    4.9 m      625
+  P6.trumpet-vine                 1      4.3 m          0%    2.9 m        0
+  P6.trumpet-vine                 3     11.0 m          1%    3.8 m        2
+  P6.trumpet-vine                 5     17.7 m          1%    4.6 m       35
+  P6.trumpet-vine                10     32.0 m          2%    4.9 m       88
+  P6.vine                         1      6.2 m          1%    3.7 m        0
+  P6.vine                         3     24.6 m          2%    5.0 m        0
+  P6.vine                         5     74.7 m          5%    6.3 m       66
+  P6.vine                        10    286.9 m         13%    6.4 m      431
+
+THROUGH 2036, on the 15th of each month
+  timber seen: of the timber seen on the bare structure. The rest: of the rectangle the structure fills in the view, open space included
+  Standing inside, looking up to the crown
+    month  timber seen  in leaf  evergreen  in flower
+    Jan            87%       9%         9%         0%
+    Feb            87%       9%         9%         0%
+    Mar            87%       9%         8%         0%
+    Apr            85%      10%         7%         2%
+    May            77%      13%         6%         5%
+    Jun            70%      20%         6%         7%
+    Jul            74%      25%         7%         0%
+    Aug            73%      26%         8%         0%
+    Sep            74%      25%         8%         0%
+    Oct            74%      25%         8%         0%
+    Nov            78%      19%         8%         0%
+    Dec            84%      11%         9%         0%
+  Approaching from the south
+    month  timber seen  in leaf  evergreen  in flower
+    Jan            76%      11%        11%         0%
+    Feb            76%      12%        11%         0%
+    Mar            76%      12%        11%         0%
+    Apr            75%      14%         9%         0%
+    May            68%      16%         9%         3%
+    Jun            63%      20%         8%         5%
+    Jul            64%      23%        10%         1%
+    Aug            64%      23%        10%         1%
+    Sep            65%      24%        11%         0%
+    Oct            65%      24%        11%         0%
+    Nov            67%      21%        12%         0%
+    Dec            72%      15%        13%         0%
+  From above, to the south-east
+    month  timber seen  in leaf  evergreen  in flower
+    Jan            75%      11%        11%         0%
+    Feb            74%      11%        11%         0%
+    Mar            73%      12%        10%         0%
+    Apr            68%      15%         7%         1%
+    May            61%      20%         7%         1%
+    Jun            54%      25%         6%         1%
+    Jul            53%      27%         7%         1%
+    Aug            53%      27%         7%         1%
+    Sep            54%      27%         8%         0%
+    Oct            54%      27%         8%         0%
+    Nov            58%      24%         8%         0%
+    Dec            69%      15%        11%         0%
+  Approaching from the north
+    month  timber seen  in leaf  evergreen  in flower
+    Jan            73%      16%        16%         0%
+    Feb            73%      16%        16%         0%
+    Mar            73%      15%        15%         0%
+    Apr            71%      17%        12%         1%
+    May            67%      20%        12%         1%
+    Jun            63%      25%        12%         1%
+    Jul            62%      27%        13%         1%
+    Aug            61%      28%        14%         0%
+    Sep            62%      28%        15%         0%
+    Oct            62%      28%        15%         0%
+    Nov            64%      25%        15%         0%
+    Dec            70%      19%        17%         0%
+  flowers open, by plant
+                                  Jan  Feb  Mar  Apr  May  Jun  Jul  Aug  Sep  Oct  Nov  Dec
+    P1.wisteria                     .    .    .    .  231    .    .    .    .    .    .    .
+    P1.rose                         .    .    .    .    .   20   11    8    1    .    .    .
+    P1.star-jasmine                 .    .    .    .    .    .  196  157    .    .    .    .
+    P1.winter-clematis             76   76    5    .    .    .    .    .    .    .   68   91
+    P2.rose                         .    .    .    .    .   31   12   22    4   10    .    .
+    P2.star-jasmine                 .    .    .    .    .    .  189  181    .    .    .    .
+    P2.winter-clematis             94   64    5    .    .    .    .    .    .    .   56   87
+    P2.honeysuckle                  .    .    .    .    .  147  210  148    9    .    .    .
+    P3.akebia                       .    .    .  627    .    .    .    .    .    .    .    .
+    P3.honeysuckle                  .    .    .    .    .   67  115   64    7    .    .    .
+    P3.summer-clematis              .    .    .    .    .    .    .   32    1    .    .    .
+    P3.evergreen-honeysuckle        .    .    .    .    .   54   83    .    .    .    .    .
+    P4.hydrangea                    .    .    .    .    .   30    8    .    .    .    .    .
+    P4.evergreen-honeysuckle        .    .    .    .    .   64  115    .    .    .    .    .
+    P4.ivy                          .    .    .    .    .    .    .    .    8    6    3    .
+    P4.akebia                       .    .    .  501    .    .    .    .    .    .    .    .
+    P5.evergreen-honeysuckle        .    .    .    .    .   57  122    .    .    .    .    .
+    P5.ivy                          .    .    .    .    .    .    .    .    5    8    2    .
+    P5.akebia                       .    .    .  419    .    .    .    .    .    .    .    .
+    P5.evergreen-honeysuckle.2      .    .    .    .    .   59  133    .    .    .    .    .
+    P6.japanese-wisteria            .    .    .    .   67  266    .    .    .    .    .    .
+    P6.spring-clematis              .    .  249  208    .    .    .    .    .    .    .    .
+    P6.trumpet-vine                 .    .    .    .    .    .    .   18   29    5    .    .
+    P6.vine                         .    .    .    .    .   59    .    .    .    .    .    .
+  something in flower in the middle of every month
+  fruit on the plant, from just set to ripe, by plant
+                                  Jan  Feb  Mar  Apr  May  Jun  Jul  Aug  Sep  Oct  Nov  Dec
+    P1.wisteria                    14    8    .    .    .   17   17   17   17   17   17   17
+    P1.rose                         .    .    .    .    .    .    2    1    2    3    3    3
+    P1.star-jasmine                 5    3    .    .    .    .    .    1    2    2    2    2
+    P1.winter-clematis             72  104  104   72   72   44    7    .    .    .    2   44
+    P2.rose                         .    .    .    .    .    .    4    .    5    9   12   12
+    P2.star-jasmine                 3    1    .    .    .    .    .    4    6    6    6    6
+    P2.winter-clematis             67  129  130   92   92   55    4    .    .    .    .   23
+    P2.honeysuckle                  .    .    .    .    .    .  139  335   26   25    7    .
+    P3.akebia                       .    .    .    .   17   17   17   17   17   17    6    .
+    P3.honeysuckle                  .    .    .    .    .    .   82  179   20   23    7    .
+    P3.summer-clematis              .    .    .    .    .    .    .    .   16   17   17    1
+    P3.evergreen-honeysuckle        .    .    .    .    .    .   56  116  116  116   89   42
+    P4.hydrangea                   39   39   28    5    .    .   38   45   45   45   45   45
+    P4.evergreen-honeysuckle        .    .    .    .    .    .   85  170  170  170  127   38
+    P4.ivy                          .    .    .    .    .    .    .    .    .    8   15   18
+    P4.akebia                       .    .    .    .   19   19   19   19   19   19   10    .
+    P5.evergreen-honeysuckle        .    .    .    .    .    .   74  167  167  167  124   33
+    P5.ivy                          .    .    .    .    .    .    .    .    .    5   12   14
+    P5.akebia                       .    .    .    .   16   16   16   16   16   16    4    .
+    P5.evergreen-honeysuckle.2      .    .    .    .    .    .   85  185  185  185  124   40
+    P6.japanese-wisteria           55   25    .    .    .   17   66   66   66   66   66   66
+    P6.spring-clematis              .    .    .  162  247   43   43   18    .    .    .    .
+    P6.trumpet-vine                 4    3    .    .    .    .    .    .    1    6    6    6
+    P6.vine                         .    .    .    .    .    .  122  122  122  122   64    .
+
+WINTER EVERGREEN COVER on 2036-01-15, against the design target of 25% to 40% (a target to test, not a fact about plants)
+  as laid out: plants that keep their leaves hold 30% of the route  within the target
+  as seen: evergreen leaf as a share of the structure's extent in each view, open bays included, and the timber it hides
+    Standing inside, looking up to the crown      8.5%  below the target    hides 9.3% of the timber seen
+    Approaching from the south                     11%  below the target    hides 14% of the timber seen
+    From above, to the south-east                  11%  below the target    hides 17% of the timber seen
+    Approaching from the north                     16%  below the target    hides 20% of the timber seen
+  The evergreens hold enough of the structure and do not yet read as cover: the difference is how dense their leaf is,
+  which has not been measured, and whether the bays between members have anything across them for foliage to fill.
+
+LIGHT in 2036: direct sun on a clear day in the middle of the month, and light as a share of an open site's
+  site: southern England (assumed), 51.5 N 0.0 E. No site was given. Southern England is assumed, at latitude 51.5 degrees north on the Greenwich meridian, with the drawing's y axis to true north and nothing near enough to cast shade.
+  nothing is declared on the site that would cast shade
+  sunrise to sunset: 16.4 h in Jun, 7.6 h in Dec
+  light acts in this run: on growth, and on flowering where a profile ties flowers to sun
+  the structure, by the side a stretch of route faces, with the leaf of 2036 on it
+    side       route   sun Jun   sun Dec  light, summer half  light, Dec
+    north      217 m     6.1 h     2.6 h                 39%         39%
+    east       213 m     6.1 h     2.4 h                 39%         39%
+    south      221 m     6.2 h     2.4 h                 38%         38%
+    west       205 m     6.0 h     1.9 h                 37%         35%
+    the top    173 m     3.6 h     2.3 h                 22%         27%
+  each plant, where it stood and climbed, against what its profile accepts
+    plant                       side               sun Jun  which is        light  growth  flowers  profile
+    P1.wisteria                 south-south-west     9.0 h  full sun          58%    100%      58%  Full sun or partial shade, preferably south or west facing and sheltered; full sun matters for profuse flowering.
+    P1.rose                     south-south-west     4.7 h  partial shade     35%     86%      35%  Full sun or partial shade; flowers best where light reaches the cane framework.
+    P1.star-jasmine             south-south-west     7.3 h  full sun          49%    100%        -  Warm full sun or partial shade, ideally south or west facing, sheltered from cold winds.
+    P1.winter-clematis          south-west           6.4 h  full sun          41%     41%        -  Sunny, warm, sheltered south or west exposure; a cooler shaded base helps.
+    P2.rose                     south-east           7.0 h  full sun          45%    100%      45%  Full sun or partial shade; flowers best where light reaches the cane framework.
+    P2.star-jasmine             south-south-east     6.9 h  full sun          47%    100%        -  Warm full sun or partial shade, ideally south or west facing, sheltered from cold winds.
+    P2.winter-clematis          south-south-east     3.6 h  partial shade     27%     27%        -  Sunny, warm, sheltered south or west exposure; a cooler shaded base helps. LESS SUN THAN ASKED
+    P2.honeysuckle              south-south-east     6.8 h  full sun          48%    100%        -  Full sun or partial shade; aspect flexible; partial shade often favourable.
+    P3.akebia                   east                 7.7 h  full sun          50%    100%        -  Full sun or partial shade; several aspects possible.
+    P3.honeysuckle              east                 5.8 h  partial shade     37%     90%        -  Full sun or partial shade; aspect flexible; partial shade often favourable.
+    P3.summer-clematis          east                 4.7 h  partial shade     28%     70%        -  Full sun or partial shade; adaptable to aspect and exposure.
+    P3.evergreen-honeysuckle    east                 7.7 h  full sun          47%    100%        -  Full sun or partial shade; north, east or west facing; exposed or sheltered, though leaf persistence is site-specific.
+    P4.hydrangea                north-north-east     3.8 h  partial shade     23%     57%        -  Partial shade, including cool east or north sectors; full sun only where the soil stays moist.
+    P4.evergreen-honeysuckle    north-north-east     3.9 h  partial shade     22%     55%        -  Full sun or partial shade; north, east or west facing; exposed or sheltered, though leaf persistence is site-specific.
+    P4.ivy                      north-north-east     4.8 h  partial shade     25%    100%        -  Shade to sun; exposed or sheltered.
+    P4.akebia                   north-east           7.9 h  full sun          46%    100%        -  Full sun or partial shade; several aspects possible.
+    P5.evergreen-honeysuckle    north-west           7.7 h  full sun          45%     98%        -  Full sun or partial shade; north, east or west facing; exposed or sheltered, though leaf persistence is site-specific.
+    P5.ivy                      north-north-west     2.8 h  moderate shade    17%     97%        -  Shade to sun; exposed or sheltered.
+    P5.akebia                   north-north-west     7.0 h  full sun          44%    100%        -  Full sun or partial shade; several aspects possible.
+    P5.evergreen-honeysuckle.2  north-north-west     7.9 h  full sun          41%     95%        -  Full sun or partial shade; north, east or west facing; exposed or sheltered, though leaf persistence is site-specific.
+    P6.japanese-wisteria        west                 8.5 h  full sun          56%    100%        -  Full sun or partial shade; south or west facing, sheltered; generous overhead clearance.
+    P6.spring-clematis          west                 5.6 h  partial shade     36%     36%        -  Full sun, south or west facing, sheltered from cold winds. LESS SUN THAN ASKED
+    P6.trumpet-vine             west                 5.3 h  partial shade     32%     32%        -  Full sun, south or west facing, warm and sheltered; summer heat strongly affects flowering. LESS SUN THAN ASKED
+    P6.vine                     west                 8.0 h  full sun          52%    100%        -  Sun or partial shade, preferably south or west facing; sheltered.
+  light: over the months the plant grows in. growth, flowers: what light multiplied the model's extension and chance of a flower bud by ("-": the profile does not tie flowers to sun)
+  Hours are direct sun on a clear day in the middle of the month, as the geometry allows: not sunshine records. A half-shaded minute counts as half.
+  Shares compare a place with an open site at the same spot, so cloud, which falls on both alike, is not in them.
+  Shade comes from the timber and cables, from what the site declares, and from the leaf other plants carried the season before. A plant is not counted as shading itself.
+  Warmth, shelter and wind are not light and are not modelled: where a profile asks for a warm or sheltered aspect, nothing here speaks to that.
+
+FLOWERS that opened in 2036, by height
+  P1.wisteria                  within reach, under 2 m: 0; 2 to 3 m: 14; above 3 m: 217
+  P1.rose                      within reach, under 2 m: 18; 2 to 3 m: 17; above 3 m: 15
+  P1.star-jasmine              within reach, under 2 m: 114; 2 to 3 m: 115; above 3 m: 222
+  P1.winter-clematis           within reach, under 2 m: 163; 2 to 3 m: 89; above 3 m: 76
+  P2.rose                      within reach, under 2 m: 45; 2 to 3 m: 31; above 3 m: 40
+  P2.star-jasmine              within reach, under 2 m: 126; 2 to 3 m: 119; above 3 m: 236
+  P2.winter-clematis           within reach, under 2 m: 179; 2 to 3 m: 87; above 3 m: 14
+  P2.honeysuckle               within reach, under 2 m: 77; 2 to 3 m: 123; above 3 m: 840
+  P3.akebia                    within reach, under 2 m: 45; 2 to 3 m: 40; above 3 m: 657
+  P3.honeysuckle               within reach, under 2 m: 94; 2 to 3 m: 68; above 3 m: 353
+  P3.summer-clematis           within reach, under 2 m: 31; 2 to 3 m: 1; above 3 m: 0
+  P3.evergreen-honeysuckle     within reach, under 2 m: 39; 2 to 3 m: 44; above 3 m: 116
+  P4.hydrangea                 within reach, under 2 m: 28; 2 to 3 m: 11; above 3 m: 17
+  P4.evergreen-honeysuckle     within reach, under 2 m: 53; 2 to 3 m: 42; above 3 m: 172
+  P4.ivy                       within reach, under 2 m: 9; 2 to 3 m: 9; above 3 m: 3
+  P4.akebia                    within reach, under 2 m: 41; 2 to 3 m: 37; above 3 m: 518
+  P5.evergreen-honeysuckle     within reach, under 2 m: 62; 2 to 3 m: 57; above 3 m: 168
+  P5.ivy                       within reach, under 2 m: 8; 2 to 3 m: 3; above 3 m: 4
+  P5.akebia                    within reach, under 2 m: 31; 2 to 3 m: 41; above 3 m: 424
+  P5.evergreen-honeysuckle.2   within reach, under 2 m: 45; 2 to 3 m: 63; above 3 m: 188
+  P6.japanese-wisteria         within reach, under 2 m: 2; 2 to 3 m: 72; above 3 m: 363
+  P6.spring-clematis           within reach, under 2 m: 238; 2 to 3 m: 130; above 3 m: 257
+  P6.trumpet-vine              within reach, under 2 m: 23; 2 to 3 m: 21; above 3 m: 44
+  P6.vine                      within reach, under 2 m: 6; 2 to 3 m: 13; above 3 m: 412
+
+GARDENING, by year (hours are not estimated: there is no basis for them yet)
+  2027: 24 plant, 4 hard_prune, 2 monitor, 3 shorten_side_shoots, 2 spur_prune; 147 tie-ins; 10 m of stem cut
+  2028: 7 shorten_side_shoots, 4 spur_prune, 1 hard_prune, 9 trim_to_bounds, 2 monitor, 10 deadhead_or_select_flowers; 105 tie-ins; 36 m of stem cut; 7 flower buds lost to cuts
+  2029: 10 shorten_side_shoots, 4 spur_prune, 1 hard_prune, 15 trim_to_bounds, 2 monitor, 10 deadhead_or_select_flowers; 169 tie-ins; 185 m of stem cut; 25 flower buds lost to cuts
+  2030: 8 shorten_side_shoots, 4 spur_prune, 1 hard_prune, 15 trim_to_bounds, 2 monitor, 10 deadhead_or_select_flowers; 158 tie-ins; 322 m of stem cut; 46 flower buds lost to cuts
+  2031: 10 shorten_side_shoots, 4 spur_prune, 1 hard_prune, 15 trim_to_bounds, 2 monitor, 10 deadhead_or_select_flowers; 182 tie-ins; 584 m of stem cut; 91 flower buds lost to cuts
+  2032: 8 shorten_side_shoots, 4 spur_prune, 1 hard_prune, 15 trim_to_bounds, 2 monitor, 10 deadhead_or_select_flowers; 185 tie-ins; 893 m of stem cut; 123 flower buds lost to cuts
+  2033: 10 shorten_side_shoots, 4 spur_prune, 1 hard_prune, 15 trim_to_bounds, 2 monitor, 10 deadhead_or_select_flowers; 187 tie-ins; 1178 m of stem cut; 174 flower buds lost to cuts
+  2034: 8 shorten_side_shoots, 4 spur_prune, 1 hard_prune, 15 trim_to_bounds, 2 monitor, 10 deadhead_or_select_flowers; 172 tie-ins; 1576 m of stem cut; 179 flower buds lost to cuts
+  2035: 10 shorten_side_shoots, 4 spur_prune, 1 hard_prune, 15 trim_to_bounds, 2 monitor, 10 deadhead_or_select_flowers; 138 tie-ins; 1965 m of stem cut; 210 flower buds lost to cuts
+  2036: 8 shorten_side_shoots, 4 spur_prune, 1 hard_prune, 15 trim_to_bounds, 2 monitor, 10 deadhead_or_select_flowers; 98 tie-ins; 2201 m of stem cut; 249 flower buds lost to cuts
+
+TO KEEP IN VIEW
+  P1.wisteria: 20 stretches where a stem of 30 mm or more is wound round a timber member (thickest 73 mm): it will go on thickening there, so keep these in view
+  P1.wisteria: the shoots of Wisteria sinensis that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant
+  P1.wisteria: the long shoots of Wisteria sinensis set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant
+  P1.wisteria: the leaves of Wisteria sinensis turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant
+  P1.rose: reached 4.3 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 3.4 to 4.6 m: length of stem, not height, is what ran out
+  P1.rose: the shoots of Rosa 'The Generous Gardener' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant
+  P1.rose: the flowering side shoots of Rosa 'The Generous Gardener' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant
+  P1.rose: the leaves of Rosa 'The Generous Gardener' turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant
+  P1.star-jasmine: 1 shoot stopped for want of a hold, and nobody tied the shoot in. First: stopped at j192: no way on (2 a timber member 185 mm round is too thick for a twining stem to grasp (limit 40 mm), and nobody ties it in; 1 already full of stems)
+  P1.star-jasmine: reached 4.9 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range
+  P1.star-jasmine: which way Trachelospermum jasminoides twines is not known: it is drawn right-handed so that it can be drawn at all, and that direction is not a finding
+  P1.star-jasmine: the profile says of how it holds on, and the model does not act on it: Twining is the primary mechanism (RHS: needs supporting wires or trellis). Aerial rootlets on damp rough surfaces are reported without citation and cannot be ruled out; if real, it could cling to timber as well as twine.
+  P1.winter-clematis: 16 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j436: no way on (2 a timber member 197 mm round is too thick for a twining leaf stalk to grasp (limit 8 mm), and nobody ties it in; 1 leads too far downhill)
+  P1.winter-clematis: reached 4.3 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 3 to 4 m: length of stem, not height, is what ran out
+  P1.winter-clematis: the shoots of Clematis cirrhosa 'Freckles' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant
+  P2.rose: reached 4.0 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 3.4 to 4.6 m: length of stem, not height, is what ran out
+  P2.rose: the shoots of Rosa 'The Generous Gardener' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant
+  P2.rose: the flowering side shoots of Rosa 'The Generous Gardener' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant
+  P2.rose: the leaves of Rosa 'The Generous Gardener' turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant
+  P2.star-jasmine: reached 4.9 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range
+  P2.star-jasmine: which way Trachelospermum jasminoides twines is not known: it is drawn right-handed so that it can be drawn at all, and that direction is not a finding
+  P2.star-jasmine: the profile says of how it holds on, and the model does not act on it: Twining is the primary mechanism (RHS: needs supporting wires or trellis). Aerial rootlets on damp rough surfaces are reported without citation and cannot be ruled out; if real, it could cling to timber as well as twine.
+  P2.winter-clematis: 18 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j206: no way on (2 a timber member 185 mm round is too thick for a twining leaf stalk to grasp (limit 8 mm), and nobody ties it in; 1 leads too far downhill)
+  P2.winter-clematis: reached 3.6 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 3 to 4 m: length of stem, not height, is what ran out
+  P2.winter-clematis: the shoots of Clematis cirrhosa 'Freckles' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant
+  P2.honeysuckle: 2 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j320: no way on (2 a timber member 197 mm round is too thick for a twining stem to grasp (limit 114 mm), and nobody ties it in; 1 leads too far downhill)
+  P2.honeysuckle: the shoots of Lonicera periclymenum 'Graham Thomas' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant
+  P2.honeysuckle: the flowering side shoots and long shoots of Lonicera periclymenum 'Graham Thomas' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant
+  P3.akebia: 41 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j351: no way on (2 a timber member 197 mm round is too thick for a twining stem to grasp (limit 60 mm), and nobody ties it in; 1 leads too far downhill)
+  P3.akebia: reached 5.3 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 9.1 to 12.2 m: length of stem, not height, is what ran out
+  P3.akebia: the shoots of Akebia quinata that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.stemFreshDensityKgM3, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant
+  P3.akebia: the long shoots of Akebia quinata set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant
+  P3.honeysuckle: 3 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j216: no way on (2 a timber member 185 mm round is too thick for a twining stem to grasp (limit 114 mm), and nobody ties it in; 1 leads too far downhill)
+  P3.honeysuckle: reached 5.3 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range
+  P3.honeysuckle: the shoots of Lonicera periclymenum 'Graham Thomas' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant
+  P3.honeysuckle: the flowering side shoots and long shoots of Lonicera periclymenum 'Graham Thomas' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant
+  P3.summer-clematis: reached 2.3 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range
+  P3.summer-clematis: the shoots of Clematis viticella 'Étoile Violette' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant
+  P3.summer-clematis: the flowering side shoots of Clematis viticella 'Étoile Violette' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant
+  P3.summer-clematis: the leaves of Clematis viticella 'Étoile Violette' turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant
+  P3.evergreen-honeysuckle: 14 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j344: no way on (2 a timber member 197 mm round is too thick for a twining stem to grasp (limit 55 mm), and nobody ties it in; 1 already full of stems)
+  P3.evergreen-honeysuckle: reached 4.5 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 5 to 10 m: length of stem, not height, is what ran out
+  P3.evergreen-honeysuckle: the shoots of Lonicera henryi that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant
+  P3.evergreen-honeysuckle: the flowering side shoots and long shoots of Lonicera henryi set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant
+  P3.evergreen-honeysuckle: the leaves of Lonicera henryi turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant
+  P4.hydrangea: has clung its way unaided to 3 joints between timber members, the highest 4.0 m up (j14): stems can enter gaps there and thicken, so these are the joints to inspect
+  P4.hydrangea: reached 4.6 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range
+  P4.hydrangea: the shoots of Hydrangea anomala subsp. petiolaris that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant
+  P4.hydrangea: the flowering side shoots of Hydrangea anomala subsp. petiolaris set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant
+  P4.hydrangea: the leaves of Hydrangea anomala subsp. petiolaris turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant
+  P4.evergreen-honeysuckle: 16 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j183: no way on (2 a timber member 185 mm round is too thick for a twining stem to grasp (limit 55 mm), and nobody ties it in; 1 already full of stems)
+  P4.evergreen-honeysuckle: reached 5.0 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 5 to 10 m: length of stem, not height, is what ran out
+  P4.evergreen-honeysuckle: the shoots of Lonicera henryi that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant
+  P4.evergreen-honeysuckle: the flowering side shoots and long shoots of Lonicera henryi set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant
+  P4.evergreen-honeysuckle: the leaves of Lonicera henryi turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant
+  P4.ivy: has clung its way unaided to 7 joints between timber members, the highest 4.8 m up (j11): stems can enter gaps there and thicken, so these are the joints to inspect
+  P4.ivy: reached 4.9 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range
+  P4.ivy: the shoots of Hedera helix that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant
+  P4.ivy: the leaves of Hedera helix turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant
+  P4.akebia: 46 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j256: no way on (2 a timber member 178 mm round is too thick for a twining stem to grasp (limit 60 mm), and nobody ties it in; 2 a timber member 197 mm round is too thick for a twining stem to grasp (limit 60 mm), and nobody ties it in; 1 leads too far downhill)
+  P4.akebia: the shoots of Akebia quinata that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.stemFreshDensityKgM3, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant
+  P4.akebia: the long shoots of Akebia quinata set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant
+  P5.evergreen-honeysuckle: 11 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j414: no way on (2 a timber member 197 mm round is too thick for a twining stem to grasp (limit 55 mm), and nobody ties it in; 1 already full of stems)
+  P5.evergreen-honeysuckle: reached 4.8 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 5 to 10 m: length of stem, not height, is what ran out
+  P5.evergreen-honeysuckle: the shoots of Lonicera henryi that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant
+  P5.evergreen-honeysuckle: the flowering side shoots and long shoots of Lonicera henryi set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant
+  P5.evergreen-honeysuckle: the leaves of Lonicera henryi turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant
+  P5.ivy: has clung its way unaided to 8 joints between timber members, the highest 4.8 m up (j52): stems can enter gaps there and thicken, so these are the joints to inspect
+  P5.ivy: reached 5.0 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range
+  P5.ivy: the shoots of Hedera helix that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant
+  P5.ivy: the leaves of Hedera helix turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant
+  P5.akebia: 38 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j391: no way on (2 a timber member 197 mm round is too thick for a twining stem to grasp (limit 60 mm), and nobody ties it in; 1 leads too far downhill)
+  P5.akebia: the shoots of Akebia quinata that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.stemFreshDensityKgM3, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant
+  P5.akebia: the long shoots of Akebia quinata set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant
+  P5.evergreen-honeysuckle.2: 5 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j389: no way on (2 a timber member 197 mm round is too thick for a twining stem to grasp (limit 55 mm), and nobody ties it in; 1 already full of stems)
+  P5.evergreen-honeysuckle.2: reached 4.9 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 5 to 10 m: length of stem, not height, is what ran out
+  P5.evergreen-honeysuckle.2: the shoots of Lonicera henryi that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant
+  P5.evergreen-honeysuckle.2: the flowering side shoots and long shoots of Lonicera henryi set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant
+  P5.evergreen-honeysuckle.2: the leaves of Lonicera henryi turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant
+  P6.japanese-wisteria: 10 stretches where a stem of 30 mm or more is wound round a timber member (thickest 82 mm): it will go on thickening there, so keep these in view
+  P6.japanese-wisteria: the shoots of Wisteria floribunda 'Macrobotrys' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant
+  P6.japanese-wisteria: the long shoots of Wisteria floribunda 'Macrobotrys' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant
+  P6.japanese-wisteria: the leaves of Wisteria floribunda 'Macrobotrys' turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant
+  P6.spring-clematis: 6 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j177: no way on (2 a timber member 185 mm round is too thick for a twining leaf stalk to grasp (limit 12 mm), and nobody ties it in; 1 already full of stems)
+  P6.spring-clematis: reached 4.9 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 5 to 8 m: length of stem, not height, is what ran out
+  P6.spring-clematis: the long shoots of Clematis armandi set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant
+  P6.trumpet-vine: has clung its way unaided to 3 joints between timber members, the highest 4.8 m up (j107): stems can enter gaps there and thicken, so these are the joints to inspect
+  P6.trumpet-vine: reached 4.9 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range
+  P6.trumpet-vine: the shoots of Campsis × tagliabueana 'Madame Galen' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant
+  P6.trumpet-vine: the flowering side shoots of Campsis × tagliabueana 'Madame Galen' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.startTowardsLight. The angles they leave at and the days they break on are not findings about this plant
+  P6.trumpet-vine: the profile says of how it holds on, and the model does not act on it: A weak self-clinger. The RHS calls campsis self-clinging by aerial roots but advises tying in; Bean says of this hybrid that it cannot be left to look after itself. Plan for ties as well as a clingable surface.
+  P6.vine: 4 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j412: no way on (2 a timber member 197 mm round is too thick for a tendril to grasp (limit 12 mm), and nobody ties it in; 1 already full of stems)
+  P6.vine: the shoots of Vitis coignetiae that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant
+  P6.vine: the leaves of Vitis coignetiae turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant
+  P2.winter-clematis: has 3.6 h of direct sun on a clear midsummer day over the 14 m of route it holds, which is partial shade; its profile asks for full sun ("Sunny, warm, sheltered south or west exposure; a cooler shaded base helps."). Its growth was held to 27% of what its model gives
+  P6.spring-clematis: has 5.6 h of direct sun on a clear midsummer day over the 42 m of route it holds, which is partial shade; its profile asks for full sun ("Full sun, south or west facing, sheltered from cold winds."). Its growth was held to 36% of what its model gives
+  P6.trumpet-vine: has 5.3 h of direct sun on a clear midsummer day over the 22 m of route it holds, which is partial shade; its profile asks for full sun ("Full sun, south or west facing, warm and sheltered; summer heat strongly affects flowering."). Its growth was held to 32% of what its model gives
+  all plants: 9 plants have profiles that ask for shelter or warmth (P1.wisteria, P1.star-jasmine, P1.winter-clematis, P2.star-jasmine, P2.winter-clematis, P6.japanese-wisteria, P6.spring-clematis, P6.trumpet-vine, P6.vine): the model has no wind or temperature, so nothing in this run speaks to whether they have it
+
+WHAT THIS RESTS ON
+  wisteria-sinensis: 90 provisional assumptions, 3 published values, 0 measured, 18 left unknown (the parts they describe are not in the run)
+  rosa-the-generous-gardener: 100 provisional assumptions, 2 published values, 0 measured, 9 left unknown (the parts they describe are not in the run)
+  trachelospermum-jasminoides: 91 provisional assumptions, 7 published values, 0 measured, 13 left unknown (the parts they describe are not in the run)
+  clematis-cirrhosa-freckles: 95 provisional assumptions, 6 published values, 0 measured, 10 left unknown (the parts they describe are not in the run)
+  lonicera-periclymenum-graham-thomas: 89 provisional assumptions, 16 published values, 0 measured, 6 left unknown (the parts they describe are not in the run)
+  akebia-quinata: 90 provisional assumptions, 6 published values, 0 measured, 15 left unknown (the parts they describe are not in the run)
+  clematis-viticella-etoile-violette: 94 provisional assumptions, 2 published values, 0 measured, 15 left unknown (the parts they describe are not in the run)
+  lonicera-henryi: 84 provisional assumptions, 12 published values, 0 measured, 15 left unknown (the parts they describe are not in the run)
+  hydrangea-anomala-subsp-petiolaris: 85 provisional assumptions, 11 published values, 0 measured, 15 left unknown (the parts they describe are not in the run)
+  hedera-helix: 83 provisional assumptions, 20 published values, 0 measured, 8 left unknown (the parts they describe are not in the run)
+  wisteria-floribunda-macrobotrys: 88 provisional assumptions, 5 published values, 0 measured, 18 left unknown (the parts they describe are not in the run)
+  clematis-armandi: 86 provisional assumptions, 1 published values, 0 measured, 24 left unknown (the parts they describe are not in the run)
+  campsis-x-tagliabueana-madame-galen: 92 provisional assumptions, 4 published values, 0 measured, 15 left unknown (the parts they describe are not in the run)
+  vitis-coignetiae: 84 provisional assumptions, 10 published values, 3 measured, 14 left unknown (the parts they describe are not in the run)
+  light model: 10 provisional assumptions, 5 published values, 0 measured
+  varied: wisteria-sinensis architecture.trunkStemStartYears = [0,0,0]. Varied for this scenario (was [0,0,1]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing
+  varied: wisteria-sinensis architecture.nurseryCaneM = 3. Varied for this scenario (was 1.2): planted as a nursery specimen standing 3 m, not a young plant
+  varied: rosa-the-generous-gardener architecture.trunkStemStartYears = [0,0,0,0,0,0]. Varied for this scenario (was [0,0,1,2,3,5]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing
+  varied: rosa-the-generous-gardener architecture.nurseryCaneM = 3. Varied for this scenario (was 0.4): planted as a nursery specimen standing 3 m, not a young plant
+  varied: trachelospermum-jasminoides architecture.trunkStemStartYears = [0,0,0,0,0,0]. Varied for this scenario (was [0,0,0,1,1,2]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing
+  varied: trachelospermum-jasminoides architecture.nurseryCaneM = 3. Varied for this scenario (was 0.9): planted as a nursery specimen standing 3 m, not a young plant
+  varied: clematis-cirrhosa-freckles architecture.trunkStemStartYears = [0,0,0,0,0,0,0,0,0,0]. Varied for this scenario (was [0,0,0,0,1,1,1,2,2,3]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing
+  varied: clematis-cirrhosa-freckles architecture.nurseryCaneM = 3. Varied for this scenario (was 0.6): planted as a nursery specimen standing 3 m, not a young plant
+  varied: lonicera-periclymenum-graham-thomas architecture.trunkStemStartYears = [0,0,0,0]. Varied for this scenario (was [0,0,1,2]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing
+  varied: lonicera-periclymenum-graham-thomas architecture.nurseryCaneM = 3. Varied for this scenario (was 0.6): planted as a nursery specimen standing 3 m, not a young plant
+  varied: akebia-quinata architecture.trunkStemStartYears = [0,0,0,0]. Varied for this scenario (was [0,0,1,2]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing
+  varied: akebia-quinata architecture.nurseryCaneM = 3. Varied for this scenario (was 0.6): planted as a nursery specimen standing 3 m, not a young plant
+  varied: clematis-viticella-etoile-violette architecture.trunkStemStartYears = [0,0,0]. Varied for this scenario (was [0,0,1]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing
+  varied: clematis-viticella-etoile-violette architecture.nurseryCaneM = 3. Varied for this scenario (was 0.3): planted as a nursery specimen standing 3 m, not a young plant
+  varied: lonicera-henryi architecture.trunkStemStartYears = [0,0,0,0]. Varied for this scenario (was [0,0,1,2]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing
+  varied: lonicera-henryi architecture.nurseryCaneM = 3. Varied for this scenario (was 0.6): planted as a nursery specimen standing 3 m, not a young plant
+  varied: hydrangea-anomala-subsp-petiolaris architecture.trunkStemStartYears = [0,0,0,0]. Varied for this scenario (was [0,0,1,2]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing
+  varied: hydrangea-anomala-subsp-petiolaris architecture.nurseryCaneM = 3. Varied for this scenario (was 0.4): planted as a nursery specimen standing 3 m, not a young plant
+  varied: hedera-helix architecture.trunkStemStartYears = [0,0,0,0,0]. Varied for this scenario (was [0,0,0,1,2]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing
+  varied: hedera-helix architecture.nurseryCaneM = 3. Varied for this scenario (was 0.3): planted as a nursery specimen standing 3 m, not a young plant
+  varied: wisteria-floribunda-macrobotrys architecture.trunkStemStartYears = [0,0,0]. Varied for this scenario (was [0,0,1]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing
+  varied: wisteria-floribunda-macrobotrys architecture.nurseryCaneM = 3. Varied for this scenario (was 1.2): planted as a nursery specimen standing 3 m, not a young plant
+  varied: clematis-armandi architecture.trunkStemStartYears = [0,0,0]. Varied for this scenario (was [0,0,1]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing
+  varied: clematis-armandi architecture.nurseryCaneM = 3. Varied for this scenario (was 0.6): planted as a nursery specimen standing 3 m, not a young plant
+  varied: campsis-x-tagliabueana-madame-galen architecture.trunkStemStartYears = [0,0,0]. Varied for this scenario (was [0,0,0]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing
+  varied: campsis-x-tagliabueana-madame-galen architecture.nurseryCaneM = 3. Varied for this scenario (was 0.15): planted as a nursery specimen standing 3 m, not a young plant
+  varied: vitis-coignetiae architecture.trunkStemStartYears = [0,0,0]. Varied for this scenario (was [0,1,2]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing
+  varied: vitis-coignetiae architecture.nurseryCaneM = 3. Varied for this scenario (was 0.8): planted as a nursery specimen standing 3 m, not a young plant
+  Stem volume is a bookkeeping proxy from modelled stem lengths and radii. It is not a mass, a load or an engineering quantity, and must not be used to size anything.

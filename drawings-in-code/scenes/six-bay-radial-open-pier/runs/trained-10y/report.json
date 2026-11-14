@@ -1,0 +1,5641 @@
+{
+  "scenario": "Trial planting: a ring of climbers round each pier, chosen by the side of the room it stands on (24 plants) on the 6-bay room, snapshot six-bay-radial-open-pier, trained",
+  "year": 2036,
+  "structure": {
+    "primaryTimberM": 612.7781965862814,
+    "subLatticeTimberM": 0,
+    "steelCableM": 234.5755288849781,
+    "routeOnTimberM": 712.4860620606938,
+    "routeOnCableM": 317.1070780763542,
+    "steelShareOfRoute": 0.3079926096187319,
+    "routeM": 1029.593140137049,
+    "crownHeightM": 6.320000000000001
+  },
+  "plants": [
+    {
+      "plantId": "P1.wisteria",
+      "label": "Wisteria sinensis",
+      "taxonId": "wisteria-sinensis",
+      "frameworkM": 139.0825121392909,
+      "annualShootsM": 10.348212106948132,
+      "spurs": 669,
+      "sideShoots": 0,
+      "highestM": 6.3420000000000005,
+      "routeHeldM": 85.84179444272633,
+      "routeShare": 0.08337448172129423,
+      "heldUnaided": 113,
+      "tiedIn": 12,
+      "stemVolumeM3": 0.10736880609356239
+    },
+    {
+      "plantId": "P1.rose",
+      "label": "Rosa 'The Generous Gardener'",
+      "taxonId": "rosa-the-generous-gardener",
+      "frameworkM": 18.129616487777742,
+      "annualShootsM": 0,
+      "spurs": 0,
+      "sideShoots": 227,
+      "highestM": 4.250084027155386,
+      "routeHeldM": 10.60061447977669,
+      "routeShare": 0.010295925707474745,
+      "heldUnaided": 0,
+      "tiedIn": 24,
+      "stemVolumeM3": 0.0037789696240595806
+    },
+    {
+      "plantId": "P1.star-jasmine",
+      "label": "Trachelospermum jasminoides",
+      "taxonId": "trachelospermum-jasminoides",
+      "frameworkM": 57.480309840372946,
+      "annualShootsM": 15.009496494338924,
+      "spurs": 0,
+      "sideShoots": 522,
+      "highestM": 4.909025339188024,
+      "routeHeldM": 31.0716745463521,
+      "routeShare": 0.030178595150911897,
+      "heldUnaided": 38,
+      "tiedIn": 33,
+      "stemVolumeM3": 0.001847809774736225
+    },
+    {
+      "plantId": "P1.winter-clematis",
+      "label": "Clematis cirrhosa 'Freckles'",
+      "taxonId": "clematis-cirrhosa-freckles",
+      "frameworkM": 36.686393332330304,
+      "annualShootsM": 55.894741834384675,
+      "spurs": 0,
+      "sideShoots": 396,
+      "highestM": 4.3312681223227685,
+      "routeHeldM": 18.66329282203956,
+      "routeShare": 0.018126862053058444,
+      "heldUnaided": 67,
+      "tiedIn": 26,
+      "stemVolumeM3": 0.0009540223171424198
+    },
+    {
+      "plantId": "P2.rose",
+      "label": "Rosa 'The Generous Gardener'",
+      "taxonId": "rosa-the-generous-gardener",
+      "frameworkM": 17.666983842096638,
+      "annualShootsM": 0,
+      "spurs": 0,
+      "sideShoots": 223,
+      "highestM": 3.9768867808739037,
+      "routeHeldM": 12.019079665135386,
+      "routeShare": 0.011673620575536788,
+      "heldUnaided": 0,
+      "tiedIn": 24,
+      "stemVolumeM3": 0.0037068861953990185
+    },
+    {
+      "plantId": "P2.star-jasmine",
+      "label": "Trachelospermum jasminoides",
+      "taxonId": "trachelospermum-jasminoides",
+      "frameworkM": 58.9631769837468,
+      "annualShootsM": 13.727554093327157,
+      "spurs": 0,
+      "sideShoots": 538,
+      "highestM": 4.909015897866743,
+      "routeHeldM": 29.16706569879072,
+      "routeShare": 0.028328729632860893,
+      "heldUnaided": 36,
+      "tiedIn": 32,
+      "stemVolumeM3": 0.0018329164964626928
+    },
+    {
+      "plantId": "P2.winter-clematis",
+      "label": "Clematis cirrhosa 'Freckles'",
+      "taxonId": "clematis-cirrhosa-freckles",
+      "frameworkM": 30.120000313822946,
+      "annualShootsM": 55.0280768015439,
+      "spurs": 0,
+      "sideShoots": 338,
+      "highestM": 3.5521153029356993,
+      "routeHeldM": 15.7819522386139,
+      "routeShare": 0.015328338567322979,
+      "heldUnaided": 52,
+      "tiedIn": 21,
+      "stemVolumeM3": 0.0007405538270441476
+    },
+    {
+      "plantId": "P2.honeysuckle",
+      "label": "Lonicera periclymenum 'Graham Thomas'",
+      "taxonId": "lonicera-periclymenum-graham-thomas",
+      "frameworkM": 145.1666579844711,
+      "annualShootsM": 23.687978296776677,
+      "spurs": 0,
+      "sideShoots": 1795,
+      "highestM": 6.364,
+      "routeHeldM": 86.06570252131846,
+      "routeShare": 0.08359195410903987,
+      "heldUnaided": 58,
+      "tiedIn": 116,
+      "stemVolumeM3": 0.018174527265184412
+    },
+    {
+      "plantId": "P3.akebia",
+      "label": "Akebia quinata",
+      "taxonId": "akebia-quinata",
+      "frameworkM": 274.86216980739744,
+      "annualShootsM": 81.80581081748441,
+      "spurs": 2349,
+      "sideShoots": 0,
+      "highestM": 5.310510560329862,
+      "routeHeldM": 137.22012939854872,
+      "routeShare": 0.13327607192515228,
+      "heldUnaided": 157,
+      "tiedIn": 190,
+      "stemVolumeM3": 0.009387374496839301
+    },
+    {
+      "plantId": "P3.honeysuckle",
+      "label": "Lonicera periclymenum 'Graham Thomas'",
+      "taxonId": "lonicera-periclymenum-graham-thomas",
+      "frameworkM": 74.51619027546317,
+      "annualShootsM": 17.823477646397414,
+      "spurs": 0,
+      "sideShoots": 898,
+      "highestM": 5.330583479684371,
+      "routeHeldM": 44.46951900638636,
+      "routeShare": 0.043191351294810526,
+      "heldUnaided": 35,
+      "tiedIn": 49,
+      "stemVolumeM3": 0.007817238728249097
+    },
+    {
+      "plantId": "P3.summer-clematis",
+      "label": "Clematis viticella 'Étoile Violette'",
+      "taxonId": "clematis-viticella-etoile-violette",
+      "frameworkM": 21.29370348902136,
+      "annualShootsM": 0,
+      "spurs": 0,
+      "sideShoots": 0,
+      "highestM": 2.254175701684849,
+      "routeHeldM": 5.361155425374912,
+      "routeShare": 0.005207062106747613,
+      "heldUnaided": 13,
+      "tiedIn": 23,
+      "stemVolumeM3": 0.00016732721002370385
+    },
+    {
+      "plantId": "P3.evergreen-honeysuckle",
+      "label": "Lonicera henryi",
+      "taxonId": "lonicera-henryi",
+      "frameworkM": 46.26675226207445,
+      "annualShootsM": 365.57587843204976,
+      "spurs": 0,
+      "sideShoots": 529,
+      "highestM": 4.4634001850873934,
+      "routeHeldM": 29.31778613830365,
+      "routeShare": 0.02847511798145932,
+      "heldUnaided": 70,
+      "tiedIn": 31,
+      "stemVolumeM3": 0.008317891853079845
+    },
+    {
+      "plantId": "P4.hydrangea",
+      "label": "Hydrangea anomala subsp. petiolaris",
+      "taxonId": "hydrangea-anomala-subsp-petiolaris",
+      "frameworkM": 28.650607380564704,
+      "annualShootsM": 0,
+      "spurs": 0,
+      "sideShoots": 305,
+      "highestM": 4.566201143660429,
+      "routeHeldM": 13.701597887283627,
+      "routeShare": 0.01330777892076846,
+      "heldUnaided": 24,
+      "tiedIn": 13,
+      "stemVolumeM3": 0.005752029428802189
+    },
+    {
+      "plantId": "P4.evergreen-honeysuckle",
+      "label": "Lonicera henryi",
+      "taxonId": "lonicera-henryi",
+      "frameworkM": 60.75382785171003,
+      "annualShootsM": 419.91672163925114,
+      "spurs": 0,
+      "sideShoots": 668,
+      "highestM": 5.004380855559738,
+      "routeHeldM": 52.67676304183048,
+      "routeShare": 0.05116269814581193,
+      "heldUnaided": 63,
+      "tiedIn": 41,
+      "stemVolumeM3": 0.011286153325215717
+    },
+    {
+      "plantId": "P4.ivy",
+      "label": "Hedera helix",
+      "taxonId": "hedera-helix",
+      "frameworkM": 75.11562933658462,
+      "annualShootsM": 154.10381501804105,
+      "spurs": 0,
+      "sideShoots": 108,
+      "highestM": 4.943198874792461,
+      "routeHeldM": 43.04641666023838,
+      "routeShare": 0.04180915254982029,
+      "heldUnaided": 93,
+      "tiedIn": 23,
+      "stemVolumeM3": 0.003924616960227507
+    },
+    {
+      "plantId": "P4.akebia",
+      "label": "Akebia quinata",
+      "taxonId": "akebia-quinata",
+      "frameworkM": 225.2430406181146,
+      "annualShootsM": 82.51183553225471,
+      "spurs": 1912,
+      "sideShoots": 0,
+      "highestM": 6.37,
+      "routeHeldM": 129.7251110607475,
+      "routeShare": 0.12599647958365362,
+      "heldUnaided": 138,
+      "tiedIn": 173,
+      "stemVolumeM3": 0.008258071205607322
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle",
+      "label": "Lonicera henryi",
+      "taxonId": "lonicera-henryi",
+      "frameworkM": 59.0021449567365,
+      "annualShootsM": 476.66258376022114,
+      "spurs": 0,
+      "sideShoots": 662,
+      "highestM": 4.831448539610686,
+      "routeHeldM": 38.017455590017946,
+      "routeShare": 0.036924736682839056,
+      "heldUnaided": 59,
+      "tiedIn": 40,
+      "stemVolumeM3": 0.011120915500438118
+    },
+    {
+      "plantId": "P5.ivy",
+      "label": "Hedera helix",
+      "taxonId": "hedera-helix",
+      "frameworkM": 73.70678984827839,
+      "annualShootsM": 145.13651231733186,
+      "spurs": 0,
+      "sideShoots": 77,
+      "highestM": 4.958585385241789,
+      "routeHeldM": 43.7927960969792,
+      "routeShare": 0.042534079132607615,
+      "heldUnaided": 90,
+      "tiedIn": 19,
+      "stemVolumeM3": 0.0036761746838966224
+    },
+    {
+      "plantId": "P5.akebia",
+      "label": "Akebia quinata",
+      "taxonId": "akebia-quinata",
+      "frameworkM": 192.56503919527924,
+      "annualShootsM": 56.911706264620385,
+      "spurs": 1621,
+      "sideShoots": 0,
+      "highestM": 6.3420000000000005,
+      "routeHeldM": 112.71840084585811,
+      "routeShare": 0.1094785857167368,
+      "heldUnaided": 107,
+      "tiedIn": 128,
+      "stemVolumeM3": 0.006569893347885923
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle.2",
+      "label": "Lonicera henryi",
+      "taxonId": "lonicera-henryi",
+      "frameworkM": 62.08357369427198,
+      "annualShootsM": 507.9908180162002,
+      "spurs": 0,
+      "sideShoots": 722,
+      "highestM": 4.914394743247505,
+      "routeHeldM": 49.35575401662831,
+      "routeShare": 0.04793714341381351,
+      "heldUnaided": 66,
+      "tiedIn": 42,
+      "stemVolumeM3": 0.012300377320889082
+    },
+    {
+      "plantId": "P6.japanese-wisteria",
+      "label": "Wisteria floribunda 'Macrobotrys'",
+      "taxonId": "wisteria-floribunda-macrobotrys",
+      "frameworkM": 78.9546371768618,
+      "annualShootsM": 5.372634260917351,
+      "spurs": 530,
+      "sideShoots": 0,
+      "highestM": 6.331729019965536,
+      "routeHeldM": 50.496594291792256,
+      "routeShare": 0.04904519302165384,
+      "heldUnaided": 68,
+      "tiedIn": 9,
+      "stemVolumeM3": 0.047339925565970664
+    },
+    {
+      "plantId": "P6.spring-clematis",
+      "label": "Clematis armandi",
+      "taxonId": "clematis-armandi",
+      "frameworkM": 44.685742704712354,
+      "annualShootsM": 209.5834634847224,
+      "spurs": 0,
+      "sideShoots": 0,
+      "highestM": 4.89777706421343,
+      "routeHeldM": 41.876140797685395,
+      "routeShare": 0.040672513408657004,
+      "heldUnaided": 55,
+      "tiedIn": 29,
+      "stemVolumeM3": 0.007548318501499589
+    },
+    {
+      "plantId": "P6.trumpet-vine",
+      "label": "Campsis × tagliabueana 'Madame Galen'",
+      "taxonId": "campsis-x-tagliabueana-madame-galen",
+      "frameworkM": 32.00928699584056,
+      "annualShootsM": 0,
+      "spurs": 0,
+      "sideShoots": 348,
+      "highestM": 4.909024728587887,
+      "routeHeldM": 25.72964931153555,
+      "routeShare": 0.024990113384118585,
+      "heldUnaided": 29,
+      "tiedIn": 6,
+      "stemVolumeM3": 0.01124664747859966
+    },
+    {
+      "plantId": "P6.vine",
+      "label": "Vitis coignetiae",
+      "taxonId": "vitis-coignetiae",
+      "frameworkM": 286.89241558537003,
+      "annualShootsM": 7.148492147186787,
+      "spurs": 0,
+      "sideShoots": 1793,
+      "highestM": 6.37,
+      "routeHeldM": 132.13745166386602,
+      "routeShare": 0.12833948334803127,
+      "heldUnaided": 48,
+      "tiedIn": 231,
+      "stemVolumeM3": 0.0760211474649616
+    }
+  ],
+  "milestones": [
+    {
+      "plantId": "P1.wisteria",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 5.999508917527351,
+      "routeShare": 0.004411246253858159,
+      "highestM": 2.668860056123534,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P1.wisteria",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 23.65788820871002,
+      "routeShare": 0.01045576371837109,
+      "highestM": 4.586049718362072,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P1.wisteria",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 52.280432749774086,
+      "routeShare": 0.030861613986891672,
+      "highestM": 4.936604149126544,
+      "flowersOpened": 18
+    },
+    {
+      "plantId": "P1.wisteria",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 139.0825121392909,
+      "routeShare": 0.08337448172129423,
+      "highestM": 6.3420000000000005,
+      "flowersOpened": 231
+    },
+    {
+      "plantId": "P1.rose",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 7.506553867751888,
+      "routeShare": 0.005504301051727483,
+      "highestM": 3.5631161835755316,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P1.rose",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 18.129616487777742,
+      "routeShare": 0.010295925707474745,
+      "highestM": 4.250084027155386,
+      "flowersOpened": 95
+    },
+    {
+      "plantId": "P1.rose",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 18.129616487777742,
+      "routeShare": 0.010295925707474745,
+      "highestM": 4.250084027155386,
+      "flowersOpened": 102
+    },
+    {
+      "plantId": "P1.rose",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 18.129616487777742,
+      "routeShare": 0.010295925707474745,
+      "highestM": 4.250084027155386,
+      "flowersOpened": 50
+    },
+    {
+      "plantId": "P1.star-jasmine",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 4.307614334988538,
+      "routeShare": 0.0035620585211361896,
+      "highestM": 2.678898305585428,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P1.star-jasmine",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 12.152815652007567,
+      "routeShare": 0.008094802039716157,
+      "highestM": 3.55195418496988,
+      "flowersOpened": 44
+    },
+    {
+      "plantId": "P1.star-jasmine",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 22.078950889103282,
+      "routeShare": 0.010293355875108953,
+      "highestM": 3.966601790369669,
+      "flowersOpened": 126
+    },
+    {
+      "plantId": "P1.star-jasmine",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 57.480309840372946,
+      "routeShare": 0.030178595150911897,
+      "highestM": 4.909025339188024,
+      "flowersOpened": 451
+    },
+    {
+      "plantId": "P1.winter-clematis",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 4.185715805045973,
+      "routeShare": 0.0017993313616157447,
+      "highestM": 0.713222857142857,
+      "flowersOpened": 3
+    },
+    {
+      "plantId": "P1.winter-clematis",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 13.836897409700853,
+      "routeShare": 0.005394446723920907,
+      "highestM": 1.8117114613955807,
+      "flowersOpened": 67
+    },
+    {
+      "plantId": "P1.winter-clematis",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 24.710981718998465,
+      "routeShare": 0.008863843693877969,
+      "highestM": 2.9333326912672626,
+      "flowersOpened": 170
+    },
+    {
+      "plantId": "P1.winter-clematis",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 36.686393332330304,
+      "routeShare": 0.018126862053058444,
+      "highestM": 4.3312681223227685,
+      "flowersOpened": 328
+    },
+    {
+      "plantId": "P2.rose",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 7.028674619006968,
+      "routeShare": 0.004988586231881508,
+      "highestM": 3.113525551939031,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P2.rose",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 16.30032258822419,
+      "routeShare": 0.009028201310543457,
+      "highestM": 3.575812101340281,
+      "flowersOpened": 53
+    },
+    {
+      "plantId": "P2.rose",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 17.666983842096638,
+      "routeShare": 0.011673620575536788,
+      "highestM": 3.9768867808739037,
+      "flowersOpened": 117
+    },
+    {
+      "plantId": "P2.rose",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 17.666983842096638,
+      "routeShare": 0.011673620575536788,
+      "highestM": 3.9768867808739037,
+      "flowersOpened": 116
+    },
+    {
+      "plantId": "P2.star-jasmine",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 4.307614334988538,
+      "routeShare": 0.0035620585211361896,
+      "highestM": 2.678898305585428,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P2.star-jasmine",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 10.45356577272798,
+      "routeShare": 0.007188533011570128,
+      "highestM": 3.540894903582273,
+      "flowersOpened": 33
+    },
+    {
+      "plantId": "P2.star-jasmine",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 20.322961795469347,
+      "routeShare": 0.011840795874618374,
+      "highestM": 3.9866026704553015,
+      "flowersOpened": 118
+    },
+    {
+      "plantId": "P2.star-jasmine",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 58.9631769837468,
+      "routeShare": 0.028328729632860893,
+      "highestM": 4.909015897866743,
+      "flowersOpened": 481
+    },
+    {
+      "plantId": "P2.winter-clematis",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 2.9671069056719057,
+      "routeShare": 0.0014510779899416706,
+      "highestM": 0.5633823529411764,
+      "flowersOpened": 3
+    },
+    {
+      "plantId": "P2.winter-clematis",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 11.656471089834985,
+      "routeShare": 0.00463117466815373,
+      "highestM": 1.5947899871692413,
+      "flowersOpened": 48
+    },
+    {
+      "plantId": "P2.winter-clematis",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 19.222115717821936,
+      "routeShare": 0.007532391743904004,
+      "highestM": 2.5113617662261234,
+      "flowersOpened": 99
+    },
+    {
+      "plantId": "P2.winter-clematis",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 30.120000313822946,
+      "routeShare": 0.015328338567322979,
+      "highestM": 3.5521153029356993,
+      "flowersOpened": 280
+    },
+    {
+      "plantId": "P2.honeysuckle",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 5.138927482260676,
+      "routeShare": 0.0038107568061112335,
+      "highestM": 1.554322141756656,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P2.honeysuckle",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 22.84873494173781,
+      "routeShare": 0.008328931722207328,
+      "highestM": 3.55241027887259,
+      "flowersOpened": 82
+    },
+    {
+      "plantId": "P2.honeysuckle",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 56.45713412110935,
+      "routeShare": 0.026784413270690113,
+      "highestM": 4.860048039235034,
+      "flowersOpened": 382
+    },
+    {
+      "plantId": "P2.honeysuckle",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 145.1666579844711,
+      "routeShare": 0.08359195410903987,
+      "highestM": 6.364,
+      "flowersOpened": 1040
+    },
+    {
+      "plantId": "P3.akebia",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 8.970081670384028,
+      "routeShare": 0.005845149226973233,
+      "highestM": 3.5994207037255532,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P3.akebia",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 58.7327149017925,
+      "routeShare": 0.037271156259634244,
+      "highestM": 4.830886108735242,
+      "flowersOpened": 10
+    },
+    {
+      "plantId": "P3.akebia",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 128.7811599701446,
+      "routeShare": 0.0849731705870948,
+      "highestM": 4.915635488315988,
+      "flowersOpened": 146
+    },
+    {
+      "plantId": "P3.akebia",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 274.86216980739744,
+      "routeShare": 0.13327607192515228,
+      "highestM": 5.310510560329862,
+      "flowersOpened": 742
+    },
+    {
+      "plantId": "P3.honeysuckle",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 4.696068556628964,
+      "routeShare": 0.003638848415538898,
+      "highestM": 1.5655529881854928,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P3.honeysuckle",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 19.10737495735823,
+      "routeShare": 0.006628591764690344,
+      "highestM": 3.365770098535509,
+      "flowersOpened": 68
+    },
+    {
+      "plantId": "P3.honeysuckle",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 33.234941864436365,
+      "routeShare": 0.012510226796667565,
+      "highestM": 4.320565662907846,
+      "flowersOpened": 237
+    },
+    {
+      "plantId": "P3.honeysuckle",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 74.51619027546317,
+      "routeShare": 0.043191351294810526,
+      "highestM": 5.330583479684371,
+      "flowersOpened": 515
+    },
+    {
+      "plantId": "P3.summer-clematis",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 7.5487807476779745,
+      "routeShare": 0.005878742494383243,
+      "highestM": 3.1270279907079055,
+      "flowersOpened": 19
+    },
+    {
+      "plantId": "P3.summer-clematis",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 25.5621620551947,
+      "routeShare": 0.005207062106747613,
+      "highestM": 2.5667897522825234,
+      "flowersOpened": 57
+    },
+    {
+      "plantId": "P3.summer-clematis",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 22.624422294579567,
+      "routeShare": 0.005956911377054714,
+      "highestM": 2.3341741832069394,
+      "flowersOpened": 36
+    },
+    {
+      "plantId": "P3.summer-clematis",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 21.29370348902136,
+      "routeShare": 0.005207062106747613,
+      "highestM": 2.254175701684849,
+      "flowersOpened": 32
+    },
+    {
+      "plantId": "P3.evergreen-honeysuckle",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 5.522411583171318,
+      "routeShare": 0.0049011728198580014,
+      "highestM": 3.548619831520232,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P3.evergreen-honeysuckle",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 27.00460103908169,
+      "routeShare": 0.017424947294919765,
+      "highestM": 4.4634001850873934,
+      "flowersOpened": 64
+    },
+    {
+      "plantId": "P3.evergreen-honeysuckle",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 36.536266897223726,
+      "routeShare": 0.025642533672395627,
+      "highestM": 4.4634001850873934,
+      "flowersOpened": 156
+    },
+    {
+      "plantId": "P3.evergreen-honeysuckle",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 46.26675226207445,
+      "routeShare": 0.02847511798145932,
+      "highestM": 4.4634001850873934,
+      "flowersOpened": 199
+    },
+    {
+      "plantId": "P4.hydrangea",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 3.441945094811213,
+      "routeShare": 0.003495904918752222,
+      "highestM": 2.7512718498190822,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P4.hydrangea",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 6.424675890360206,
+      "routeShare": 0.0064847550020434895,
+      "highestM": 3.1878233698221887,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P4.hydrangea",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 12.341297688862108,
+      "routeShare": 0.009028365178397016,
+      "highestM": 3.6461609028029165,
+      "flowersOpened": 2
+    },
+    {
+      "plantId": "P4.hydrangea",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 28.650607380564704,
+      "routeShare": 0.01330777892076846,
+      "highestM": 4.566201143660429,
+      "flowersOpened": 56
+    },
+    {
+      "plantId": "P4.evergreen-honeysuckle",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 6.241112136334854,
+      "routeShare": 0.004886118952006426,
+      "highestM": 3.444010446201548,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P4.evergreen-honeysuckle",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 29.87680246866987,
+      "routeShare": 0.020134345314743597,
+      "highestM": 4.630808264359718,
+      "flowersOpened": 63
+    },
+    {
+      "plantId": "P4.evergreen-honeysuckle",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 42.5828652936029,
+      "routeShare": 0.02610336259580665,
+      "highestM": 4.708370533332403,
+      "flowersOpened": 161
+    },
+    {
+      "plantId": "P4.evergreen-honeysuckle",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 60.75382785171003,
+      "routeShare": 0.05116269814581193,
+      "highestM": 5.004380855559738,
+      "flowersOpened": 267
+    },
+    {
+      "plantId": "P4.ivy",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 3.875725224719205,
+      "routeShare": 0.0035620585211361896,
+      "highestM": 2.8254967120433565,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P4.ivy",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 12.311318213805816,
+      "routeShare": 0.008670568907479257,
+      "highestM": 3.624035871626179,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P4.ivy",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 32.52714994838448,
+      "routeShare": 0.014240616136691258,
+      "highestM": 4.412314235838472,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P4.ivy",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 75.11562933658462,
+      "routeShare": 0.04180915254982029,
+      "highestM": 4.943198874792461,
+      "flowersOpened": 21
+    },
+    {
+      "plantId": "P4.akebia",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 7.384994409599049,
+      "routeShare": 0.006011759649754789,
+      "highestM": 3.7307144255828963,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P4.akebia",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 43.77668956196033,
+      "routeShare": 0.03127873803419905,
+      "highestM": 4.90902235333362,
+      "flowersOpened": 8
+    },
+    {
+      "plantId": "P4.akebia",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 105.04761894438091,
+      "routeShare": 0.06841868009541768,
+      "highestM": 6.32,
+      "flowersOpened": 116
+    },
+    {
+      "plantId": "P4.akebia",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 225.2430406181146,
+      "routeShare": 0.12599647958365362,
+      "highestM": 6.37,
+      "flowersOpened": 596
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 6.5854746536000395,
+      "routeShare": 0.005845526647999847,
+      "highestM": 3.450448688054283,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 39.8569363770035,
+      "routeShare": 0.025536658315408724,
+      "highestM": 4.418625382238004,
+      "flowersOpened": 76
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 49.4475474451216,
+      "routeShare": 0.036674480744393625,
+      "highestM": 4.747679419416129,
+      "flowersOpened": 192
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 59.0021449567365,
+      "routeShare": 0.036924736682839056,
+      "highestM": 4.831448539610686,
+      "flowersOpened": 287
+    },
+    {
+      "plantId": "P5.ivy",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 3.875725224719205,
+      "routeShare": 0.0035620585211361896,
+      "highestM": 2.8254967120433565,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P5.ivy",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 10.41093721525743,
+      "routeShare": 0.0072650961799678865,
+      "highestM": 3.624035871626179,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P5.ivy",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 28.688421244996466,
+      "routeShare": 0.013216159491063828,
+      "highestM": 4.461228324296574,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P5.ivy",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 73.70678984827839,
+      "routeShare": 0.042534079132607615,
+      "highestM": 4.958585385241789,
+      "flowersOpened": 15
+    },
+    {
+      "plantId": "P5.akebia",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 8.381314747779351,
+      "routeShare": 0.005504301051727483,
+      "highestM": 3.654838596818321,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P5.akebia",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 42.88096472538087,
+      "routeShare": 0.024173640322120313,
+      "highestM": 4.90902235333362,
+      "flowersOpened": 6
+    },
+    {
+      "plantId": "P5.akebia",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 93.73111634854224,
+      "routeShare": 0.052071763762319104,
+      "highestM": 4.986934317539956,
+      "flowersOpened": 114
+    },
+    {
+      "plantId": "P5.akebia",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 192.56503919527924,
+      "routeShare": 0.1094785857167368,
+      "highestM": 6.3420000000000005,
+      "flowersOpened": 496
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle.2",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 5.343515599939309,
+      "routeShare": 0.005258748026800515,
+      "highestM": 3.4350014046833723,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle.2",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 32.5247613609271,
+      "routeShare": 0.02264247439312838,
+      "highestM": 4.670615116906504,
+      "flowersOpened": 57
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle.2",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 50.64034093237729,
+      "routeShare": 0.03370005886556831,
+      "highestM": 4.898736393589874,
+      "flowersOpened": 184
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle.2",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 62.08357369427198,
+      "routeShare": 0.04793714341381351,
+      "highestM": 4.914394743247505,
+      "flowersOpened": 296
+    },
+    {
+      "plantId": "P6.japanese-wisteria",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 6.018061790045935,
+      "routeShare": 0.004411247125012978,
+      "highestM": 2.7804206495075445,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P6.japanese-wisteria",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 28.514803261920637,
+      "routeShare": 0.013320970035153238,
+      "highestM": 4.671966764672722,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P6.japanese-wisteria",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 53.50684421822304,
+      "routeShare": 0.028789619546059953,
+      "highestM": 4.936601903783924,
+      "flowersOpened": 59
+    },
+    {
+      "plantId": "P6.japanese-wisteria",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 78.9546371768618,
+      "routeShare": 0.04904519302165384,
+      "highestM": 6.331729019965536,
+      "flowersOpened": 437
+    },
+    {
+      "plantId": "P6.spring-clematis",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 4.508478228003016,
+      "routeShare": 0.004137914171034146,
+      "highestM": 3.087051333760951,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P6.spring-clematis",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 12.363724632640192,
+      "routeShare": 0.013391272324211145,
+      "highestM": 3.965923929258308,
+      "flowersOpened": 56
+    },
+    {
+      "plantId": "P6.spring-clematis",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 26.798736253782796,
+      "routeShare": 0.021356702505353115,
+      "highestM": 4.671966764672722,
+      "flowersOpened": 214
+    },
+    {
+      "plantId": "P6.spring-clematis",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 44.685742704712354,
+      "routeShare": 0.040672513408657004,
+      "highestM": 4.89777706421343,
+      "flowersOpened": 625
+    },
+    {
+      "plantId": "P6.trumpet-vine",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 4.2533554715626325,
+      "routeShare": 0.004137914171034146,
+      "highestM": 2.9271968390522236,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P6.trumpet-vine",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 11.017061123347302,
+      "routeShare": 0.008141374115237316,
+      "highestM": 3.827951666493479,
+      "flowersOpened": 2
+    },
+    {
+      "plantId": "P6.trumpet-vine",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 17.733185069870242,
+      "routeShare": 0.011762159865956056,
+      "highestM": 4.6128306018223615,
+      "flowersOpened": 35
+    },
+    {
+      "plantId": "P6.trumpet-vine",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 32.00928699584056,
+      "routeShare": 0.024990113384118585,
+      "highestM": 4.909024728587887,
+      "flowersOpened": 88
+    },
+    {
+      "plantId": "P6.vine",
+      "yearsAfterPlanting": 1,
+      "year": 2027,
+      "frameworkM": 6.2114613864254,
+      "routeShare": 0.006011854841989732,
+      "highestM": 3.681280536308232,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P6.vine",
+      "yearsAfterPlanting": 3,
+      "year": 2029,
+      "frameworkM": 24.598094830765973,
+      "routeShare": 0.018246492831691562,
+      "highestM": 4.967550008553132,
+      "flowersOpened": 0
+    },
+    {
+      "plantId": "P6.vine",
+      "yearsAfterPlanting": 5,
+      "year": 2031,
+      "frameworkM": 74.68713373749837,
+      "routeShare": 0.04966218362598804,
+      "highestM": 6.32,
+      "flowersOpened": 66
+    },
+    {
+      "plantId": "P6.vine",
+      "yearsAfterPlanting": 10,
+      "year": 2036,
+      "frameworkM": 286.89241558537003,
+      "routeShare": 0.12833948334803127,
+      "highestM": 6.37,
+      "flowersOpened": 431
+    }
+  ],
+  "variations": [
+    {
+      "taxonId": "wisteria-sinensis",
+      "parameter": "architecture.trunkStemStartYears",
+      "value": [
+        0,
+        0,
+        0
+      ],
+      "basis": "Varied for this scenario (was [0,0,1]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing"
+    },
+    {
+      "taxonId": "wisteria-sinensis",
+      "parameter": "architecture.nurseryCaneM",
+      "value": 3,
+      "basis": "Varied for this scenario (was 1.2): planted as a nursery specimen standing 3 m, not a young plant"
+    },
+    {
+      "taxonId": "rosa-the-generous-gardener",
+      "parameter": "architecture.trunkStemStartYears",
+      "value": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "basis": "Varied for this scenario (was [0,0,1,2,3,5]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing"
+    },
+    {
+      "taxonId": "rosa-the-generous-gardener",
+      "parameter": "architecture.nurseryCaneM",
+      "value": 3,
+      "basis": "Varied for this scenario (was 0.4): planted as a nursery specimen standing 3 m, not a young plant"
+    },
+    {
+      "taxonId": "trachelospermum-jasminoides",
+      "parameter": "architecture.trunkStemStartYears",
+      "value": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "basis": "Varied for this scenario (was [0,0,0,1,1,2]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing"
+    },
+    {
+      "taxonId": "trachelospermum-jasminoides",
+      "parameter": "architecture.nurseryCaneM",
+      "value": 3,
+      "basis": "Varied for this scenario (was 0.9): planted as a nursery specimen standing 3 m, not a young plant"
+    },
+    {
+      "taxonId": "clematis-cirrhosa-freckles",
+      "parameter": "architecture.trunkStemStartYears",
+      "value": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "basis": "Varied for this scenario (was [0,0,0,0,1,1,1,2,2,3]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing"
+    },
+    {
+      "taxonId": "clematis-cirrhosa-freckles",
+      "parameter": "architecture.nurseryCaneM",
+      "value": 3,
+      "basis": "Varied for this scenario (was 0.6): planted as a nursery specimen standing 3 m, not a young plant"
+    },
+    {
+      "taxonId": "lonicera-periclymenum-graham-thomas",
+      "parameter": "architecture.trunkStemStartYears",
+      "value": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "basis": "Varied for this scenario (was [0,0,1,2]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing"
+    },
+    {
+      "taxonId": "lonicera-periclymenum-graham-thomas",
+      "parameter": "architecture.nurseryCaneM",
+      "value": 3,
+      "basis": "Varied for this scenario (was 0.6): planted as a nursery specimen standing 3 m, not a young plant"
+    },
+    {
+      "taxonId": "akebia-quinata",
+      "parameter": "architecture.trunkStemStartYears",
+      "value": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "basis": "Varied for this scenario (was [0,0,1,2]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing"
+    },
+    {
+      "taxonId": "akebia-quinata",
+      "parameter": "architecture.nurseryCaneM",
+      "value": 3,
+      "basis": "Varied for this scenario (was 0.6): planted as a nursery specimen standing 3 m, not a young plant"
+    },
+    {
+      "taxonId": "clematis-viticella-etoile-violette",
+      "parameter": "architecture.trunkStemStartYears",
+      "value": [
+        0,
+        0,
+        0
+      ],
+      "basis": "Varied for this scenario (was [0,0,1]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing"
+    },
+    {
+      "taxonId": "clematis-viticella-etoile-violette",
+      "parameter": "architecture.nurseryCaneM",
+      "value": 3,
+      "basis": "Varied for this scenario (was 0.3): planted as a nursery specimen standing 3 m, not a young plant"
+    },
+    {
+      "taxonId": "lonicera-henryi",
+      "parameter": "architecture.trunkStemStartYears",
+      "value": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "basis": "Varied for this scenario (was [0,0,1,2]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing"
+    },
+    {
+      "taxonId": "lonicera-henryi",
+      "parameter": "architecture.nurseryCaneM",
+      "value": 3,
+      "basis": "Varied for this scenario (was 0.6): planted as a nursery specimen standing 3 m, not a young plant"
+    },
+    {
+      "taxonId": "hydrangea-anomala-subsp-petiolaris",
+      "parameter": "architecture.trunkStemStartYears",
+      "value": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "basis": "Varied for this scenario (was [0,0,1,2]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing"
+    },
+    {
+      "taxonId": "hydrangea-anomala-subsp-petiolaris",
+      "parameter": "architecture.nurseryCaneM",
+      "value": 3,
+      "basis": "Varied for this scenario (was 0.4): planted as a nursery specimen standing 3 m, not a young plant"
+    },
+    {
+      "taxonId": "hedera-helix",
+      "parameter": "architecture.trunkStemStartYears",
+      "value": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "basis": "Varied for this scenario (was [0,0,0,1,2]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing"
+    },
+    {
+      "taxonId": "hedera-helix",
+      "parameter": "architecture.nurseryCaneM",
+      "value": 3,
+      "basis": "Varied for this scenario (was 0.3): planted as a nursery specimen standing 3 m, not a young plant"
+    },
+    {
+      "taxonId": "wisteria-floribunda-macrobotrys",
+      "parameter": "architecture.trunkStemStartYears",
+      "value": [
+        0,
+        0,
+        0
+      ],
+      "basis": "Varied for this scenario (was [0,0,1]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing"
+    },
+    {
+      "taxonId": "wisteria-floribunda-macrobotrys",
+      "parameter": "architecture.nurseryCaneM",
+      "value": 3,
+      "basis": "Varied for this scenario (was 1.2): planted as a nursery specimen standing 3 m, not a young plant"
+    },
+    {
+      "taxonId": "clematis-armandi",
+      "parameter": "architecture.trunkStemStartYears",
+      "value": [
+        0,
+        0,
+        0
+      ],
+      "basis": "Varied for this scenario (was [0,0,1]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing"
+    },
+    {
+      "taxonId": "clematis-armandi",
+      "parameter": "architecture.nurseryCaneM",
+      "value": 3,
+      "basis": "Varied for this scenario (was 0.6): planted as a nursery specimen standing 3 m, not a young plant"
+    },
+    {
+      "taxonId": "campsis-x-tagliabueana-madame-galen",
+      "parameter": "architecture.trunkStemStartYears",
+      "value": [
+        0,
+        0,
+        0
+      ],
+      "basis": "Varied for this scenario (was [0,0,0]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing"
+    },
+    {
+      "taxonId": "campsis-x-tagliabueana-madame-galen",
+      "parameter": "architecture.nurseryCaneM",
+      "value": 3,
+      "basis": "Varied for this scenario (was 0.15): planted as a nursery specimen standing 3 m, not a young plant"
+    },
+    {
+      "taxonId": "vitis-coignetiae",
+      "parameter": "architecture.trunkStemStartYears",
+      "value": [
+        0,
+        0,
+        0
+      ],
+      "basis": "Varied for this scenario (was [0,1,2]): planted as a nursery specimen standing 3 m, not a young plant: every main stem already growing"
+    },
+    {
+      "taxonId": "vitis-coignetiae",
+      "parameter": "architecture.nurseryCaneM",
+      "value": 3,
+      "basis": "Varied for this scenario (was 0.8): planted as a nursery specimen standing 3 m, not a young plant"
+    }
+  ],
+  "routes": {
+    "heldM": 826.830316869275,
+    "freeM": 202.76282326777402,
+    "heldShare": 0.8030650988595511
+  },
+  "jointsReached": [
+    {
+      "plantId": "P4.hydrangea",
+      "nodeIds": [
+        "j14",
+        "j179",
+        "j292"
+      ],
+      "highestM": 4.034272992536764
+    },
+    {
+      "plantId": "P4.ivy",
+      "nodeIds": [
+        "j11",
+        "j12",
+        "j13",
+        "j151",
+        "j179",
+        "j251",
+        "j59"
+      ],
+      "highestM": 4.828369533203931
+    },
+    {
+      "plantId": "P5.ivy",
+      "nodeIds": [
+        "j155",
+        "j169",
+        "j243",
+        "j261",
+        "j27",
+        "j40",
+        "j52",
+        "j83"
+      ],
+      "highestM": 4.828369807793701
+    },
+    {
+      "plantId": "P6.trumpet-vine",
+      "nodeIds": [
+        "j107",
+        "j172",
+        "j65"
+      ],
+      "highestM": 4.796786848483459
+    }
+  ],
+  "viewpoints": [
+    {
+      "id": "interior",
+      "label": "Standing inside, looking up to the crown",
+      "eye": {
+        "x": 0.6,
+        "y": -4,
+        "z": 1.65
+      },
+      "target": {
+        "x": 0,
+        "y": 1,
+        "z": 4.4
+      },
+      "fovDeg": 73.7
+    },
+    {
+      "id": "exterior",
+      "label": "Approaching from the south",
+      "eye": {
+        "x": 1.2,
+        "y": -21,
+        "z": 1.7
+      },
+      "target": {
+        "x": 0.2,
+        "y": 0,
+        "z": 3
+      },
+      "fovDeg": 33.4
+    },
+    {
+      "id": "overhead",
+      "label": "From above, to the south-east",
+      "eye": {
+        "x": 11,
+        "y": -14.5,
+        "z": 13
+      },
+      "target": {
+        "x": 0,
+        "y": 0,
+        "z": 2.5
+      },
+      "fovDeg": 37.8
+    },
+    {
+      "id": "north",
+      "label": "Approaching from the north",
+      "eye": {
+        "x": -1.2,
+        "y": 21,
+        "z": 1.7
+      },
+      "target": {
+        "x": -0.2,
+        "y": 0,
+        "z": 3
+      },
+      "fovDeg": 33.4
+    }
+  ],
+  "months": [
+    {
+      "month": 1,
+      "date": "2036-01-15",
+      "views": [
+        {
+          "viewpointId": "interior",
+          "day": 3242,
+          "timberVisible": 0.8710392304790645,
+          "timberBehindLeaf": 0.09288947566955866,
+          "timberBehindEvergreen": 0.09288947566955866,
+          "foliage": 0.08537037037037037,
+          "evergreenFoliage": 0.08537037037037037,
+          "flowers": 0
+        },
+        {
+          "viewpointId": "exterior",
+          "day": 3242,
+          "timberVisible": 0.7632911392405063,
+          "timberBehindLeaf": 0.14284323271665045,
+          "timberBehindEvergreen": 0.14284323271665045,
+          "foliage": 0.11382616764614908,
+          "evergreenFoliage": 0.11382616764614908,
+          "flowers": 0.0009794824208681308
+        },
+        {
+          "viewpointId": "overhead",
+          "day": 3242,
+          "timberVisible": 0.7463458287759769,
+          "timberBehindLeaf": 0.16535746246395544,
+          "timberBehindEvergreen": 0.16535746246395544,
+          "foliage": 0.10764482431149097,
+          "evergreenFoliage": 0.10764482431149097,
+          "flowers": 0.00042735042735042735
+        },
+        {
+          "viewpointId": "north",
+          "day": 3242,
+          "timberVisible": 0.7305406721870433,
+          "timberBehindLeaf": 0.19707744763760351,
+          "timberBehindEvergreen": 0.19707744763760351,
+          "foliage": 0.15769666975976904,
+          "evergreenFoliage": 0.15769666975976904,
+          "flowers": 0.00041241365089184453
+        }
+      ],
+      "leaves": {
+        "P3.akebia": 4195,
+        "P4.akebia": 3470,
+        "P5.akebia": 2884,
+        "P5.ivy": 2979,
+        "P4.ivy": 3336,
+        "P3.evergreen-honeysuckle": 4962,
+        "P5.evergreen-honeysuckle": 6176,
+        "P5.evergreen-honeysuckle.2": 6532,
+        "P4.evergreen-honeysuckle": 5998,
+        "P2.star-jasmine": 5436,
+        "P1.star-jasmine": 5656,
+        "P1.winter-clematis": 2282,
+        "P2.winter-clematis": 2192,
+        "P6.spring-clematis": 2000
+      },
+      "flowers": {
+        "P1.winter-clematis": 76,
+        "P2.winter-clematis": 94
+      },
+      "fruits": {
+        "P1.wisteria": 14,
+        "P6.japanese-wisteria": 55,
+        "P4.hydrangea": 39,
+        "P1.star-jasmine": 5,
+        "P2.star-jasmine": 3,
+        "P6.trumpet-vine": 4,
+        "P1.winter-clematis": 72,
+        "P2.winter-clematis": 67
+      }
+    },
+    {
+      "month": 2,
+      "date": "2036-02-15",
+      "views": [
+        {
+          "viewpointId": "interior",
+          "day": 3273,
+          "timberVisible": 0.8700490380988306,
+          "timberBehindLeaf": 0.09326669181440966,
+          "timberBehindEvergreen": 0.09279517163334591,
+          "foliage": 0.08671296296296296,
+          "evergreenFoliage": 0.08518518518518518,
+          "flowers": 0
+        },
+        {
+          "viewpointId": "exterior",
+          "day": 3273,
+          "timberVisible": 0.7599805258033107,
+          "timberBehindLeaf": 0.14800389483933787,
+          "timberBehindEvergreen": 0.14196689386562805,
+          "foliage": 0.1175378905041757,
+          "evergreenFoliage": 0.11331065058253428,
+          "flowers": 0.0008248273017836891
+        },
+        {
+          "viewpointId": "overhead",
+          "day": 3273,
+          "timberVisible": 0.7422690663219648,
+          "timberBehindLeaf": 0.17241722183553743,
+          "timberBehindEvergreen": 0.16366709754399922,
+          "foliage": 0.11215574548907882,
+          "evergreenFoliage": 0.10655270655270656,
+          "flowers": 0.00042735042735042735
+        },
+        {
+          "viewpointId": "north",
+          "day": 3273,
+          "timberVisible": 0.7296639064783244,
+          "timberBehindLeaf": 0.19853872381880175,
+          "timberBehindEvergreen": 0.19707744763760351,
+          "foliage": 0.15898546241880607,
+          "evergreenFoliage": 0.15774822146613052,
+          "flowers": 0.00041241365089184453
+        }
+      ],
+      "leaves": {
+        "P3.akebia": 4195,
+        "P4.akebia": 3470,
+        "P5.akebia": 2884,
+        "P2.honeysuckle": 13584,
+        "P3.honeysuckle": 7212,
+        "P5.ivy": 2979,
+        "P4.ivy": 3336,
+        "P3.evergreen-honeysuckle": 4962,
+        "P5.evergreen-honeysuckle": 6176,
+        "P5.evergreen-honeysuckle.2": 6532,
+        "P4.evergreen-honeysuckle": 5998,
+        "P2.star-jasmine": 5436,
+        "P1.star-jasmine": 5656,
+        "P1.winter-clematis": 2282,
+        "P2.winter-clematis": 2192,
+        "P6.spring-clematis": 2000
+      },
+      "flowers": {
+        "P1.winter-clematis": 76,
+        "P2.winter-clematis": 64
+      },
+      "fruits": {
+        "P1.wisteria": 8,
+        "P6.japanese-wisteria": 25,
+        "P4.hydrangea": 39,
+        "P1.star-jasmine": 3,
+        "P2.star-jasmine": 1,
+        "P6.trumpet-vine": 3,
+        "P1.winter-clematis": 104,
+        "P2.winter-clematis": 129
+      }
+    },
+    {
+      "month": 3,
+      "date": "2036-03-15",
+      "views": [
+        {
+          "viewpointId": "interior",
+          "day": 3302,
+          "timberVisible": 0.8734439834024896,
+          "timberBehindLeaf": 0.08628819313466617,
+          "timberBehindEvergreen": 0.08374198415692191,
+          "foliage": 0.08564814814814815,
+          "evergreenFoliage": 0.0775462962962963,
+          "flowers": 0.003912037037037037
+        },
+        {
+          "viewpointId": "exterior",
+          "day": 3302,
+          "timberVisible": 0.759396299902629,
+          "timberBehindLeaf": 0.15180136319376825,
+          "timberBehindEvergreen": 0.13125608568646543,
+          "foliage": 0.12047633776678009,
+          "evergreenFoliage": 0.1058356531601196,
+          "flowers": 0.0032993092071347562
+        },
+        {
+          "viewpointId": "overhead",
+          "day": 3302,
+          "timberVisible": 0.7289450134234862,
+          "timberBehindLeaf": 0.1928010341055981,
+          "timberBehindEvergreen": 0.15471810679128964,
+          "foliage": 0.12454890788224121,
+          "evergreenFoliage": 0.100664767331434,
+          "flowers": 0.000949667616334283
+        },
+        {
+          "viewpointId": "north",
+          "day": 3302,
+          "timberVisible": 0.7346322454943984,
+          "timberBehindLeaf": 0.1918168533852898,
+          "timberBehindEvergreen": 0.18334145153433998,
+          "foliage": 0.15336632642540468,
+          "evergreenFoliage": 0.14635529436024333,
+          "flowers": 0.0048458603979791735
+        }
+      ],
+      "leaves": {
+        "P3.akebia": 15280,
+        "P4.akebia": 12467,
+        "P5.akebia": 10564,
+        "P2.rose": 211,
+        "P2.honeysuckle": 12280,
+        "P3.honeysuckle": 6226,
+        "P5.ivy": 2670,
+        "P4.ivy": 3053,
+        "P2.star-jasmine": 5436,
+        "P1.star-jasmine": 5656,
+        "P1.winter-clematis": 1538,
+        "P1.rose": 163,
+        "P2.winter-clematis": 1756,
+        "P5.evergreen-honeysuckle.2": 5212,
+        "P3.evergreen-honeysuckle": 3820,
+        "P4.evergreen-honeysuckle": 4798,
+        "P5.evergreen-honeysuckle": 4258,
+        "P6.spring-clematis": 2000
+      },
+      "flowers": {
+        "P6.spring-clematis": 249,
+        "P1.winter-clematis": 5,
+        "P2.winter-clematis": 5
+      },
+      "fruits": {
+        "P4.hydrangea": 28,
+        "P1.winter-clematis": 104,
+        "P2.winter-clematis": 130
+      }
+    },
+    {
+      "month": 4,
+      "date": "2036-04-15",
+      "views": [
+        {
+          "viewpointId": "interior",
+          "day": 3333,
+          "timberVisible": 0.8485477178423236,
+          "timberBehindLeaf": 0.09840626178800453,
+          "timberBehindEvergreen": 0.07369860430026405,
+          "foliage": 0.10203703703703704,
+          "evergreenFoliage": 0.06585648148148149,
+          "flowers": 0.015069444444444444
+        },
+        {
+          "viewpointId": "exterior",
+          "day": 3333,
+          "timberVisible": 0.7465433300876338,
+          "timberBehindLeaf": 0.16923076923076924,
+          "timberBehindEvergreen": 0.11460564751703992,
+          "foliage": 0.1357871945561398,
+          "evergreenFoliage": 0.09253531291885761,
+          "flowers": 0.0048458603979791735
+        },
+        {
+          "viewpointId": "overhead",
+          "day": 3333,
+          "timberVisible": 0.6770408670577707,
+          "timberBehindLeaf": 0.2429153823207716,
+          "timberBehindEvergreen": 0.10868052103012826,
+          "foliage": 0.15365622032288698,
+          "evergreenFoliage": 0.07355175688509022,
+          "flowers": 0.005365622032288699
+        },
+        {
+          "viewpointId": "north",
+          "day": 3333,
+          "timberVisible": 0.7112518265952265,
+          "timberBehindLeaf": 0.21977593765221626,
+          "timberBehindEvergreen": 0.15528494885533367,
+          "foliage": 0.17228580266006804,
+          "evergreenFoliage": 0.12454892256933704,
+          "flowers": 0.008506031549644293
+        }
+      ],
+      "leaves": {
+        "P3.akebia": 15335,
+        "P4.akebia": 12527,
+        "P5.akebia": 10595,
+        "P1.wisteria": 1658,
+        "P6.japanese-wisteria": 1328,
+        "P2.rose": 478,
+        "P4.hydrangea": 3780,
+        "P2.honeysuckle": 13746,
+        "P3.honeysuckle": 6986,
+        "P5.ivy": 2700,
+        "P4.ivy": 3085,
+        "P2.star-jasmine": 4318,
+        "P1.star-jasmine": 4620,
+        "P1.winter-clematis": 1052,
+        "P1.rose": 442,
+        "P2.winter-clematis": 1060,
+        "P5.evergreen-honeysuckle.2": 5266,
+        "P3.evergreen-honeysuckle": 3870,
+        "P4.evergreen-honeysuckle": 4814,
+        "P5.evergreen-honeysuckle": 4300,
+        "P6.spring-clematis": 2054,
+        "P3.summer-clematis": 100
+      },
+      "flowers": {
+        "P3.akebia": 627,
+        "P4.akebia": 501,
+        "P5.akebia": 419,
+        "P6.spring-clematis": 208
+      },
+      "fruits": {
+        "P4.hydrangea": 5,
+        "P1.winter-clematis": 72,
+        "P2.winter-clematis": 92,
+        "P6.spring-clematis": 162
+      }
+    },
+    {
+      "month": 5,
+      "date": "2036-05-15",
+      "views": [
+        {
+          "viewpointId": "interior",
+          "day": 3363,
+          "timberVisible": 0.7720671444737834,
+          "timberBehindLeaf": 0.1255658242172765,
+          "timberBehindEvergreen": 0.07393436439079593,
+          "foliage": 0.13270833333333334,
+          "evergreenFoliage": 0.06386574074074074,
+          "flowers": 0.05379629629629629
+        },
+        {
+          "viewpointId": "exterior",
+          "day": 3363,
+          "timberVisible": 0.6818889970788705,
+          "timberBehindLeaf": 0.2035053554040896,
+          "timberBehindEvergreen": 0.10720545277507303,
+          "foliage": 0.1628518403959171,
+          "evergreenFoliage": 0.08609134962367254,
+          "flowers": 0.031446540880503145
+        },
+        {
+          "viewpointId": "overhead",
+          "day": 3363,
+          "timberVisible": 0.6056478074972655,
+          "timberBehindLeaf": 0.3176891717211892,
+          "timberBehindEvergreen": 0.09764343243511982,
+          "foliage": 0.200997150997151,
+          "evergreenFoliage": 0.06623931623931624,
+          "flowers": 0.00892687559354226
+        },
+        {
+          "viewpointId": "north",
+          "day": 3363,
+          "timberVisible": 0.6728689722357526,
+          "timberBehindLeaf": 0.2511446663419386,
+          "timberBehindEvergreen": 0.14992693619094008,
+          "foliage": 0.19914424167439942,
+          "evergreenFoliage": 0.12274461284668522,
+          "flowers": 0.012063099288586452
+        }
+      ],
+      "leaves": {
+        "P3.akebia": 15606,
+        "P4.akebia": 12849,
+        "P5.akebia": 10892,
+        "P1.wisteria": 1705,
+        "P6.japanese-wisteria": 1366,
+        "P2.rose": 1153,
+        "P4.hydrangea": 4108,
+        "P2.honeysuckle": 17044,
+        "P3.honeysuckle": 8778,
+        "P4.ivy": 3171,
+        "P5.ivy": 2756,
+        "P2.star-jasmine": 4334,
+        "P1.star-jasmine": 4633,
+        "P1.winter-clematis": 1238,
+        "P1.rose": 1064,
+        "P2.winter-clematis": 1200,
+        "P5.evergreen-honeysuckle.2": 6458,
+        "P3.evergreen-honeysuckle": 4678,
+        "P4.evergreen-honeysuckle": 5276,
+        "P5.evergreen-honeysuckle": 5498,
+        "P6.spring-clematis": 2404,
+        "P3.summer-clematis": 204,
+        "P6.trumpet-vine": 14,
+        "P6.vine": 2105
+      },
+      "flowers": {
+        "P1.wisteria": 231,
+        "P6.japanese-wisteria": 67
+      },
+      "fruits": {
+        "P1.winter-clematis": 72,
+        "P2.winter-clematis": 92,
+        "P6.spring-clematis": 247,
+        "P4.akebia": 19,
+        "P5.akebia": 16,
+        "P3.akebia": 17
+      }
+    },
+    {
+      "month": 6,
+      "date": "2036-06-15",
+      "views": [
+        {
+          "viewpointId": "interior",
+          "day": 3394,
+          "timberVisible": 0.6995944926442852,
+          "timberBehindLeaf": 0.16408902301018483,
+          "timberBehindEvergreen": 0.06832327423613731,
+          "foliage": 0.19787037037037036,
+          "evergreenFoliage": 0.05976851851851852,
+          "flowers": 0.07486111111111111
+        },
+        {
+          "viewpointId": "exterior",
+          "day": 3394,
+          "timberVisible": 0.627458617332035,
+          "timberBehindLeaf": 0.239143135345667,
+          "timberBehindEvergreen": 0.101460564751704,
+          "foliage": 0.19960820703165275,
+          "evergreenFoliage": 0.08289514382926075,
+          "flowers": 0.0456232601299103
+        },
+        {
+          "viewpointId": "overhead",
+          "day": 3394,
+          "timberVisible": 0.5400218753107289,
+          "timberBehindLeaf": 0.3879884657452521,
+          "timberBehindEvergreen": 0.09247290444466541,
+          "foliage": 0.2528964862298196,
+          "evergreenFoliage": 0.06267806267806268,
+          "flowers": 0.013057929724596391
+        },
+        {
+          "viewpointId": "north",
+          "day": 3394,
+          "timberVisible": 0.6320506575742816,
+          "timberBehindLeaf": 0.2968339016074038,
+          "timberBehindEvergreen": 0.15470043838285436,
+          "foliage": 0.24997422414681925,
+          "evergreenFoliage": 0.11800185586142901,
+          "flowers": 0.012527064645839777
+        }
+      ],
+      "leaves": {
+        "P3.akebia": 15429,
+        "P4.akebia": 12605,
+        "P5.akebia": 10706,
+        "P1.wisteria": 1857,
+        "P6.japanese-wisteria": 1484,
+        "P2.rose": 1733,
+        "P4.hydrangea": 4660,
+        "P2.honeysuckle": 19450,
+        "P3.honeysuckle": 10452,
+        "P4.ivy": 3062,
+        "P5.ivy": 2753,
+        "P2.star-jasmine": 5342,
+        "P1.star-jasmine": 5445,
+        "P1.winter-clematis": 1629,
+        "P1.rose": 1833,
+        "P2.winter-clematis": 1425,
+        "P5.evergreen-honeysuckle.2": 8230,
+        "P3.evergreen-honeysuckle": 5852,
+        "P4.evergreen-honeysuckle": 6434,
+        "P5.evergreen-honeysuckle": 7284,
+        "P6.spring-clematis": 1035,
+        "P3.summer-clematis": 272,
+        "P6.trumpet-vine": 198,
+        "P6.vine": 9871
+      },
+      "flowers": {
+        "P4.hydrangea": 30,
+        "P6.japanese-wisteria": 266,
+        "P2.honeysuckle": 147,
+        "P3.honeysuckle": 67,
+        "P3.evergreen-honeysuckle": 54,
+        "P4.evergreen-honeysuckle": 64,
+        "P5.evergreen-honeysuckle": 57,
+        "P5.evergreen-honeysuckle.2": 59,
+        "P1.rose": 20,
+        "P2.rose": 31,
+        "P6.vine": 59
+      },
+      "fruits": {
+        "P2.winter-clematis": 55,
+        "P1.winter-clematis": 44,
+        "P6.spring-clematis": 43,
+        "P4.akebia": 19,
+        "P5.akebia": 16,
+        "P3.akebia": 17,
+        "P1.wisteria": 17,
+        "P6.japanese-wisteria": 17
+      }
+    },
+    {
+      "month": 7,
+      "date": "2036-07-15",
+      "views": [
+        {
+          "viewpointId": "interior",
+          "day": 3424,
+          "timberVisible": 0.7350528102602791,
+          "timberBehindLeaf": 0.2238306299509619,
+          "timberBehindEvergreen": 0.0786967182195398,
+          "foliage": 0.2530324074074074,
+          "evergreenFoliage": 0.06886574074074074,
+          "flowers": 0.003981481481481482
+        },
+        {
+          "viewpointId": "exterior",
+          "day": 3424,
+          "timberVisible": 0.6407010710808179,
+          "timberBehindLeaf": 0.281110029211295,
+          "timberBehindEvergreen": 0.1181110029211295,
+          "foliage": 0.22930198989586556,
+          "evergreenFoliage": 0.0962985874832457,
+          "flowers": 0.013300340241261985
+        },
+        {
+          "viewpointId": "overhead",
+          "day": 3424,
+          "timberVisible": 0.5269961221040071,
+          "timberBehindLeaf": 0.4078751118623844,
+          "timberBehindEvergreen": 0.10152132842796062,
+          "foliage": 0.26828110161443497,
+          "evergreenFoliage": 0.06951566951566951,
+          "flowers": 0.012867996201329534
+        },
+        {
+          "viewpointId": "north",
+          "day": 3424,
+          "timberVisible": 0.6188991719434973,
+          "timberBehindLeaf": 0.3192401363857769,
+          "timberBehindEvergreen": 0.16492937165124208,
+          "foliage": 0.2705949066914115,
+          "evergreenFoliage": 0.1284153005464481,
+          "flowers": 0.007217238890607279
+        }
+      ],
+      "leaves": {
+        "P3.akebia": 15559,
+        "P4.akebia": 12753,
+        "P5.akebia": 10835,
+        "P1.wisteria": 2001,
+        "P6.japanese-wisteria": 1617,
+        "P2.rose": 1733,
+        "P4.hydrangea": 4966,
+        "P2.honeysuckle": 19594,
+        "P3.honeysuckle": 10570,
+        "P4.ivy": 3408,
+        "P5.ivy": 3086,
+        "P1.winter-clematis": 2070,
+        "P1.rose": 1833,
+        "P2.winter-clematis": 1656,
+        "P5.evergreen-honeysuckle.2": 9052,
+        "P3.evergreen-honeysuckle": 6354,
+        "P4.evergreen-honeysuckle": 7652,
+        "P5.evergreen-honeysuckle": 7892,
+        "P1.star-jasmine": 6146,
+        "P2.star-jasmine": 6150,
+        "P6.spring-clematis": 1349,
+        "P3.summer-clematis": 318,
+        "P6.trumpet-vine": 372,
+        "P6.vine": 6502
+      },
+      "flowers": {
+        "P4.hydrangea": 8,
+        "P2.honeysuckle": 210,
+        "P3.honeysuckle": 115,
+        "P3.evergreen-honeysuckle": 83,
+        "P4.evergreen-honeysuckle": 115,
+        "P5.evergreen-honeysuckle": 122,
+        "P5.evergreen-honeysuckle.2": 133,
+        "P1.rose": 11,
+        "P2.rose": 12,
+        "P1.star-jasmine": 196,
+        "P2.star-jasmine": 189
+      },
+      "fruits": {
+        "P2.winter-clematis": 4,
+        "P1.winter-clematis": 7,
+        "P6.spring-clematis": 43,
+        "P4.akebia": 19,
+        "P5.akebia": 16,
+        "P3.akebia": 17,
+        "P1.wisteria": 17,
+        "P6.japanese-wisteria": 66,
+        "P2.honeysuckle": 139,
+        "P3.honeysuckle": 82,
+        "P3.evergreen-honeysuckle": 56,
+        "P5.evergreen-honeysuckle.2": 85,
+        "P4.evergreen-honeysuckle": 85,
+        "P5.evergreen-honeysuckle": 74,
+        "P6.vine": 122,
+        "P4.hydrangea": 38,
+        "P1.rose": 2,
+        "P2.rose": 4
+      }
+    },
+    {
+      "month": 8,
+      "date": "2036-08-15",
+      "views": [
+        {
+          "viewpointId": "interior",
+          "day": 3455,
+          "timberVisible": 0.7325066012825349,
+          "timberBehindLeaf": 0.22731987929083364,
+          "timberBehindEvergreen": 0.08675971331572992,
+          "foliage": 0.2557638888888889,
+          "evergreenFoliage": 0.07548611111111111,
+          "flowers": 0.0037731481481481483
+        },
+        {
+          "viewpointId": "exterior",
+          "day": 3455,
+          "timberVisible": 0.6384615384615384,
+          "timberBehindLeaf": 0.2892891918208374,
+          "timberBehindEvergreen": 0.12804284323271664,
+          "foliage": 0.2339416434683988,
+          "evergreenFoliage": 0.1042375502629137,
+          "flowers": 0.010155686153211671
+        },
+        {
+          "viewpointId": "overhead",
+          "day": 3455,
+          "timberVisible": 0.5275927214875211,
+          "timberBehindLeaf": 0.4143382718504524,
+          "timberBehindEvergreen": 0.10788505518544297,
+          "foliage": 0.27203228869895535,
+          "evergreenFoliage": 0.07492877492877494,
+          "flowers": 0.007929724596391264
+        },
+        {
+          "viewpointId": "north",
+          "day": 3455,
+          "timberVisible": 0.6130540672187044,
+          "timberBehindLeaf": 0.33151485630784217,
+          "timberBehindEvergreen": 0.17613248904042864,
+          "foliage": 0.28100835137643054,
+          "evergreenFoliage": 0.13944736570780492,
+          "flowers": 0.004227239921641406
+        }
+      ],
+      "leaves": {
+        "P3.akebia": 15643,
+        "P4.akebia": 12843,
+        "P5.akebia": 10902,
+        "P1.wisteria": 1864,
+        "P6.japanese-wisteria": 1458,
+        "P2.rose": 1733,
+        "P4.hydrangea": 4984,
+        "P2.honeysuckle": 19684,
+        "P3.honeysuckle": 10640,
+        "P4.ivy": 3760,
+        "P5.ivy": 3423,
+        "P1.winter-clematis": 2491,
+        "P1.rose": 1833,
+        "P2.winter-clematis": 1903,
+        "P5.evergreen-honeysuckle.2": 9256,
+        "P3.evergreen-honeysuckle": 6490,
+        "P4.evergreen-honeysuckle": 8110,
+        "P5.evergreen-honeysuckle": 8108,
+        "P1.star-jasmine": 6218,
+        "P2.star-jasmine": 6220,
+        "P3.summer-clematis": 324,
+        "P6.spring-clematis": 1776,
+        "P6.trumpet-vine": 374,
+        "P6.vine": 6538
+      },
+      "flowers": {
+        "P2.honeysuckle": 148,
+        "P3.honeysuckle": 64,
+        "P3.summer-clematis": 32,
+        "P1.star-jasmine": 157,
+        "P2.star-jasmine": 181,
+        "P2.rose": 22,
+        "P1.rose": 8,
+        "P6.trumpet-vine": 18
+      },
+      "fruits": {
+        "P6.spring-clematis": 18,
+        "P4.akebia": 19,
+        "P5.akebia": 16,
+        "P3.akebia": 17,
+        "P1.wisteria": 17,
+        "P6.japanese-wisteria": 66,
+        "P2.honeysuckle": 335,
+        "P3.honeysuckle": 179,
+        "P3.evergreen-honeysuckle": 116,
+        "P5.evergreen-honeysuckle.2": 185,
+        "P4.evergreen-honeysuckle": 170,
+        "P5.evergreen-honeysuckle": 167,
+        "P6.vine": 122,
+        "P4.hydrangea": 45,
+        "P2.star-jasmine": 4,
+        "P1.star-jasmine": 1,
+        "P1.rose": 1
+      }
+    },
+    {
+      "month": 9,
+      "date": "2036-09-15",
+      "views": [
+        {
+          "viewpointId": "interior",
+          "day": 3486,
+          "timberVisible": 0.7361844586948322,
+          "timberBehindLeaf": 0.2262825348924934,
+          "timberBehindEvergreen": 0.08892870614862317,
+          "foliage": 0.25252314814814814,
+          "evergreenFoliage": 0.07726851851851851,
+          "flowers": 0.0011342592592592593
+        },
+        {
+          "viewpointId": "exterior",
+          "day": 3486,
+          "timberVisible": 0.6481012658227848,
+          "timberBehindLeaf": 0.29707887049659204,
+          "timberBehindEvergreen": 0.1400194741966894,
+          "foliage": 0.23883905557273946,
+          "evergreenFoliage": 0.11341375399525724,
+          "flowers": 0.0002577585318074028
+        },
+        {
+          "viewpointId": "overhead",
+          "day": 3486,
+          "timberVisible": 0.5427065725365418,
+          "timberBehindLeaf": 0.41553147061748036,
+          "timberBehindEvergreen": 0.1135527493288257,
+          "foliage": 0.2730294396961064,
+          "evergreenFoliage": 0.07934472934472935,
+          "flowers": 0.00033238366571699906
+        },
+        {
+          "viewpointId": "north",
+          "day": 3486,
+          "timberVisible": 0.6198733560642962,
+          "timberBehindLeaf": 0.3311251826595227,
+          "timberBehindEvergreen": 0.18129566488066245,
+          "foliage": 0.2821424889163831,
+          "evergreenFoliage": 0.14553046705845962,
+          "flowers": 0.0002577585318074028
+        }
+      ],
+      "leaves": {
+        "P3.akebia": 15402,
+        "P4.akebia": 12583,
+        "P5.akebia": 10686,
+        "P1.wisteria": 1880,
+        "P6.japanese-wisteria": 1462,
+        "P2.rose": 1733,
+        "P4.hydrangea": 4996,
+        "P2.honeysuckle": 16386,
+        "P3.honeysuckle": 8924,
+        "P4.ivy": 3983,
+        "P5.ivy": 3645,
+        "P1.rose": 1833,
+        "P5.evergreen-honeysuckle.2": 9264,
+        "P3.evergreen-honeysuckle": 6512,
+        "P4.evergreen-honeysuckle": 8322,
+        "P5.evergreen-honeysuckle": 8126,
+        "P1.star-jasmine": 6254,
+        "P2.star-jasmine": 6246,
+        "P1.winter-clematis": 2850,
+        "P2.winter-clematis": 2174,
+        "P3.summer-clematis": 324,
+        "P6.spring-clematis": 1928,
+        "P6.trumpet-vine": 374,
+        "P6.vine": 6545
+      },
+      "flowers": {
+        "P2.honeysuckle": 9,
+        "P3.honeysuckle": 7,
+        "P3.summer-clematis": 1,
+        "P6.trumpet-vine": 29,
+        "P4.ivy": 8,
+        "P5.ivy": 5,
+        "P2.rose": 4,
+        "P1.rose": 1
+      },
+      "fruits": {
+        "P4.akebia": 19,
+        "P5.akebia": 16,
+        "P3.akebia": 17,
+        "P1.wisteria": 17,
+        "P6.japanese-wisteria": 66,
+        "P2.honeysuckle": 26,
+        "P3.evergreen-honeysuckle": 116,
+        "P5.evergreen-honeysuckle.2": 185,
+        "P4.evergreen-honeysuckle": 170,
+        "P5.evergreen-honeysuckle": 167,
+        "P6.vine": 122,
+        "P4.hydrangea": 45,
+        "P3.honeysuckle": 20,
+        "P2.star-jasmine": 6,
+        "P1.star-jasmine": 2,
+        "P3.summer-clematis": 16,
+        "P2.rose": 5,
+        "P1.rose": 2,
+        "P6.trumpet-vine": 1
+      }
+    },
+    {
+      "month": 10,
+      "date": "2036-10-15",
+      "views": [
+        {
+          "viewpointId": "interior",
+          "day": 3516,
+          "timberVisible": 0.7357600905318747,
+          "timberBehindLeaf": 0.22750848736325915,
+          "timberBehindEvergreen": 0.09006035458317616,
+          "foliage": 0.25340277777777775,
+          "evergreenFoliage": 0.07798611111111112,
+          "flowers": 0.00034722222222222224
+        },
+        {
+          "viewpointId": "exterior",
+          "day": 3516,
+          "timberVisible": 0.6473222979552093,
+          "timberBehindLeaf": 0.29795520934761444,
+          "timberBehindEvergreen": 0.14148003894839337,
+          "foliage": 0.23971543458088462,
+          "evergreenFoliage": 0.11444478812248686,
+          "flowers": 0.0002577585318074028
+        },
+        {
+          "viewpointId": "overhead",
+          "day": 3516,
+          "timberVisible": 0.5421099731530278,
+          "timberBehindLeaf": 0.4157303370786517,
+          "timberBehindEvergreen": 0.11414934871233966,
+          "foliage": 0.27298195631528965,
+          "evergreenFoliage": 0.07962962962962963,
+          "flowers": 0.00033238366571699906
+        },
+        {
+          "viewpointId": "north",
+          "day": 3516,
+          "timberVisible": 0.6184120798830979,
+          "timberBehindLeaf": 0.332489040428641,
+          "timberBehindEvergreen": 0.18246468582562103,
+          "foliage": 0.2832766264563357,
+          "evergreenFoliage": 0.14676770801113517,
+          "flowers": 0.0003093102381688834
+        }
+      ],
+      "leaves": {
+        "P3.akebia": 15406,
+        "P4.akebia": 12583,
+        "P5.akebia": 10686,
+        "P1.wisteria": 1880,
+        "P6.japanese-wisteria": 1463,
+        "P2.rose": 1733,
+        "P4.hydrangea": 4998,
+        "P2.honeysuckle": 16396,
+        "P3.honeysuckle": 8924,
+        "P4.ivy": 4046,
+        "P5.ivy": 3713,
+        "P1.rose": 1833,
+        "P5.evergreen-honeysuckle.2": 9264,
+        "P3.evergreen-honeysuckle": 6512,
+        "P4.evergreen-honeysuckle": 8378,
+        "P5.evergreen-honeysuckle": 8126,
+        "P1.star-jasmine": 6260,
+        "P2.star-jasmine": 6246,
+        "P1.winter-clematis": 2938,
+        "P2.winter-clematis": 2252,
+        "P3.summer-clematis": 324,
+        "P6.spring-clematis": 1928,
+        "P6.trumpet-vine": 374,
+        "P6.vine": 6545
+      },
+      "flowers": {
+        "P6.trumpet-vine": 5,
+        "P4.ivy": 6,
+        "P5.ivy": 8,
+        "P2.rose": 10
+      },
+      "fruits": {
+        "P4.akebia": 19,
+        "P5.akebia": 16,
+        "P3.akebia": 17,
+        "P1.wisteria": 17,
+        "P6.japanese-wisteria": 66,
+        "P3.evergreen-honeysuckle": 116,
+        "P5.evergreen-honeysuckle.2": 185,
+        "P4.evergreen-honeysuckle": 170,
+        "P5.evergreen-honeysuckle": 167,
+        "P6.vine": 122,
+        "P4.hydrangea": 45,
+        "P2.honeysuckle": 25,
+        "P3.honeysuckle": 23,
+        "P2.star-jasmine": 6,
+        "P1.star-jasmine": 2,
+        "P3.summer-clematis": 17,
+        "P2.rose": 9,
+        "P1.rose": 3,
+        "P6.trumpet-vine": 6,
+        "P5.ivy": 5,
+        "P4.ivy": 8
+      }
+    },
+    {
+      "month": 11,
+      "date": "2036-11-15",
+      "views": [
+        {
+          "viewpointId": "interior",
+          "day": 3547,
+          "timberVisible": 0.7769238023387401,
+          "timberBehindLeaf": 0.18153526970954356,
+          "timberBehindEvergreen": 0.09293662768766503,
+          "foliage": 0.19280092592592593,
+          "evergreenFoliage": 0.08097222222222222,
+          "flowers": 0.000023148148148148147
+        },
+        {
+          "viewpointId": "exterior",
+          "day": 3547,
+          "timberVisible": 0.6689386562804285,
+          "timberBehindLeaf": 0.26630963972736127,
+          "timberBehindEvergreen": 0.14498539435248295,
+          "foliage": 0.21156820290751624,
+          "evergreenFoliage": 0.11640375296422312,
+          "flowers": 0.0008248273017836891
+        },
+        {
+          "viewpointId": "overhead",
+          "day": 3547,
+          "timberVisible": 0.5798946007755792,
+          "timberBehindLeaf": 0.3572635974942826,
+          "timberBehindEvergreen": 0.12011534254747937,
+          "foliage": 0.23513770180436847,
+          "evergreenFoliage": 0.08399810066476733,
+          "flowers": 0.0001899335232668566
+        },
+        {
+          "viewpointId": "north",
+          "day": 3547,
+          "timberVisible": 0.6447150511446663,
+          "timberBehindLeaf": 0.3003409644422796,
+          "timberBehindEvergreen": 0.1850949829517779,
+          "foliage": 0.24600474275698525,
+          "evergreenFoliage": 0.1501701206309929,
+          "flowers": 0.00041241365089184453
+        }
+      ],
+      "leaves": {
+        "P3.akebia": 15406,
+        "P4.akebia": 12583,
+        "P5.akebia": 10686,
+        "P1.wisteria": 1273,
+        "P6.japanese-wisteria": 1108,
+        "P2.rose": 1733,
+        "P4.hydrangea": 2920,
+        "P2.honeysuckle": 7942,
+        "P3.honeysuckle": 4364,
+        "P4.ivy": 4059,
+        "P5.ivy": 3716,
+        "P1.rose": 1833,
+        "P5.evergreen-honeysuckle.2": 9264,
+        "P3.evergreen-honeysuckle": 6512,
+        "P4.evergreen-honeysuckle": 8378,
+        "P5.evergreen-honeysuckle": 8126,
+        "P1.star-jasmine": 6260,
+        "P2.star-jasmine": 6246,
+        "P1.winter-clematis": 2938,
+        "P2.winter-clematis": 2252,
+        "P3.summer-clematis": 216,
+        "P6.spring-clematis": 1928,
+        "P6.trumpet-vine": 132,
+        "P6.vine": 1627
+      },
+      "flowers": {
+        "P4.ivy": 3,
+        "P5.ivy": 2,
+        "P1.winter-clematis": 68,
+        "P2.winter-clematis": 56
+      },
+      "fruits": {
+        "P3.akebia": 6,
+        "P4.akebia": 10,
+        "P5.akebia": 4,
+        "P1.wisteria": 17,
+        "P6.japanese-wisteria": 66,
+        "P3.evergreen-honeysuckle": 89,
+        "P5.evergreen-honeysuckle.2": 124,
+        "P4.evergreen-honeysuckle": 127,
+        "P5.evergreen-honeysuckle": 124,
+        "P6.vine": 64,
+        "P4.hydrangea": 45,
+        "P2.honeysuckle": 7,
+        "P3.honeysuckle": 7,
+        "P2.star-jasmine": 6,
+        "P1.star-jasmine": 2,
+        "P3.summer-clematis": 17,
+        "P2.rose": 12,
+        "P1.rose": 3,
+        "P6.trumpet-vine": 6,
+        "P5.ivy": 12,
+        "P4.ivy": 15,
+        "P1.winter-clematis": 2
+      }
+    },
+    {
+      "month": 12,
+      "date": "2036-12-15",
+      "views": [
+        {
+          "viewpointId": "interior",
+          "day": 3577,
+          "timberVisible": 0.8449170124481328,
+          "timberBehindLeaf": 0.11439079592606563,
+          "timberBehindEvergreen": 0.0993964541682384,
+          "foliage": 0.10770833333333334,
+          "evergreenFoliage": 0.09032407407407407,
+          "flowers": 0
+        },
+        {
+          "viewpointId": "exterior",
+          "day": 3577,
+          "timberVisible": 0.724634858812074,
+          "timberBehindLeaf": 0.1866601752677702,
+          "timberBehindEvergreen": 0.16095423563777994,
+          "foliage": 0.14857201773378698,
+          "evergreenFoliage": 0.12903392102278585,
+          "flowers": 0.0009794824208681308
+        },
+        {
+          "viewpointId": "overhead",
+          "day": 3577,
+          "timberVisible": 0.6864870239634085,
+          "timberBehindLeaf": 0.22253157005071095,
+          "timberBehindEvergreen": 0.15243114248781942,
+          "foliage": 0.148670465337132,
+          "evergreenFoliage": 0.10531813865147198,
+          "flowers": 0.00023741690408357076
+        },
+        {
+          "viewpointId": "north",
+          "day": 3577,
+          "timberVisible": 0.6985874330248417,
+          "timberBehindLeaf": 0.23438869946419874,
+          "timberBehindEvergreen": 0.20623477837311252,
+          "foliage": 0.1883183833384885,
+          "evergreenFoliage": 0.16573873595216002,
+          "flowers": 0.00046396535725332506
+        }
+      ],
+      "leaves": {
+        "P3.akebia": 9895,
+        "P4.akebia": 8061,
+        "P5.akebia": 6943,
+        "P4.ivy": 4059,
+        "P5.ivy": 3716,
+        "P2.rose": 475,
+        "P1.rose": 472,
+        "P5.evergreen-honeysuckle.2": 9264,
+        "P3.evergreen-honeysuckle": 6512,
+        "P4.evergreen-honeysuckle": 8378,
+        "P5.evergreen-honeysuckle": 8126,
+        "P1.star-jasmine": 6260,
+        "P2.star-jasmine": 6246,
+        "P1.winter-clematis": 2938,
+        "P2.winter-clematis": 2252,
+        "P6.spring-clematis": 1928
+      },
+      "flowers": {
+        "P1.winter-clematis": 91,
+        "P2.winter-clematis": 87
+      },
+      "fruits": {
+        "P1.wisteria": 17,
+        "P6.japanese-wisteria": 66,
+        "P4.evergreen-honeysuckle": 38,
+        "P4.hydrangea": 45,
+        "P5.evergreen-honeysuckle.2": 40,
+        "P3.evergreen-honeysuckle": 42,
+        "P5.evergreen-honeysuckle": 33,
+        "P2.star-jasmine": 6,
+        "P1.star-jasmine": 2,
+        "P2.rose": 12,
+        "P1.rose": 3,
+        "P6.trumpet-vine": 6,
+        "P3.summer-clematis": 1,
+        "P5.ivy": 14,
+        "P4.ivy": 18,
+        "P1.winter-clematis": 44,
+        "P2.winter-clematis": 23
+      }
+    }
+  ],
+  "flowerlessMonths": [],
+  "winter": {
+    "target": {
+      "value": [
+        0.25,
+        0.4
+      ],
+      "unit": "share of the structure seen from a viewpoint",
+      "status": "design_target",
+      "basis": "KEY.md section 6. A design target, not a biological fact: the range is to be tested, and timber is meant to stay visible elsewhere."
+    },
+    "date": "2036-01-15",
+    "routeHeldByEvergreens": 0.3010534753600974,
+    "layoutAgainst": "within",
+    "views": [
+      {
+        "viewpointId": "interior",
+        "evergreen": 0.08537037037037037,
+        "against": "below",
+        "timberHidden": 0.09288947566955866
+      },
+      {
+        "viewpointId": "exterior",
+        "evergreen": 0.11382616764614908,
+        "against": "below",
+        "timberHidden": 0.14284323271665045
+      },
+      {
+        "viewpointId": "overhead",
+        "evergreen": 0.10764482431149097,
+        "against": "below",
+        "timberHidden": 0.16535746246395544
+      },
+      {
+        "viewpointId": "north",
+        "evergreen": 0.15769666975976904,
+        "against": "below",
+        "timberHidden": 0.19707744763760351
+      }
+    ]
+  },
+  "light": {
+    "site": {
+      "name": "southern England (assumed)",
+      "latitudeDeg": 51.5,
+      "longitudeDeg": 0,
+      "bearingDeg": 0,
+      "assumed": true,
+      "basis": "No site was given. Southern England is assumed, at latitude 51.5 degrees north on the Greenwich meridian, with the drawing's y axis to true north and nothing near enough to cast shade.",
+      "obstructions": []
+    },
+    "acts": true,
+    "possibleHours": [
+      8.095366098473619,
+      9.697929164772459,
+      11.527009421840193,
+      13.603569991410252,
+      15.375229841487572,
+      16.371805987155874,
+      15.959661518701507,
+      14.394016877575684,
+      12.371774728157057,
+      10.363921750878607,
+      8.55084654333975,
+      7.623275156285839
+    ],
+    "sides": [
+      {
+        "facing": "north",
+        "routeM": 217.3891345652544,
+        "midsummerHours": 6.119644604088616,
+        "midwinterHours": 2.57181249522104,
+        "summerShare": 0.38689406929562004,
+        "midwinterShare": 0.3898741523843201
+      },
+      {
+        "facing": "east",
+        "routeM": 212.9438513522553,
+        "midsummerHours": 6.089758808867985,
+        "midwinterHours": 2.395052110592257,
+        "summerShare": 0.38710597041504086,
+        "midwinterShare": 0.39232268178764895
+      },
+      {
+        "facing": "south",
+        "routeM": 221.16210859852114,
+        "midsummerHours": 6.171854877162549,
+        "midwinterHours": 2.375899343109656,
+        "summerShare": 0.3843204326600504,
+        "midwinterShare": 0.38364408418745594
+      },
+      {
+        "facing": "west",
+        "routeM": 205.12432808573905,
+        "midsummerHours": 6.025769473060694,
+        "midwinterHours": 1.9266205998538637,
+        "summerShare": 0.37075273738828457,
+        "midwinterShare": 0.35055218238311225
+      },
+      {
+        "facing": "up",
+        "routeM": 172.9737175352784,
+        "midsummerHours": 3.5769024869678154,
+        "midwinterHours": 2.2797204612292337,
+        "summerShare": 0.22220309117606352,
+        "midwinterShare": 0.26922551691716173
+      }
+    ],
+    "stations": [
+      {
+        "stationId": "bed.R1.P1.1",
+        "facing": "south",
+        "side": "south-south-west",
+        "hours": [
+          5.119128500714022,
+          5.560408377179913,
+          6.856362236178258,
+          7.77289215486833,
+          7.705890297455985,
+          7.117648526143847,
+          6.958427695417612,
+          7.917682378525444,
+          7.522659853035056,
+          6.198687385110294,
+          5.348470478198108,
+          5.026292283044142
+        ],
+        "share": [
+          0.49182355511109466,
+          0.4719860698333115,
+          0.4799468789510206,
+          0.4577859280338257,
+          0.4197430368228394,
+          0.40348726623135456,
+          0.40253636515000657,
+          0.4407478500690398,
+          0.4630863154063735,
+          0.45930808297478637,
+          0.4708018733659233,
+          0.4989920313355825
+        ],
+        "sunClass": "full_sun"
+      },
+      {
+        "stationId": "bed.R1.P1.2",
+        "facing": "south",
+        "side": "south-south-west",
+        "hours": [
+          4.207161816841328,
+          4.774377969192467,
+          5.334029567534338,
+          2.3729932378096295,
+          1.3825997518491757,
+          1.3586681417532687,
+          1.4407998724184417,
+          1.9526064049348981,
+          1.3504571663509624,
+          1.809173692363497,
+          0.9706888271322103,
+          1.9449686692458297
+        ],
+        "share": [
+          0.44812930969313636,
+          0.3843175969450211,
+          0.3631456533999332,
+          0.16381856716257806,
+          0.07732402859965404,
+          0.07413998271065723,
+          0.07762631869529196,
+          0.09059184156476865,
+          0.09645109409881497,
+          0.1029025988945734,
+          0.11287679722851715,
+          0.2530063589090975
+        ],
+        "sunClass": "deep_shade"
+      },
+      {
+        "stationId": "bed.R1.P1.3",
+        "facing": "south",
+        "side": "south-south-west",
+        "hours": [
+          0.8792343014208563,
+          0.8555935444456462,
+          0.9417696302638111,
+          0.607945874263409,
+          0.6625923737997961,
+          1.2671760935225442,
+          1.394227344360139,
+          0.6863324670604903,
+          0.6911688889833147,
+          0.6030100642278502,
+          0.6393101827161022,
+          0.8614953485532396
+        ],
+        "share": [
+          0.11194354766109194,
+          0.10109633988056345,
+          0.09663238572089343,
+          0.07590229204191189,
+          0.0684681031218939,
+          0.06817305149749214,
+          0.07316411292270342,
+          0.07015602200942692,
+          0.07677492210068304,
+          0.075076590144805,
+          0.08533856615983826,
+          0.10627419373499308
+        ],
+        "sunClass": "deep_shade"
+      },
+      {
+        "stationId": "bed.R1.P1.4",
+        "facing": "south",
+        "side": "south-west",
+        "hours": [
+          2.3698001347322024,
+          3.236980802672026,
+          2.6291718794939887,
+          2.2158352007336664,
+          3.118138932851044,
+          3.5247753281638525,
+          3.2746776226427325,
+          2.4432295853213635,
+          2.373969076211797,
+          3.117334615371782,
+          2.8043834474024534,
+          2.094175624523426
+        ],
+        "share": [
+          0.23275618892065641,
+          0.25412571402747397,
+          0.23726956516967176,
+          0.1994394785277247,
+          0.19318015521584275,
+          0.19051797218449085,
+          0.18962092776830358,
+          0.18991570612170366,
+          0.21480598278849786,
+          0.24684603322420756,
+          0.23675891479765215,
+          0.21753463558908737
+        ],
+        "sunClass": "partial_shade"
+      },
+      {
+        "stationId": "bed.R1.P2.1",
+        "facing": "south",
+        "side": "south-east",
+        "hours": [
+          5.442108135234162,
+          6.0495692020755385,
+          4.715756564924818,
+          1.6636166242384158,
+          1.8956304320495898,
+          2.5095271439893754,
+          2.1731579964236145,
+          1.2072750113131194,
+          0.858362634764607,
+          1.5892228784562774,
+          1.622990160085133,
+          2.3972652454846957
+        ],
+        "share": [
+          0.487315805619958,
+          0.48663775482038196,
+          0.4035589228052928,
+          0.17629864132699752,
+          0.09941357597362553,
+          0.10561088647134037,
+          0.10148821524188437,
+          0.0926891344533461,
+          0.09865228843548314,
+          0.12237004170955523,
+          0.13244700211066468,
+          0.2556907146331632
+        ],
+        "sunClass": "moderate_shade"
+      },
+      {
+        "stationId": "bed.R1.P2.2",
+        "facing": "south",
+        "side": "south-south-east",
+        "hours": [
+          1.3113022807533121,
+          1.9821025688328495,
+          2.0748375656642173,
+          0.7050141290646281,
+          0.5649825489923183,
+          0.8744619514887929,
+          1.1218373041751426,
+          0.5792016957440969,
+          0.5260720603648267,
+          0.6194992081244558,
+          0.8097189358100213,
+          1.2458636387077042
+        ],
+        "share": [
+          0.14592090600854077,
+          0.15827807285638318,
+          0.15272043809042246,
+          0.08767459321883213,
+          0.05952428532896888,
+          0.053955747835142606,
+          0.059583540335327104,
+          0.0622422878993342,
+          0.06605047887930066,
+          0.07292000783062022,
+          0.09094832596201605,
+          0.13099474516234205
+        ],
+        "sunClass": "deep_shade"
+      },
+      {
+        "stationId": "bed.R1.P2.3",
+        "facing": "south",
+        "side": "south-south-east",
+        "hours": [
+          2.072107777343923,
+          2.285864547128447,
+          2.855682204192117,
+          2.793570000861479,
+          2.4183456710719597,
+          2.205743697490487,
+          2.139467769680374,
+          3.063546370143033,
+          2.324523581162844,
+          2.2372360475091577,
+          1.4633804479973251,
+          1.6792566638267599
+        ],
+        "share": [
+          0.2311540496655814,
+          0.19639021324168207,
+          0.1967625751426011,
+          0.16573280766199813,
+          0.1347124175232735,
+          0.12265815239752068,
+          0.12397836225950365,
+          0.15384963073039437,
+          0.1547027818624862,
+          0.1525106111101241,
+          0.16276398552878715,
+          0.20438087832342544
+        ],
+        "sunClass": "moderate_shade"
+      },
+      {
+        "stationId": "bed.R1.P2.4",
+        "facing": "south",
+        "side": "south-south-east",
+        "hours": [
+          5.119128500714021,
+          5.560408377179913,
+          6.770184306791203,
+          6.898000001986499,
+          6.244159748543869,
+          5.717849272618227,
+          5.766471970658753,
+          6.38255786395686,
+          6.174222634973741,
+          5.323126320742204,
+          5.156461912590362,
+          4.935564083320864
+        ],
+        "share": [
+          0.48534598744663404,
+          0.46550850216885087,
+          0.4684102724317255,
+          0.40829109054598633,
+          0.3461580318048329,
+          0.32782685580589044,
+          0.3341866353054507,
+          0.3619569980516366,
+          0.3870269176205843,
+          0.389877630756721,
+          0.43561554313212747,
+          0.47822462150753126
+        ],
+        "sunClass": "partial_shade"
+      },
+      {
+        "stationId": "bed.R1.P3.1",
+        "facing": "east",
+        "side": "east",
+        "hours": [
+          1.079909169492779,
+          1.2270642670366463,
+          1.8866472308777031,
+          3.19485128292099,
+          3.4377225449400246,
+          3.76009866081573,
+          3.7428032235277593,
+          3.2669640512438636,
+          1.6073888563790777,
+          0.4830207268047678,
+          0.31440629325137565,
+          0.6311985729609207
+        ],
+        "share": [
+          0.21726213861225419,
+          0.21334777165313,
+          0.20478468463104044,
+          0.18688017637292614,
+          0.17220300578444198,
+          0.16657897829176194,
+          0.16947674789336675,
+          0.1710430251434129,
+          0.13746486302076077,
+          0.1145438045934015,
+          0.12054003581784445,
+          0.163794668618294
+        ],
+        "sunClass": "partial_shade"
+      },
+      {
+        "stationId": "bed.R1.P3.2",
+        "facing": "east",
+        "side": "east",
+        "hours": [
+          2.5322043357141544,
+          2.4322703863894097,
+          2.824478096363715,
+          2.6465653096150206,
+          1.9830834933758748,
+          1.7926062892253063,
+          2.0873676578975866,
+          2.4365638728560546,
+          2.240674903665221,
+          1.5390022052011902,
+          1.569566898876609,
+          1.4948716128359392
+        ],
+        "share": [
+          0.2283971055798492,
+          0.23245842697469982,
+          0.219107392138138,
+          0.1457164749593594,
+          0.10474708701767131,
+          0.0950690544730352,
+          0.11079219904254224,
+          0.1117962196807093,
+          0.12645596355782054,
+          0.1243339318942222,
+          0.11724966872922166,
+          0.14964856087451645
+        ],
+        "sunClass": "deep_shade"
+      },
+      {
+        "stationId": "bed.R1.P3.3",
+        "facing": "east",
+        "side": "east",
+        "hours": [
+          2.719858815669282,
+          3.3553705313091986,
+          4.129812443107965,
+          2.6817806680764034,
+          1.9174272238361194,
+          2.060731280397977,
+          1.9023528770789695,
+          1.58494956066343,
+          2.408082445513046,
+          2.0653982685295307,
+          1.9412243222019687,
+          2.228766692170971
+        ],
+        "share": [
+          0.2453451942977774,
+          0.25850703570397926,
+          0.24764696595792907,
+          0.16844708494534497,
+          0.12163073654096901,
+          0.11568565452074725,
+          0.11516663883456082,
+          0.11449340461377919,
+          0.13925372424359764,
+          0.13302870078390006,
+          0.1447102074547994,
+          0.2063221157431118
+        ],
+        "sunClass": "moderate_shade"
+      },
+      {
+        "stationId": "bed.R1.P3.4",
+        "facing": "east",
+        "side": "east",
+        "hours": [
+          2.3724605109891472,
+          3.230199391804874,
+          4.203081392813961,
+          4.223796285118134,
+          3.772828588558202,
+          3.693939883169179,
+          3.908330641541767,
+          4.282618376637558,
+          4.492288249967571,
+          3.2396500161507045,
+          2.3152224222071283,
+          2.1472128275778006
+        ],
+        "share": [
+          0.23665982858900816,
+          0.2497365385886336,
+          0.25872161731373466,
+          0.24540333186432178,
+          0.23194764038931945,
+          0.2292875416216706,
+          0.2356045378154405,
+          0.24458034691405087,
+          0.2567085423752216,
+          0.23707164704941908,
+          0.21522113185168626,
+          0.25255975380289325
+        ],
+        "sunClass": "partial_shade"
+      },
+      {
+        "stationId": "bed.R1.P4.1",
+        "facing": "north",
+        "side": "north-north-east",
+        "hours": [
+          1.8547309795540432,
+          1.8109215853464786,
+          1.3054358565663242,
+          0.4188079230293408,
+          1.932264600376528,
+          2.484908004690647,
+          2.077512525627514,
+          1.0138076356260401,
+          0.051380955164552974,
+          0.13831403831232084,
+          0.0018609335865416054,
+          0.07287346317097933
+        ],
+        "share": [
+          0.26590270823912504,
+          0.2434015050401359,
+          0.206229333776224,
+          0.1031786880202541,
+          0.07696985831587885,
+          0.08517837053027101,
+          0.07836085379212317,
+          0.05891498361983512,
+          0.0494661481882836,
+          0.04963311412361527,
+          0.05535345681336516,
+          0.1228300866499464
+        ],
+        "sunClass": "moderate_shade"
+      },
+      {
+        "stationId": "bed.R1.P4.2",
+        "facing": "north",
+        "side": "north-north-east",
+        "hours": [
+          1.6593144489029106,
+          1.559097656276181,
+          1.5823792479906968,
+          0.7585834030825034,
+          1.03267458261386,
+          1.259254417727938,
+          1.0179930892141418,
+          0.8405396497150422,
+          0.7241680110454031,
+          0.3108827103744133,
+          1.098014064152625,
+          1.4539599916073571
+        ],
+        "share": [
+          0.17108179062424056,
+          0.16533966984077167,
+          0.14683327663819165,
+          0.07443917374774198,
+          0.049476686006516404,
+          0.058512416728768224,
+          0.05346701021958883,
+          0.046073800726409445,
+          0.04796555602713405,
+          0.03890150775549938,
+          0.0788317530215639,
+          0.1336486836422962
+        ],
+        "sunClass": "deep_shade"
+      },
+      {
+        "stationId": "bed.R1.P4.3",
+        "facing": "north",
+        "side": "north-north-east",
+        "hours": [
+          1.1451334079921403,
+          0.8306406594991204,
+          0.4348121448657705,
+          0.35277490666682193,
+          0.731717561153846,
+          0.9789965039783475,
+          0.9624823317831604,
+          0.476307400929155,
+          0.27720904960811854,
+          0.33441415914737205,
+          0.9225085193672433,
+          0.8761575442187612
+        ],
+        "share": [
+          0.10033737631195971,
+          0.08049382710438213,
+          0.06531609259289023,
+          0.04632720858078934,
+          0.03997245120334804,
+          0.04247600429542922,
+          0.0427914523302516,
+          0.03784771246446045,
+          0.043361893503701496,
+          0.044516508326646484,
+          0.07126002433573216,
+          0.08919246122262994
+        ],
+        "sunClass": "deep_shade"
+      },
+      {
+        "stationId": "bed.R1.P4.4",
+        "facing": "north",
+        "side": "north-east",
+        "hours": [
+          2.876409097178867,
+          2.9978755250775215,
+          2.784597309748527,
+          1.751173855581882,
+          2.1903561285952513,
+          2.2939808443012764,
+          2.320848166270191,
+          1.8851601704145788,
+          2.459913341160539,
+          2.425390976368375,
+          2.6845473337331014,
+          2.833291889957437
+        ],
+        "share": [
+          0.31726804060741476,
+          0.2752813509455188,
+          0.27066958820249376,
+          0.20852178970330673,
+          0.17608443694405396,
+          0.16575198012886988,
+          0.17262593479708374,
+          0.18383933949809142,
+          0.2235333092453709,
+          0.2156392006892287,
+          0.25426342418551207,
+          0.3056886373743013
+        ],
+        "sunClass": "moderate_shade"
+      },
+      {
+        "stationId": "bed.R1.P5.1",
+        "facing": "north",
+        "side": "north-west",
+        "hours": [
+          1.462490941282752,
+          2.1254526463700825,
+          1.4630913171931856,
+          0.8071874021382455,
+          1.7229145512446546,
+          2.317464548253164,
+          2.1151541941384675,
+          1.1488393707674285,
+          1.1472738534713436,
+          1.5920532832053325,
+          1.6041058223054796,
+          1.463714378891157
+        ],
+        "share": [
+          0.1455355284954064,
+          0.1581666446017885,
+          0.14130429255304805,
+          0.11695781704738994,
+          0.11785633156764216,
+          0.12403254646814632,
+          0.12321315488622975,
+          0.11530639666726603,
+          0.12836877803947255,
+          0.13696569412779272,
+          0.14168427896689056,
+          0.14727446615127282
+        ],
+        "sunClass": "moderate_shade"
+      },
+      {
+        "stationId": "bed.R1.P5.2",
+        "facing": "north",
+        "side": "north-north-west",
+        "hours": [
+          1.375308967675143,
+          1.0214802547248663,
+          0.3593579000004957,
+          0.4563592721871424,
+          1.0117421833411548,
+          1.1873724071149456,
+          1.0806425623823244,
+          0.7374410560453364,
+          0.4594068987529536,
+          0.3979954980302717,
+          1.1484706963818991,
+          1.3237308531213414
+        ],
+        "share": [
+          0.11535527882807577,
+          0.0883240295833963,
+          0.060578961811736526,
+          0.052872854677103905,
+          0.05232007115346277,
+          0.05506402710383494,
+          0.053351838356458695,
+          0.05072451910479958,
+          0.057904142878382664,
+          0.05343734973024854,
+          0.09057498795955446,
+          0.11169856038558244
+        ],
+        "sunClass": "deep_shade"
+      },
+      {
+        "stationId": "bed.R1.P5.3",
+        "facing": "north",
+        "side": "north-north-west",
+        "hours": [
+          1.2474689718164769,
+          1.1101407304524797,
+          1.1214086932139025,
+          0.5119120473867763,
+          1.6208603998437137,
+          1.2821877221501454,
+          1.0398878016878021,
+          0.8863052679729247,
+          0.3662867758563268,
+          0.4697472322273985,
+          0.514942352221626,
+          1.1074431110838887
+        ],
+        "share": [
+          0.12540275283651442,
+          0.11518834089064736,
+          0.10189367494983356,
+          0.058359973903642656,
+          0.052445827453504026,
+          0.05723851536843221,
+          0.0535011240912103,
+          0.04230312154166495,
+          0.04234930423502595,
+          0.0422312616768034,
+          0.05600005448797135,
+          0.10866816255582647
+        ],
+        "sunClass": "deep_shade"
+      },
+      {
+        "stationId": "bed.R1.P5.4",
+        "facing": "north",
+        "side": "north-north-west",
+        "hours": [
+          1.4407431820850538,
+          1.2651199932886632,
+          1.2853635957711576,
+          1.3843486134589562,
+          2.93529581393426,
+          3.4123209714717975,
+          3.174150262125628,
+          1.9243035761627367,
+          1.144408442591398,
+          0.6231024560132309,
+          1.1249389207588507,
+          1.3286030414719243
+        ],
+        "share": [
+          0.2123972750173198,
+          0.19038721628804875,
+          0.1767538590997343,
+          0.16878866209150595,
+          0.19625859850063412,
+          0.20248977437369692,
+          0.20068766204884658,
+          0.17440862411282487,
+          0.1628738477735886,
+          0.15101052165360407,
+          0.1925241232049748,
+          0.19639354676413567
+        ],
+        "sunClass": "partial_shade"
+      },
+      {
+        "stationId": "bed.R1.P6.1",
+        "facing": "west",
+        "side": "west",
+        "hours": [
+          3.790473896108831,
+          4.725537585932532,
+          6.242264928293202,
+          6.003874094307131,
+          6.047662572847518,
+          6.063236619604105,
+          6.187647280272969,
+          6.3851374549641395,
+          6.45506933280226,
+          4.936441293334686,
+          3.890390879531213,
+          3.4869033850113906
+        ],
+        "share": [
+          0.398206215428216,
+          0.3982110884033937,
+          0.41003056663524573,
+          0.37843575575923505,
+          0.37241757415398197,
+          0.3692261899353778,
+          0.3740671589412836,
+          0.3853775437508368,
+          0.399249876220772,
+          0.3818446823913396,
+          0.37534999636968136,
+          0.41697468437591223
+        ],
+        "sunClass": "full_sun"
+      },
+      {
+        "stationId": "bed.R1.P6.2",
+        "facing": "west",
+        "side": "west",
+        "hours": [
+          2.806658908110419,
+          3.4084560774397703,
+          4.218929747862036,
+          3.364581036271556,
+          2.9907041025469443,
+          2.9382287465733103,
+          2.650606892716167,
+          2.6736196369811327,
+          3.8466803349590815,
+          3.1572472965898526,
+          2.543254737366076,
+          2.6945130704776874
+        ],
+        "share": [
+          0.24368635625213764,
+          0.2544923350537092,
+          0.2523715343182279,
+          0.20900377462634084,
+          0.1890700334571856,
+          0.17659496327295693,
+          0.17353680951681083,
+          0.18193634839343392,
+          0.22607964938781525,
+          0.20662315964134886,
+          0.20496950560388233,
+          0.2420820598082914
+        ],
+        "sunClass": "moderate_shade"
+      },
+      {
+        "stationId": "bed.R1.P6.3",
+        "facing": "west",
+        "side": "west",
+        "hours": [
+          2.3082818510660745,
+          2.2447745059653412,
+          2.5148845871841634,
+          2.791943310527957,
+          3.6004612567476135,
+          3.737032657616908,
+          3.6854636378134837,
+          3.46535394596495,
+          1.8934861940792589,
+          1.2393460060056773,
+          1.2305979705007228,
+          1.2942177106583355
+        ],
+        "share": [
+          0.25023289001669313,
+          0.25441849919455506,
+          0.2372621270762073,
+          0.18766898588423359,
+          0.18670515357852943,
+          0.18771219055730953,
+          0.18949253093723997,
+          0.18345084307448317,
+          0.1705305654066894,
+          0.1672106304080667,
+          0.16101673286387685,
+          0.1843770388966207
+        ],
+        "sunClass": "partial_shade"
+      },
+      {
+        "stationId": "bed.R1.P6.4",
+        "facing": "west",
+        "side": "west",
+        "hours": [
+          2.1173033406133177,
+          2.4328685938609276,
+          3.1571911790835863,
+          5.299405556713037,
+          5.726878490028245,
+          5.4929747259722275,
+          4.939218676220225,
+          6.056199704303444,
+          3.997629935657023,
+          2.2191319593062113,
+          1.927412392482189,
+          2.0521726671899847
+        ],
+        "share": [
+          0.33436327093819984,
+          0.3305008353357419,
+          0.30917521864314645,
+          0.32478367281533393,
+          0.32691197920934123,
+          0.3066573197528606,
+          0.3007100012941092,
+          0.34410243495588644,
+          0.31075298943763374,
+          0.281941167507932,
+          0.30630856248079796,
+          0.32230219722078457
+        ],
+        "sunClass": "partial_shade"
+      }
+    ],
+    "plants": [
+      {
+        "plantId": "P1.wisteria",
+        "taxonId": "wisteria-sinensis",
+        "stationId": "bed.R1.P1.1",
+        "facing": "south",
+        "side": "south-south-west",
+        "reading": {
+          "words": "Full sun or partial shade, preferably south or west facing and sheltered; full sun matters for profuse flowering.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [
+            "south",
+            "west"
+          ],
+          "shelter": true,
+          "warmth": false,
+          "floweringNeedsSun": true,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun or partial shade, preferably south or west facing and sheltered; full sun matters for profuse flowering.\""
+        },
+        "over": "route",
+        "routeM": 78.6468252642398,
+        "midsummerHours": 8.986031243824662,
+        "sunClass": "full_sun",
+        "seasonShare": 0.5832625669022459,
+        "growthFactor": 1,
+        "floweringFactor": 0.5832625669022459,
+        "light": "within",
+        "aspect": "as_asked"
+      },
+      {
+        "plantId": "P1.rose",
+        "taxonId": "rosa-the-generous-gardener",
+        "stationId": "bed.R1.P1.2",
+        "facing": "south",
+        "side": "south-south-west",
+        "reading": {
+          "words": "Full sun or partial shade; flowers best where light reaches the cane framework.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [],
+          "shelter": false,
+          "warmth": false,
+          "floweringNeedsSun": true,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun or partial shade; flowers best where light reaches the cane framework.\""
+        },
+        "over": "route",
+        "routeM": 10.60061447977669,
+        "midsummerHours": 4.748005160890868,
+        "sunClass": "partial_shade",
+        "seasonShare": 0.3470798497750267,
+        "growthFactor": 0.8571018609020107,
+        "floweringFactor": 0.3470798497750267,
+        "light": "within",
+        "aspect": "not_asked"
+      },
+      {
+        "plantId": "P1.star-jasmine",
+        "taxonId": "trachelospermum-jasminoides",
+        "stationId": "bed.R1.P1.3",
+        "facing": "south",
+        "side": "south-south-west",
+        "reading": {
+          "words": "Warm full sun or partial shade, ideally south or west facing, sheltered from cold winds.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [
+            "south",
+            "west"
+          ],
+          "shelter": true,
+          "warmth": true,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Warm full sun or partial shade, ideally south or west facing, sheltered from cold winds.\""
+        },
+        "over": "route",
+        "routeM": 26.77945960081347,
+        "midsummerHours": 7.319017592432857,
+        "sunClass": "full_sun",
+        "seasonShare": 0.4861745938717646,
+        "growthFactor": 1,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "as_asked"
+      },
+      {
+        "plantId": "P1.winter-clematis",
+        "taxonId": "clematis-cirrhosa-freckles",
+        "stationId": "bed.R1.P1.4",
+        "facing": "south",
+        "side": "south-west",
+        "reading": {
+          "words": "Sunny, warm, sheltered south or west exposure; a cooler shaded base helps.",
+          "accepts": [
+            "full_sun"
+          ],
+          "aspects": [
+            "south",
+            "west"
+          ],
+          "shelter": true,
+          "warmth": true,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Sunny, warm, sheltered south or west exposure; a cooler shaded base helps.\""
+        },
+        "over": "route",
+        "routeM": 15.661160463571038,
+        "midsummerHours": 6.359300640790038,
+        "sunClass": "full_sun",
+        "seasonShare": 0.41306754868650747,
+        "growthFactor": 0.41306754868650747,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "as_asked"
+      },
+      {
+        "plantId": "P2.rose",
+        "taxonId": "rosa-the-generous-gardener",
+        "stationId": "bed.R1.P2.1",
+        "facing": "south",
+        "side": "south-east",
+        "reading": {
+          "words": "Full sun or partial shade; flowers best where light reaches the cane framework.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [],
+          "shelter": false,
+          "warmth": false,
+          "floweringNeedsSun": true,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun or partial shade; flowers best where light reaches the cane framework.\""
+        },
+        "over": "route",
+        "routeM": 12.019079665135386,
+        "midsummerHours": 6.976981822497107,
+        "sunClass": "full_sun",
+        "seasonShare": 0.45134619814153687,
+        "growthFactor": 1,
+        "floweringFactor": 0.45134619814153687,
+        "light": "within",
+        "aspect": "not_asked"
+      },
+      {
+        "plantId": "P2.star-jasmine",
+        "taxonId": "trachelospermum-jasminoides",
+        "stationId": "bed.R1.P2.2",
+        "facing": "south",
+        "side": "south-south-east",
+        "reading": {
+          "words": "Warm full sun or partial shade, ideally south or west facing, sheltered from cold winds.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [
+            "south",
+            "west"
+          ],
+          "shelter": true,
+          "warmth": true,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Warm full sun or partial shade, ideally south or west facing, sheltered from cold winds.\""
+        },
+        "over": "route",
+        "routeM": 28.250000722319232,
+        "midsummerHours": 6.884513593334459,
+        "sunClass": "full_sun",
+        "seasonShare": 0.4722351025674967,
+        "growthFactor": 1,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "as_asked"
+      },
+      {
+        "plantId": "P2.winter-clematis",
+        "taxonId": "clematis-cirrhosa-freckles",
+        "stationId": "bed.R1.P2.3",
+        "facing": "south",
+        "side": "south-south-east",
+        "reading": {
+          "words": "Sunny, warm, sheltered south or west exposure; a cooler shaded base helps.",
+          "accepts": [
+            "full_sun"
+          ],
+          "aspects": [
+            "south",
+            "west"
+          ],
+          "shelter": true,
+          "warmth": true,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Sunny, warm, sheltered south or west exposure; a cooler shaded base helps.\""
+        },
+        "over": "route",
+        "routeM": 14.328501312449957,
+        "midsummerHours": 3.574197192268316,
+        "sunClass": "partial_shade",
+        "seasonShare": 0.27406942478572754,
+        "growthFactor": 0.27406942478572754,
+        "floweringFactor": 1,
+        "light": "less_sun",
+        "aspect": "as_asked"
+      },
+      {
+        "plantId": "P2.honeysuckle",
+        "taxonId": "lonicera-periclymenum-graham-thomas",
+        "stationId": "bed.R1.P2.4",
+        "facing": "south",
+        "side": "south-south-east",
+        "reading": {
+          "words": "Full sun or partial shade; aspect flexible; partial shade often favourable.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [],
+          "shelter": false,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun or partial shade; aspect flexible; partial shade often favourable.\""
+        },
+        "over": "route",
+        "routeM": 75.38439311735203,
+        "midsummerHours": 6.8004732204834495,
+        "sunClass": "full_sun",
+        "seasonShare": 0.4797091423579352,
+        "growthFactor": 1,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "not_asked"
+      },
+      {
+        "plantId": "P3.akebia",
+        "taxonId": "akebia-quinata",
+        "stationId": "bed.R1.P3.1",
+        "facing": "east",
+        "side": "east",
+        "reading": {
+          "words": "Full sun or partial shade; several aspects possible.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [],
+          "shelter": false,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun or partial shade; several aspects possible.\""
+        },
+        "over": "route",
+        "routeM": 130.6741499731587,
+        "midsummerHours": 7.698725779433868,
+        "sunClass": "full_sun",
+        "seasonShare": 0.4952860120950118,
+        "growthFactor": 1,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "not_asked"
+      },
+      {
+        "plantId": "P3.honeysuckle",
+        "taxonId": "lonicera-periclymenum-graham-thomas",
+        "stationId": "bed.R1.P3.2",
+        "facing": "east",
+        "side": "east",
+        "reading": {
+          "words": "Full sun or partial shade; aspect flexible; partial shade often favourable.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [],
+          "shelter": false,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun or partial shade; aspect flexible; partial shade often favourable.\""
+        },
+        "over": "route",
+        "routeM": 38.924215964642706,
+        "midsummerHours": 5.803213662479774,
+        "sunClass": "partial_shade",
+        "seasonShare": 0.36727641483494017,
+        "growthFactor": 0.903103958234693,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "not_asked"
+      },
+      {
+        "plantId": "P3.summer-clematis",
+        "taxonId": "clematis-viticella-etoile-violette",
+        "stationId": "bed.R1.P3.3",
+        "facing": "east",
+        "side": "east",
+        "reading": {
+          "words": "Full sun or partial shade; adaptable to aspect and exposure.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [],
+          "shelter": false,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun or partial shade; adaptable to aspect and exposure.\""
+        },
+        "over": "route",
+        "routeM": 1.4941929124606355,
+        "midsummerHours": 4.655913281634634,
+        "sunClass": "partial_shade",
+        "seasonShare": 0.28034273642148805,
+        "growthFactor": 0.7008568410537201,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "not_asked"
+      },
+      {
+        "plantId": "P3.evergreen-honeysuckle",
+        "taxonId": "lonicera-henryi",
+        "stationId": "bed.R1.P3.4",
+        "facing": "east",
+        "side": "east",
+        "reading": {
+          "words": "Full sun or partial shade; north, east or west facing; exposed or sheltered, though leaf persistence is site-specific.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [
+            "north",
+            "east",
+            "west"
+          ],
+          "shelter": false,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun or partial shade; north, east or west facing; exposed or sheltered, though leaf persistence is site-specific.\""
+        },
+        "over": "route",
+        "routeM": 29.56575834210124,
+        "midsummerHours": 7.657860939066492,
+        "sunClass": "full_sun",
+        "seasonShare": 0.4733543707809564,
+        "growthFactor": 1,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "as_asked"
+      },
+      {
+        "plantId": "P4.hydrangea",
+        "taxonId": "hydrangea-anomala-subsp-petiolaris",
+        "stationId": "bed.R1.P4.1",
+        "facing": "north",
+        "side": "north-north-east",
+        "reading": {
+          "words": "Partial shade, including cool east or north sectors; full sun only where the soil stays moist.",
+          "accepts": [
+            "partial_shade"
+          ],
+          "aspects": [
+            "north",
+            "east"
+          ],
+          "shelter": false,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": "full sun only where the soil stays moist",
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Partial shade, including cool east or north sectors; full sun only where the soil stays moist.\""
+        },
+        "over": "route",
+        "routeM": 13.701597887283627,
+        "midsummerHours": 3.7861340938181263,
+        "sunClass": "partial_shade",
+        "seasonShare": 0.2262283442517328,
+        "growthFactor": 0.565570860629332,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "as_asked"
+      },
+      {
+        "plantId": "P4.evergreen-honeysuckle",
+        "taxonId": "lonicera-henryi",
+        "stationId": "bed.R1.P4.2",
+        "facing": "north",
+        "side": "north-north-east",
+        "reading": {
+          "words": "Full sun or partial shade; north, east or west facing; exposed or sheltered, though leaf persistence is site-specific.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [
+            "north",
+            "east",
+            "west"
+          ],
+          "shelter": false,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun or partial shade; north, east or west facing; exposed or sheltered, though leaf persistence is site-specific.\""
+        },
+        "over": "route",
+        "routeM": 47.937421747262,
+        "midsummerHours": 3.875880616311198,
+        "sunClass": "partial_shade",
+        "seasonShare": 0.21857856024013134,
+        "growthFactor": 0.5464464006003283,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "as_asked"
+      },
+      {
+        "plantId": "P4.ivy",
+        "taxonId": "hedera-helix",
+        "stationId": "bed.R1.P4.3",
+        "facing": "north",
+        "side": "north-north-east",
+        "reading": {
+          "words": "Shade to sun; exposed or sheltered.",
+          "accepts": [
+            "full_sun",
+            "partial_shade",
+            "moderate_shade",
+            "deep_shade"
+          ],
+          "aspects": [],
+          "shelter": false,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Shade to sun; exposed or sheltered.\""
+        },
+        "over": "route",
+        "routeM": 35.37634319072671,
+        "midsummerHours": 4.754250897037428,
+        "sunClass": "partial_shade",
+        "seasonShare": 0.25408262321757674,
+        "growthFactor": 1,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "not_asked"
+      },
+      {
+        "plantId": "P4.akebia",
+        "taxonId": "akebia-quinata",
+        "stationId": "bed.R1.P4.4",
+        "facing": "north",
+        "side": "north-east",
+        "reading": {
+          "words": "Full sun or partial shade; several aspects possible.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [],
+          "shelter": false,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun or partial shade; several aspects possible.\""
+        },
+        "over": "route",
+        "routeM": 127.88655049389631,
+        "midsummerHours": 7.919297556981413,
+        "sunClass": "full_sun",
+        "seasonShare": 0.4600924528259748,
+        "growthFactor": 1,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "not_asked"
+      },
+      {
+        "plantId": "P5.evergreen-honeysuckle",
+        "taxonId": "lonicera-henryi",
+        "stationId": "bed.R1.P5.1",
+        "facing": "north",
+        "side": "north-west",
+        "reading": {
+          "words": "Full sun or partial shade; north, east or west facing; exposed or sheltered, though leaf persistence is site-specific.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [
+            "north",
+            "east",
+            "west"
+          ],
+          "shelter": false,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun or partial shade; north, east or west facing; exposed or sheltered, though leaf persistence is site-specific.\""
+        },
+        "over": "route",
+        "routeM": 36.97368453109053,
+        "midsummerHours": 7.681567933980139,
+        "sunClass": "full_sun",
+        "seasonShare": 0.4488999764793924,
+        "growthFactor": 0.9811063989227146,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "as_asked"
+      },
+      {
+        "plantId": "P5.ivy",
+        "taxonId": "hedera-helix",
+        "stationId": "bed.R1.P5.2",
+        "facing": "north",
+        "side": "north-north-west",
+        "reading": {
+          "words": "Shade to sun; exposed or sheltered.",
+          "accepts": [
+            "full_sun",
+            "partial_shade",
+            "moderate_shade",
+            "deep_shade"
+          ],
+          "aspects": [],
+          "shelter": false,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Shade to sun; exposed or sheltered.\""
+        },
+        "over": "route",
+        "routeM": 35.56301405362712,
+        "midsummerHours": 2.8300182043623785,
+        "sunClass": "moderate_shade",
+        "seasonShare": 0.16865222005489316,
+        "growthFactor": 0.9733548233304383,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "not_asked"
+      },
+      {
+        "plantId": "P5.akebia",
+        "taxonId": "akebia-quinata",
+        "stationId": "bed.R1.P5.3",
+        "facing": "north",
+        "side": "north-north-west",
+        "reading": {
+          "words": "Full sun or partial shade; several aspects possible.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [],
+          "shelter": false,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun or partial shade; several aspects possible.\""
+        },
+        "over": "route",
+        "routeM": 105.98477819896875,
+        "midsummerHours": 7.013452326421492,
+        "sunClass": "full_sun",
+        "seasonShare": 0.43638337232797475,
+        "growthFactor": 0.9999857386049574,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "not_asked"
+      },
+      {
+        "plantId": "P5.evergreen-honeysuckle.2",
+        "taxonId": "lonicera-henryi",
+        "stationId": "bed.R1.P5.4",
+        "facing": "north",
+        "side": "north-north-west",
+        "reading": {
+          "words": "Full sun or partial shade; north, east or west facing; exposed or sheltered, though leaf persistence is site-specific.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [
+            "north",
+            "east",
+            "west"
+          ],
+          "shelter": false,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun or partial shade; north, east or west facing; exposed or sheltered, though leaf persistence is site-specific.\""
+        },
+        "over": "route",
+        "routeM": 47.07673413113352,
+        "midsummerHours": 7.874001078421442,
+        "sunClass": "full_sun",
+        "seasonShare": 0.4121983515766981,
+        "growthFactor": 0.9543276520941505,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "as_asked"
+      },
+      {
+        "plantId": "P6.japanese-wisteria",
+        "taxonId": "wisteria-floribunda-macrobotrys",
+        "stationId": "bed.R1.P6.1",
+        "facing": "west",
+        "side": "west",
+        "reading": {
+          "words": "Full sun or partial shade; south or west facing, sheltered; generous overhead clearance.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [
+            "south",
+            "west"
+          ],
+          "shelter": true,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun or partial shade; south or west facing, sheltered; generous overhead clearance.\""
+        },
+        "over": "route",
+        "routeM": 46.78347132241402,
+        "midsummerHours": 8.504097786558182,
+        "sunClass": "full_sun",
+        "seasonShare": 0.5561337898156945,
+        "growthFactor": 1,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "as_asked"
+      },
+      {
+        "plantId": "P6.spring-clematis",
+        "taxonId": "clematis-armandi",
+        "stationId": "bed.R1.P6.2",
+        "facing": "west",
+        "side": "west",
+        "reading": {
+          "words": "Full sun, south or west facing, sheltered from cold winds.",
+          "accepts": [
+            "full_sun"
+          ],
+          "aspects": [
+            "south",
+            "west"
+          ],
+          "shelter": true,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun, south or west facing, sheltered from cold winds.\""
+        },
+        "over": "route",
+        "routeM": 41.876140797685395,
+        "midsummerHours": 5.573824036126252,
+        "sunClass": "partial_shade",
+        "seasonShare": 0.36414654855027456,
+        "growthFactor": 0.36414654855027456,
+        "floweringFactor": 1,
+        "light": "less_sun",
+        "aspect": "as_asked"
+      },
+      {
+        "plantId": "P6.trumpet-vine",
+        "taxonId": "campsis-x-tagliabueana-madame-galen",
+        "stationId": "bed.R1.P6.3",
+        "facing": "west",
+        "side": "west",
+        "reading": {
+          "words": "Full sun, south or west facing, warm and sheltered; summer heat strongly affects flowering.",
+          "accepts": [
+            "full_sun"
+          ],
+          "aspects": [
+            "south",
+            "west"
+          ],
+          "shelter": true,
+          "warmth": true,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Full sun, south or west facing, warm and sheltered; summer heat strongly affects flowering.\""
+        },
+        "over": "route",
+        "routeM": 22.384414134555193,
+        "midsummerHours": 5.3311644207751545,
+        "sunClass": "partial_shade",
+        "seasonShare": 0.324144195681154,
+        "growthFactor": 0.324144195681154,
+        "floweringFactor": 1,
+        "light": "less_sun",
+        "aspect": "as_asked"
+      },
+      {
+        "plantId": "P6.vine",
+        "taxonId": "vitis-coignetiae",
+        "stationId": "bed.R1.P6.4",
+        "facing": "west",
+        "side": "west",
+        "reading": {
+          "words": "Sun or partial shade, preferably south or west facing; sheltered.",
+          "accepts": [
+            "full_sun",
+            "partial_shade"
+          ],
+          "aspects": [
+            "south",
+            "west"
+          ],
+          "shelter": true,
+          "warmth": false,
+          "floweringNeedsSun": false,
+          "fullSunOnlyIf": null,
+          "status": "provisional_design_assumption",
+          "basis": "Read from the profile's words: \"Sun or partial shade, preferably south or west facing; sheltered.\""
+        },
+        "over": "route",
+        "routeM": 125.15132349449435,
+        "midsummerHours": 7.990578852591134,
+        "sunClass": "full_sun",
+        "seasonShare": 0.5157660042444164,
+        "growthFactor": 1,
+        "floweringFactor": 1,
+        "light": "within",
+        "aspect": "as_asked"
+      }
+    ],
+    "assumptions": {
+      "measured": 0,
+      "peer_reviewed": 2,
+      "published_plant_profile": 3,
+      "calibrated": 0,
+      "provisional_design_assumption": 10,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 0
+    },
+    "notes": [
+      "Hours are direct sun on a clear day in the middle of the month, as the geometry allows: not sunshine records. A half-shaded minute counts as half.",
+      "Shares compare a place with an open site at the same spot, so cloud, which falls on both alike, is not in them.",
+      "Shade comes from the timber and cables, from what the site declares, and from the leaf other plants carried the season before. A plant is not counted as shading itself.",
+      "Warmth, shelter and wind are not light and are not modelled: where a profile asks for a warm or sheltered aspect, nothing here speaks to that."
+    ]
+  },
+  "flowersByHeight": [
+    {
+      "plantId": "P3.akebia",
+      "zone": "within reach, under 2 m",
+      "count": 45
+    },
+    {
+      "plantId": "P3.akebia",
+      "zone": "2 to 3 m",
+      "count": 40
+    },
+    {
+      "plantId": "P3.akebia",
+      "zone": "above 3 m",
+      "count": 657
+    },
+    {
+      "plantId": "P4.akebia",
+      "zone": "within reach, under 2 m",
+      "count": 41
+    },
+    {
+      "plantId": "P4.akebia",
+      "zone": "2 to 3 m",
+      "count": 37
+    },
+    {
+      "plantId": "P4.akebia",
+      "zone": "above 3 m",
+      "count": 518
+    },
+    {
+      "plantId": "P5.akebia",
+      "zone": "within reach, under 2 m",
+      "count": 31
+    },
+    {
+      "plantId": "P5.akebia",
+      "zone": "2 to 3 m",
+      "count": 41
+    },
+    {
+      "plantId": "P5.akebia",
+      "zone": "above 3 m",
+      "count": 424
+    },
+    {
+      "plantId": "P4.hydrangea",
+      "zone": "within reach, under 2 m",
+      "count": 28
+    },
+    {
+      "plantId": "P4.hydrangea",
+      "zone": "2 to 3 m",
+      "count": 11
+    },
+    {
+      "plantId": "P4.hydrangea",
+      "zone": "above 3 m",
+      "count": 17
+    },
+    {
+      "plantId": "P6.spring-clematis",
+      "zone": "above 3 m",
+      "count": 257
+    },
+    {
+      "plantId": "P6.spring-clematis",
+      "zone": "2 to 3 m",
+      "count": 130
+    },
+    {
+      "plantId": "P6.spring-clematis",
+      "zone": "within reach, under 2 m",
+      "count": 238
+    },
+    {
+      "plantId": "P1.wisteria",
+      "zone": "2 to 3 m",
+      "count": 14
+    },
+    {
+      "plantId": "P1.wisteria",
+      "zone": "above 3 m",
+      "count": 217
+    },
+    {
+      "plantId": "P1.winter-clematis",
+      "zone": "2 to 3 m",
+      "count": 89
+    },
+    {
+      "plantId": "P1.winter-clematis",
+      "zone": "above 3 m",
+      "count": 76
+    },
+    {
+      "plantId": "P1.winter-clematis",
+      "zone": "within reach, under 2 m",
+      "count": 163
+    },
+    {
+      "plantId": "P2.winter-clematis",
+      "zone": "within reach, under 2 m",
+      "count": 179
+    },
+    {
+      "plantId": "P2.winter-clematis",
+      "zone": "above 3 m",
+      "count": 14
+    },
+    {
+      "plantId": "P2.winter-clematis",
+      "zone": "2 to 3 m",
+      "count": 87
+    },
+    {
+      "plantId": "P6.japanese-wisteria",
+      "zone": "2 to 3 m",
+      "count": 72
+    },
+    {
+      "plantId": "P6.japanese-wisteria",
+      "zone": "above 3 m",
+      "count": 363
+    },
+    {
+      "plantId": "P6.japanese-wisteria",
+      "zone": "within reach, under 2 m",
+      "count": 2
+    },
+    {
+      "plantId": "P2.honeysuckle",
+      "zone": "2 to 3 m",
+      "count": 123
+    },
+    {
+      "plantId": "P2.honeysuckle",
+      "zone": "above 3 m",
+      "count": 840
+    },
+    {
+      "plantId": "P2.honeysuckle",
+      "zone": "within reach, under 2 m",
+      "count": 77
+    },
+    {
+      "plantId": "P3.honeysuckle",
+      "zone": "above 3 m",
+      "count": 353
+    },
+    {
+      "plantId": "P3.honeysuckle",
+      "zone": "within reach, under 2 m",
+      "count": 94
+    },
+    {
+      "plantId": "P3.honeysuckle",
+      "zone": "2 to 3 m",
+      "count": 68
+    },
+    {
+      "plantId": "P3.evergreen-honeysuckle",
+      "zone": "within reach, under 2 m",
+      "count": 39
+    },
+    {
+      "plantId": "P3.evergreen-honeysuckle",
+      "zone": "2 to 3 m",
+      "count": 44
+    },
+    {
+      "plantId": "P3.evergreen-honeysuckle",
+      "zone": "above 3 m",
+      "count": 116
+    },
+    {
+      "plantId": "P4.evergreen-honeysuckle",
+      "zone": "within reach, under 2 m",
+      "count": 53
+    },
+    {
+      "plantId": "P4.evergreen-honeysuckle",
+      "zone": "2 to 3 m",
+      "count": 42
+    },
+    {
+      "plantId": "P4.evergreen-honeysuckle",
+      "zone": "above 3 m",
+      "count": 172
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle",
+      "zone": "within reach, under 2 m",
+      "count": 62
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle",
+      "zone": "2 to 3 m",
+      "count": 57
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle",
+      "zone": "above 3 m",
+      "count": 168
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle.2",
+      "zone": "within reach, under 2 m",
+      "count": 45
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle.2",
+      "zone": "2 to 3 m",
+      "count": 63
+    },
+    {
+      "plantId": "P5.evergreen-honeysuckle.2",
+      "zone": "above 3 m",
+      "count": 188
+    },
+    {
+      "plantId": "P1.rose",
+      "zone": "2 to 3 m",
+      "count": 17
+    },
+    {
+      "plantId": "P1.rose",
+      "zone": "above 3 m",
+      "count": 15
+    },
+    {
+      "plantId": "P1.rose",
+      "zone": "within reach, under 2 m",
+      "count": 18
+    },
+    {
+      "plantId": "P2.rose",
+      "zone": "within reach, under 2 m",
+      "count": 45
+    },
+    {
+      "plantId": "P2.rose",
+      "zone": "2 to 3 m",
+      "count": 31
+    },
+    {
+      "plantId": "P2.rose",
+      "zone": "above 3 m",
+      "count": 40
+    },
+    {
+      "plantId": "P3.summer-clematis",
+      "zone": "within reach, under 2 m",
+      "count": 31
+    },
+    {
+      "plantId": "P6.vine",
+      "zone": "within reach, under 2 m",
+      "count": 6
+    },
+    {
+      "plantId": "P6.vine",
+      "zone": "above 3 m",
+      "count": 412
+    },
+    {
+      "plantId": "P6.vine",
+      "zone": "2 to 3 m",
+      "count": 13
+    },
+    {
+      "plantId": "P1.star-jasmine",
+      "zone": "above 3 m",
+      "count": 222
+    },
+    {
+      "plantId": "P1.star-jasmine",
+      "zone": "within reach, under 2 m",
+      "count": 114
+    },
+    {
+      "plantId": "P1.star-jasmine",
+      "zone": "2 to 3 m",
+      "count": 115
+    },
+    {
+      "plantId": "P2.star-jasmine",
+      "zone": "above 3 m",
+      "count": 236
+    },
+    {
+      "plantId": "P2.star-jasmine",
+      "zone": "2 to 3 m",
+      "count": 119
+    },
+    {
+      "plantId": "P2.star-jasmine",
+      "zone": "within reach, under 2 m",
+      "count": 126
+    },
+    {
+      "plantId": "P3.summer-clematis",
+      "zone": "2 to 3 m",
+      "count": 1
+    },
+    {
+      "plantId": "P6.trumpet-vine",
+      "zone": "within reach, under 2 m",
+      "count": 23
+    },
+    {
+      "plantId": "P6.trumpet-vine",
+      "zone": "2 to 3 m",
+      "count": 21
+    },
+    {
+      "plantId": "P6.trumpet-vine",
+      "zone": "above 3 m",
+      "count": 44
+    },
+    {
+      "plantId": "P4.ivy",
+      "zone": "within reach, under 2 m",
+      "count": 9
+    },
+    {
+      "plantId": "P4.ivy",
+      "zone": "2 to 3 m",
+      "count": 9
+    },
+    {
+      "plantId": "P4.ivy",
+      "zone": "above 3 m",
+      "count": 3
+    },
+    {
+      "plantId": "P5.ivy",
+      "zone": "within reach, under 2 m",
+      "count": 8
+    },
+    {
+      "plantId": "P5.ivy",
+      "zone": "above 3 m",
+      "count": 4
+    },
+    {
+      "plantId": "P5.ivy",
+      "zone": "2 to 3 m",
+      "count": 3
+    }
+  ],
+  "gardening": [
+    {
+      "year": 2027,
+      "actions": {
+        "plant": 24,
+        "hard_prune": 4,
+        "monitor": 2,
+        "shorten_side_shoots": 3,
+        "spur_prune": 2
+      },
+      "stemRemovedM": 9.620593926344185,
+      "tieIns": 147,
+      "floralBudsRemoved": 0
+    },
+    {
+      "year": 2028,
+      "actions": {
+        "shorten_side_shoots": 7,
+        "spur_prune": 4,
+        "hard_prune": 1,
+        "trim_to_bounds": 9,
+        "monitor": 2,
+        "deadhead_or_select_flowers": 10
+      },
+      "stemRemovedM": 36.05299711892235,
+      "tieIns": 105,
+      "floralBudsRemoved": 7
+    },
+    {
+      "year": 2029,
+      "actions": {
+        "shorten_side_shoots": 10,
+        "spur_prune": 4,
+        "hard_prune": 1,
+        "trim_to_bounds": 15,
+        "monitor": 2,
+        "deadhead_or_select_flowers": 10
+      },
+      "stemRemovedM": 185.3643511365267,
+      "tieIns": 169,
+      "floralBudsRemoved": 25
+    },
+    {
+      "year": 2030,
+      "actions": {
+        "shorten_side_shoots": 8,
+        "spur_prune": 4,
+        "hard_prune": 1,
+        "trim_to_bounds": 15,
+        "monitor": 2,
+        "deadhead_or_select_flowers": 10
+      },
+      "stemRemovedM": 321.9761438290385,
+      "tieIns": 158,
+      "floralBudsRemoved": 46
+    },
+    {
+      "year": 2031,
+      "actions": {
+        "shorten_side_shoots": 10,
+        "spur_prune": 4,
+        "hard_prune": 1,
+        "trim_to_bounds": 15,
+        "monitor": 2,
+        "deadhead_or_select_flowers": 10
+      },
+      "stemRemovedM": 583.5039293132515,
+      "tieIns": 182,
+      "floralBudsRemoved": 91
+    },
+    {
+      "year": 2032,
+      "actions": {
+        "shorten_side_shoots": 8,
+        "spur_prune": 4,
+        "hard_prune": 1,
+        "trim_to_bounds": 15,
+        "monitor": 2,
+        "deadhead_or_select_flowers": 10
+      },
+      "stemRemovedM": 892.69018905833,
+      "tieIns": 185,
+      "floralBudsRemoved": 123
+    },
+    {
+      "year": 2033,
+      "actions": {
+        "shorten_side_shoots": 10,
+        "spur_prune": 4,
+        "hard_prune": 1,
+        "trim_to_bounds": 15,
+        "monitor": 2,
+        "deadhead_or_select_flowers": 10
+      },
+      "stemRemovedM": 1178.3561470866155,
+      "tieIns": 187,
+      "floralBudsRemoved": 174
+    },
+    {
+      "year": 2034,
+      "actions": {
+        "shorten_side_shoots": 8,
+        "spur_prune": 4,
+        "hard_prune": 1,
+        "trim_to_bounds": 15,
+        "monitor": 2,
+        "deadhead_or_select_flowers": 10
+      },
+      "stemRemovedM": 1575.772214743256,
+      "tieIns": 172,
+      "floralBudsRemoved": 179
+    },
+    {
+      "year": 2035,
+      "actions": {
+        "shorten_side_shoots": 10,
+        "spur_prune": 4,
+        "hard_prune": 1,
+        "trim_to_bounds": 15,
+        "monitor": 2,
+        "deadhead_or_select_flowers": 10
+      },
+      "stemRemovedM": 1964.5312072881102,
+      "tieIns": 138,
+      "floralBudsRemoved": 210
+    },
+    {
+      "year": 2036,
+      "actions": {
+        "shorten_side_shoots": 8,
+        "spur_prune": 4,
+        "hard_prune": 1,
+        "trim_to_bounds": 15,
+        "monitor": 2,
+        "deadhead_or_select_flowers": 10
+      },
+      "stemRemovedM": 2200.5979561408085,
+      "tieIns": 98,
+      "floralBudsRemoved": 249
+    }
+  ],
+  "gardeningHours": null,
+  "alerts": [
+    {
+      "kind": "thickening_watch",
+      "plantId": "P1.wisteria",
+      "count": 20,
+      "text": "20 stretches where a stem of 30 mm or more is wound round a timber member (thickest 73 mm): it will go on thickening there, so keep these in view"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P1.wisteria",
+      "count": 1,
+      "text": "the shoots of Wisteria sinensis that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P1.wisteria",
+      "count": 1,
+      "text": "the long shoots of Wisteria sinensis set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P1.wisteria",
+      "count": 1,
+      "text": "the leaves of Wisteria sinensis turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P1.rose",
+      "count": 1,
+      "text": "reached 4.3 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 3.4 to 4.6 m: length of stem, not height, is what ran out"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P1.rose",
+      "count": 1,
+      "text": "the shoots of Rosa 'The Generous Gardener' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P1.rose",
+      "count": 1,
+      "text": "the flowering side shoots of Rosa 'The Generous Gardener' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P1.rose",
+      "count": 1,
+      "text": "the leaves of Rosa 'The Generous Gardener' turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
+    },
+    {
+      "kind": "no_hold",
+      "plantId": "P1.star-jasmine",
+      "count": 1,
+      "text": "1 shoot stopped for want of a hold, and nobody tied the shoot in. First: stopped at j192: no way on (2 a timber member 185 mm round is too thick for a twining stem to grasp (limit 40 mm), and nobody ties it in; 1 already full of stems)"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P1.star-jasmine",
+      "count": 1,
+      "text": "reached 4.9 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range"
+    },
+    {
+      "kind": "assumed",
+      "plantId": "P1.star-jasmine",
+      "count": 1,
+      "text": "which way Trachelospermum jasminoides twines is not known: it is drawn right-handed so that it can be drawn at all, and that direction is not a finding"
+    },
+    {
+      "kind": "caveat",
+      "plantId": "P1.star-jasmine",
+      "count": 1,
+      "text": "the profile says of how it holds on, and the model does not act on it: Twining is the primary mechanism (RHS: needs supporting wires or trellis). Aerial rootlets on damp rough surfaces are reported without citation and cannot be ruled out; if real, it could cling to timber as well as twine."
+    },
+    {
+      "kind": "no_hold",
+      "plantId": "P1.winter-clematis",
+      "count": 16,
+      "text": "16 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j436: no way on (2 a timber member 197 mm round is too thick for a twining leaf stalk to grasp (limit 8 mm), and nobody ties it in; 1 leads too far downhill)"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P1.winter-clematis",
+      "count": 1,
+      "text": "reached 4.3 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 3 to 4 m: length of stem, not height, is what ran out"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P1.winter-clematis",
+      "count": 1,
+      "text": "the shoots of Clematis cirrhosa 'Freckles' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P2.rose",
+      "count": 1,
+      "text": "reached 4.0 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 3.4 to 4.6 m: length of stem, not height, is what ran out"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P2.rose",
+      "count": 1,
+      "text": "the shoots of Rosa 'The Generous Gardener' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P2.rose",
+      "count": 1,
+      "text": "the flowering side shoots of Rosa 'The Generous Gardener' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P2.rose",
+      "count": 1,
+      "text": "the leaves of Rosa 'The Generous Gardener' turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P2.star-jasmine",
+      "count": 1,
+      "text": "reached 4.9 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range"
+    },
+    {
+      "kind": "assumed",
+      "plantId": "P2.star-jasmine",
+      "count": 1,
+      "text": "which way Trachelospermum jasminoides twines is not known: it is drawn right-handed so that it can be drawn at all, and that direction is not a finding"
+    },
+    {
+      "kind": "caveat",
+      "plantId": "P2.star-jasmine",
+      "count": 1,
+      "text": "the profile says of how it holds on, and the model does not act on it: Twining is the primary mechanism (RHS: needs supporting wires or trellis). Aerial rootlets on damp rough surfaces are reported without citation and cannot be ruled out; if real, it could cling to timber as well as twine."
+    },
+    {
+      "kind": "no_hold",
+      "plantId": "P2.winter-clematis",
+      "count": 18,
+      "text": "18 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j206: no way on (2 a timber member 185 mm round is too thick for a twining leaf stalk to grasp (limit 8 mm), and nobody ties it in; 1 leads too far downhill)"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P2.winter-clematis",
+      "count": 1,
+      "text": "reached 3.6 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 3 to 4 m: length of stem, not height, is what ran out"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P2.winter-clematis",
+      "count": 1,
+      "text": "the shoots of Clematis cirrhosa 'Freckles' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "no_hold",
+      "plantId": "P2.honeysuckle",
+      "count": 2,
+      "text": "2 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j320: no way on (2 a timber member 197 mm round is too thick for a twining stem to grasp (limit 114 mm), and nobody ties it in; 1 leads too far downhill)"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P2.honeysuckle",
+      "count": 1,
+      "text": "the shoots of Lonicera periclymenum 'Graham Thomas' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P2.honeysuckle",
+      "count": 1,
+      "text": "the flowering side shoots and long shoots of Lonicera periclymenum 'Graham Thomas' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant"
+    },
+    {
+      "kind": "no_hold",
+      "plantId": "P3.akebia",
+      "count": 41,
+      "text": "41 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j351: no way on (2 a timber member 197 mm round is too thick for a twining stem to grasp (limit 60 mm), and nobody ties it in; 1 leads too far downhill)"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P3.akebia",
+      "count": 1,
+      "text": "reached 5.3 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 9.1 to 12.2 m: length of stem, not height, is what ran out"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P3.akebia",
+      "count": 1,
+      "text": "the shoots of Akebia quinata that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.stemFreshDensityKgM3, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P3.akebia",
+      "count": 1,
+      "text": "the long shoots of Akebia quinata set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant"
+    },
+    {
+      "kind": "no_hold",
+      "plantId": "P3.honeysuckle",
+      "count": 3,
+      "text": "3 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j216: no way on (2 a timber member 185 mm round is too thick for a twining stem to grasp (limit 114 mm), and nobody ties it in; 1 leads too far downhill)"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P3.honeysuckle",
+      "count": 1,
+      "text": "reached 5.3 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P3.honeysuckle",
+      "count": 1,
+      "text": "the shoots of Lonicera periclymenum 'Graham Thomas' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P3.honeysuckle",
+      "count": 1,
+      "text": "the flowering side shoots and long shoots of Lonicera periclymenum 'Graham Thomas' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P3.summer-clematis",
+      "count": 1,
+      "text": "reached 2.3 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P3.summer-clematis",
+      "count": 1,
+      "text": "the shoots of Clematis viticella 'Étoile Violette' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P3.summer-clematis",
+      "count": 1,
+      "text": "the flowering side shoots of Clematis viticella 'Étoile Violette' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P3.summer-clematis",
+      "count": 1,
+      "text": "the leaves of Clematis viticella 'Étoile Violette' turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
+    },
+    {
+      "kind": "no_hold",
+      "plantId": "P3.evergreen-honeysuckle",
+      "count": 14,
+      "text": "14 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j344: no way on (2 a timber member 197 mm round is too thick for a twining stem to grasp (limit 55 mm), and nobody ties it in; 1 already full of stems)"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P3.evergreen-honeysuckle",
+      "count": 1,
+      "text": "reached 4.5 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 5 to 10 m: length of stem, not height, is what ran out"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P3.evergreen-honeysuckle",
+      "count": 1,
+      "text": "the shoots of Lonicera henryi that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P3.evergreen-honeysuckle",
+      "count": 1,
+      "text": "the flowering side shoots and long shoots of Lonicera henryi set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P3.evergreen-honeysuckle",
+      "count": 1,
+      "text": "the leaves of Lonicera henryi turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
+    },
+    {
+      "kind": "joints_reached",
+      "plantId": "P4.hydrangea",
+      "count": 3,
+      "text": "has clung its way unaided to 3 joints between timber members, the highest 4.0 m up (j14): stems can enter gaps there and thicken, so these are the joints to inspect"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P4.hydrangea",
+      "count": 1,
+      "text": "reached 4.6 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P4.hydrangea",
+      "count": 1,
+      "text": "the shoots of Hydrangea anomala subsp. petiolaris that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P4.hydrangea",
+      "count": 1,
+      "text": "the flowering side shoots of Hydrangea anomala subsp. petiolaris set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P4.hydrangea",
+      "count": 1,
+      "text": "the leaves of Hydrangea anomala subsp. petiolaris turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
+    },
+    {
+      "kind": "no_hold",
+      "plantId": "P4.evergreen-honeysuckle",
+      "count": 16,
+      "text": "16 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j183: no way on (2 a timber member 185 mm round is too thick for a twining stem to grasp (limit 55 mm), and nobody ties it in; 1 already full of stems)"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P4.evergreen-honeysuckle",
+      "count": 1,
+      "text": "reached 5.0 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 5 to 10 m: length of stem, not height, is what ran out"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P4.evergreen-honeysuckle",
+      "count": 1,
+      "text": "the shoots of Lonicera henryi that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P4.evergreen-honeysuckle",
+      "count": 1,
+      "text": "the flowering side shoots and long shoots of Lonicera henryi set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P4.evergreen-honeysuckle",
+      "count": 1,
+      "text": "the leaves of Lonicera henryi turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
+    },
+    {
+      "kind": "joints_reached",
+      "plantId": "P4.ivy",
+      "count": 7,
+      "text": "has clung its way unaided to 7 joints between timber members, the highest 4.8 m up (j11): stems can enter gaps there and thicken, so these are the joints to inspect"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P4.ivy",
+      "count": 1,
+      "text": "reached 4.9 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P4.ivy",
+      "count": 1,
+      "text": "the shoots of Hedera helix that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P4.ivy",
+      "count": 1,
+      "text": "the leaves of Hedera helix turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
+    },
+    {
+      "kind": "no_hold",
+      "plantId": "P4.akebia",
+      "count": 46,
+      "text": "46 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j256: no way on (2 a timber member 178 mm round is too thick for a twining stem to grasp (limit 60 mm), and nobody ties it in; 2 a timber member 197 mm round is too thick for a twining stem to grasp (limit 60 mm), and nobody ties it in; 1 leads too far downhill)"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P4.akebia",
+      "count": 1,
+      "text": "the shoots of Akebia quinata that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.stemFreshDensityKgM3, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P4.akebia",
+      "count": 1,
+      "text": "the long shoots of Akebia quinata set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant"
+    },
+    {
+      "kind": "no_hold",
+      "plantId": "P5.evergreen-honeysuckle",
+      "count": 11,
+      "text": "11 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j414: no way on (2 a timber member 197 mm round is too thick for a twining stem to grasp (limit 55 mm), and nobody ties it in; 1 already full of stems)"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P5.evergreen-honeysuckle",
+      "count": 1,
+      "text": "reached 4.8 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 5 to 10 m: length of stem, not height, is what ran out"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P5.evergreen-honeysuckle",
+      "count": 1,
+      "text": "the shoots of Lonicera henryi that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P5.evergreen-honeysuckle",
+      "count": 1,
+      "text": "the flowering side shoots and long shoots of Lonicera henryi set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P5.evergreen-honeysuckle",
+      "count": 1,
+      "text": "the leaves of Lonicera henryi turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
+    },
+    {
+      "kind": "joints_reached",
+      "plantId": "P5.ivy",
+      "count": 8,
+      "text": "has clung its way unaided to 8 joints between timber members, the highest 4.8 m up (j52): stems can enter gaps there and thicken, so these are the joints to inspect"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P5.ivy",
+      "count": 1,
+      "text": "reached 5.0 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P5.ivy",
+      "count": 1,
+      "text": "the shoots of Hedera helix that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P5.ivy",
+      "count": 1,
+      "text": "the leaves of Hedera helix turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
+    },
+    {
+      "kind": "no_hold",
+      "plantId": "P5.akebia",
+      "count": 38,
+      "text": "38 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j391: no way on (2 a timber member 197 mm round is too thick for a twining stem to grasp (limit 60 mm), and nobody ties it in; 1 leads too far downhill)"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P5.akebia",
+      "count": 1,
+      "text": "the shoots of Akebia quinata that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.stemFreshDensityKgM3, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P5.akebia",
+      "count": 1,
+      "text": "the long shoots of Akebia quinata set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant"
+    },
+    {
+      "kind": "no_hold",
+      "plantId": "P5.evergreen-honeysuckle.2",
+      "count": 5,
+      "text": "5 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j389: no way on (2 a timber member 197 mm round is too thick for a twining stem to grasp (limit 55 mm), and nobody ties it in; 1 already full of stems)"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P5.evergreen-honeysuckle.2",
+      "count": 1,
+      "text": "reached 4.9 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 5 to 10 m: length of stem, not height, is what ran out"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P5.evergreen-honeysuckle.2",
+      "count": 1,
+      "text": "the shoots of Lonicera henryi that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P5.evergreen-honeysuckle.2",
+      "count": 1,
+      "text": "the flowering side shoots and long shoots of Lonicera henryi set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P5.evergreen-honeysuckle.2",
+      "count": 1,
+      "text": "the leaves of Lonicera henryi turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
+    },
+    {
+      "kind": "thickening_watch",
+      "plantId": "P6.japanese-wisteria",
+      "count": 10,
+      "text": "10 stretches where a stem of 30 mm or more is wound round a timber member (thickest 82 mm): it will go on thickening there, so keep these in view"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P6.japanese-wisteria",
+      "count": 1,
+      "text": "the shoots of Wisteria floribunda 'Macrobotrys' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P6.japanese-wisteria",
+      "count": 1,
+      "text": "the long shoots of Wisteria floribunda 'Macrobotrys' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P6.japanese-wisteria",
+      "count": 1,
+      "text": "the leaves of Wisteria floribunda 'Macrobotrys' turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
+    },
+    {
+      "kind": "no_hold",
+      "plantId": "P6.spring-clematis",
+      "count": 6,
+      "text": "6 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j177: no way on (2 a timber member 185 mm round is too thick for a twining leaf stalk to grasp (limit 12 mm), and nobody ties it in; 1 already full of stems)"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P6.spring-clematis",
+      "count": 1,
+      "text": "reached 4.9 m on a structure whose routes go to 6.3 m: its main stems came to the length given for a stem of this plant, 5 to 8 m: length of stem, not height, is what ran out"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P6.spring-clematis",
+      "count": 1,
+      "text": "the long shoots of Clematis armandi set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant"
+    },
+    {
+      "kind": "joints_reached",
+      "plantId": "P6.trumpet-vine",
+      "count": 3,
+      "text": "has clung its way unaided to 3 joints between timber members, the highest 4.8 m up (j107): stems can enter gaps there and thicken, so these are the joints to inspect"
+    },
+    {
+      "kind": "crown_not_reached",
+      "plantId": "P6.trumpet-vine",
+      "count": 1,
+      "text": "reached 4.9 m on a structure whose routes go to 6.3 m: its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P6.trumpet-vine",
+      "count": 1,
+      "text": "the shoots of Campsis × tagliabueana 'Madame Galen' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P6.trumpet-vine",
+      "count": 1,
+      "text": "the flowering side shoots of Campsis × tagliabueana 'Madame Galen' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.startTowardsLight. The angles they leave at and the days they break on are not findings about this plant"
+    },
+    {
+      "kind": "caveat",
+      "plantId": "P6.trumpet-vine",
+      "count": 1,
+      "text": "the profile says of how it holds on, and the model does not act on it: A weak self-clinger. The RHS calls campsis self-clinging by aerial roots but advises tying in; Bean says of this hybrid that it cannot be left to look after itself. Plan for ties as well as a clingable surface."
+    },
+    {
+      "kind": "no_hold",
+      "plantId": "P6.vine",
+      "count": 4,
+      "text": "4 shoots stopped for want of a hold, and nobody tied the shoot in. First: stopped at j412: no way on (2 a timber member 197 mm round is too thick for a tendril to grasp (limit 12 mm), and nobody ties it in; 1 already full of stems)"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P6.vine",
+      "count": 1,
+      "text": "the shoots of Vitis coignetiae that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant"
+    },
+    {
+      "kind": "generic_shoot",
+      "plantId": "P6.vine",
+      "count": 1,
+      "text": "the leaves of Vitis coignetiae turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
+    },
+    {
+      "kind": "less_sun_than_profile",
+      "plantId": "P2.winter-clematis",
+      "count": 1,
+      "text": "has 3.6 h of direct sun on a clear midsummer day over the 14 m of route it holds, which is partial shade; its profile asks for full sun (\"Sunny, warm, sheltered south or west exposure; a cooler shaded base helps.\"). Its growth was held to 27% of what its model gives"
+    },
+    {
+      "kind": "less_sun_than_profile",
+      "plantId": "P6.spring-clematis",
+      "count": 1,
+      "text": "has 5.6 h of direct sun on a clear midsummer day over the 42 m of route it holds, which is partial shade; its profile asks for full sun (\"Full sun, south or west facing, sheltered from cold winds.\"). Its growth was held to 36% of what its model gives"
+    },
+    {
+      "kind": "less_sun_than_profile",
+      "plantId": "P6.trumpet-vine",
+      "count": 1,
+      "text": "has 5.3 h of direct sun on a clear midsummer day over the 22 m of route it holds, which is partial shade; its profile asks for full sun (\"Full sun, south or west facing, warm and sheltered; summer heat strongly affects flowering.\"). Its growth was held to 32% of what its model gives"
+    },
+    {
+      "kind": "shelter_not_modelled",
+      "plantId": null,
+      "count": 9,
+      "text": "9 plants have profiles that ask for shelter or warmth (P1.wisteria, P1.star-jasmine, P1.winter-clematis, P2.star-jasmine, P2.winter-clematis, P6.japanese-wisteria, P6.spring-clematis, P6.trumpet-vine, P6.vine): the model has no wind or temperature, so nothing in this run speaks to whether they have it"
+    }
+  ],
+  "assumptions": {
+    "wisteria-sinensis": {
+      "measured": 0,
+      "peer_reviewed": 0,
+      "published_plant_profile": 3,
+      "calibrated": 0,
+      "provisional_design_assumption": 90,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 18
+    },
+    "rosa-the-generous-gardener": {
+      "measured": 0,
+      "peer_reviewed": 0,
+      "published_plant_profile": 2,
+      "calibrated": 0,
+      "provisional_design_assumption": 100,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 9
+    },
+    "trachelospermum-jasminoides": {
+      "measured": 0,
+      "peer_reviewed": 3,
+      "published_plant_profile": 4,
+      "calibrated": 0,
+      "provisional_design_assumption": 91,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 13
+    },
+    "clematis-cirrhosa-freckles": {
+      "measured": 0,
+      "peer_reviewed": 0,
+      "published_plant_profile": 6,
+      "calibrated": 0,
+      "provisional_design_assumption": 95,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 10
+    },
+    "lonicera-periclymenum-graham-thomas": {
+      "measured": 0,
+      "peer_reviewed": 0,
+      "published_plant_profile": 16,
+      "calibrated": 0,
+      "provisional_design_assumption": 89,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 6
+    },
+    "akebia-quinata": {
+      "measured": 0,
+      "peer_reviewed": 0,
+      "published_plant_profile": 6,
+      "calibrated": 0,
+      "provisional_design_assumption": 90,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 15
+    },
+    "clematis-viticella-etoile-violette": {
+      "measured": 0,
+      "peer_reviewed": 0,
+      "published_plant_profile": 2,
+      "calibrated": 0,
+      "provisional_design_assumption": 94,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 15
+    },
+    "lonicera-henryi": {
+      "measured": 0,
+      "peer_reviewed": 2,
+      "published_plant_profile": 10,
+      "calibrated": 0,
+      "provisional_design_assumption": 84,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 15
+    },
+    "hydrangea-anomala-subsp-petiolaris": {
+      "measured": 0,
+      "peer_reviewed": 0,
+      "published_plant_profile": 11,
+      "calibrated": 0,
+      "provisional_design_assumption": 85,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 15
+    },
+    "hedera-helix": {
+      "measured": 0,
+      "peer_reviewed": 12,
+      "published_plant_profile": 8,
+      "calibrated": 0,
+      "provisional_design_assumption": 83,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 8
+    },
+    "wisteria-floribunda-macrobotrys": {
+      "measured": 0,
+      "peer_reviewed": 0,
+      "published_plant_profile": 5,
+      "calibrated": 0,
+      "provisional_design_assumption": 88,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 18
+    },
+    "clematis-armandi": {
+      "measured": 0,
+      "peer_reviewed": 0,
+      "published_plant_profile": 1,
+      "calibrated": 0,
+      "provisional_design_assumption": 86,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 24
+    },
+    "campsis-x-tagliabueana-madame-galen": {
+      "measured": 0,
+      "peer_reviewed": 0,
+      "published_plant_profile": 4,
+      "calibrated": 0,
+      "provisional_design_assumption": 92,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 15
+    },
+    "vitis-coignetiae": {
+      "measured": 2,
+      "peer_reviewed": 2,
+      "published_plant_profile": 8,
+      "calibrated": 1,
+      "provisional_design_assumption": 84,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 14
+    },
+    "light model": {
+      "measured": 0,
+      "peer_reviewed": 2,
+      "published_plant_profile": 3,
+      "calibrated": 0,
+      "provisional_design_assumption": 10,
+      "design_target": 0,
+      "site_dependent": 0,
+      "unknown": 0
+    }
+  },
+  "proxyNote": "Stem volume is a bookkeeping proxy from modelled stem lengths and radii. It is not a mass, a load or an engineering quantity, and must not be used to size anything.",
+  "statement": "A scenario, not a forecast. Growth rates, dates and flowering chances are provisional assumptions that have not been measured on plants."
+}
