@@ -74,6 +74,10 @@ and an hour), or the room `round`: the whole room unrolled as seen turning on th
 each bay can be drawn at its own moment, so a turn of the room is also a passage of time. `shows` in each
 description says what the plate shows, for the caption.
 
+Nothing that goes to the presentation works anything out when it is shown. The studio does (it reads ten years
+of growth and draws every leaf), so the studio is for making drawings, not for showing them: what is shown is
+pictures made from it beforehand, and a page that turns through them.
+
 A description with `modes` makes a **piece** instead: a drawing to turn, scrub and play. Each mode is drawn at a
 list of moments, and those frames go into `exports/deck/<name>/` with a small player (`deck/player/`): an
 `index.html` that needs nothing but the files beside it. Dragging turns the room or moves along the day, the line
@@ -84,6 +88,7 @@ drive it (`__setMode`, `__setT`, `__play`, or the same by `postMessage`), as it 
 | Description | For |
 |---|---|
 | `04-plants-make-space` (piece) | Slide 4. Time, which it opens on: the whole building from above, on the approach and from inside, through design, assembly, planting, establishment and a year of seasons. Space: the room unrolled, from installation to established and through a year. Light: the floor in plan with its shade, frame alone beside established, through a midsummer day. Made in ink and, as `04-plants-make-space-timber`, in timber. |
+| `a-room-through-time` (piece) | A slide of its own, 16:9. What the studio draws, made beforehand as pictures so that nothing is worked out when it is shown: the building on the approach, from above and from inside, along one line of time (design, assembly, planting, establishment season by season). Changing view keeps the moment. In ink and, as `a-room-through-time-timber`, in timber. |
 | `05-shaded-room` (plate) | Slide 5, Shaded room: the shade wanted, the ways up from the soil, a pier with its lines |
 
 The views a plate can use beyond the studio's three: `plan` (from straight above, cut 1.2 m up, so that what

@@ -65,8 +65,9 @@
   }
   function setMode(id) {
     const mode = manifest.modes.find((m) => m.id === id) ?? manifest.modes[0];
+    // views of one thing keep their place along the line of time when one is changed for another
+    if (!(manifest.sameTime && state.mode)) state.t = 0;
     state.mode = mode;
-    state.t = 0;
     piece.classList.toggle('still', mode.frames.length < 2);
     for (const b of tabs.children) b.setAttribute('aria-pressed', String(b.dataset.mode === mode.id));
     $('line').textContent = mode.line ?? '';
@@ -118,14 +119,18 @@
     const along = n > 1 ? Math.min(1, state.t / (1 - HOLD_AT_END)) * (n - 1) : 0;
     const i = Math.min(n - 1, Math.floor(along));
     const mix = ease(along - i);
-    const next = i + 1 < n && picture(frames[i + 1].src).complete ? mix : 0;
+    // a picture that has not arrived yet: the nearest before it that has, so that the sheet is never empty
+    const here = (k) => picture(frames[k].src).complete && picture(frames[k].src).naturalWidth > 0;
+    let shown = i;
+    while (shown > 0 && !here(shown)) shown--;
+    const next = shown === i && i + 1 < n && here(i + 1) ? mix : 0;
     if (mixing.width !== canvas.width || mixing.height !== canvas.height) {
       mixing.width = canvas.width;
       mixing.height = canvas.height;
     }
     mixed.globalCompositeOperation = 'source-over';
     mixed.clearRect(0, 0, mixing.width, mixing.height);
-    lay(picture(frames[i].src), 1 - next);
+    lay(picture(frames[shown].src), 1 - next);
     mixed.globalCompositeOperation = 'lighter';
     if (next > 0) lay(picture(frames[i + 1].src), next);
     ctx.globalAlpha = 1;
@@ -133,7 +138,7 @@
     ctx.drawImage(mixing, 0, 0);
     $('stage').textContent = frames[mix > 0.5 && i + 1 < n ? i + 1 : i].stage;
     $('scrub').value = String(Math.round(state.t * 1000));
-    window.__ready = picture(frames[i].src).complete;
+    window.__ready = here(shown);
   }
 
   let before = performance.now();

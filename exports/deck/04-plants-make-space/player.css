@@ -49,6 +49,26 @@ body.embed {
   height: auto;
 }
 
+/* what each panel of a row is: a word or two at its head */
+.panels {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  pointer-events: none;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--ink) 72%, transparent);
+}
+.panels span {
+  padding: 3px 0 0 1px;
+}
+
 /* the line of time: along the foot of the drawing, light enough to draw through */
 .bar {
   position: absolute;

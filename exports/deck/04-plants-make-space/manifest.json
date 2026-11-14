@@ -1,6 +1,6 @@
 {
   "name": "04-plants-make-space",
-  "for": "Slide 4, Plants make space. One drawing with three modes, one for each tab on the slide.",
+  "for": "Slide 4, Plants make space. One drawing with three modes, one for each tab on the slide. It opens on Time: the first sight of the building.",
   "slot": [
     1117,
     326
@@ -10,11 +10,164 @@
   "statement": "A growth scenario on stated assumptions, not a forecast. Concept geometry; trial planting.",
   "modes": [
     {
+      "id": "time",
+      "label": "Time",
+      "line": "A place that develops after installation.",
+      "turns": false,
+      "seconds": 40,
+      "hint": "drag to move through time",
+      "panels": [
+        "From above",
+        "On the approach",
+        "Inside"
+      ],
+      "gutter": 0.012533572068039392,
+      "frames": [
+        {
+          "src": "frames/time-00.webp",
+          "stage": "The design"
+        },
+        {
+          "src": "frames/time-01.webp",
+          "stage": "The design"
+        },
+        {
+          "src": "frames/time-02.webp",
+          "stage": "Assembly"
+        },
+        {
+          "src": "frames/time-03.webp",
+          "stage": "Assembly"
+        },
+        {
+          "src": "frames/time-04.webp",
+          "stage": "Assembly"
+        },
+        {
+          "src": "frames/time-05.webp",
+          "stage": "Assembly"
+        },
+        {
+          "src": "frames/time-06.webp",
+          "stage": "Assembly"
+        },
+        {
+          "src": "frames/time-07.webp",
+          "stage": "Assembly"
+        },
+        {
+          "src": "frames/time-08.webp",
+          "stage": "Assembly"
+        },
+        {
+          "src": "frames/time-09.webp",
+          "stage": "Assembly"
+        },
+        {
+          "src": "frames/time-10.webp",
+          "stage": "Assembly"
+        },
+        {
+          "src": "frames/time-11.webp",
+          "stage": "Assembly"
+        },
+        {
+          "src": "frames/time-12.webp",
+          "stage": "Assembly"
+        },
+        {
+          "src": "frames/time-13.webp",
+          "stage": "Assembly"
+        },
+        {
+          "src": "frames/time-14.webp",
+          "stage": "Assembly"
+        },
+        {
+          "src": "frames/time-15.webp",
+          "stage": "Assembly"
+        },
+        {
+          "src": "frames/time-16.webp",
+          "stage": "At installation"
+        },
+        {
+          "src": "frames/time-17.webp",
+          "stage": "Planting"
+        },
+        {
+          "src": "frames/time-18.webp",
+          "stage": "Establishing"
+        },
+        {
+          "src": "frames/time-19.webp",
+          "stage": "Establishing"
+        },
+        {
+          "src": "frames/time-20.webp",
+          "stage": "Establishing"
+        },
+        {
+          "src": "frames/time-21.webp",
+          "stage": "Establishing"
+        },
+        {
+          "src": "frames/time-22.webp",
+          "stage": "Establishing"
+        },
+        {
+          "src": "frames/time-23.webp",
+          "stage": "Establishing"
+        },
+        {
+          "src": "frames/time-24.webp",
+          "stage": "Establishing"
+        },
+        {
+          "src": "frames/time-25.webp",
+          "stage": "Established"
+        },
+        {
+          "src": "frames/time-26.webp",
+          "stage": "Established · summer"
+        },
+        {
+          "src": "frames/time-27.webp",
+          "stage": "Established · early autumn"
+        },
+        {
+          "src": "frames/time-28.webp",
+          "stage": "Established · autumn"
+        },
+        {
+          "src": "frames/time-29.webp",
+          "stage": "Established · leaf fall"
+        },
+        {
+          "src": "frames/time-30.webp",
+          "stage": "Established · winter"
+        },
+        {
+          "src": "frames/time-31.webp",
+          "stage": "Established · early spring"
+        },
+        {
+          "src": "frames/time-32.webp",
+          "stage": "Established · spring"
+        },
+        {
+          "src": "frames/time-33.webp",
+          "stage": "Established · summer"
+        }
+      ]
+    },
+    {
       "id": "space",
       "label": "Space",
       "line": "Planting becomes part of the room.",
       "turns": true,
       "seconds": 30,
+      "hint": "drag to turn",
       "frames": [
         {
           "src": "frames/space-00.webp",
@@ -84,6 +237,13 @@
       "line": "Growth changes the light we inhabit.",
       "turns": false,
       "seconds": 22,
+      "hint": "drag to move through the day",
+      "panels": [
+        "At installation",
+        "Establishing",
+        "Established"
+      ],
+      "gutter": 0.012533572068039392,
       "frames": [
         {
           "src": "frames/light-00.webp",
@@ -232,19 +392,6 @@
         {
           "src": "frames/light-36.webp",
           "stage": "Midsummer · 6 pm"
-        }
-      ]
-    },
-    {
-      "id": "time",
-      "label": "Time",
-      "line": "A place that develops after installation.",
-      "turns": true,
-      "seconds": 24,
-      "frames": [
-        {
-          "src": "frames/time-00.webp",
-          "stage": "Each bay a later moment: installation, establishing, then established in spring, autumn and winter"
         }
       ]
     }

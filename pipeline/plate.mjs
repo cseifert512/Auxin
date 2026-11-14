@@ -25,6 +25,7 @@
 // A moment is "build:0.5" (a share of the assembly), "day:3399" (a day of the run) or "date:2031-06-20".
 //
 // A piece has `modes`, each filled in one of those ways and drawn at a list of `moments`: the frames it is
+// (with `sameTime`, its modes are views of one thing along one line of time, and changing view keeps the moment)
 // scrubbed and played through. The player (deck/player) is copied in beside them. A piece carries no heavy
 // machinery to the page it goes to: pictures, and a few hundred lines of script.
 import { execFileSync } from 'node:child_process';
@@ -156,7 +157,7 @@ for (const described of wanted) {
   const before = only && existsSync(resolve(dir, 'manifest.json')) ? JSON.parse(readFileSync(resolve(dir, 'manifest.json'), 'utf8')).modes : [];
   if (!before.length) rmSync(dir, { recursive: true, force: true });
   mkdirSync(resolve(dir, 'frames'), { recursive: true });
-  const manifest = { name, for: spec.for, slot: spec.slot, paper: `#${spec.paper ?? 'FDFCF9'}`, ink: `#${spec.ink ?? '1D1D1B'}`, statement: spec.statement ?? '', modes: [] };
+  const manifest = { name, for: spec.for, slot: spec.slot, paper: `#${spec.paper ?? 'FDFCF9'}`, ink: `#${spec.ink ?? '1D1D1B'}`, statement: spec.statement ?? '', ...(spec.piece.sameTime ? { sameTime: true } : {}), modes: [] };
   for (const [id, mode] of Object.entries(spec.piece.modes)) {
     if (only && !only.includes(id)) {
       const was = before.find((m) => m.id === id);
