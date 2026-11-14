@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the room can change</title>
+<!--
+  The room with a tag on each thing about it that can change. Choose one and it is drawn close to
+  on the right while its change plays as a loop that explains itself, in the manner of the factory
+  drawings (bower-factory, docs/STYLE.md): a few named steps, one red for what is moving or at
+  issue, at most two leaders and one dimension at once, a pause button, nothing to hover over.
+  The viewer chooses a change and may pause; nothing else is asked of them.
+
+  A change that has had the same planting grown at both ends tells that whole story (today: the
+  pier). The others show the timber only.
+
+  A sketch, not a drawing for the deck: the timber is centre lines and the plants are stems only.
+  It reads states.js (bower-blender/scripts/sweep_states.py) and grown-<change>.js (grown.mjs,
+  beside this file). Every number on it comes from those.
+  ?only=pier-opens shows one change with no tags.
+  Hooks, as on the deck's pieces: __setT(seconds), __play(), __choose(id), __duration, __ready.
+-->
+<style>
+  :root { --paper: #EEF3EA; --ink: #102820; --red: #B4492F; --rule: rgba(16, 40, 32, .2); --soft: rgba(16, 40, 32, .62); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--paper); color: var(--ink); font: 14px/1.45 "Segoe UI", system-ui, sans-serif; }
+  #page { display: grid; grid-template-columns: minmax(0, 1fr) 300px; max-width: 1500px; margin: 0 auto; min-height: 100vh; }
+  #left { display: flex; flex-direction: column; min-width: 0; }
+  header { display: flex; align-items: baseline; gap: 16px; padding: 18px 22px 0; }
+  h1 { font: 400 28px/1.1 Georgia, "Times New Roman", serif; margin: 0; flex: 1; }
+  button { font: inherit; color: var(--ink); background: none; border: 1px solid var(--rule); border-radius: 999px; padding: 3px 12px; cursor: pointer; }
+  #cap { font-size: 15px; min-height: 3em; margin: 6px 22px 0; max-width: 64ch; }
+  #stage { position: relative; flex: 1; min-height: 380px; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .tag { position: absolute; font-size: 12px; line-height: 1.2; padding: 2px 9px; background: var(--paper); border-color: rgba(16, 40, 32, .45); white-space: nowrap; }
+  .tag.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  #bar { height: 16px; margin: 0 22px; position: relative; cursor: pointer; touch-action: none; }
+  #bar::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 1px; background: var(--rule); }
+  #fill { position: absolute; left: 0; top: 6px; height: 3px; width: 0; background: var(--ink); }
+  #steps { display: grid; list-style: none; margin: 0; padding: 2px 22px 18px; gap: 8px; }
+  #steps button { border: 0; border-radius: 0; padding: 4px 0; text-align: left; width: 100%; color: var(--soft); line-height: 1.25; }
+  #steps button b { display: block; font: 11px ui-monospace, Consolas, monospace; font-weight: 400; }
+  #steps .on button { color: var(--ink); }
+  aside { border-left: 1px solid var(--rule); padding: 22px 20px; }
+  .k { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--soft); margin: 16px 0 2px; }
+  .k:first-child { margin-top: 0; }
+  aside p { margin: 0; }
+  .note { font-size: 12px; color: var(--soft); margin-top: 8px; }
+  #missing { padding: 40px; max-width: 62ch; }
+  @media (max-width: 900px) {
+    #page { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+    #stage { flex: none; height: clamp(380px, 58vw, 640px); }
+    aside { border-left: 0; border-top: 1px solid var(--rule); }
+    #steps { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div id="page">
+  <div id="left">
+    <header><h1 id="title"></h1><button id="pp" aria-pressed="false">Pause</button></header>
+    <p id="cap"></p>
+    <div id="stage"><canvas id="c"></canvas></div>
+    <div id="bar"><div id="fill"></div></div>
+    <ol id="steps"></ol>
+  </div>
+  <aside>
+    <p class="k">What happens</p><p id="happens"></p>
+    <p class="k">What the plants need</p><p id="need"></p>
+    <p class="k">Where the building disagrees</p><p id="disagrees"></p>
+    <p class="k">What it costs</p><p id="cost"></p>
+    <p class="k">Still to prove</p><p id="prove"></p>
+    <p class="note" id="setup"></p>
+    <p class="note" id="statement"></p>
+  </aside>
+</div>
+<script src="states.js"></script>
+<script src="grown-pier-opens.js"></script>
+<script>
+(() => {
+  const D = window.DESIGN_SPACE, GROWN = window.GROWN || {};
+  if (!D || !D.sweeps.length) {
+    document.getElementById("page").outerHTML = '<p id="missing">This needs <code>states.js</code> beside it. How it is made is in <code>drawings-in-code/README.md</code>, under sketches.</p>';
+    return;
+  }
+  const $ = (id) => document.getElementById(id);
+  const N = D.points, FLOOR = 0.08, INK = "16,40,32", RED = "180,73,47";
+  const UNIT = { m: " m", m2: " m²", m3: " m³", deg: "°" };
+  const seg = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+  const ease = (u) => u * u * (3 - 2 * u);
+  const win = (t, a, b, f = 0.35) => Math.min(seg(t, a, a + f), 1 - seg(t, b - f, b));
+  const pct = (x) => Math.round(100 * x) + "%";
+  const YAW = -1.32, PITCH = 0.575;   // one projection for both views; the pier at bearing 0 is at the front
+  const CY = Math.cos(YAW), SY = Math.sin(YAW), CP = Math.cos(PITCH), SP = Math.sin(PITCH);
+
+  // ---- the states of every change, and the grown ends where there are any -------------------------
+  const reach = (a, b) => { let d = 0; for (let i = 0; i < N * 3; i += 3) d = Math.max(d, Math.hypot(a[i] - b[i], a[i + 1] - b[i + 1], a[i + 2] - b[i + 2])); return d; };
+  const SW = {};
+  for (const sw of D.sweeps) {
+    SW[sw.id] = sw;
+    sw.at = sw.states.map((st) => {
+      const map = new Map();
+      st.has.forEach((mi, j) => {
+        const a = new Float32Array(N * 3);
+        for (let k = 0; k < N * 3; k++) a[k] = st.mm[j * N * 3 + k] / 1000;
+        map.set(mi, a);
+      });
+      return map;
+    });
+    sw.last = sw.at.length - 1;
+    sw.move = []; sw.top = 0;
+    for (let k = 0; k < sw.last; k++) {
+      const mv = new Float32Array(sw.members.length);
+      for (const [mi, a] of sw.at[k]) { const b = sw.at[k + 1].get(mi); if (b) mv[mi] = reach(a, b); sw.top = Math.max(sw.top, mv[mi]); }
+      sw.move.push(mv);
+    }
+    sw.top = sw.top || 1;
+    sw.buf = sw.members.map(() => new Float32Array(N * 3));
+    sw.comes = sw.members.filter((m, mi) => sw.at.some((s) => !s.has(mi))).length;
+  }
+  for (const g of Object.values(GROWN)) for (const end of [g.start, g.end]) {
+    for (const st of end.stems) { st.xyz = Float32Array.from(st.mm, (v) => v / 1000); st.key = st.plant * 2 + st.frame; }
+    end.stems.sort((x, y) => x.key - y.key);
+  }
+
+  // ---- places on the building as it is drawn, which the tags and close views hang on ----------------
+  const base = D.sweeps[0], BM = base.members, B0 = (mi) => base.at[0].get(mi);
+  const off = (a, b) => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b)));
+  const pt = (p, i) => [p[i * 3], p[i * 3 + 1], p[i * 3 + 2]];
+  const mid = (p) => pt(p, N >> 1);
+  const middle = (list) => [list.reduce((n, p) => n + p.x, 0) / list.length, list.reduce((n, p) => n + p.y, 0) / list.length];
+  function feetAt(get, members, bearing) {   // the feet standing on the floor near a bearing about the room's centre
+    const out = [];
+    for (let mi = 0; mi < members.length; mi++) {
+      const p = get(mi);
+      if (!p || members[mi].closed) continue;
+      for (const i of [0, (N - 1) * 3]) {
+        if (p[i + 2] <= FLOOR && off(Math.atan2(p[i + 1], p[i]), bearing) < 0.4) out.push({ x: p[i], y: p[i + 1], w: members[mi].width_m, arch: members[mi].family === "arch" });
+      }
+    }
+    return out;
+  }
+  const family = (name) => BM.map((m, mi) => (m.family === name ? mi : -1)).filter((mi) => mi >= 0);
+  const best = (list, score) => list.reduce((b, mi) => { const d = score(mi); return !b || d < b.d ? { mi, d } : b; }, null).mi;
+  const apexOf = (p) => { let top = 0; for (let i = 1; i < N; i++) if (p[i * 3 + 2] > p[top * 3 + 2]) top = i; return pt(p, top); };
+  const centreOf = (p) => { const c = [0, 0, 0]; for (let i = 0; i < N * 3; i++) c[i % 3] += p[i] / N; return c; };
+  const across = (p) => { let far = null; for (let i = 0; i < N >> 1; i++) { const a = pt(p, i), b = pt(p, i + (N >> 1)); const d = Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]); if (!far || d > far.d) far = { a, b, d }; } return far; };
+  const ribNear = (bearing) => best(family("rib"), (mi) => { const m = mid(B0(mi)); return off(Math.atan2(m[1], m[0]), bearing); });
+  const PIER = middle(feetAt(B0, BM, 0)), PIER5 = middle(feetAt(B0, BM, -Math.PI / 3));
+  const CENTRES = [0, 1, 2, 3, 4, 5].map((i) => middle(feetAt(B0, BM, i * Math.PI / 3)));
+  const RIB = ribNear(Math.PI / 6), RIB_FAR = ribNear(-3 * Math.PI / 4);
+  const CROWN = family("crown")[0], CROWN_AT = centreOf(B0(CROWN));
+  const ARCH = best(family("arch"), (mi) => { const a = apexOf(B0(mi)); return off(Math.atan2(a[1], a[0]), -Math.PI / 6) - a[2] * 0.01; });
+  const APEX = apexOf(B0(ARCH));
+  const ringSide = (() => { const p = B0(CROWN); let b = 0; for (let i = 1; i < N; i++) if (p[i * 3] * CY - p[i * 3 + 1] * SY > p[b * 3] * CY - p[b * 3 + 1] * SY) b = i; return pt(p, b); })();
+
+  // ---- each change: its tag, where it is looked at close to, and what is said and measured --------
+  // `off` is where the tag sits from its place on the room, in pixels. `dim` and `lead` return what
+  // to draw at this moment of the change: e.at(member) is the member's centre line now.
+  const CHANGES = {
+    "pier-opens": { tag: "Pier", anchor: [PIER[0], PIER[1], 1.0], off: [16, 10], locus: [PIER[0] * 0.93, PIER[1] * 0.93, 1.45], span: 3.5 },
+    "ribs-straighten": {
+      tag: "Rib lean", anchor: mid(B0(RIB)), off: [16, -10], locus: mid(B0(RIB)), span: 4.6,
+      says: (a, b) => [`As drawn, the lattice's ribs lean ${a}° from the straight way down the roof.`, `They straighten to ${b}°.`],
+      lead: (e) => ["inset", mid(e.at(RIB) || B0(RIB)), 26, -44, `ribs lean ${e.value.toFixed(0)}°`],
+    },
+    "crown-comes-down": {
+      tag: "Crown height", anchor: CROWN_AT, off: [-14, -30], locus: [0, 0, CROWN_AT[2] - 1.1], span: 4.6,
+      says: (a, b) => [`As drawn, the crown ring stands ${a} m above the floor.`, `It comes down to ${b} m.`],
+      dim: (e) => { const z = centreOf(e.at(CROWN))[2]; return ["main", [0, 0, 0], [0, 0, z], `${z.toFixed(2)} m to the crown`]; },
+    },
+    "crown-opens": {
+      tag: "Crown opening", anchor: ringSide, off: [16, -18], locus: [0, 0, CROWN_AT[2] - 0.6], span: 5.2,
+      says: (a, b) => [`As drawn, the crown ring is ${(2 * a).toFixed(1)} m across.`, `It opens to ${(2 * b).toFixed(1)} m.`],
+      dim: (e) => { const d = across(e.at(CROWN)); return ["inset", d.a, d.b, `${d.d.toFixed(2)} m across`]; },
+    },
+    "arches-lower": {
+      tag: "Arch height", anchor: APEX, off: [-16, -16], locus: [APEX[0] * 0.92, APEX[1] * 0.92, APEX[2] - 1.5], span: 6.2,
+      says: (a, b) => [`As drawn, each arch rises ${a} m.`, `They come down to ${b} m.`],
+      dim: (e) => { const a = apexOf(e.at(ARCH)); return ["main", [a[0], a[1], 0], a, `${a[2].toFixed(2)} m to the arch`]; },
+    },
+    "room-tightens": {
+      tag: "Room size", anchor: [PIER5[0], PIER5[1], 0.1], off: [-14, 26], locus: [(PIER[0] + PIER5[0]) * 0.42, (PIER[1] + PIER5[1]) * 0.42, 1.9], span: 8.4,
+      says: (a, b) => [`As drawn, the piers stand ${a} m from the centre of the room.`, `They come in to ${b} m.`],
+      dim: (e) => { const p = middle(feetAt(e.at, e.members, -Math.PI / 3)); return ["main", [0, 0, 0], [p[0], p[1], 0], `${Math.hypot(p[0], p[1]).toFixed(2)} m, centre to pier`]; },
+    },
+  };
+  const only = new URLSearchParams(location.search).get("only");
+  const IDS = Object.keys(CHANGES).filter((id) => SW[id] && (!only || id === only));
+
+  // ---- the loop of a change ---------------------------------------------------------------------
+  const YEARS = 3, DAYS = Math.round(YEARS * 365.25);
+  function storyOf(id) {
+    const sw = SW[id], g = GROWN[id], show = (v) => String(+v.toFixed(2));
+    if (g) {   // the whole story: planted, what is wrong, the change, its cost, grown again
+      const times = sw.measures[sw.last].pier_ground_m2 / sw.measures[0].pier_ground_m2;
+      return {
+        grown: g, DUR: 34, BND: [0, 7, 13, 19, 24, 34], STATIC: 31,
+        steps: [
+          ["Planted", "The planting goes in where the timber meets the ground: at the piers."],
+          ["Shaded", "At a tight pier, each plant stands in the shade of its neighbours and of the timber."],
+          ["The pier opens", `The legs move apart, and the ground between them grows about ${times.toFixed(0)} times over.`],
+          ["What it costs", "Each way through the room is narrower, and there is more for the gardener to tie in."],
+          ["Grown again", `The same planting over the same ${YEARS} years: more of it stands in the sun, and more of it has grown.`],
+        ],
+        at(t) {
+          const first = t < 13.8;
+          return {
+            s: (ease(seg(t, 13.8, 18.2)) - ease(seg(t, 33, 34))) * sw.last,
+            moving: Math.sin(Math.PI * seg(t, 13.8, 18.2)),
+            end: first ? g.start : g.end,
+            day: (first ? ease(seg(t, 0.6, 6.3)) : ease(seg(t, 24.3, 30.5))) * DAYS,
+            plants: first ? Math.min(seg(t, 0, 0.5), 1 - seg(t, 13, 13.8)) : Math.min(seg(t, 24, 24.5), 1 - seg(t, 32.3, 33)),
+          };
+        },
+      };
+    }
+    const said = CHANGES[id].says(show(sw.values[0]), show(sw.values[sw.last]));
+    return {     // timber only: as drawn, the change, what follows
+      grown: null, DUR: 20, BND: [0, 5, 12, 20], STATIC: 16,
+      steps: [["As drawn", said[0]], ["It moves", said[1]], ["What follows", "What follows from it, read off the centre lines. No planting has been grown on this one yet."]],
+      at: (t) => ({ s: (ease(seg(t, 5.5, 11)) - ease(seg(t, 19, 20))) * sw.last, moving: Math.sin(Math.PI * seg(t, 5.5, 11)), end: null, day: 0, plants: 0 }),
+    };
+  }
+  // The two measures a change moves most, for a change that has no planting to speak for it.
+  function follows(sw) {
+    return D.measures.filter((m) => ["pier_ground_m2", "way_through_m", "to_crown_m", "timber_m"].includes(m.key))
+      .map((m) => ({ m, a: sw.measures[0][m.key], b: sw.measures[sw.last][m.key] }))
+      .filter((x) => x.a != null && x.b != null && Math.abs(x.b - x.a) / Math.abs(x.a) > 0.02)
+      .sort((x, y) => Math.abs(y.b - y.a) / Math.abs(y.a) - Math.abs(x.b - x.a) / Math.abs(x.a)).slice(0, 2);
+  }
+
+  // ---- drawing ----------------------------------------------------------------------------------
+  const canvas = $("c"), ctx = canvas.getContext("2d");
+  let W = 0, H = 0, U = 1, main = null, inset = null;
+  let id = IDS.includes("pier-opens") ? "pier-opens" : IDS[0], sw = SW[id], change = CHANGES[id], story = storyOf(id);
+  let DRAW = [], NOW = new Map();
+  const view = (rect, at, scale) => ({ rect, at, scale });
+  function P(v, x, y, z) {
+    x -= v.at[0]; y -= v.at[1]; z -= v.at[2];
+    return [v.rect.x + v.rect.w / 2 + (x * CY - y * SY) * v.scale, v.rect.y + v.rect.h / 2 - ((x * SY + y * CY) * SP + z * CP) * v.scale];
+  }
+  function layout() {
+    const wide = W >= 700;
+    const m = wide ? { x: 0, y: 0, w: W * 0.6, h: H } : { x: 0, y: 0, w: W, h: H * 0.58 };
+    const n = wide ? { x: W * 0.63, y: H * 0.1, w: W * 0.35, h: H * 0.8 } : { x: W * 0.2, y: H * 0.62, w: W * 0.6, h: H * 0.36 };
+    main = view(m, [0, 0, 2.9], Math.min(m.w / 15.6, m.h / 12.6));
+    inset = view(n, change.locus, Math.min(n.w / change.span, n.h / (change.span * 1.23)));
+    U = Math.max(0.8, Math.min(1.25, W / 1000));
+    for (const b of document.querySelectorAll(".tag")) {
+      const c = CHANGES[b.dataset.id], p = P(main, ...c.anchor);
+      b.style.left = (p[0] + c.off[0] * U) + "px"; b.style.top = (p[1] + c.off[1] * U) + "px";
+      b.style.transform = `translate(${c.off[0] < 0 ? "-100%" : "0"}, -50%)`;
+    }
+  }
+  function blend(s) {
+    const k = Math.min(sw.last - 1, Math.floor(s)), u = s - k, A = sw.at[k], B = sw.at[k + 1];
+    DRAW = []; NOW = new Map();
+    for (let mi = 0; mi < sw.members.length; mi++) {
+      const a = A.get(mi), b = B.get(mi);
+      if (!a && !b) continue;
+      let points = a || b, alpha = 1, rate = 1;
+      if (a && b) {
+        points = sw.buf[mi];
+        for (let i = 0; i < N * 3; i++) points[i] = a[i] + (b[i] - a[i]) * u;
+        rate = sw.move[k][mi] / sw.top;
+      } else alpha = a ? 1 - u : u;
+      if (alpha > 0.5) NOW.set(mi, points);
+      DRAW.push({ mi, points, alpha, rate });
+    }
+    return { k, u };
+  }
+  function clip(v, draw) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(v.rect.x, v.rect.y, v.rect.w, v.rect.h); ctx.clip();
+    draw();
+    ctx.restore();
+  }
+  function line(v, points, closed) {
+    ctx.beginPath();
+    for (let i = 0; i < N; i++) {
+      const p = P(v, points[i * 3], points[i * 3 + 1], points[i * 3 + 2]);
+      if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]);
+    }
+    if (closed) ctx.closePath();
+    ctx.stroke();
+  }
+  function timber(v, now, weight) {
+    ctx.lineCap = ctx.lineJoin = "round";
+    const start = sw.at[0];
+    for (const d of DRAW) {
+      const m = sw.members[d.mi], from = start.get(d.mi);
+      ctx.lineWidth = Math.max(0.8, m.width_m * v.scale * weight);
+      if (from && now.s > 0.02 && reach(from, d.points) > 0.03) {   // where it stood as drawn, faintly
+        ctx.strokeStyle = `rgba(${INK},.13)`;
+        line(v, from, m.closed);
+      }
+      ctx.strokeStyle = `rgba(${INK},${d.alpha})`;
+      line(v, d.points, m.closed);
+      if (now.moving > 0.02 && d.rate > 0.06) {  // red only while it moves, arrives or leaves
+        ctx.strokeStyle = `rgba(${RED},${d.alpha * now.moving * (0.45 + 0.55 * Math.min(1, d.rate))})`;
+        line(v, d.points, m.closed);
+      }
+    }
+  }
+  function plants(v, now, width) {
+    if (!now.end || now.plants <= 0.01) return;
+    ctx.globalAlpha = now.plants * 0.88;
+    let key = -1;
+    for (const st of now.end.stems) {
+      if (st.key !== key) {
+        if (key >= 0) ctx.stroke();
+        key = st.key;
+        ctx.beginPath();
+        ctx.strokeStyle = `hsl(${78 + (st.plant * 37) % 84} 52% 33%)`;
+        ctx.lineWidth = (st.frame ? 1.7 : 0.8) * width;
+      }
+      let open = false;
+      for (let i = 0; i < st.born.length; i++) {
+        if (st.born[i] > now.day || (st.gone[i] >= 0 && st.gone[i] <= now.day)) { open = false; continue; }
+        const p = P(v, st.xyz[i * 3], st.xyz[i * 3 + 1], st.xyz[i * 3 + 2]);
+        if (open) ctx.lineTo(p[0], p[1]); else { ctx.moveTo(p[0], p[1]); open = true; }
+      }
+    }
+    if (key >= 0) ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  function hull(points) {
+    const pts = [...points].sort((a, b) => a.x - b.x || a.y - b.y), half = (list) => {
+      const out = [];
+      for (const p of list) {
+        while (out.length >= 2 && (out[out.length - 1].x - out[out.length - 2].x) * (p.y - out[out.length - 2].y) - (out[out.length - 1].y - out[out.length - 2].y) * (p.x - out[out.length - 2].x) <= 0) out.pop();
+        out.push(p);
+      }
+      return out;
+    };
+    return half(pts).slice(0, -1).concat(half(pts.reverse()).slice(0, -1));
+  }
+  function ground(v, feet) {   // the ground inside one pier's feet, and the feet
+    ctx.beginPath();
+    hull(feet).forEach((f, i) => { const p = P(v, f.x, f.y, 0); if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); });
+    ctx.closePath();
+    ctx.fillStyle = "rgba(122,96,58,.16)"; ctx.fill();
+    ctx.strokeStyle = "rgba(122,96,58,.55)"; ctx.lineWidth = 1; ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]);
+    for (const f of feet) {
+      const p = P(v, f.x, f.y, 0);
+      ctx.beginPath(); ctx.ellipse(p[0], p[1], Math.max(2, f.w * v.scale * 0.5), Math.max(1.4, f.w * v.scale * 0.5 * SP), 0, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${INK},1)`; ctx.fill();
+    }
+  }
+  function ring(v, centre, radius, alpha) {
+    if (alpha <= 0.01) return;
+    const p = P(v, centre[0] * 0.95, centre[1] * 0.95, 0);
+    ctx.beginPath(); ctx.ellipse(p[0], p[1], radius * v.scale, radius * v.scale * SP, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(${RED},${alpha})`; ctx.lineWidth = 1.5; ctx.stroke();
+  }
+
+  // ---- annotation: paper boxes, leaders and one dimension, as the factory drawings have them ----------
+  function box(x, y, text, alpha, red, anchor) {
+    const lines = text.split("\n"), size = 12.5 * U, pad = 3;
+    ctx.font = `${size}px "Segoe UI", system-ui, sans-serif`;
+    const w = Math.max(...lines.map((l) => ctx.measureText(l).width)), h = lines.length * size * 1.3;
+    const x0 = Math.max(4, Math.min(W - w - 4 - 2 * pad, anchor === "middle" ? x - w / 2 - pad : anchor === "end" ? x - w - 2 * pad : x));
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#EEF3EA"; ctx.fillRect(x0, y - h / 2 - pad, w + 2 * pad, h + 2 * pad);
+    ctx.fillStyle = red ? `rgb(${RED})` : `rgb(${INK})`; ctx.textBaseline = "middle";
+    lines.forEach((l, i) => ctx.fillText(l, x0 + pad, y - h / 2 + size * 0.65 + i * size * 1.3));
+    ctx.globalAlpha = 1;
+  }
+  function leader(v, world, dx, dy, text, alpha, red) {
+    if (alpha <= 0.01) return;
+    const p = P(v, world[0], world[1], world[2]), x = p[0] + dx * U, y = p[1] + dy * U;
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = red ? `rgb(${RED})` : `rgb(${INK})`; ctx.fillStyle = ctx.strokeStyle; ctx.lineWidth = 0.9;
+    ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(x, y); ctx.stroke();
+    ctx.beginPath(); ctx.arc(p[0], p[1], 2.2, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+    box(x, y, text, alpha, red, dx < 0 ? "end" : "start");
+  }
+  function dimension(v, a, b, text, alpha, red, lift) {
+    if (alpha <= 0.01) return;
+    const p = P(v, a[0], a[1], a[2]), q = P(v, b[0], b[1], b[2]), len = Math.hypot(q[0] - p[0], q[1] - p[1]) || 1;
+    const nx = -(q[1] - p[1]) / len, ny = (q[0] - p[0]) / len, tick = 5;
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = red ? `rgb(${RED})` : `rgb(${INK})`; ctx.lineWidth = red ? 1.6 : 1.1;
+    ctx.beginPath();
+    ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]);
+    ctx.moveTo(p[0] - nx * tick, p[1] - ny * tick); ctx.lineTo(p[0] + nx * tick, p[1] + ny * tick);
+    ctx.moveTo(q[0] - nx * tick, q[1] - ny * tick); ctx.lineTo(q[0] + nx * tick, q[1] + ny * tick);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    box((p[0] + q[0]) / 2, (p[1] + q[1]) / 2 + lift * U, text, alpha, red, "middle");
+  }
+  function small(x, y, text, alpha) {
+    ctx.globalAlpha = alpha;
+    ctx.font = `${10.5 * U}px "Segoe UI", system-ui, sans-serif`;
+    ctx.fillStyle = "rgba(16,40,32,.62)"; ctx.textBaseline = "alphabetic";
+    ctx.fillText(text.toUpperCase().split("").join(" "), x, y);
+    ctx.globalAlpha = 1;
+  }
+  const nearest = (list, other, skip) => {
+    let found = null;
+    for (const a of list) for (const b of other) {
+      if (a === b || (skip && skip(a, b))) continue;
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (!found || d < found.d) found = { a, b, d };
+    }
+    return found;
+  };
+  const measure = (key, k, u) => sw.measures[k][key] + (sw.measures[k + 1][key] - sw.measures[k][key]) * u;
+  const views = () => ({ main, inset });
+
+  // The pier's whole story. Never more than two leaders and one dimension at a time.
+  function tellGrown(t, k, u, feet) {
+    const A = story.grown.start.report, B = story.grown.end.report;
+    const pair = nearest(feet, feet, (a, b) => a.arch && b.arch), front = nearest(feet, feetAt((mi) => NOW.get(mi), sw.members, -Math.PI / 3));
+    const c = middle(feet), far = mid(B0(RIB_FAR));
+    if (pair) dimension(inset, [pair.a.x, pair.a.y, 0], [pair.b.x, pair.b.y, 0], `${measure("feet_apart_m", k, u).toFixed(2)} m between feet`, win(t, 1.5, 18.9), false, 26);
+    leader(inset, [c[0], c[1], 0], -30, 58, `${measure("pier_ground_m2", k, u).toFixed(2)} m² of ground\ninside the feet`, win(t, 2.6, 18.9), false);
+    leader(main, [PIER[0], PIER[1], 0.5], -64, 52, `${A.sunHours.toFixed(1)} h of direct sun a plant\nat midsummer; ${A.fullSun} of ${A.plants} in full sun`, win(t, 7.6, 12.7), true);
+    if (front) dimension(main, [front.a.x, front.a.y, 0], [front.b.x, front.b.y, 0], `${measure("way_through_m", k, u).toFixed(2)} m through, was ${sw.measures[0].way_through_m.toFixed(2)} m`, win(t, 19.2, 23.9), true, 22);
+    leader(main, far, -30, -64, `${B.tieIns.toLocaleString("en")} tie-ins in ten years,\nwas ${A.tieIns.toLocaleString("en")}`, win(t, 20.3, 23.9), true);
+    leader(main, [PIER[0], PIER[1], 0.5], -64, 52, `${B.sunHours.toFixed(1)} h of direct sun a plant,\nwas ${A.sunHours.toFixed(1)}; ${B.fullSun} of ${B.plants} in full sun`, win(t, 25.2, 32.2), false);
+    const a3 = A.byYear.find((y) => y.year === YEARS), b3 = B.byYear.find((y) => y.year === YEARS);
+    if (a3 && b3) leader(inset, [c[0], c[1], 2.3], -34, -52, `${b3.frameworkM.toFixed(0)} m of framework\nat year ${YEARS}, was ${a3.frameworkM.toFixed(0)} m`, win(t, 28.6, 32.2), false);
+  }
+  // A change with timber only: its one dimension or leader throughout, then the two measures it moves most.
+  function tellTimber(t, k, u) {
+    const e = { at: (mi) => NOW.get(mi), members: sw.members, value: sw.values[k] + (sw.values[k + 1] - sw.values[k]) * u };
+    const show = win(t, 1.2, 18.7);
+    if (change.dim) { const [v, a, b, text] = change.dim(e); dimension(views()[v], a, b, text, show, false, 22); }
+    if (change.lead) { const [v, at, dx, dy, text] = change.lead(e); leader(views()[v], at, dx, dy, text, show, false); }
+    const slots = [[main, mid(B0(RIB_FAR)), -30, -64], [main, [PIER[0], PIER[1], 0.5], -64, 52]];
+    follows(sw).slice(0, change.lead ? 1 : 2).forEach((x, i) => {
+      const [v, at, dx, dy] = slots[i], unit = UNIT[x.m.unit] || "";
+      leader(v, at, dx, dy, `${x.m.label}\n${x.b.toFixed(x.m.digits)}${unit}, was ${x.a.toFixed(x.m.digits)}${unit}`, win(t, 12.8 + i * 0.9, 18.7), false);
+    });
+  }
+
+  function frame(t) {
+    const now = story.at(t), { k, u } = blend(now.s);
+    const dpr = window.devicePixelRatio || 1;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    const feet = story.grown ? feetAt((mi) => NOW.get(mi), sw.members, 0) : null;
+    clip(main, () => {   // the whole room
+      timber(main, now, 0.5);
+      plants(main, now, 1);
+      if (story.grown) for (const c of CENTRES) ring(main, c, 0.85, win(t, 7.3, 12.8));
+    });
+    for (const other of IDS) {   // where each tag's change acts on the room
+      const c = CHANGES[other], p = P(main, ...c.anchor);
+      ctx.strokeStyle = ctx.fillStyle = `rgba(${INK},${other === id ? 1 : 0.5})`; ctx.lineWidth = 0.9;
+      ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(p[0] + c.off[0] * U, p[1] + c.off[1] * U); ctx.stroke();
+      ctx.beginPath(); ctx.arc(p[0], p[1], other === id ? 3 : 2.2, 0, Math.PI * 2); ctx.fill();
+    }
+    const c0 = P(main, ...inset.at), f = main.scale / inset.scale;   // where the close view is taken from
+    const loc = { x: c0[0] - inset.rect.w * f / 2, y: c0[1] - inset.rect.h * f / 2, w: inset.rect.w * f, h: inset.rect.h * f };
+    ctx.strokeStyle = "rgba(16,40,32,.38)"; ctx.lineWidth = 0.8;
+    ctx.strokeRect(loc.x, loc.y, loc.w, loc.h);
+    ctx.beginPath();
+    if (inset.rect.x > loc.x + loc.w) { ctx.moveTo(loc.x + loc.w, loc.y); ctx.lineTo(inset.rect.x, inset.rect.y); ctx.moveTo(loc.x + loc.w, loc.y + loc.h); ctx.lineTo(inset.rect.x, inset.rect.y + inset.rect.h); }
+    else { ctx.moveTo(loc.x, loc.y + loc.h); ctx.lineTo(inset.rect.x, inset.rect.y); ctx.moveTo(loc.x + loc.w, loc.y + loc.h); ctx.lineTo(inset.rect.x + inset.rect.w, inset.rect.y); }
+    ctx.stroke();
+    ctx.fillStyle = "#EEF3EA"; ctx.fillRect(inset.rect.x, inset.rect.y, inset.rect.w, inset.rect.h);
+    clip(inset, () => {   // the chosen part, close to
+      if (feet && feet.length > 2) ground(inset, feet);
+      timber(inset, now, 0.8);
+      plants(inset, now, 1.5);
+      if (story.grown) ring(inset, PIER, 0.85, win(t, 7.3, 12.8));
+    });
+    ctx.strokeStyle = "rgba(16,40,32,.38)"; ctx.lineWidth = 0.8;
+    ctx.strokeRect(inset.rect.x, inset.rect.y, inset.rect.w, inset.rect.h);
+    small(inset.rect.x, inset.rect.y - 7, change.tag, 1);
+    small(main.rect.x + 22, main.rect.y + 18 * U, "The room", 1);
+    if (now.plants > 0.01) small(main.rect.x + 22, main.rect.y + 34 * U, `${(now.day / 365.25).toFixed(1)} years after planting`, now.plants);
+    if (story.grown) tellGrown(t, k, u, feet); else tellTimber(t, k, u);
+  }
+
+  // ---- page: tags, steps, caption, card, playing ------------------------------------------------------
+  let shown = -1, paused = false, tp = 0, t0 = performance.now();
+  const stepOf = (t) => Math.max(0, story.BND.findIndex((b, i) => t >= b && t < story.BND[i + 1]));
+  function ui(t) {
+    const k = stepOf(t);
+    if (k !== shown) {
+      shown = k;
+      $("cap").textContent = story.steps[k][1];
+      [...$("steps").children].forEach((li, i) => li.classList.toggle("on", i === k));
+    }
+    $("fill").style.width = (100 * t / story.DUR) + "%";
+  }
+  function seek(t, play) {
+    tp = Math.max(0, Math.min(story.DUR - 0.01, t));
+    paused = !play; t0 = performance.now() - tp * 1000;
+    $("pp").textContent = paused ? "Play" : "Pause"; $("pp").setAttribute("aria-pressed", paused);
+    frame(tp); ui(tp);
+  }
+  function loop(ms) {
+    if (!paused) tp = ((ms - t0) / 1000) % story.DUR;
+    frame(tp); ui(tp);
+    requestAnimationFrame(loop);
+  }
+  function card() {
+    const g = story.grown, a = sw.values[0], b = sw.values[sw.last], unit = UNIT[sw.unit] || "";
+    $("title").textContent = sw.title;
+    if (g) {
+      const A = g.start.report, B = g.end.report;
+      $("happens").textContent = `A planting is grown on the room as it was drawn. The ring that the lattice's legs stand on at each pier is opened from ${a} m to ${b} m; the arch legs stay. The same planting is grown again.`;
+      $("need").textContent = `Light. Opened, a plant has ${B.sunHours.toFixed(1)} hours of direct sun at midsummer, and the light allows it ${pct(B.lightGrowth)} of its growth.`;
+      $("disagrees").textContent = `As drawn, ${A.sunHours.toFixed(1)} hours and ${pct(A.lightGrowth)}: each plant stands in its neighbours' shade and the timber's.`;
+      $("cost").textContent = `The way through each bay, from ${sw.measures[0].way_through_m.toFixed(2)} m to ${sw.measures[sw.last].way_through_m.toFixed(2)} m. ${B.tieIns - A.tieIns} more tie-ins over ten years. A pier that no longer reads as one trunk.`;
+      $("prove").textContent = "The light model behind this is mostly provisional assumptions and none of it is measured. One run of each, with one seed. Soil, footings and what an open pier does to the structure are not in it.";
+      $("setup").textContent = `Two runs of the plant simulator (${g.end.setup.simulator}), ${g.end.setup.years} years each: the same planting, seed ${g.end.setup.seed}, ${g.end.setup.care}, planted standing ${g.end.setup.specimenM} m. Timber as centre lines; stems only.`;
+      $("statement").textContent = g.start.statement;
+    } else {
+      $("happens").textContent = `One thing about the building is moved, from ${a}${unit} to ${b}${unit} (${sw.parameter}), and the timber follows.`;
+      $("need").textContent = sw.need; $("disagrees").textContent = sw.disagrees; $("cost").textContent = sw.costs;
+      $("prove").textContent = "No planting has been grown on this change, so nothing here says what it does for a plant." + (sw.comes ? ` ${sw.comes} members of the lattice come or go along the way, because its fine tier is chosen afresh at each value.` : "");
+      $("setup").textContent = "Timber as centre lines. The measures are rough, read off those lines." + (sw.source ? ` Reasons from ${sw.source}` : "");
+      $("statement").textContent = "";
+    }
+  }
+  function choose(next) {
+    if (!SW[next] || !CHANGES[next]) return;
+    id = next; sw = SW[id]; change = CHANGES[id]; story = storyOf(id);
+    for (const b of document.querySelectorAll(".tag")) { b.classList.toggle("on", b.dataset.id === id); b.setAttribute("aria-pressed", b.dataset.id === id); }
+    const list = $("steps");
+    list.innerHTML = ""; list.style.gridTemplateColumns = `repeat(${story.steps.length}, minmax(0, 1fr))`;
+    story.steps.forEach(([name], i) => {
+      const li = document.createElement("li"), b = document.createElement("button");
+      b.innerHTML = `<b>${i + 1}</b>${name}`;
+      b.onclick = () => seek(story.BND[i] + 0.01, true);
+      li.append(b); list.append(li);
+    });
+    shown = -1;
+    card();
+    if (W) layout();
+    seek(0, !matchMedia("(prefers-reduced-motion: reduce)").matches);
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) seek(story.STATIC, false);
+  }
+  if (IDS.length > 1) for (const other of IDS) {
+    const b = document.createElement("button");
+    b.className = "tag"; b.dataset.id = other; b.textContent = CHANGES[other].tag;
+    b.onclick = () => choose(other);
+    $("stage").append(b);
+  }
+  $("pp").onclick = () => seek(tp, paused);
+  const bar = $("bar"), scrub = (e) => { const r = bar.getBoundingClientRect(); seek(story.DUR * (e.clientX - r.left) / r.width, false); };
+  bar.onpointerdown = (e) => { bar.setPointerCapture(e.pointerId); scrub(e); bar.onpointermove = scrub; };
+  bar.onpointerup = () => { bar.onpointermove = null; };
+  function resize() {
+    const dpr = window.devicePixelRatio || 1, r = canvas.getBoundingClientRect();
+    W = r.width; H = r.height;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    layout(); frame(tp);
+  }
+  new ResizeObserver(resize).observe(canvas);
+  resize();
+  choose(id);
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) $("pp").hidden = true; else requestAnimationFrame(loop);
+  window.__setT = (t) => seek(t, false);
+  window.__play = () => seek(tp, true);
+  window.__choose = choose;
+  Object.defineProperty(window, "__duration", { get: () => story.DUR });
+  window.__ready = true;
+})();
+</script>
+</body>
+</html>

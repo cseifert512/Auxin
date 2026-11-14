@@ -144,11 +144,14 @@ shows is the floor and the shade on it) and `round`.
   A trial is centre lines only, written into `../releases/trial-*/` because that is where the steps above read
   from. It is not a snapshot: no milled meshes, no manifest, not in git, and the studio cannot draw it.
 
-  `sketches/design-space/pier-opens.html` is that one change as a vignette: a loop of five named steps that
-  plays by itself, annotated, with the whole room and one pier drawn together. It follows the factory drawings'
-  rules (`bower-factory`, `docs/STYLE.md`): one red for what is moving or at issue, at most two leaders and one
-  dimension at once, a pause button, nothing to hover over. The page with the sliders is the workbench; this
-  is the form a drawing for the deck would take. It is still a sketch: centre lines and stems.
+  `sketches/design-space/changes.html` is the form a drawing for the deck would take. The room carries a tag for
+  each thing about it that can change. Choosing one draws that part close to on the right and plays its change
+  as a loop of named steps, annotated. A change with a planting grown at both ends tells the whole story (today
+  the pier: planted, shaded, the pier opens, what it costs, grown again); the others show timber only. It
+  follows the factory drawings' rules (`bower-factory`, `docs/STYLE.md`): one red for what is moving or at
+  issue, at most two leaders and one dimension at once, a pause button, nothing to hover over. The viewer
+  chooses a change and may pause; nothing else is asked of them. `?only=pier-opens` shows one change with no
+  tags. The page with the sliders is the workbench. Both are sketches: centre lines and stems.
 
 ## What this is not
 
