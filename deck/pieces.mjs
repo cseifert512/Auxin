@@ -16,10 +16,10 @@ const to = resolve(top, 'deck/designx/pieces');
 
 // what edition 08 sets into its slides
 const pieces = [
-  '04-plants-make-space', // slide 4: the room through time, unrolled, and the light on its floor
-  '05-shaded-room.webp', // slide 5: the plate for Shaded room
+  'a-room-through-time', // a slide of its own: the one piece drawn live
+  '04-plants-make-space-timber', // Plants make space: the room unrolled, the light on its floor, and through time
+  '05-shaded-room-timber.webp', // Growth changes the geometry: the plate for Shaded room
   'shaded-at-the-pier', // a slide of its own: the plants were shading each other
-  'found-the-joints', // a slide of its own: the clinging plants found the joints
   '06-grown-again', // a slide of its own: the same pier grown three times
 ];
 

@@ -54,20 +54,14 @@
   // ---- drawings with no place in 07: a slide each ----------------------------------------------------------------
   const sheet = (name, kind, title, statement) => `<section class="v7-scene v8-sheet v8-${kind}">${piece(name, kind, title)}<p class="v7-status">${statement}</p></section>`;
 
-  // two findings from growing a planting on the room, each in the steps slide 5 sets out, after slide 5
+  // a finding from growing a planting on the room, in the steps "Growth changes the geometry" sets out, after that slide.
+  // (A second, on the joints, stood here until its piece was replaced in drawings-in-code; nothing is placed for it now.)
   slides.splice(anatomy + 1, 0, {
     ...slides[anatomy],
     title: 'The plants were shading each other',
     theme: 'v8-vignette-slide',
     html: sheet('shaded-at-the-pier', 'vignette', 'The plants were shading each other: the room and one pier of it', `${scenario} The light model is provisional. ${concept}`),
-    notes: 'The first of two worked examples of the relationship on the slide before, in the same steps: we want, we ask, we reconsider, we ask again. The room and one pier of it. The planting grows for five tended years on the room as it was drawn; the piers are marked, where each plant stands in the shade of its neighbours and of the timber; the piers open, and the way through each bay narrows; and the same planting grows for the same five years on the opened room. It plays by itself; the steps under it can be chosen. This is a growth scenario on stated assumptions, not a forecast, and the light model is provisional.',
-    source,
-  }, {
-    ...slides[anatomy],
-    title: 'The clinging plants found the joints',
-    theme: 'v8-vignette-slide',
-    html: sheet('found-the-joints', 'vignette', 'The clinging plants found the joints: the room and one patch of its roof', `${scenario} The cut is set out, not proved. ${concept}`),
-    notes: 'The second worked example, addressed to single joints. The room and one patch of its roof, looked at squarely from outside. The planting grows for ten tended years; the joints the clinging plants reach are marked as they are reached; the lap is shown cut through, with a stem going into the gap beside the crossing member and thickening; then the same patch of roof as it is now cut, bare and with the ivy on it; and last which joints are reached in every run and which only in some. That a stem in a gap wedges it is taken from what clinging plants are known to do to fences and cladding; the simulator does not show it. The splayed lap is set out and cut in the model, not proved: its sizes are provisional and nobody has checked what it does to the strength of the lap.',
+    notes: 'A worked example of the relationship on the slide before, in the same steps: we want, we ask, we reconsider, we ask again. The room and one pier of it. The planting grows for five tended years on the room as it was drawn; the piers are marked, where each plant stands in the shade of its neighbours and of the timber; the piers open, and the way through each bay narrows; and the same planting grows for the same five years on the opened room. It plays by itself; the steps under it can be chosen. This is a growth scenario on stated assumptions, not a forecast, and the light model is provisional.',
     source,
   });
 
