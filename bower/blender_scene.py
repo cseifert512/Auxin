@@ -645,3 +645,26 @@ def build_design(scene, design: dict) -> dict:
     build_views(scene, design)
     bpy.context.view_layer.update()
     return report
+
+
+def write_snapshot(scene, folder) -> dict:
+    """Write the generated model into `folder` for other work to use (see bower/snapshot.py).
+
+    bower.blend is a library holding the generated collections and nothing else: another Blender
+    file links from it. bower.glb holds the timber meshes as they stand, joints milled, each
+    carrying its member ID in its extras.
+    """
+    folder = Path(folder)
+    root = bpy.data.collections[ROOT_COLLECTION]
+    bpy.data.libraries.write(str(folder / "bower.blend"), {root}, fake_user=True, compress=True)
+    timber = MESH_COLLECTION["primary"]
+    options = dict(filepath=str(folder / "bower.glb"), export_format="GLB", export_extras=True, export_cameras=False, export_lights=False, export_apply=False, export_yup=True)
+    try:
+        bpy.ops.export_scene.gltf(collection=timber, **options)
+        chosen = f"collection {timber}"
+    except TypeError:  # an exporter without the collection option: export by selection instead
+        for obj in scene.objects:
+            obj.select_set(obj.name in bpy.data.collections[timber].objects)
+        bpy.ops.export_scene.gltf(use_selection=True, **options)
+        chosen = f"the objects of {timber}, by selection"
+    return {"bower.blend": f"library of the collection {ROOT_COLLECTION} and everything in it", "bower.glb": f"glTF binary of {chosen}"}

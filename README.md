@@ -93,6 +93,7 @@ runpy.run_path(r"C:\BOWER\bower-blender\scripts\generate.py")["main"]()
 | `scripts/gate2_demo.py` | Regenerates the timber after four topology edits and checks each result. |
 | `scripts/gate2_shifts.py` | Regenerates the timber under two shifts of its parameters and checks each result. |
 | `scripts/gate2_notches_view.py` | Renders a close view with the ribs of one hand left out, so the lap notches can be seen. |
+| `scripts/export_snapshot.py` | Writes a named, frozen copy of the model to `releases/<name>/` for other work to link or read. See `releases/README.md`. |
 | `scripts/gate1_demo.py` | The same four edits, reported at envelope level. |
 | `scripts/gate0.py` | Rebuilds the Gate 0 test member from `design/gate0_member.json`. |
 
@@ -114,6 +115,7 @@ No Blender needed:
 python tests/test_gate0_geometry.py
 python tests/test_gate1_room.py
 python tests/test_gate2_timber.py
+python tests/test_snapshot.py
 python tests/survey_envelope_validity.py     # slower: random walks of edits
 ```
 
@@ -125,6 +127,8 @@ bower/topology.py               Level A
 bower/envelope.py               Level B
 bower/timber.py                 Level C: member generators, clearances, schedule
 bower/joints.py                 Level C: joints and the cuts they make
+bower/snapshot.py               what a snapshot carries: centrelines, schedules, manifest
+releases/                       named snapshots of the model for other work to build on
 bower/centreline.py             Bezier paths, sampling, frames
 bower/member.py                 member data and section sweep
 bower/blender_scene.py          the only module that touches Blender
