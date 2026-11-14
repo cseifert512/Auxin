@@ -145,21 +145,28 @@ Pictures made beforehand (plates, pieces, films) still take the whole record, an
 ```bash
 cd ../bower-blender && python scripts/tour_states.py ../drawings-in-code/tours/first/tour.json   # every state, and a trial building at each form
 cd ../drawings-in-code
-node pipeline/tour.mjs first grow              # the same planting, ten years, on each form: about 90 s a form
+node pipeline/tour.mjs first grow              # the same planting, ten years, on each form (--again: on all of them afresh)
 node pipeline/tour.mjs first film              # exports/tour-first/tour-first.mp4
 node pipeline/tour.mjs first film --still=12.5 # one picture, 12.5 s into the film
+node pipeline/tour.mjs first film --still=7 --back=0.5 --lift=3.5   # the same from nearer and higher, to look at joints
 ```
 
 A film of the room going from one form to another with a planting on it, while a year of seasons goes by and the
 camera goes round. A tour is described in `tours/<name>/tour.json`: the forms (each sets some of the building's
 controls, as its sliders do), and how the film is timed. `tours/first` goes from the lantern as designed to a flared
 basket, an open oculus, the oculus turned down, a trunk standing on the floor, a tall close room, and back.
+The planting is the one the other drawings use (`npm run plant`, then `--specimen=3 --tall=wisteria:4`), unless
+the tour's `planting` says otherwise. Every form, the snapshot's own too, is grown as a trial under
+`scenes/trial-tour-*`, so one command grows them all alike and no snapshot's scene is touched.
 
 What it is, and is not:
 
-- **The timber is the generator's at every state.** Between two states a timber is moved point by point. The
-  meshes moved are the snapshot's milled ones, so only the snapshot's own form has its joints where the mill
-  would cut them.
+- **The timber is the generator's at every state, joints and all.** Between two states a timber is moved point
+  by point, and it is cut where it then crosses the others: each state carries the laps the building's joints
+  code sets out for it. A timber is drawn as the generator's own simpler model of a milled piece, built here
+  from its centre line: flat-walled laps, ends cut to their planes. It is not the milled mesh of a snapshot, so
+  there are no housings, seats or splayed walls; a rib's end runs into the member it meets; and a lap too
+  oblique or too near an end to step in is left uncut in both members (about 24 of 780 on the flared basket).
 - **The lattice re-forms as the form changes**, and that is the generator's doing: a rib is drawn into a pier
   and stands on the floor, or lands on an arch, and which it does changes at once (`bower-blender`, README, "A
   tour of forms"). The film shows such a rib running out to its new foot or drawing back from its old one.

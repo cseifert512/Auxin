@@ -16,9 +16,10 @@
     "calendar": { "from": "2035-01-10", "to": "2036-01-10" },
     "timber": "wood",
     "view": "approach",
-    "back": 0.9,
+    "back": 1.02,
     "lift": 3
   },
+  "planting": { "care": "trained", "years": 10, "seed": 7, "specimen": 3, "tall": "wisteria:4" },
   "forms": [
     { "id": "lantern", "title": "A lantern", "set": {} },
     { "id": "basket", "title": "A flared basket", "set": { "crown_height": 7.4, "crown_radius": 1.5, "top_slope": 118 } },

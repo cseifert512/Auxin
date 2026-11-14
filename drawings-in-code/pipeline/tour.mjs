@@ -1,10 +1,11 @@
 // A film of a turn through the forms a room can take: the timber moved from form to form with a planting on it,
 // the seasons going by, seen from a camera that goes round.
 //   node pipeline/tour.mjs [name] [grow | film]      (tours/<name>/tour.json; "first" if none is named)
-//     grow                 grow the planting on every form that has none yet, one after another
+//     grow                 grow the planting on every form that has none yet, one after another (--again: on every form)
 //     film                 the film (the default)
 //       --still=12.5       one picture, at that many seconds into the film, and no film
 //       --fps=24 --scale=2 --size=960x540
+//       --back=0.5 --lift=2 --turn=40   the camera nearer, higher, or further round than the tour says: to look at a joint
 //       --frames=keep      put the film together again from the pictures already made
 // Reads  tours/<name>/tour.json, and beside it states.json (bower-blender/scripts/tour_states.py)
 // Writes exports/tour-<name>/tour-<name>.mp4 and a still beside it
@@ -31,18 +32,21 @@ if (!existsSync(resolve(folder, 'states.json'))) throw new Error(`no states yet:
 // only what says which state each form is, and where it was grown: the states themselves are for the studio
 const { forms, between, loop, states: allStates } = JSON.parse(readFileSync(resolve(folder, 'states.json'), 'utf8'));
 const stateCount = allStates.length;
-const PLANTING = { care: 'trained', years: 10, seed: 7, specimen: 3, ...(tour.planting ?? {}) };
+// The planting is the one the other drawings are made from (README, "Run it"): the scheme `npm run plant` writes
+// unless told another, ten tended years, specimens standing 3 m and the wisterias 4 m. A tour may say otherwise.
+const PLANTING = { care: 'trained', years: 10, seed: 7, specimen: 3, tall: 'wisteria:4', scheme: null, ...(tour.planting ?? {}) };
 const runOf = (form) => resolve(root, 'scenes', form.grown_on, 'runs', `${PLANTING.care}-${PLANTING.years}y`);
 
 // ---- the plantings ---------------------------------------------------------------------------------------------------
 if (what === 'grow') {
   const node = (script, ...rest) => execFileSync(process.execPath, [resolve(root, 'pipeline', script), ...rest], { cwd: root, stdio: 'inherit' });
   for (const form of forms) {
-    if (existsSync(resolve(runOf(form), 'growth.json'))) continue;
+    // --again: grow them all afresh, as after the planting's rule or the simulator has changed
+    if (existsSync(resolve(runOf(form), 'growth.json')) && !('again' in options)) continue;
     console.log(`growing on ${form.grown_on}`);
     node('convert.mjs', form.grown_on);
-    node('plant.mjs', form.grown_on);
-    node('grow.mjs', form.grown_on, PLANTING.care, String(PLANTING.years), String(PLANTING.seed), `--specimen=${PLANTING.specimen}`);
+    node('plant.mjs', form.grown_on, ...(PLANTING.scheme ? [`--scheme=${PLANTING.scheme}`] : []));
+    node('grow.mjs', form.grown_on, PLANTING.care, String(PLANTING.years), String(PLANTING.seed), `--specimen=${PLANTING.specimen}`, ...(PLANTING.tall ? [`--tall=${PLANTING.tall}`] : []));
   }
   process.exit(0);
 }
@@ -126,14 +130,15 @@ if (options.frames !== 'keep') {
     console.log(`${form.id}: ${mine.length} pictures; ${tied.onTimber} of ${tied.points} stem points lie on timber, ${tied.organs} leaves, flowers and the rest go with them (tied in ${tied.seconds.toFixed(1)} s)`);
     for (const [n, i] of mine.entries()) {
       const m = moments.get(i);
-      await page.js(`window.studio.tour.frame(${JSON.stringify({ at: m.at, day: m.day, yaw: m.yaw, back: film.back, lift: film.lift, title: m.title, seconds: 1 / fps, view: film.view })})`);
+      await page.js(`window.studio.tour.frame(${JSON.stringify({ at: m.at, day: m.day, yaw: m.yaw + Number(options.turn ?? 0), back: Number(options.back ?? film.back), lift: Number(options.lift ?? film.lift), title: m.title, seconds: 1 / fps, view: film.view })})`);
       writeFileSync(shot(q, i), await page.shot('jpeg'));
       if (page.problems.length) throw new Error(`the studio failed while filming:\n  ${page.problems.join('\n  ')}`);
       if (n % 60 === 59) console.log(`  ${n + 1} of ${mine.length}: ${((performance.now() - began) / 1000 / (n + 1)).toFixed(1)} s a picture`);
     }
     const made = await page.js('window.studio.tour.made()');
+    const cut = await page.js('window.studio.tour.timber()');
     studio.stop();
-    console.log(`  ${form.id} in ${((performance.now() - began) / 1000).toFixed(0)} s; the plants were placed afresh ${made} times`);
+    console.log(`  ${form.id} in ${((performance.now() - began) / 1000).toFixed(0)} s; the plants were placed afresh ${made} times; in the last picture ${cut.lapsCut} lap notches are cut and ${cut.lapsNotCut} could not be`);
     await sleep(3000);
   }
 }

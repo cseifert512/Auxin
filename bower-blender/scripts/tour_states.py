@@ -10,21 +10,22 @@ Between one form and the next every control moves in a straight line, and `betwe
 on the way. With `"loop": true` the last form goes on to the first.
 
 Writes, beside the tour's description:
-    states.json                     every state: each member's centre line as the same number of points,
-                                    with the way its depth is turned at each, so that a drawing can move
-                                    a member from one state to the next point by point
-and, for every form but one that changes nothing:
+    states.json                     every state: each timber's centre line as the same number of points, with
+                                    the way its depth is turned at each; the planes its ends are cut to; and
+                                    every lap the joints code sets out in that state (which two timbers, where
+                                    along each, which is cut on its outer face, and how deep). A drawing can
+                                    then move a timber from one state to the next point by point, and cut it.
+and, for every form:
     ../releases/trial-tour-<tour>-<form>/    centre lines and design, for a planting to be grown on
 
-No Blender. About two seconds a state. Nothing here is a snapshot: git ignores all of it, and the same
-command makes it again.
+No Blender. About eight seconds a state, most of it finding the joints. Nothing here is a snapshot: git
+ignores all of it, and the same command makes it again.
 
 The members are not the same in every state. The lattice's third tier fills the slots that fit, and
 which fit changes with the form; the crown's ring is not there when the crown stands on the floor.
-So states.json lists every member met on the tour, and each state says which of them it has.
+So states.json lists every timber met on the tour, and each state says which of them it has.
 """
 
-import copy
 import json
 import math
 import sys
@@ -35,8 +36,10 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
 from bower import controls, snapshot, topology  # noqa: E402
+from bower.joints import find_joints  # noqa: E402
+from bower.timber import build_design_timber  # noqa: E402
 
-SAMPLES = 64  # points kept of every member's centre line
+SAMPLES = 128  # points kept of every member's centre line
 RIBS = ("rib", "fill", "fine")  # the lattice's ribs: each runs from a head, on the crown or on a ring, to a foot that lands where the form lets it
 
 
@@ -76,6 +79,28 @@ def shaped(design: dict, room_id: str, values: dict) -> dict:
         if len(refused) == len(left) and left:
             raise topology.DesignError("; ".join(f"{k} = {left[k]}: {e}" for k, e in refused.items()))
     return design
+
+
+def cuts_of(design: dict) -> tuple:
+    """What the joints code sets out for a design, as far as a drawing cuts it: the plane each member's ends are
+    cut to, and every lap.
+
+    Returns ({member ID: (start plane's normal or None, end plane's normal or None)},
+             [(member cut on its outer face, member cut on its inner face, station on the first, station on the second,
+               depth of the first's cut, depth of the second's)]).
+    The joints are found as for a milled model, so a lap is set out however obliquely the two cross; nothing is
+    milled, which is the slow part and needs Blender.
+    """
+    timber = {**design["timber"], "joints": {**design["timber"].get("joints", {}), "cut_meshes": "none"}}
+    ends, laps = {}, []
+    for group in build_design_timber(design):
+        for m in group["members"]:
+            ends[m.id] = (m.start_cut, m.end_cut)
+        for joint in find_joints(group["members"], timber)[0]:
+            if joint.kind == "cross_lap" and len(joint.cuts) == 2:
+                outer, inner = joint.cuts  # the first goes in first and is notched on its outer face
+                laps.append((outer.member, inner.member, outer.at_m, inner.at_m, outer.depth_m, inner.depth_m))
+    return ends, laps
 
 
 def _dist(a, b) -> float:
@@ -167,16 +192,24 @@ def followed(built: list, loop: bool, snapshot_state) -> tuple:
                 plays[k] = len(tracks)
                 tracks.append({"id": f"{m['id']}@{at}" if at else m["id"], "kind": _kind(m["id"]), "family": m["family"], "width_m": m["width_m"], "depth_m": m["depth_m"], "closed": m["closed"], "from_head": m["family"] in RIBS, "mesh": None})
             if at == snapshot_state:
-                tracks[plays[k]]["mesh"] = m["id"]  # the snapshot's milled mesh of this name is this timber
+                tracks[plays[k]]["mesh"] = m["id"]  # the snapshot's member of this name is this timber
             last[plays[k]] = (at, m["line"][0])
         if at == 0:
             first_plays = dict(plays)
         order = sorted(range(len(state["members"])), key=lambda k: plays[k])
+        number = {m["id"]: plays[k] for k, m in enumerate(state["members"])}
+        ends = [state["ends"][state["members"][k]["id"]] for k in order]
         states.append({
             "values": state["values"],
             "has": [plays[k] for k in order],
             "mm": [round(c * 1000) for k in order for p in state["members"][k]["line"][0] for c in p],
             "axes": [round(c * 10000) for k in order for d in state["members"][k]["line"][1] for c in d],
+            # each member's length; the unit normals of the planes its start and its end are cut to (0 0 0: square)
+            "len": [round(state["members"][k]["length_m"] * 1000) for k in order],
+            "ends": [round(c * 10000) for start, end in ends for normal in (start, end) for c in (normal or (0.0, 0.0, 0.0))],
+            # each lap, six numbers: the timber cut on its outer face, the timber cut on its inner face, how far along
+            # each from its start, and how deep each is cut
+            "laps": [n for a, b, sa, sb, da, db in state["laps"] for n in (number[a], number[b], round(sa * 1000), round(sb * 1000), round(da * 1000), round(db * 1000))],
         })
     wrap = None
     if loop:
@@ -216,18 +249,20 @@ def main(argv: list) -> None:
             try:
                 design = shaped(base, room_id, values)
                 lines = snapshot.centrelines(design)
+                ends, laps = cuts_of(design)
             except Exception as error:  # a state the generator will not build
                 problems.append(f"{label}: {error}")
                 print(f"  {label}: NOT BUILT: {error}")
                 continue
-            built.append({"values": values, "members": [{**{k: m[k] for k in ("id", "family", "width_m", "depth_m", "closed")}, "length_m": m["length_m"], "raw": m} for m in lines["members"]]})
-            print(f"  {label}: {len(lines['members'])} members")
-            if step == 0 and forms[leg].get("set") and not check:
+            built.append({"values": values, "ends": ends, "laps": laps, "members": [{**{k: m[k] for k in ("id", "family", "width_m", "depth_m", "closed")}, "length_m": m["length_m"], "raw": m} for m in lines["members"]]})
+            print(f"  {label}: {len(lines['members'])} members, {len(laps)} laps")
+            if step == 0 and not check:
+                # every form is written as a trial, the one that changes nothing too: then one command grows them all alike
                 trial = REPO.parent / "releases" / f"trial-tour-{name}-{forms[leg]['id']}"
                 trial.mkdir(parents=True, exist_ok=True)
                 (trial / "design.json").write_text(json.dumps(design, indent=2) + "\n", encoding="utf-8")
                 (trial / "centrelines.json").write_text(json.dumps(lines, separators=(",", ":")) + "\n", encoding="utf-8")
-                made = ", ".join(f"`{k} = {v}`" for k, v in forms[leg]["set"].items())
+                made = ", ".join(f"`{k} = {v}`" for k, v in forms[leg].get("set", {}).items()) or "nothing changed"
                 (trial / "TRIAL.md").write_text(
                     f"# {trial.name}\n\nA trial, not a snapshot: centre lines only, written by `bower-blender/scripts/tour_states.py`\n"
                     f"from `releases/{tour['snapshot']}/design.json` with {made}.\nNot in git. Safe to delete.\n",
@@ -242,23 +277,27 @@ def main(argv: list) -> None:
         for m in state["members"]:
             m["line"] = resampled(m.pop("raw"), SAMPLES, spacing if m["family"] in RIBS else None)
     snapshot_form = next((i for i, f in enumerate(forms) if not f.get("set")), None)
-    members, states, wrap = followed(built, bool(tour.get("loop")), None if snapshot_form is None else snapshot_form * (between + 1))
+    snapshot_state = None if snapshot_form is None else snapshot_form * (between + 1)
+    members, states, wrap = followed(built, bool(tour.get("loop")), snapshot_state)
     print(f"{len(members)} timbers followed through the tour" + ("" if wrap is None else "; going round once does not bring every one back to where it began"))
     if check:
         return
     out = {
         "tour": name,
         "snapshot": tour["snapshot"],
+        # the state that is the snapshot's own form, if the tour has it
+        "snapshot_state": snapshot_state,
         "samples": SAMPLES,
         # a member marked "from_head" has its points this far apart, counted from its last; the rest are spread evenly along it
         "spacing_m": spacing,
+        # the gap the joints code leaves between a member and the wall of the lap it sits in
+        "lap_clearance_m": base["timber"].get("joints", {}).get("lap_clearance_m", 0.001),
         "loop": bool(tour.get("loop")),
         "between": between,
         "members": members,
         # which timber each one has become when a loop comes round to its first state again, where that is not itself
         **({} if wrap is None else {"wrap": wrap}),
-        # a form that changes nothing is the snapshot itself; any other was written as a trial to grow on
-        "forms": [{"id": f["id"], "title": f.get("title", f["id"]), "state": i * (between + 1), "grown_on": f"trial-tour-{name}-{f['id']}" if f.get("set") else tour["snapshot"]} for i, f in enumerate(forms)],
+        "forms": [{"id": f["id"], "title": f.get("title", f["id"]), "state": i * (between + 1), "grown_on": f"trial-tour-{name}-{f['id']}"} for i, f in enumerate(forms)],
         "states": states,
     }
     target = file.parent / "states.json"

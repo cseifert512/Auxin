@@ -320,9 +320,16 @@ What the draft shows at `R1.P6`, and what it leaves open:
 
 `scripts/tour_states.py <tour.json>` builds every state between a list of forms of one room, for a drawing
 that moves through them (`drawings-in-code`, "A turn through the forms"). A form sets some controls of
-`bower/controls.py`; between two forms each control moves in a straight line. No Blender, about two seconds a
+`bower/controls.py`; between two forms each control moves in a straight line. No Blender, about four seconds a
 state. It writes `states.json` beside the tour's description and a trial building under `../releases/trial-tour-*`
 for each form, for a planting to be grown on. Git ignores both.
+
+Each state carries its own joints, so that a drawing cuts every form where that form's members cross and not
+where a snapshot's did: the laps `bower/joints.py` sets out (which two members, where along each, which is cut on
+its outer face, how deep) and the planes each member's ends are cut to. The drawing builds each member from
+these as `sweep` in `bower/member.py` does, the generator's simpler model of a milled piece: flat-walled laps
+stepped into the section, ends slid on to their planes. Housings, seats, pier mitres and splayed walls are in
+the milled model only, which needs Blender.
 
 Two things it found about the generator, which any drawing of a changing room has to deal with:
 
