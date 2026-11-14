@@ -41,9 +41,9 @@ The copy is kept as it came so that it can always be compared with the website's
 
 | Version | What it is |
 |---|---|
-| [`designx/v8/`](designx/v8/README.md) | The first of ours: one page that is scrolled, not a set of slides. Scrolling is the only control and it moves time: the room through its years, a day on its floor, seconds at the mill. |
+| [`designx/v8/`](designx/v8/README.md) | The first of ours: edition 07 with the dynamic drawings in. Still the deck, 16:9, nothing of 07 taken out; the pieces made in `../drawings-in-code` sit in the places 07 kept for them, and those with no place have a slide each. |
 
-`node deck/pieces.mjs` copies the pictures a version uses out of `../drawings-in-code/exports/deck/` into that version's folder. Run it again after a plate is remade.
+The drawings are not copied into the deck. `serve.mjs` answers `/designx/pieces/<name>/` from `../drawings-in-code/exports/deck/<name>/`, where they are made, so a piece that is remade shows at the next reload. `node deck/pieces.mjs` makes a copy in `designx/pieces/` (not in git) for when the deck has to stand without this server.
 
 Two things to know before starting one from the slides:
 

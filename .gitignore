@@ -9,3 +9,6 @@ __pycache__/
 # trial buildings: centre lines only, made by bower-blender/scripts/trial_snapshot.py; not snapshots
 releases/trial-*/
 drawings-in-code/scenes/trial-*/
+
+# a copy of the dynamic drawings beside the deck, made by `node deck/pieces.mjs`; the originals are in drawings-in-code/exports/deck
+deck/designx/pieces/

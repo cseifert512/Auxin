@@ -7,6 +7,8 @@
 //   /                         goes to the newest edition
 //   /designx/<edition>        that edition's index.html
 //   /designx/<edition>/pdf    the PDF in that edition's downloads folder, shown in the browser
+//   /designx/pieces/<name>/   the dynamic drawings, straight from ../drawings-in-code/exports/deck/ where they are
+//                             made, so the deck always shows the latest (a copy in designx/pieces/ is used if there)
 // Nothing is cached, so an edit shows on the next reload.
 import { createReadStream, existsSync, readdirSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
@@ -16,6 +18,7 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('.', import.meta.url));
 const port = Number(process.argv[2] ?? process.env.PORT ?? 5312);
 const newest = '/designx/v8';
+const made = resolve(root, '../drawings-in-code/exports/deck');
 
 const types = {
   '.html': 'text/html; charset=utf-8',
@@ -38,6 +41,12 @@ const types = {
 function find(path) {
   const file = resolve(root, normalize(`.${path}`));
   if (file !== resolve(root) && !file.startsWith(resolve(root) + sep)) return null;
+  if (!existsSync(file) && path.startsWith('/designx/pieces/')) {
+    const piece = resolve(made, normalize(`./${path.slice('/designx/pieces/'.length)}`));
+    if (!piece.startsWith(made + sep) || !existsSync(piece)) return null;
+    if (statSync(piece).isFile()) return piece;
+    return existsSync(join(piece, 'index.html')) ? join(piece, 'index.html') : null;
+  }
   if (existsSync(file)) {
     if (statSync(file).isFile()) return file;
     const index = join(file, 'index.html');

@@ -1,54 +1,44 @@
-# v8: the deck as a page that is scrolled
+# v8: edition 07 with the drawings in
 
-The first version of ours. One page, no slides. Scrolling is the only control, and it moves time: years in the room, hours on its floor, seconds at the mill. A clock at the top right says what the scroll is moving.
+The first version of ours. It is still the deck: the same viewer, the same 16:9 slides, the same words and order as edition 07. What is new is that the dynamic drawings made in `drawings-in-code` are in it.
 
 Open it with `node deck/serve.mjs`, then http://localhost:5312/designx/v8.
 
-## The order, and why
+## What changed from 07
 
-It follows a reading of v7 given to Clay on 14 November 2026 and not yet agreed by him: show the whole before taking it apart, tell one case through instead of describing a system, and keep the generated pictures away from the drawings.
+Nothing of 07 is taken out. 07 has 18 slides; this has 21.
 
-| Part | What it is | Scroll moves |
-|---|---|---|
-| The name | "Buildings that grow. And the means to make many." | |
-| Why | The severance sentence, which v7 keeps for its last slide | |
-| A room, through time | The whole, first: one room from above, on the approach and inside | The design, assembly, planting, establishing, a year of seasons |
-| What makes it hard | The premise, then the variability sentence | |
-| Growth changes the light | Three plans of the floor, at three ages | One midsummer day, 6 am to 6 pm |
-| Planting becomes part of the room | The room unrolled, still | |
-| The plants found the joints | The case, in five sentences and one plate | |
-| Different parts. A repeatable process. | Daniel's line, playing by itself | |
-| Form. Measure. Machine. | Three of his stations | 34 seconds at each |
-| What is not designed yet | The planting | |
-| The first customers, the three steps, the two of us, the close | As v7 has them | |
+| Slide | What is there now |
+|---|---|
+| 4, Plants make space | The piece made for that space (`04-plants-make-space`) in place of the note. The slide's three tabs are the piece's three modes: Space is the room unrolled, Light is the floor through a midsummer day, Time is the building through design, assembly, planting and its seasons. Dragging and the line of time are the piece's own. |
+| 5, Growth changes the geometry | The plate made for the Shaded room tab (`05-shaded-room`) in place of the note. The other two tabs keep 07's note: nothing is made for them yet. |
+| 6, new | The vignette "The plants were shading each other" (`shaded-at-the-pier`), a slide to itself. |
+| 7, new | The vignette "The clinging plants found the joints" (`found-the-joints`), a slide to itself. |
+| 8 | 07's slide 6, Can we make it? Can it grow?, as it was. |
+| 9, new | "Grown again" (`06-grown-again`): the same pier grown three times. |
+| 10 to 21 | 07's slides 7 to 18, as they were. |
 
-Left out of v7 on purpose: the four slides that diagram a learning loop (9, 10, 11 and 15) and the commercial loop (14). The joints case stands where they stood.
+Three choices made here that are Clay's to overrule:
 
-## Whose words
+- **Slide 4 opens on Time**, not Space. The piece was made to open on Time, as the first sight of the building.
+- **The two vignettes follow slide 5** as worked examples of it. Their own descriptions say only "not placed in the deck yet".
+- **Grown again follows 07's slide 6 and replaces nothing.** Its description says it was made for slide 6, in place of the two checks side by side.
 
-Taken from v7 as they are: the title and its second line, the severance sentence, the variability sentence, the scene titles "Growth changes the light" and "Planting becomes part of the room" (from v7's lines for those tabs on slide 4), the factory titles and captions, everything about customers, price and the two founders, and the close.
-
-New here, for Clay to keep, change or cut:
-
-- "A building like this is not finished when it is built. Nobody can yet draw, promise or price one whose finished state is years away, and partly not theirs to decide." This stands where v7 says "The obstacle is production."
-- "A room, through time." and the five notes under it.
-- "The plants found the joints." and its five sentences. The numbers are from the runs and the model: 631 milled joints, 13 reached in all three runs and 9 more in some, a slot 3 mm by 110 mm, a 30 mm land opening 40 mm, 18 laps cut splayed.
-- "Every study here changed the building and held the planting still. Which plant goes where, and why, is the next thing to design."
-- "A splayed lap is one more." under Machine.
-- The small line above each title, the line about scrolling on the first screen, and the note under the light.
-
-Every scene keeps its statement of what it is not: a growth scenario and not a forecast; simulated and not built; studies and not an operating line.
+Words that are new: the last sentence under slide 4 (07 says "Growth drawings in development."; this gives the piece's own statement), the line under each added slide (each piece's own statement), and the speaker notes of the three added slides, which are each piece's own description from its `piece.json`.
 
 ## How it is made
 
-- `index.html` is the page, `site.css` its look, `site.js` the scroll. No library, nothing built.
-- A scene is a tall stretch of page with a stage pinned in it. How far the stretch has been scrolled picks the moment. In the room and the light that is a picture from `frames/`, blended into the next. At the mill it is a time sent to one of Daniel's drawings (`../5/factory/`), which draw themselves when told.
-- `frames/` is copied from `drawings-in-code/exports/deck/` by `node deck/pieces.mjs`. Nothing is worked out when the page is shown.
-- It shares the typefaces (`../4/`), Daniel's drawings (`../5/factory/`) and the photographs (`../assets/`, `../3/assets/`) with the copied editions, so it has to stay beside them.
+- `index.html` is 07's, naming the edition and loading two more files.
+- `edition.js` runs after 07's. It sets each piece into its slide, starts a piece from its beginning when its slide is shown and rests it when the slide goes (as the factory drawings do), passes the slide-4 tabs to the piece, and passes the deck's keys and the wheel on from inside a piece so the deck never gets stuck there.
+- `pieces.css` is where the pieces sit, in the deck's own 1600 × 900 stage.
+- The pieces are not copied here. `deck/serve.mjs` answers `/designx/pieces/<name>/` from `drawings-in-code/exports/deck/<name>/`, where they are made, so a piece that is remade shows in the deck at the next reload. `node deck/pieces.mjs` makes a copy beside the deck for when it has to stand alone.
 
 ## Not done
 
-- **No page for paper.** Printed, each pinned scene would show one moment. The application takes a file, so this version cannot be what is uploaded until it has a print layout and a way to export one.
-- **The room's pictures were made for a slide**, 2234 pixels wide for three views. A page this size wants each view made larger, and more moments than 34.
-- **The frames are 14 MB**, all asked for as their scene comes near. Fine from this laptop, heavy over a slow connection.
-- **Opened from disk without the server**, the factory drawings and the frames should still work, but that has not been tried.
+- **Paper.** Laid out for print (`?print=1`), slide 4 shows the piece's still and the vignettes their last moment, but this has not been looked at, and no PDF has been exported: the export scripts are still in the website's repository. The PDF button opens edition 07's.
+- **Timber on slide 4.** The piece is the ink one. Its timber frames exist (`04-plants-make-space-timber`) but have no page of their own, and no Light mode.
+- **Typefaces.** The vignettes and Grown again set their own words in Georgia and Segoe UI; the deck is Argesta and Safiro.
+- **Not placed:** `a-room-through-time` (a slide of its own, not made in this repository yet). Slides 12 and 17 still hold 07's notes for a drawing.
+- **Opening from a folder** needs `node deck/pieces.mjs` first, and has not been tried.
+
+An earlier v8 was a page that was scrolled, with no slides. That was a misreading of what was asked and it was taken out; it is in the history at `0fd443d`.
