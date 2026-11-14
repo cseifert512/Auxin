@@ -14,7 +14,7 @@ from bower.joints import LAP_ORDER, find_joints, joint_rows, lap_layer  # noqa: 
 from bower.member import sweep  # noqa: E402
 from bower.timber import ARCHES, LATTICE, LATTICES, build_timber, clearances, schedule  # noqa: E402
 
-BASE = T.load(REPO / "design.json")
+BASE = T.load(REPO / "releases" / "six-bay-v1" / "design.json")  # the frozen six-bay design: these checks name its piers and bays
 ROOM = BASE["rooms"][0]
 RIBS = BASE["timber"]["lattice"]["ribs_per_family"]
 HOOPS = len(BASE["timber"]["arches"]["hoops_m"])

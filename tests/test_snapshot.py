@@ -33,7 +33,7 @@ def test_every_member_is_there_once_with_its_section_and_centreline():
         for (a, b), axis in zip(zip(points, points[1:]), entry["depth_axes"]):
             assert abs(math.hypot(*axis) - 1.0) < 1e-3
             along = [(q - p) / max(math.dist(a, b), 1e-9) for p, q in zip(a, b)]
-            assert abs(sum(u * v for u, v in zip(along, axis))) < 0.08  # the section's depth stands across the member
+            assert abs(sum(u * v for u, v in zip(along, axis))) < 0.15  # the section's depth stands across the member (a chord of a tight curve leans a little)
         assert len(entry["bezier_m"]) == len(m.path.anchors)
     assert sorted(i for i, e in entries.items() if e["closed"]) == sorted(i for i in MEMBERS if ".ring." in i)
 

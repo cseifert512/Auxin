@@ -37,6 +37,8 @@ def main(name: str, commit: str | None = None, design_path=DESIGN, rebuild: bool
         raise FileExistsError(f"{folder} already holds a snapshot; snapshots are not overwritten, give the new one a new name")
     scene = bpy.context.scene
     design = topology.load(design_path)
+    if topology.reconcile(design)[1]:
+        raise RuntimeError("a room's layout asks for a different number of bays than its ring has: run scripts/generate.py first")
 
     checks = None
     if rebuild:

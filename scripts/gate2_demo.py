@@ -36,8 +36,14 @@ def main() -> dict:
         return {m.id: tuple((a.co, a.handle_left, a.handle_right) for a in m.path.anchors) for m in build_timber(design["rooms"][0], design["timber"])}
 
     before = shapes(base)
+    # the pier to move, and where to: 0.7 m further out from the crown and 0.35 m round the ring, whatever the layout
+    room = base["rooms"][0]
+    pier, (cx, cy) = room["piers"][2], room["crown"]["centre_m"]
+    px, py = pier["position_m"]
+    out = ((px - cx) ** 2 + (py - cy) ** 2) ** 0.5
+    moved = [round(px + (0.7 * (px - cx) - 0.35 * (py - cy)) / out, 2), round(py + (0.7 * (py - cy) + 0.35 * (px - cx)) / out, 2)]
     edits = [
-        ("1_move_pier", "move_pier(R1.P3, [7.0, 0.3])", lambda d: topology.move_pier(d, "R1.P3", [7.0, 0.3])),
+        ("1_move_pier", f"move_pier({pier['id']}, {moved})", lambda d: topology.move_pier(d, pier["id"], moved)),
         ("2_crown_height", "set_crown(R1, height_m=7.0), up from 6.3", lambda d: topology.set_crown(d, "R1", height_m=7.0)),
         ("3_add_bay", "add_bay(R1.B1): split the front bay", lambda d: topology.add_bay(d, "R1.B1")),
         ("4_remove_bay", "remove_bay(R1.B2): collapse the south-east bay", lambda d: topology.remove_bay(d, "R1.B2")),

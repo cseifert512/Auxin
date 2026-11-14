@@ -1,0 +1,270 @@
+{
+  "blender": "5.3.0",
+  "design": "C:\\BOWER\\bower-blender\\design.json",
+  "settings": {
+    "carry": "grounded",
+    "families": [
+      "rib",
+      "fill",
+      "fine",
+      "hoop"
+    ],
+    "members": [],
+    "without": [],
+    "face": "outer",
+    "gap_m": 0.075,
+    "cable_diameter_m": 0.004,
+    "standoff_spacing_m": 0.9,
+    "standoff_sag_m": 0.012,
+    "standoff_diameter_m": 0.01,
+    "hole_depth_m": 0.04,
+    "joint_clear_m": 0.03,
+    "clear_m": 0.025,
+    "foot_clear_m": 0.1,
+    "end_clear_m": 0.3,
+    "min_length_m": 1.0
+  },
+  "set_out": {
+    "lines": 42,
+    "stale_lines_removed": 0,
+    "groups": [
+      {
+        "rooms": [
+          "R1"
+        ],
+        "lines": 42,
+        "members_with_a_line": 40,
+        "length_m": 381.8,
+        "standoffs": 773,
+        "nearest_other_member_m": {
+          "clear_m": 0.0281,
+          "line": "R1.B6.arch.L.feeder.back",
+          "member": "R1.B5.arch.R"
+        },
+        "clear_of_other_members": true,
+        "gap_to_own_member_m": [
+          0.0629,
+          0.085
+        ],
+        "feeders": 4,
+        "carriers_without_a_line": [],
+        "lines_cut_back": [],
+        "lines_from_the_floor": 38,
+        "highest_start_above_floor_m": 0.1,
+        "cables_cross_each_other": 22,
+        "standoffs_in_a_joint": 7,
+        "stray_from_curve_m": 0.012,
+        "to_review": 5
+      }
+    ]
+  },
+  "ground": {
+    "objects": 21,
+    "stale_objects_removed": 0,
+    "groups": [
+      {
+        "rooms": [
+          "R1"
+        ],
+        "root_zones": 2,
+        "piers_with_root_zones": [
+          "R1.P6"
+        ],
+        "soil_m3": {
+          "R1.P6.root.1": 0.41,
+          "R1.P6.root.2": 0.405
+        },
+        "footings": 8,
+        "footing_type": "piles",
+        "piles": 24,
+        "piles_at_each_pier": [
+          3
+        ],
+        "footing_area_m2": {
+          "R1.P6": [
+            1.067,
+            1.05
+          ]
+        },
+        "soil_below_feet_m": 0.3,
+        "feeders": [
+          "R1.B5.arch.R.feeder",
+          "R1.B5.arch.R.feeder.back",
+          "R1.B6.arch.L.feeder",
+          "R1.B6.arch.L.feeder.back"
+        ],
+        "feeder_length_m": 8.68,
+        "handovers": 8,
+        "handover_gap_m": [
+          0.224,
+          0.424
+        ],
+        "handover_height_m": [
+          2.8,
+          3.6
+        ],
+        "training_line_below_handovers_m": 24.6,
+        "narrowest_entrance_m": 3.24,
+        "to_review": {}
+      }
+    ]
+  },
+  "measured_in_scene": {
+    "measured_against": "the 108 timber meshes in the scene, as they stand",
+    "cables": 42,
+    "samples": 13792,
+    "samples_inside_timber": 0,
+    "nearest_other_member_m": {
+      "clear_m": 0.0282,
+      "line": "R1.B6.arch.L.feeder.back",
+      "member": "R1.B5.arch.R"
+    },
+    "gap_to_own_member_m": [
+      0.0628,
+      0.0897
+    ]
+  },
+  "timber": [
+    {
+      "members": 108,
+      "milled": {
+        "members_milled": 108,
+        "cutters": 870,
+        "volume_removed_m3": 1.603,
+        "left_open": []
+      },
+      "meshes_closed": true,
+      "mesh_intersections_in_scene": {
+        "pairs_touching_under_1mm": 18,
+        "lattice_pairs_still_intersecting": 6,
+        "laps_not_clean": [
+          [
+            "R1.rib.ccw.01",
+            "R1.rib.cw.08",
+            3.1
+          ],
+          [
+            "R1.rib.ccw.02",
+            "R1.B3.hoop0",
+            2.0
+          ],
+          [
+            "R1.rib.ccw.05",
+            "R1.B5.hoop0",
+            1.3
+          ],
+          [
+            "R1.rib.ccw.11",
+            "R1.B1.hoop0",
+            1.0
+          ],
+          [
+            "R1.fill.ccw.09",
+            "R1.B8.hoop0",
+            2.0
+          ],
+          [
+            "R1.fine.ccw.06",
+            "R1.B4.hoop0",
+            1.9
+          ]
+        ],
+        "clashes": [
+          [
+            "R1.fill.ccw.00",
+            "R1.B2.arch.R",
+            3.0
+          ]
+        ]
+      }
+    }
+  ],
+  "line_feet_at_each_pier": {
+    "R1.P1": {
+      "lines": 6,
+      "from_pier_axis_m": [
+        0.375,
+        0.375
+      ],
+      "closest_two_m": 0.107
+    },
+    "R1.P2": {
+      "lines": 6,
+      "from_pier_axis_m": [
+        0.355,
+        0.356
+      ],
+      "closest_two_m": 0.099
+    },
+    "R1.P3": {
+      "lines": 7,
+      "from_pier_axis_m": [
+        0.415,
+        0.415
+      ],
+      "closest_two_m": 0.104
+    },
+    "R1.P4": {
+      "lines": 7,
+      "from_pier_axis_m": [
+        0.435,
+        0.435
+      ],
+      "closest_two_m": 0.104
+    },
+    "R1.P5": {
+      "lines": 7,
+      "from_pier_axis_m": [
+        0.395,
+        0.395
+      ],
+      "closest_two_m": 0.106
+    },
+    "R1.P6": {
+      "lines": 12,
+      "from_pier_axis_m": [
+        0.021,
+        0.456
+      ],
+      "closest_two_m": 0.049
+    },
+    "R1.P7": {
+      "lines": 7,
+      "from_pier_axis_m": [
+        0.435,
+        0.435
+      ],
+      "closest_two_m": 0.107
+    },
+    "R1.P8": {
+      "lines": 6,
+      "from_pier_axis_m": [
+        0.374,
+        0.376
+      ],
+      "closest_two_m": 0.103
+    }
+  },
+  "to_review": {
+    "R1.B1.hoop0.line": "2 of its standoffs stand where the face is another member's",
+    "R1.B4.hoop0.line": "2 of its standoffs stand where the face is another member's",
+    "R1.B5.hoop0.line": "1 of its standoffs stand where the face is another member's",
+    "R1.B6.hoop0.line": "1 of its standoffs stand where the face is another member's",
+    "R1.B7.hoop0.line": "1 of its standoffs stand where the face is another member's"
+  },
+  "views": [
+    "C:\\BOWER\\bower-blender\\views\\lines_pier_outside.png",
+    "C:\\BOWER\\bower-blender\\views\\lines_pier_inside.png",
+    "C:\\BOWER\\bower-blender\\views\\lines_pier_foot.png",
+    "C:\\BOWER\\bower-blender\\views\\lines_roof.png",
+    "C:\\BOWER\\bower-blender\\views\\lines_ground_plan.png",
+    "C:\\BOWER\\bower-blender\\views\\lines_ground_outside.png",
+    "C:\\BOWER\\bower-blender\\views\\lines_ground_section.png",
+    "C:\\BOWER\\bower-blender\\views\\lines_ground_handover.png",
+    "C:\\BOWER\\bower-blender\\views\\lines_diagram_plan.png",
+    "C:\\BOWER\\bower-blender\\views\\lines_diagram_exterior.png",
+    "C:\\BOWER\\bower-blender\\views\\lines_diagram_overhead.png",
+    "C:\\BOWER\\bower-blender\\views\\lines_diagram_ground_outside.png",
+    "C:\\BOWER\\bower-blender\\views\\lines_diagram_ground_handover.png"
+  ]
+}

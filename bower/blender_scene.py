@@ -20,10 +20,10 @@ from mathutils import Matrix, Vector
 
 from . import topology
 from .centreline import norm, sub
-from .envelope import CREASE_KINDS, build_envelope, check_envelope
+from .envelope import CREASE_KINDS, boundary, build_envelope, check_envelope
 from .joints import find_joints, joint_summary
 from .member import Member, diagnostics, sweep
-from .timber import LATTICE, build_timber, clearances
+from .timber import LATTICE, build_design_timber, clearances
 
 ROOT_COLLECTION = "BOWER_V1"
 CONTROLS, ENVELOPES, CONTEXT, CAMERAS, DIAGNOSTICS = "00_CONTROLS", "10_ENVELOPES", "60_CONTEXT", "70_CAMERAS", "80_DIAGNOSTICS"
@@ -202,8 +202,11 @@ def _member_mesh_check(member: Member, obj) -> dict:
     return check
 
 
-def build_member(scene, member: Member, sampling: dict, tags: dict | None = None, notches=()) -> dict:
-    """Write one member as a centreline curve plus a separate swept mesh, cut with its lap notches; return its report."""
+def build_member(scene, member: Member, sampling: dict, tags: dict | None = None, notches=(), checks: bool = True) -> dict:
+    """Write one member as a centreline curve plus a separate swept mesh, cut with its lap notches; return its report.
+
+    With `checks` off the two objects are written and nothing is measured: for a quick draft.
+    """
     props = {
         **(tags or {}),
         "bower_family": member.family,
@@ -229,6 +232,8 @@ def build_member(scene, member: Member, sampling: dict, tags: dict | None = None
         _collection(scene, MESH_COLLECTION[member.role]),
         {**props, "bower_kind": "timber_preview", "bower_centreline": centreline.name},
     )
+    if not checks:
+        return {"objects": {"centreline": centreline.name, "timber": timber.name}}
     bpy.context.view_layer.update()
     report = diagnostics(member, sampling["export_station_spacing_m"])
     report["objects"] = {"centreline": centreline.name, "timber": timber.name}
@@ -296,22 +301,31 @@ def _handle(scene, kind: str, element_id: str, location, tags: dict):
     return obj
 
 
-def build_room(scene, design: dict, room: dict) -> dict:
-    """Write one room: its handles, its named boundary curves and its envelope mesh."""
+def build_room(scene, design: dict, room: dict, detail: str = "full") -> tuple[dict, list]:
+    """Write one room's handles, named boundary curves and envelope mesh.
+
+    Returns the room's report and the objects written for it. Its timber is written by
+    `build_design`, since rooms that are joined share members. With `detail` "outline" only the
+    handles and the boundary curves are written, and the curves are shown (see `build_design`).
+    """
     rid, z0 = room["id"], room["floor_z_m"]
     tags = {"bower_room": rid}
-    env = build_envelope(room, design["sampling"])
-    envelope_check = check_envelope(env)
-    if not envelope_check["ok"]:  # refuse before touching the scene
-        raise topology.DesignError(f"{rid}: this design gives an invalid envelope: " + "; ".join(envelope_check["problems"]))
     envelopes, controls = _collection(scene, ENVELOPES), _collection(scene, CONTROLS)
     built = []
-
-    surface = _place(f"ENV_{rid}", _envelope_mesh(env), envelopes, {**tags, "bower_kind": "envelope", "bower_patches": ",".join(env.patches)})
-    built.append(surface)
+    if detail == "outline":  # the boundary curves alone: quick enough to follow a handle as it is dragged
+        env = surface = envelope_check = None
+        edges = boundary(room)[1]
+    else:
+        env = build_envelope(room, design["sampling"])
+        envelope_check = check_envelope(env)
+        if not envelope_check["ok"]:  # refuse before touching the scene
+            raise topology.DesignError(f"{rid}: this design gives an invalid envelope: " + "; ".join(envelope_check["problems"]))
+        edges = env.edges
+        surface = _place(f"ENV_{rid}", _envelope_mesh(env), envelopes, {**tags, "bower_kind": "envelope", "bower_patches": ",".join(env.patches)})
+        built.append(surface)
 
     guides = {}  # one curve object per shaft, groin, arch, eave and ridge, and one for the crown ring
-    for edge in env.edges.values():
+    for edge in edges.values():
         if edge.kind == "crown":
             key = f"{rid}.crown"
         elif edge.kind == "arch":
@@ -333,31 +347,35 @@ def build_room(scene, design: dict, room: dict) -> dict:
     ring.use_cyclic_u = True
     built.append(_place(f"CTRL_{rid}.footprint", footprint, controls, {**tags, "bower_kind": "control_polygon"}))
 
+    stands_for, joined = topology.same_piers(design), topology.portals(design)
     for pier in room["piers"]:
-        built.append(_handle(scene, "pier", pier["id"], (*pier["position_m"], z0), tags))
+        if stands_for.get(pier["id"], pier["id"]) == pier["id"]:  # a pier that rooms share has one handle, in the first of them
+            built.append(_handle(scene, "pier", pier["id"], (*pier["position_m"], z0), tags))
     for bay in room["bays"]:
-        built.append(_handle(scene, "apex", bay["id"], topology.apex_point(room, bay), tags))
+        if bay["id"] not in joined or joined[bay["id"]][2]:  # and an arch they share has one apex handle
+            built.append(_handle(scene, "apex", bay["id"], topology.apex_point(room, bay), tags))
     crown = room["crown"]
     built.append(_handle(scene, "crown", rid, (*crown["centre_m"], z0 + crown["height_m"]), tags))
 
+    # design["display"]: `envelope` shows the guide surface and its boundary curves; `outline` shows the curves alone
     show_envelope = design.get("display", {}).get("envelope", True)
+    show_outline = detail == "outline" or design.get("display", {}).get("outline", show_envelope)
     for obj in built:
         if obj.get("bower_kind") in ("envelope", "guide"):
-            obj.hide_viewport = obj.hide_render = not show_envelope
+            obj.hide_viewport = not (show_outline if obj["bower_kind"] == "guide" else show_envelope)
+            obj.hide_render = not show_envelope
 
-    timber = _build_room_timber(scene, design, room, tags, built) if "timber" in design else None
-    removed = _remove_stale({o.name for o in built}, bower_room=rid)
-    bpy.context.view_layer.update()
-    return {
+    report = {
         "room": rid,
-        "timber": timber,
+        "timber": None,
         "piers": [p["id"] for p in room["piers"]],
         "bays": [b["id"] for b in room["bays"]],
-        "objects": len(built),
-        "stale_objects_removed": removed,
+        "objects": 0,
+        "stale_objects_removed": 0,
         "envelope": envelope_check,
-        "scene_check": _envelope_scene_check(env, surface),
+        "scene_check": _envelope_scene_check(env, surface) if detail == "full" else None,
     }
+    return report, built
 
 
 def _mill(scene, objects, cutters: dict, solver: str) -> dict:
@@ -502,15 +520,26 @@ def _mesh_intersections(objects) -> dict:
     return found
 
 
-def _build_room_timber(scene, design: dict, room: dict, tags: dict, built: list) -> dict:
-    """Write a room's primary members and return what was checked: source geometry, scene geometry, clearances."""
-    members = build_timber(room, design["timber"])
+def _build_group_timber(scene, design: dict, group: dict, built: dict, detail: str = "full") -> dict:
+    """Write the primary members of a group of joined rooms (or of one room on its own) and return what was checked.
+
+    The members are jointed, milled and checked against each other as one set, since joined
+    rooms share an arch and the piers it stands on. Each object is tagged with its own room and
+    added to that room's list in `built`.
+    """
+    members, room_of = group["members"], group["room_of"]
+    by_room = {room_id: sum(1 for m in members if room_of[m.id] == room_id) for room_id in group["rooms"]}
+    if detail == "draft":  # every member swept from its centreline; no joints cut, nothing checked
+        for m in members:
+            objects = build_member(scene, m, design["timber"]["sampling"], {"bower_room": room_of[m.id]}, (), checks=False)["objects"]
+            built[room_of[m.id]] += [bpy.data.objects[objects["timber"]], bpy.data.objects[objects["centreline"]]]
+        return {"rooms": list(group["rooms"]), "members": len(members), "members_by_room": by_room, "draft": True}
     joints, notches, cutters = find_joints(members, design["timber"])
-    reports = [build_member(scene, m, design["timber"]["sampling"], tags, notches.get(m.id, ())) for m in members]
+    reports = [build_member(scene, m, design["timber"]["sampling"], {"bower_room": room_of[m.id]}, notches.get(m.id, ())) for m in members]
     meshes = [bpy.data.objects[r["objects"]["timber"]] for r in reports]
     milled = _mill(scene, meshes, cutters, design["timber"].get("joints", {}).get("solver", "EXACT")) if cutters else None
-    built.extend(meshes)
-    built.extend(bpy.data.objects[r["objects"]["centreline"]] for r in reports)
+    for m, r in zip(members, reports):
+        built[room_of[m.id]] += [bpy.data.objects[r["objects"]["timber"]], bpy.data.objects[r["objects"]["centreline"]]]
     families = {}
     for m, r in zip(members, reports):
         f = families.setdefault(m.family, {"members": 0, "length_m": 0.0, "min_bend_radius_m": None})
@@ -520,14 +549,20 @@ def _build_room_timber(scene, design: dict, room: dict, tags: dict, built: list)
         if radius is not None and (f["min_bend_radius_m"] is None or radius < f["min_bend_radius_m"]):
             f["min_bend_radius_m"] = radius
     estimate = clearances(members)
-    # the joints as points, for finding them in the scene: one vertex each, tagged with its kind
+    # the joints as points, for finding them in the scene: one vertex each, tagged with its kind.
+    # A joint between two rooms is listed with the room of the first member it names.
     kinds = sorted({j.kind for j in joints})
-    points = bpy.data.meshes.new(f"{room['id']}.joints")
-    points.from_pydata([j.at_m for j in joints], [], [])
-    points.attributes.new("bower_joint_kind", "INT", "POINT").data.foreach_set("value", [kinds.index(j.kind) for j in joints])
-    built.append(_place(f"JT_{room['id']}", points, _collection(scene, DIAGNOSTICS), {**tags, "bower_kind": "joints", "bower_joint_kinds": ",".join(kinds)}))
+    for room_id in group["rooms"]:
+        mine = [j for j in joints if room_of[j.members[0]] == room_id]
+        points = bpy.data.meshes.new(f"{room_id}.joints")
+        points.from_pydata([j.at_m for j in mine], [], [])
+        points.attributes.new("bower_joint_kind", "INT", "POINT").data.foreach_set("value", [kinds.index(j.kind) for j in mine])
+        built[room_id].append(_place(f"JT_{room_id}", points, _collection(scene, DIAGNOSTICS), {"bower_room": room_id, "bower_kind": "joints", "bower_joint_kinds": ",".join(kinds)}))
     return {
+        "rooms": list(group["rooms"]),
         "members": len(members),
+        "members_by_room": by_room,
+        "draft": False,
         "joints": joint_summary(joints),
         "lap_notches_cut": sum(len(v) for v in notches.values()),
         "milled": milled,
@@ -551,7 +586,8 @@ def read_dragged_handles(design: dict) -> tuple[dict, list]:
     moved = {}
     for obj in bpy.data.objects:
         if obj.get("bower_kind") == "handle" and (obj.location - Vector(obj["bower_placed_at"])).length > 1e-5:
-            moved.setdefault(obj["bower_handle"], []).append((obj["bower_id"], tuple(obj.location)))
+            # to the millimetre: Blender holds locations in single precision, and the design should not inherit the noise
+            moved.setdefault(obj["bower_handle"], []).append((obj["bower_id"], tuple(round(c, 3) for c in obj.location)))
     changes = []
     for element_id, p in sorted(moved.get("pier", [])):
         design, change = topology.move_pier(design, element_id, p[:2])
@@ -637,10 +673,42 @@ def render_views(scene, design: dict, out_dir, prefix: str = "", only=None, size
     return paths
 
 
-def build_design(scene, design: dict) -> dict:
-    """Rebuild every generated object for the design: rooms, context and view cameras."""
+def build_design(scene, design: dict, detail: str = "full") -> dict:
+    """Rebuild every generated object for the design: rooms, context and view cameras.
+
+    `detail` trades completeness for speed, for working on a design interactively:
+        "outline"  handles and boundary curves only (arches, crown ring, ridges); a fraction of a second
+        "draft"    everything, the timber swept from its centrelines with no joints cut and nothing checked; seconds
+        "full"     everything, joints cut as the design says and every check run (the default)
+    """
+    if detail not in ("outline", "draft", "full"):
+        raise ValueError(f"detail {detail!r} is not outline, draft or full")
     topology.validate(design)
-    report = {"rooms": [build_room(scene, design, room) for room in design["rooms"]]}
+    rooms = {room["id"]: build_room(scene, design, room, detail) for room in design["rooms"]}
+    if detail == "outline":  # handles and boundary curves only: the envelope and the timber are left as they were
+        for room_id, (_, objects) in rooms.items():
+            for kind in ("guide", "handle", "control_polygon"):
+                _remove_stale({o.name for o in objects}, bower_room=room_id, bower_kind=kind)
+        bpy.context.view_layer.update()
+        return {"detail": detail, "rooms": [room_report for room_report, _ in rooms.values()]}
+    if "timber" in design:
+        built = {room_id: objects for room_id, (_, objects) in rooms.items()}
+        for group in build_design_timber(design):  # rooms that are joined are built, jointed and checked together
+            timber = _build_group_timber(scene, design, group, built, detail)
+            for room_id in group["rooms"]:
+                rooms[room_id][0]["timber"] = timber
+    for room_id, (room_report, objects) in rooms.items():
+        room_report["objects"] = len(objects)
+        room_report["stale_objects_removed"] = _remove_stale({o.name for o in objects}, bower_room=room_id)
+    # objects of rooms that are no longer in the design
+    gone = [o for o in bpy.data.objects if o.get("bower_generated") and o.get("bower_room") and o["bower_room"] not in rooms]
+    removed_rooms = sorted({o["bower_room"] for o in gone})
+    orphaned = {o.data for o in gone if o.data is not None}
+    for obj in gone:
+        bpy.data.objects.remove(obj, do_unlink=True)
+    if orphaned:
+        bpy.data.batch_remove([d for d in orphaned if d.users == 0])
+    report = {"detail": detail, "rooms": [room_report for room_report, _ in rooms.values()], "rooms_removed_from_scene": removed_rooms}
     build_context(scene, design)
     build_views(scene, design)
     bpy.context.view_layer.update()

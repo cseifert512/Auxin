@@ -52,18 +52,27 @@ member, are set out in `bower/joints.py`.
 Rib IDs follow the bearing at which a rib reaches the top ring, so they do not
 change when bays are added or removed.
 
+Joined rooms. `build_design_timber` builds every room of a design. Two rooms
+that are joined share one arch: the room whose bay the connection names first
+builds it, the lattice of both rooms is housed into it, one room from either
+side, and each room keeps its own hoops inside it. At a pier the two rooms
+share, three arch legs meet and are mitred into one trunk, and each room's
+legs stand in its own angle between them. A room may carry its own
+`timber` settings for its lattice, hoops and piers (`room_timber`).
+
 Pure Python (no bpy). Sections are provisional concept values: nothing here is a
 structural or fabrication check.
 """
 from __future__ import annotations
 
+import copy
 import math
 from collections import defaultdict
 
 from .centreline import Anchor, BezierPath, arc_path, cross, dot, mul, norm, plane_path, sub, unit
-from .envelope import Roof, arch_profile, closed_spline, spline
+from .envelope import Roof, arch_profile, closed_spline, cubic_at, spline
 from .member import Member
-from .topology import DesignError
+from .topology import DesignError, find, joined_rooms, portals, same_piers
 
 UP = (0.0, 0.0, 1.0)
 LATTICE = ("rib", "fill", "fine", "hoop", "ring")  # families that are notched where they cross each other
@@ -82,14 +91,22 @@ class Build:
         self.knee = timber.get("piers", {}).get("knee_drop_m")  # None: each leg's knee matches its first run in the roof
         self.rim_inset = 0.0  # how far short of an arch's plane a rib stops: set once the arches are known
         self.rim_band = 0.0  # how far inside the arches their hoops reach
+        # where this room is joined to others (see build_design_timber)
+        self.portals = set()  # its bays that are shared with another room
+        self.lent = set()  # those of them whose arch the other room builds
+        self.pier_names = {}  # pier ID -> the ID a pier shared between rooms goes by
         # the widest circle about the crown's axis that stays inside every arch
-        self.clear_radius = min(self.roof.rim(2.0 * math.pi * i / 360)[0] for i in range(360))
+        self.clear_radius = min(self.roof.rim(self.roof.period * i / 360)[0] for i in range(360))
 
     def member(self, member_id: str, family: str, parent: str, path: BezierPath, nodes, end_cut=None, start_cut=None) -> None:
         if family not in self.section:
             raise DesignError(f"timber.sections_m has no section for the family {family!r}")
         width, depth = self.section[family]
         self.members.append(Member(member_id, "primary", width, depth, path, parent, family, tuple(nodes), end_cut, start_cut))
+
+    def mitre_node(self, pier_id: str) -> str:
+        """The node where the arch legs at a pier are mitred together: one node for a pier that rooms share."""
+        return self.pier_names.get(pier_id, pier_id) + ".mitre"
 
     def in_roof(self, samples) -> BezierPath:
         """A path through (point, normal) samples of the roof, with the section's depth square to the surface."""
@@ -182,6 +199,7 @@ class SpiralLattice:
                               phases   where its ribs fall between one top-ring position (0) and the next (1)
                               from     "top", {"lantern": 0..1} part-way up the lantern, or {"radius_m": r} on the canopy
                               gathers  false leaves out the ribs that would be drawn into a pier (default true)
+                              gather_m this tier's own gather distance (default: the lattice's gather_m)
                               ring_family  the family (so the section) of the ring at its head (default "ring")
         ring_rows           rows of crossings below the top ring that get a ring through them (may be fractional)
 
@@ -196,15 +214,21 @@ class SpiralLattice:
         self.lean_top = math.radians(cfg["lean_top_deg"]) if cfg.get("lean_top_deg") is not None else None
         self.legs = b.timber.get("piers", {}).get("legs", True)
         self.ribs, self.top_heads, self.rings = [], [], []
-        wound, swing = roof.winding(self.lean, self.lean_top), roof._swing(self.lean, lean_rim)
-        present = []  # (phases, half the angle between a pair at the top ring) of the tiers laid so far
+        around = roof.spine.perimeter(roof.top_radius)  # ribs reach the top ring evenly spaced along it
 
-        def clearest(candidates, turned, radius_at, phases):
+        def traced(family: str, j: int, phase: float, sense: float, apart: float, top: float = 1.0, radius=None, gather=None):
+            arrival = roof.spine.along(around * (j + phase) / self.count, roof.top_radius)
+            if apart:  # the two ribs of a pair stand this far either side of their shared point, at their inner edges
+                arrival = roof.spine.shift(arrival, -sense * apart, roof.top_radius - b.section[family][1] / 2.0)
+            return roof.trace(arrival, sense, self.lean, cfg["sample_spacing_m"], b.rim_inset, cfg["gather_m"] if gather is None else gather, top, radius, lean_rim, self.lean_top)
+
+        def clearest(candidates, bearing_at, distance_at, courses):
             """Of the candidate positions for a ring, the one where the members crossing it or stopping at it are furthest apart."""
 
             def tightest(x) -> float:
-                bearings = sorted((2.0 * math.pi * (j + phase) / self.count - sense * (apart + turned(x))) % (2.0 * math.pi) for tier_phases, apart in present + [(phases, 0.0)] for phase in tier_phases for j in range(self.count) for sense in (1.0, -1.0))
-                return min((b2 - b1) % (2.0 * math.pi) for b1, b2 in zip(bearings, bearings[1:] + bearings[:1])) * radius_at(x)
+                distance = distance_at(x)
+                at = sorted(bearing_at(course, x) % roof.period for course in courses)
+                return min(roof.spine.arc(one, other, distance) for one, other in zip(at, at[1:] + at[:1]))
 
             return max(candidates, key=tightest)
 
@@ -212,43 +236,44 @@ class SpiralLattice:
             family, phases, start = tier["family"], tier.get("phases", [0.0]), tier.get("from", "top")
             if family not in LATTICE:
                 raise DesignError(f"lattice tier family {family!r} is not one of {LATTICE}")
-            top, radius, apart = 1.0, None, 0.0
+            each = [(j, p, phase, sense, hand) for j in range(self.count) for p, phase in enumerate(phases) for sense, hand in ((1.0, "ccw"), (-1.0, "cw"))]
+            reach = tier.get("gather_m")  # this tier's own distance for being drawn into a pier, if it has one
+            top, radius = 1.0, None
             if start == "top":
+                apart = 0.0
                 if cfg.get("pair_gap_m") is not None:
-                    # Half the angle between the two ribs of a pair at the top ring: enough for the gap to
-                    # hold at their inner edges, which stand nearer the crown's axis than their centrelines.
-                    width, depth = b.section[family]
-                    apart = (width / math.cos(self.lean_top or self.lean) + cfg["pair_gap_m"]) / (2.0 * (roof.top_radius - depth / 2.0))
-            elif "lantern" in start:
-                # The ring at the head of the tier is nudged to where it crosses the ribs clear of their own crossings.
-                near = [min(max(start["lantern"] + 0.1 * (k - 20) / 20, 0.05), 0.95) for k in range(41)]
-                top = clearest(near, wound, lambda lam: math.hypot(roof.on_lantern(0.0, lam)[0][0] - roof.centre[0], roof.on_lantern(0.0, lam)[0][1] - roof.centre[1]), phases)
+                    apart = (b.section[family][0] / math.cos(self.lean_top or self.lean) + cfg["pair_gap_m"]) / 2.0
+                courses = [traced(family, j, phase, sense, apart, gather=reach) for j, _, phase, sense, _ in each]
             else:
-                widest = b.clear_radius - max(0.8, b.rim_band + 0.35)  # stay inside the arches and clear of their hoops
-                if widest < roof.base_radius + 0.3:
-                    widest = b.clear_radius - 0.8  # a tight room: keep the tier, and let its ring run near the hoops
-                radius = min(start["radius_m"], widest)
-                if radius < roof.base_radius + 0.3:
-                    continue  # the room is too tight here for a tier that starts on the canopy
-                near = [min(max(radius + 0.3 * (k - 20) / 20, roof.base_radius + 0.3), widest) for k in range(41)]
-                radius = clearest(near, lambda r: wound(0.0) + swing(r), lambda r: r, phases)
-            present.append((phases, apart))
+                # Each rib's whole course is traced first, so the ring at the head of the tier can be put
+                # where it crosses the ribs clear of their own crossings.
+                whole = [traced(family, j, phase, sense, 0.0, gather=reach) for j, _, phase, sense, _ in each]
+                laid = [course for _, _, _, course, _ in self.ribs]
+                if "lantern" in start:
+                    near = [min(max(start["lantern"] + 0.1 * (k - 20) / 20, 0.05), 0.95) for k in range(41)]
+                    top = clearest(near, lambda course, lam: course.up(lam), lambda lam: roof.base_radius - cubic_at(roof.lantern, lam)[0][0], laid + whole)
+                else:
+                    widest = b.clear_radius - max(0.8, b.rim_band + 0.35)  # stay inside the arches and clear of their hoops
+                    if widest < roof.base_radius + 0.3:
+                        widest = b.clear_radius - 0.8  # a tight room: keep the tier, and let its ring run near the hoops
+                    radius = min(start["radius_m"], widest)
+                    if radius < roof.base_radius + 0.3:
+                        continue  # the room is too tight here for a tier that starts on the canopy
+                    near = [min(max(radius + 0.3 * (k - 20) / 20, roof.base_radius + 0.3), widest) for k in range(41)]
+                    radius = clearest(near, lambda course, r: course.at(r)[0], lambda r: r, laid + whole)
+                courses = [traced(family, j, phase, sense, 0.0, top, radius, gather=reach) for j, _, phase, sense, _ in each]
             heads = []
-            for j in range(self.count):
-                for p, phase in enumerate(phases):
-                    n = j * len(phases) + p
-                    for sense, hand in ((1.0, "ccw"), (-1.0, "cw")):
-                        arrival = 2.0 * math.pi * (j + phase) / self.count - sense * apart
-                        course = roof.trace(arrival, sense, self.lean, cfg["sample_spacing_m"], b.rim_inset, cfg["gather_m"], top, radius, lean_rim, self.lean_top)
-                        if course.pier and not tier.get("gathers", True):
-                            continue
-                        rib_id = f"{rid}.{family}.{hand}.{n:02d}"
-                        if start != "top":
-                            head = rib_id + ".head"
-                        else:  # the two hands share a point on the top ring
-                            head = f"{rid}.top.{n:02d}" if family == "rib" else f"{rid}.top.{family}.{n:02d}"
-                        heads.append(head)
-                        self.ribs.append((rib_id, family, head, course, start == "top"))
+            for (j, p, phase, sense, hand), course in zip(each, courses):
+                if course.pier and not tier.get("gathers", True):
+                    continue
+                n = j * len(phases) + p
+                rib_id = f"{rid}.{family}.{hand}.{n:02d}"
+                if start != "top":
+                    head = rib_id + ".head"
+                else:  # the two hands share a point on the top ring
+                    head = f"{rid}.top.{n:02d}" if family == "rib" else f"{rid}.top.{family}.{n:02d}"
+                heads.append(head)
+                self.ribs.append((rib_id, family, head, course, start == "top"))
             if start == "top":
                 self.top_heads += heads
             elif heads:
@@ -283,7 +308,10 @@ class SpiralLattice:
                 if not course.pier:  # cut to the arch's plane and housed into it
                     cut = mul(_inward(roof, half), -1.0)
             # a rib that reaches the top is cut level there, to seat in the crown ring
-            b.member(rib_id, family, rid, b.in_roof(samples), (foot, head), end_cut=UP if to_top else None, start_cut=cut)
+            if to_top:  # cut square to the roof's section where it ends: level under an upright lantern
+                top = samples[-1][0]
+                top_cut = roof.top_direction(roof.spine.locate(top)[0])
+            b.member(rib_id, family, rid, b.in_roof(samples), (foot, head), end_cut=top_cut if to_top else None, start_cut=cut)
 
         if self.top_heads:
             self._crown(tuple(dict.fromkeys(self.top_heads)))
@@ -292,7 +320,7 @@ class SpiralLattice:
         # Opposite-handed ribs cross wherever they have each turned a whole number of half-spacings
         # from the top ring. Rings can be run through chosen rows of crossings, or between rows.
         wound = roof.winding(self.lean, self.lean_top)
-        for row in self.cfg.get("ring_rows", []) if self.top_heads else []:
+        for row in self.cfg.get("ring_rows", []) if self.top_heads and not roof.spine.length else []:  # rows are worked out for a point crown only
             lo, hi = 0.0, 1.0
             for _ in range(50):
                 mid = 0.5 * (lo + hi)
@@ -344,12 +372,28 @@ class SpiralLattice:
         self.b.member(ring_id, family, self.b.rid, closed_spline([p for p, _ in samples], [mul(n, -1.0) for _, n in samples]), nodes)
 
     def _crown(self, nodes: tuple) -> None:
-        """The crown ring: a level collar seated on the heads of the ribs that reach the top."""
+        """The crown ring: a collar just past the heads of the ribs that reach the top, which are let into it.
+
+        It lies on from the rib heads in the direction the roof's section ends: above them on an
+        upright lantern, inside them round a flat oculus. Where the section comes down to the
+        floor there is no ring: the ribs stand on the floor as a trunk.
+        """
         b, roof = self.b, self.b.roof
+        inward, upward = roof.top_slope()
+        if upward < -0.5:
+            return
         family = "crown" if "crown" in b.section else "ring"
-        z = roof.top_z + b.section[family][1] / 2.0 - b.timber.get("crown", {}).get("seat_m", 0.03)
-        circle = arc_path((roof.centre[0] + roof.top_radius, roof.centre[1], z), (0.0, 1.0, 0.0), (-1.0, 0.0, 0.0), roof.top_radius, 2.0 * math.pi * roof.top_radius)
-        b.member(f"{b.rid}.ring.top", family, b.rid, BezierPath(Anchor(a.co, a.handle_left, a.handle_right, UP) for a in circle.anchors), nodes)
+        onward = b.section[family][1] / 2.0 - b.timber.get("crown", {}).get("seat_m", 0.03)
+        radius, z = roof.top_radius - inward * onward, roof.top_z + upward * onward
+        if radius < 0.15:
+            return  # no room for a ring inside the rib heads
+        if roof.spine.length:  # round a spine the ring is drawn out with it: two straight sides and two half circles
+            bearings = roof.top_ring(radius, 0.25)
+            path = closed_spline([(*roof._at(bearing, radius), z) for bearing in bearings], [roof.top_direction(bearing) for bearing in bearings])
+        else:
+            circle = arc_path((roof.centre[0] + radius, roof.centre[1], z), (0.0, 1.0, 0.0), (-1.0, 0.0, 0.0), radius, 2.0 * math.pi * radius)
+            path = BezierPath(Anchor(a.co, a.handle_left, a.handle_right, roof.top_direction(roof.spine.locate(a.co)[0])) for a in circle.anchors)
+        b.member(f"{b.rid}.ring.top", family, b.rid, path, nodes)
 
 
 # --- arches -------------------------------------------------------------------------------
@@ -392,11 +436,13 @@ class EdgeArches:
         shaft = b.shape["pier_height_m"]
         for half in roof.halves:
             bid, side = half.bay, half.side
+            if bid in b.lent:
+                continue  # the arch of this bay is shared, and the room it is joined to builds it
             leg = (half.foot[0] + half.direction[0] * roof.pier_radius, half.foot[1] + half.direction[1] * roof.pier_radius, b.z0)
             arch_id = f"{bid}.arch.{side}"
             path = plane_path(leg, half.direction, [_shaft(shaft), tuple((d, z + shaft) for d, z in half.profile)])
-            # The two legs at a pier are mitred into one trunk; the two halves of an arch are mitred at the apex.
-            b.member(arch_id, "arch", bid, path, (arch_id + ".foot", half.pier + ".mitre", *b.landings[(bid, side)], bid + ".apex"), half.direction)
+            # The legs at a pier are mitred into one trunk; the two halves of an arch are mitred at the apex.
+            b.member(arch_id, "arch", bid, path, (arch_id + ".foot", b.mitre_node(half.pier), *b.landings[(bid, side)], bid + ".apex"), half.direction)
         if not self.offsets:
             return
         bays = defaultdict(list)
@@ -447,12 +493,13 @@ class EdgeArches:
         return max((offset + nudge * (k - 6) / 6 for k in range(13)), key=lambda d: (round(min(abs(inside - d) for inside in mine), 3), -abs(d - offset)))
 
     def _meets_ridge(self, half, offset: float) -> tuple:
-        """Where the line `offset` inside an arch half crosses the vertical plane through the crown's axis and the apex."""
+        """Where the line `offset` inside an arch half crosses the bay's ridge: the meridian from the crown out through the apex."""
         roof = self.b.roof
         n, (dx, dy) = _inward(roof, half), half.direction[:2]
-        wx, wy = half.apex[0] - roof.centre[0], half.apex[1] - roof.centre[1]
+        crown, _ = roof.spine.frame(roof.spine.locate(half.apex)[0])
+        wx, wy = half.apex[0] - crown[0], half.apex[1] - crown[1]
         ox, oy = half.foot[0] + n[0] * offset, half.foot[1] + n[1] * offset
-        rx, ry = roof.centre[0] - ox, roof.centre[1] - oy
+        rx, ry = crown[0] - ox, crown[1] - oy
         a = (ry * wx - rx * wy) / (dy * wx - dx * wy)
         return (ox + dx * a, oy + dy * a)
 
@@ -515,7 +562,10 @@ class PairedArches:
             rise = half.apex[2] - b.z0 - shaft
             inner_id = f"{bid}.inner.{side}"
             inner = [_shaft(shaft), tuple((d, z + shaft) for d, z in half.profile)]
-            b.member(inner_id, "inner", bid, plane_path((leg[0], leg[1], b.z0), half.direction, inner), (inner_id + ".foot", half.pier + ".mitre", *b.landings[(bid, side)], bid + ".inner.apex"), half.direction)
+            if bid not in b.lent:
+                b.member(inner_id, "inner", bid, plane_path((leg[0], leg[1], b.z0), half.direction, inner), (inner_id + ".foot", b.mitre_node(half.pier), *b.landings[(bid, side)], bid + ".inner.apex"), half.direction)
+            if bid in b.portals:
+                continue  # no arch stands proud of a bay that opens into another room
             proud = (leg[0] - n[0] * reveal, leg[1] - n[1] * reveal, b.z0)
             outer = [_shaft(shaft), tuple((d, z + shaft) for d, z in arch_profile(half.span - roof.pier_radius, rise + crest, b.shape))]
             b.member(f"{bid}.arch.{side}", "arch", bid, plane_path(proud, half.direction, outer), (f"{bid}.arch.{side}.foot", bid + ".apex"), half.direction)
@@ -540,8 +590,8 @@ ARCHES = {"edge": EdgeArches, "paired": PairedArches, "none": Nothing}
 LATTICES = {"spiral": SpiralLattice, "none": Nothing}
 
 
-def build_timber(room: dict, timber: dict) -> list[Member]:
-    """The primary members of one room, in a fixed order."""
+def _stage(room: dict, timber: dict):
+    """One room's timber as far as its lattice: the build and the arch generator, whose members are still to come."""
     for key, registry in (("lattice", LATTICES), ("arches", ARCHES)):
         if timber[key]["type"] not in registry:
             raise DesignError(f"timber.{key}.type {timber[key]['type']!r} is not one of {sorted(registry)}")
@@ -552,8 +602,71 @@ def build_timber(room: dict, timber: dict) -> list[Member]:
     lattice = LATTICES[timber["lattice"]["type"]](b, timber["lattice"])
     b.place = pier_places(b, lattice.claims() + arches.claims(), arches.rim_width)
     lattice.members()  # first: the arches need to know what lands on them
+    return b, arches
+
+
+def build_timber(room: dict, timber: dict) -> list[Member]:
+    """The primary members of one room on its own, in a fixed order."""
+    b, arches = _stage(room, timber)
     arches.members()
     return b.members
+
+
+ROOM_TIMBER_KEYS = ("lattice", "arches", "piers")  # what a room may set for itself; sections, joints and sampling belong to the design
+
+
+def room_timber(design: dict, room: dict) -> dict:
+    """The timber settings one room is built with: the design's, with the room's own `timber` laid over them.
+
+    A room sets values inside `lattice`, `arches` (its hoops) and `piers`; a value it gives
+    replaces the design's whole value for that name (so its `lattice.tiers` is its own list).
+    """
+    own = room.get("timber") or {}
+    unknown = sorted(set(own) - set(ROOM_TIMBER_KEYS)) + (["arches.type"] if "type" in own.get("arches", {}) else [])
+    if unknown:
+        raise DesignError(f"{room['id']}: a room's own timber settings are its {', '.join(ROOM_TIMBER_KEYS)}, not {', '.join(unknown)}")
+    merged = copy.deepcopy(design["timber"])
+    for key, value in own.items():
+        merged[key] = {**merged.get(key, {}), **copy.deepcopy(value)}
+    return merged
+
+
+def build_design_timber(design: dict) -> list[dict]:
+    """The primary members of every room, in groups of rooms that are joined to each other.
+
+    Each group is {"rooms": [room IDs], "members": [...], "room_of": {member ID: room ID}}: a
+    group's members are jointed with each other, so joints and clearances are found group by
+    group. A room joined to nothing is a group of one, built exactly as `build_timber` builds it.
+    """
+    stands_for, joined = same_piers(design), portals(design)
+    stages = {}
+    for room in design["rooms"]:
+        b, arches = _stage(room, room_timber(design, room))
+        b.pier_names = stands_for
+        stages[room["id"]] = (b, arches)
+    for room in design["rooms"]:
+        b = stages[room["id"]][0]
+        for bay in room["bays"]:
+            if bay["id"] not in joined:
+                continue
+            _, other_id, owns = joined[bay["id"]]
+            b.portals.add(bay["id"])
+            if owns:  # what the other room's lattice lands on the shared arch is housed into it as well
+                other = stages[find(design, "bays", other_id)[0]["id"]][0]
+                for side, opposite in (("L", "R"), ("R", "L")):  # the two rings run opposite ways along the arch
+                    b.landings[(bay["id"], side)] += other.landings[(other_id, opposite)]
+            else:
+                b.lent.add(bay["id"])
+    groups = []
+    for rooms in joined_rooms(design):
+        members, room_of = [], {}
+        for room_id in rooms:
+            b, arches = stages[room_id]
+            arches.members()
+            members += b.members
+            room_of.update({m.id: room_id for m in b.members})
+        groups.append({"rooms": rooms, "members": members, "room_of": room_of})
+    return groups
 
 
 # --- diagnostics -----------------------------------------------------------------------

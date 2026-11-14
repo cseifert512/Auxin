@@ -1,0 +1,607 @@
+{
+  "design": "C:\\BOWER\\bower-blender\\design.json",
+  "forms": [
+    {
+      "name": "1_flared_basket",
+      "form": "the crown leans back out at the top, as a flared basket: nearest the reference",
+      "changes": {
+        "crown": {
+          "height_m": 7.4,
+          "radius_m": 1.5,
+          "section": {
+            "top_slope_deg": 118.0
+          }
+        }
+      },
+      "bays": 8,
+      "members": 108,
+      "families": {
+        "rib": {
+          "members": 24,
+          "length_m": 222.51,
+          "min_bend_radius_m": 0.5283
+        },
+        "fill": {
+          "members": 24,
+          "length_m": 137.01,
+          "min_bend_radius_m": 0.5997
+        },
+        "fine": {
+          "members": 25,
+          "length_m": 60.48,
+          "min_bend_radius_m": 0.4514
+        },
+        "crown": {
+          "members": 1,
+          "length_m": 9.48,
+          "min_bend_radius_m": 1.5086
+        },
+        "ring": {
+          "members": 2,
+          "length_m": 39.77,
+          "min_bend_radius_m": 2.5801
+        },
+        "arch": {
+          "members": 16,
+          "length_m": 88.62,
+          "min_bend_radius_m": 2.1906
+        },
+        "hoop": {
+          "members": 16,
+          "length_m": 178.9,
+          "min_bend_radius_m": 0.3885
+        }
+      },
+      "total_length_m": 736.9,
+      "joints": {
+        "joints": 590,
+        "by_kind": {
+          "base": 72,
+          "cross_lap": 362,
+          "crown_seat": 24,
+          "housing": 98,
+          "mitre": 8,
+          "paired_heads": 12,
+          "pier_mitre": 8,
+          "scarf": 6
+        },
+        "third_depth_laps": 54,
+        "to_review": 0,
+        "laps_left_uncut": 0,
+        "laps_whose_walls_must_follow_a_turn": 0
+      },
+      "collisions_estimated": [],
+      "images": [
+        "form_1_flared_basket_exterior.png",
+        "form_1_flared_basket_overhead.png"
+      ]
+    },
+    {
+      "name": "2_dome",
+      "form": "the crown rises steeply from the canopy and levels off at a small oculus: a dome",
+      "changes": {
+        "crown": {
+          "height_m": 7.4,
+          "radius_m": 0.9,
+          "section": {
+            "base_slope_deg": 38.0,
+            "top_slope_deg": 8.0
+          }
+        }
+      },
+      "bays": 8,
+      "members": 106,
+      "families": {
+        "rib": {
+          "members": 24,
+          "length_m": 223.02,
+          "min_bend_radius_m": 0.1996
+        },
+        "fill": {
+          "members": 24,
+          "length_m": 144.08,
+          "min_bend_radius_m": 0.2192
+        },
+        "fine": {
+          "members": 23,
+          "length_m": 54.17,
+          "min_bend_radius_m": 0.4646
+        },
+        "crown": {
+          "members": 1,
+          "length_m": 5.53,
+          "min_bend_radius_m": 0.8797
+        },
+        "ring": {
+          "members": 2,
+          "length_m": 38.5,
+          "min_bend_radius_m": 2.3316
+        },
+        "arch": {
+          "members": 16,
+          "length_m": 88.62,
+          "min_bend_radius_m": 2.1906
+        },
+        "hoop": {
+          "members": 16,
+          "length_m": 179.05,
+          "min_bend_radius_m": 0.3424
+        }
+      },
+      "total_length_m": 733.0,
+      "joints": {
+        "joints": 585,
+        "by_kind": {
+          "alongside": 1,
+          "base": 70,
+          "cross_lap": 360,
+          "crown_seat": 24,
+          "housing": 96,
+          "mitre": 8,
+          "paired_heads": 12,
+          "pier_mitre": 8,
+          "scarf": 6
+        },
+        "third_depth_laps": 71,
+        "to_review": 1,
+        "laps_left_uncut": 0,
+        "laps_whose_walls_must_follow_a_turn": 0
+      },
+      "collisions_estimated": [],
+      "images": [
+        "form_2_dome_exterior.png",
+        "form_2_dome_overhead.png"
+      ]
+    },
+    {
+      "name": "3_open_oculus",
+      "form": "no lantern: the canopy runs level to a ring round an open oculus",
+      "changes": {
+        "crown": {
+          "height_m": 4.8,
+          "radius_m": 1.7,
+          "section": {
+            "top_slope_deg": 0.0
+          }
+        }
+      },
+      "bays": 8,
+      "members": 112,
+      "families": {
+        "rib": {
+          "members": 24,
+          "length_m": 157.43,
+          "min_bend_radius_m": 0.6774
+        },
+        "fill": {
+          "members": 24,
+          "length_m": 141.93,
+          "min_bend_radius_m": 0.7114
+        },
+        "fine": {
+          "members": 29,
+          "length_m": 65.41,
+          "min_bend_radius_m": 0.5141
+        },
+        "crown": {
+          "members": 1,
+          "length_m": 10.56,
+          "min_bend_radius_m": 1.6791
+        },
+        "ring": {
+          "members": 2,
+          "length_m": 40.3,
+          "min_bend_radius_m": 2.5095
+        },
+        "arch": {
+          "members": 16,
+          "length_m": 88.62,
+          "min_bend_radius_m": 2.1906
+        },
+        "hoop": {
+          "members": 16,
+          "length_m": 178.98,
+          "min_bend_radius_m": 0.5636
+        }
+      },
+      "total_length_m": 683.2,
+      "joints": {
+        "joints": 567,
+        "by_kind": {
+          "base": 72,
+          "cross_lap": 331,
+          "crown_seat": 24,
+          "housing": 106,
+          "mitre": 8,
+          "paired_heads": 12,
+          "pier_mitre": 8,
+          "scarf": 6
+        },
+        "third_depth_laps": 48,
+        "to_review": 0,
+        "laps_left_uncut": 0,
+        "laps_whose_walls_must_follow_a_turn": 0
+      },
+      "collisions_estimated": [],
+      "images": [
+        "form_3_open_oculus_exterior.png",
+        "form_3_open_oculus_overhead.png"
+      ]
+    },
+    {
+      "name": "4_trunk",
+      "form": "the crown comes down to the floor at the centre: the ribs gather into a trunk",
+      "changes": {
+        "crown": {
+          "height_m": 0.0,
+          "radius_m": 0.6,
+          "section": {
+            "top_slope_deg": -90.0
+          }
+        }
+      },
+      "bays": 8,
+      "members": 105,
+      "families": {
+        "rib": {
+          "members": 24,
+          "length_m": 288.61,
+          "min_bend_radius_m": 0.6897
+        },
+        "fill": {
+          "members": 24,
+          "length_m": 130.04,
+          "min_bend_radius_m": 0.612
+        },
+        "fine": {
+          "members": 23,
+          "length_m": 58.43,
+          "min_bend_radius_m": 0.6151
+        },
+        "ring": {
+          "members": 2,
+          "length_m": 37.94,
+          "min_bend_radius_m": 2.3614
+        },
+        "arch": {
+          "members": 16,
+          "length_m": 88.62,
+          "min_bend_radius_m": 2.1906
+        },
+        "hoop": {
+          "members": 16,
+          "length_m": 179.61,
+          "min_bend_radius_m": 0.3078
+        }
+      },
+      "total_length_m": 783.3,
+      "joints": {
+        "joints": 678,
+        "by_kind": {
+          "alongside": 8,
+          "base": 94,
+          "cross_lap": 434,
+          "housing": 96,
+          "mitre": 8,
+          "paired_heads": 12,
+          "pier_mitre": 8,
+          "scarf": 18
+        },
+        "third_depth_laps": 77,
+        "to_review": 8,
+        "laps_left_uncut": 0,
+        "laps_whose_walls_must_follow_a_turn": 0
+      },
+      "collisions_estimated": [],
+      "images": [
+        "form_4_trunk_exterior.png",
+        "form_4_trunk_overhead.png"
+      ]
+    },
+    {
+      "name": "5_oval",
+      "form": "ten bays on an oval outline, 1.4 times as long as it is wide",
+      "changes": {
+        "layout": {
+          "bays": 10,
+          "bay_weights": null,
+          "outline": {
+            "radius_m": 5.5,
+            "stretch": 1.4,
+            "stretch_bearing_deg": 15.0
+          }
+        }
+      },
+      "bays": 10,
+      "members": 111,
+      "families": {
+        "rib": {
+          "members": 24,
+          "length_m": 203.7,
+          "min_bend_radius_m": 0.4215
+        },
+        "fill": {
+          "members": 24,
+          "length_m": 171.19,
+          "min_bend_radius_m": 0.4314
+        },
+        "fine": {
+          "members": 20,
+          "length_m": 55.82,
+          "min_bend_radius_m": 0.3775
+        },
+        "crown": {
+          "members": 1,
+          "length_m": 6.28,
+          "min_bend_radius_m": 0.9995
+        },
+        "ring": {
+          "members": 2,
+          "length_m": 39.96,
+          "min_bend_radius_m": 2.225
+        },
+        "arch": {
+          "members": 20,
+          "length_m": 106.94,
+          "min_bend_radius_m": 2.2131
+        },
+        "hoop": {
+          "members": 20,
+          "length_m": 216.52,
+          "min_bend_radius_m": 0.3724
+        }
+      },
+      "total_length_m": 800.4,
+      "joints": {
+        "joints": 583,
+        "by_kind": {
+          "base": 86,
+          "cross_lap": 348,
+          "crown_seat": 24,
+          "housing": 86,
+          "mitre": 10,
+          "paired_heads": 12,
+          "pier_mitre": 10,
+          "scarf": 7
+        },
+        "third_depth_laps": 66,
+        "to_review": 0,
+        "laps_left_uncut": 0,
+        "laps_whose_walls_must_follow_a_turn": 0
+      },
+      "collisions_estimated": [],
+      "images": [
+        "form_5_oval_exterior.png",
+        "form_5_oval_overhead.png"
+      ]
+    },
+    {
+      "name": "6_lobed_egg",
+      "form": "seven bays on an egg-shaped outline with four shallow lobes",
+      "changes": {
+        "layout": {
+          "bays": 7,
+          "bay_weights": null,
+          "outline": {
+            "radius_m": 6.1,
+            "taper": 0.12,
+            "lobes": 4,
+            "lobe_depth": 0.05
+          }
+        }
+      },
+      "bays": 7,
+      "members": 104,
+      "families": {
+        "rib": {
+          "members": 24,
+          "length_m": 184.6,
+          "min_bend_radius_m": 0.6759
+        },
+        "fill": {
+          "members": 24,
+          "length_m": 130.0,
+          "min_bend_radius_m": 0.7197
+        },
+        "fine": {
+          "members": 25,
+          "length_m": 63.05,
+          "min_bend_radius_m": 0.4514
+        },
+        "crown": {
+          "members": 1,
+          "length_m": 6.28,
+          "min_bend_radius_m": 0.9995
+        },
+        "ring": {
+          "members": 2,
+          "length_m": 37.56,
+          "min_bend_radius_m": 2.4493
+        },
+        "arch": {
+          "members": 14,
+          "length_m": 80.36,
+          "min_bend_radius_m": 1.6123
+        },
+        "hoop": {
+          "members": 14,
+          "length_m": 161.96,
+          "min_bend_radius_m": 0.6045
+        }
+      },
+      "total_length_m": 663.9,
+      "joints": {
+        "joints": 590,
+        "by_kind": {
+          "base": 61,
+          "cross_lap": 368,
+          "crown_seat": 24,
+          "housing": 103,
+          "mitre": 7,
+          "paired_heads": 12,
+          "pier_mitre": 7,
+          "scarf": 8
+        },
+        "third_depth_laps": 66,
+        "to_review": 0,
+        "laps_left_uncut": 0,
+        "laps_whose_walls_must_follow_a_turn": 0
+      },
+      "collisions_estimated": [],
+      "images": [
+        "form_6_lobed_egg_exterior.png",
+        "form_6_lobed_egg_overhead.png"
+      ]
+    },
+    {
+      "name": "7_long_hall",
+      "form": "the crown drawn out into a spine 6 m long: a hall with two straight sides and two round ends",
+      "changes": {
+        "crown": {
+          "spine_m": [
+            [
+              -2.95,
+              0.1
+            ],
+            [
+              3.05,
+              0.1
+            ]
+          ]
+        },
+        "layout": {
+          "bays": 10,
+          "bay_weights": null,
+          "outline": {
+            "radius_m": 5.6,
+            "first_pier_turn": 0.947
+          }
+        },
+        "timber": {
+          "lattice": {
+            "ribs_per_family": 20
+          }
+        },
+        "views": {
+          "exterior": {
+            "location_m": [
+              1.6,
+              -28.0,
+              1.7
+            ]
+          },
+          "overhead": {
+            "location_m": [
+              15.0,
+              -20.0,
+              17.5
+            ]
+          },
+          "plan": {
+            "ortho_scale_m": 30.0
+          },
+          "elevation": {
+            "ortho_scale_m": 24.0
+          }
+        }
+      },
+      "bays": 10,
+      "members": 164,
+      "families": {
+        "rib": {
+          "members": 40,
+          "length_m": 339.9,
+          "min_bend_radius_m": 0.5885
+        },
+        "fill": {
+          "members": 40,
+          "length_m": 213.03,
+          "min_bend_radius_m": 0.4621
+        },
+        "fine": {
+          "members": 41,
+          "length_m": 92.71,
+          "min_bend_radius_m": 0.568
+        },
+        "crown": {
+          "members": 1,
+          "length_m": 18.28,
+          "min_bend_radius_m": 0.6058
+        },
+        "ring": {
+          "members": 2,
+          "length_m": 58.21,
+          "min_bend_radius_m": 1.2297
+        },
+        "arch": {
+          "members": 20,
+          "length_m": 110.1,
+          "min_bend_radius_m": 2.145
+        },
+        "hoop": {
+          "members": 20,
+          "length_m": 224.07,
+          "min_bend_radius_m": 0.3436
+        }
+      },
+      "total_length_m": 1056.3,
+      "joints": {
+        "joints": 989,
+        "by_kind": {
+          "base": 100,
+          "cross_lap": 639,
+          "crown_seat": 40,
+          "housing": 162,
+          "mitre": 10,
+          "paired_heads": 20,
+          "pier_mitre": 10,
+          "scarf": 8
+        },
+        "third_depth_laps": 102,
+        "to_review": 1,
+        "laps_left_uncut": 0,
+        "laps_whose_walls_must_follow_a_turn": 0
+      },
+      "collisions_estimated": [],
+      "milled_check": {
+        "milled": {
+          "members_milled": 164,
+          "cutters": 1544,
+          "volume_removed_m3": 2.321,
+          "left_open": []
+        },
+        "meshes_closed": true,
+        "laps_not_clean": 4,
+        "clashes": 0,
+        "deepest_overlaps_mm": [
+          [
+            "R1.fill.cw.14",
+            "R1.B9.hoop0",
+            2.1
+          ],
+          [
+            "R1.fill.ccw.15",
+            "R1.B8.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.cw.09",
+            "R1.B4.hoop0",
+            1.5
+          ],
+          [
+            "R1.fine.ccw.24",
+            "R1.B7.hoop0",
+            1.4
+          ]
+        ]
+      },
+      "images": [
+        "form_7_long_hall_plan.png",
+        "form_7_long_hall_interior.png",
+        "form_7_long_hall_exterior.png",
+        "form_7_long_hall_overhead.png"
+      ]
+    }
+  ]
+}

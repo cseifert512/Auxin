@@ -12,10 +12,11 @@ they regenerate with them.
                   and is notched on its inner face.
     housing       a rib's foot let into the inner face of the arch it lands on, or its head let
                   into the side of the ring it stops at
-    crown_seat    the level-cut head of a rib let into the underside of the crown ring
+    crown_seat    the head of a rib, cut square to the roof's section there, let into the crown ring
     paired_heads  the two ribs that arrive side by side at one point of the crown ring
     mitre         the two halves of an arch or of a hoop meeting at the bay's apex
-    pier_mitre    the two arch legs at a pier, mitred together over the height of the pier
+    pier_mitre    two arch legs at a pier, mitred together over the height of the pier (three legs
+                  meet at a pier that two rooms share: each pair of them is one such joint)
     scarf         a splice in a closed ring, or in a member longer than max_piece_length_m
     base          a leg or arch foot on its footing
 
@@ -310,7 +311,8 @@ def find_joints(members: list[Member], timber: dict) -> tuple[list[Joint], dict,
                 joints.append(
                     Joint(
                         f"housing:{m.id}:{host.id}", "housing", (m.id, host.id), point(start.point), round(90.0 - skew, 1),
-                        (Cut(m.id, "shoulder", 0.0, 0.0, "start", 0.0, skew), Cut(host.id, "housing", round(near_station(host, start.point), 3), round(width, 3), "room", housing_depth, skew)),
+                        # an arch shared by two rooms is housed on both faces: its own room's, and the far one
+                        (Cut(m.id, "shoulder", 0.0, 0.0, "start", 0.0, skew), Cut(host.id, "housing", round(near_station(host, start.point), 3), round(width, 3), "room" if m.parent.split(".")[0] == host.parent.split(".")[0] else "far", housing_depth, skew)),
                         "meets the arch at a glancing angle" if skew > 55.0 else "",
                     )
                 )
@@ -329,7 +331,8 @@ def find_joints(members: list[Member], timber: dict) -> tuple[list[Joint], dict,
                     seat = timber.get("crown", {}).get("seat_m", 0.03)
                     joints.append(Joint(f"seat:{m.id}:{host.id}", "crown_seat", (m.id, host.id), point(end.point), 90.0, (Cut(m.id, "level", round(m.path.length, 3), 0.0, "end", 0.0, 0.0), Cut(host.id, "housing", round(near_station(host, end.point), 3), round(m.width + 2.0 * clearance, 3), "underside", seat, 0.0))))
                     if mode == "milled":
-                        cutters[host.id].append(pocket(m, m.path.length - 0.3, m.path.length, hi_plane=((end.point[0], end.point[1], end.point[2] + clearance), (0.0, 0.0, 1.0))))
+                        square = m.end_cut or end.tangent  # the plane the rib's head is cut to
+                        cutters[host.id].append(pocket(m, m.path.length - 0.3, m.path.length, hi_plane=(tuple(end.point[k] + clearance * square[k] for k in range(3)), square)))
                 else:
                     at = near_station(host, end.point)
                     angle = angle_between(end.tangent, host.path.station_at(at).tangent)
@@ -337,7 +340,7 @@ def find_joints(members: list[Member], timber: dict) -> tuple[list[Joint], dict,
                     if mode == "milled":
                         cutters[host.id].append(pocket(m, m.path.length - 0.3, m.path.length, hi_plane=(tuple(end.point[k] + clearance * end.tangent[k] for k in range(3)), end.tangent)))
         for tag, st, at, upright in (("", start, 0.0, start.tangent[2]), (":end", end, m.path.length, -end.tangent[2])):
-            if abs(st.point[2] - floor) < 1e-6 and upright > 0.99:  # stands upright on the floor
+            if abs(st.point[2] - floor) < 1e-6 and upright > 0.9:  # stands on the floor, upright or nearly
                 joints.append(Joint(f"base:{m.id}{tag}", "base", (m.id, ""), point(st.point), 90.0, (Cut(m.id, "square", round(at, 3), 0.0, "end" if tag else "start", 0.0, 0.0),)))
         closed = norm(sub(start.point, end.point)) < 1e-6
         pieces = max(2 if closed else 1, math.ceil(m.path.length / longest))
@@ -352,34 +355,42 @@ def find_joints(members: list[Member], timber: dict) -> tuple[list[Joint], dict,
     for node, group in sorted(by_node.items()):
         if ".top." in node:  # the ribs that arrive together at one point of the crown ring
             group = [m for m in group if lap_layer(m) in ("cw", "ccw")]
-        if len(group) != 2:
+        if node.endswith(".mitre") and len(group) > 2:  # a pier that rooms share: every two of its arch legs are mitred together
+            pairs = [(a, b) for i, a in enumerate(group) for b in group[i + 1 :]]
+        elif len(group) == 2:
+            pairs = [tuple(group)]
+        else:
             continue
-        a, b = group
-        if node.endswith(".apex"):
-            end = a.path.station_at(a.path.length)
-            slope = round(math.degrees(math.asin(min(1.0, abs(end.tangent[2])))), 1)
-            joints.append(Joint(f"mitre:{a.id}:{b.id}", "mitre", (a.id, b.id), point(end.point), round(2.0 * slope, 1), tuple(Cut(m.id, "mitre", round(m.path.length, 3), 0.0, "end", 0.0, slope) for m in (a, b))))
-        elif node.endswith(".mitre"):
-            foot, height = a.path.station_at(0.0), a.path.anchors[1].co[2] - a.path.anchors[0].co[2]
-            lean_a, lean_b = a.path.station_at(a.path.length * 0.5).width_axis, b.path.station_at(b.path.length * 0.5).width_axis
-            angle = angle_between(lean_a, lean_b)
-            joints.append(Joint(f"pier_mitre:{a.id}:{b.id}", "pier_mitre", (a.id, b.id), point(foot.point), round(180.0 - angle, 1), tuple(Cut(m.id, "mitre", round(height / 2.0, 3), round(height, 3), "side", round(m.depth, 3), round(angle / 2.0, 1)) for m in (a, b))))
-            if mode == "milled":
-                # Each leg is cut back to the upright plane that halves the angle between the two arches,
-                # through the point where their planes meet: the pier's own axis.
-                da, db = a.path.station_at(0.0).depth_axis, b.path.station_at(0.0).depth_axis  # each points along its arch, away from the pier
-                fa, fb = a.path.anchors[0].co, b.path.anchors[0].co
-                det = da[0] * db[1] - da[1] * db[0]
-                if abs(det) > 1e-6:
-                    t = ((fb[0] - fa[0]) * db[1] - (fb[1] - fa[1]) * db[0]) / det
-                    axis = (fa[0] + da[0] * t, fa[1] + da[1] * t, floor - 0.1)
+        for a, b in pairs:
+            if node.endswith(".apex"):
+                end = a.path.station_at(a.path.length)
+                slope = round(math.degrees(math.asin(min(1.0, abs(end.tangent[2])))), 1)
+                joints.append(Joint(f"mitre:{a.id}:{b.id}", "mitre", (a.id, b.id), point(end.point), round(2.0 * slope, 1), tuple(Cut(m.id, "mitre", round(m.path.length, 3), 0.0, "end", 0.0, slope) for m in (a, b))))
+            elif node.endswith(".mitre"):
+                foot, height = a.path.station_at(0.0), a.path.anchors[1].co[2] - a.path.anchors[0].co[2]
+                lean_a, lean_b = a.path.station_at(a.path.length * 0.5).width_axis, b.path.station_at(b.path.length * 0.5).width_axis
+                angle = angle_between(lean_a, lean_b)
+                joints.append(Joint(f"pier_mitre:{a.id}:{b.id}", "pier_mitre", (a.id, b.id), point(foot.point), round(180.0 - angle, 1), tuple(Cut(m.id, "mitre", round(height / 2.0, 3), round(height, 3), "side", round(m.depth, 3), round(angle / 2.0, 1)) for m in (a, b))))
+                if mode == "milled":
+                    # Each leg is cut back to the upright plane that halves the angle between the two arches,
+                    # through the point where their planes meet: the pier's own axis.
+                    da, db = a.path.station_at(0.0).depth_axis, b.path.station_at(0.0).depth_axis  # each points along its arch, away from the pier
+                    fa, fb = a.path.anchors[0].co, b.path.anchors[0].co
+                    det = da[0] * db[1] - da[1] * db[0]
+                    if abs(det) > 1e-6:
+                        t = ((fb[0] - fa[0]) * db[1] - (fb[1] - fa[1]) * db[0]) / det
+                        axis = (fa[0] + da[0] * t, fa[1] + da[1] * t, floor - 0.1)
+                    else:  # the two arches run straight through the pier: its axis is half-way between their legs
+                        axis = ((fa[0] + fb[0]) / 2.0, (fa[1] + fb[1]) / 2.0, floor - 0.1)
+                    # With more than two legs at a pier each keeps what lies nearer its own arch than any other's,
+                    # which is what cutting it back to the halving plane against every other leg leaves.
                     toward_b = unit((db[0] - da[0], db[1] - da[1], 0.0))
                     along = (-toward_b[1], toward_b[0], 0.0)
                     tall = height + 2.5
                     cutters[a.id].append(box(axis, (toward_b, along, (0.0, 0.0, 1.0)), ((-clearance / 2.0, 0.9), (-0.9, 0.9), (0.0, tall))))
                     cutters[b.id].append(box(axis, (toward_b, along, (0.0, 0.0, 1.0)), ((-0.9, clearance / 2.0), (-0.9, 0.9), (0.0, tall))))
-        elif ".top." in node and {lap_layer(a), lap_layer(b)} == {"cw", "ccw"}:
-            joints.append(Joint(f"pair:{a.id}:{b.id}", "paired_heads", (a.id, b.id), point(a.path.station_at(a.path.length).point), round(angle_between(a.path.station_at(a.path.length).tangent, b.path.station_at(b.path.length).tangent), 1), ()))
+            elif ".top." in node and {lap_layer(a), lap_layer(b)} == {"cw", "ccw"}:
+                joints.append(Joint(f"pair:{a.id}:{b.id}", "paired_heads", (a.id, b.id), point(a.path.station_at(a.path.length).point), round(angle_between(a.path.station_at(a.path.length).tangent, b.path.station_at(b.path.length).tangent), 1), ()))
     return joints, notches, dict(cutters)
 
 

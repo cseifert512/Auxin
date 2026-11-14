@@ -9,7 +9,7 @@ sys.path.insert(0, str(REPO))
 from bower import topology as T  # noqa: E402
 from bower.envelope import bay_signature, build_envelope, check_envelope  # noqa: E402
 
-BASE = T.load(REPO / "design.json")
+BASE = T.load(REPO / "releases" / "six-bay-v1" / "design.json")  # the frozen six-bay design: these checks name its piers and bays
 
 
 def room(design):

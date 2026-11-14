@@ -1,8 +1,10 @@
 """Level B: a room's roof as one smooth surface between its arches and its crown.
 
-The roof is described by two coordinates: a bearing round the crown's axis, and
-how far along the meridian at that bearing a point lies, from the arch (0) to
-the crown ring (1). Three things shape it:
+The roof is described by two coordinates: a bearing round the crown, and how far
+along the meridian at that bearing a point lies, from the arch (0) to the crown
+ring (1). The crown is a point or, for a long room, a straight line (a spine):
+bower/spine.py supplies bearing and distance for both, so everything here reads
+the same for a round room and a long one. Three things shape the roof:
 
     rim      the pointed arches, pier to apex to pier. At every bearing the roof
              starts on the arch that faces that way.
@@ -12,8 +14,11 @@ the crown ring (1). Three things shape it:
              Within `pier_funnel_m` of a pier the roof is a round funnel about
              the pier's own axis, so each pier opens upward like a tree and
              there is no sharp valley over it.
-    lantern  inside `lantern_radius_m` the roof turns up and narrows to the crown
-             ring. The lantern is a surface of revolution about the crown's axis.
+    lantern  inside `lantern_radius_m` the roof runs on to the crown ring along the
+             crown's section: by default it turns up and narrows (a lantern), but
+             the section can make it a dome, a flared basket, a flat ring round an
+             open oculus, or a funnel that comes down to the floor as a trunk. It
+             is a surface of revolution about the crown's axis.
 
 The roof over a bay depends on that bay's arch, on the arches of the bays either
 side (it eases toward their apex heights, and shares a pier funnel with each) and
@@ -51,7 +56,8 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass
 
 from .centreline import Anchor, BezierPath, Vec, add, arc_path, cross, dot, mul, norm, plane_path, sub, unit
-from .topology import apex_point
+from .spine import crown_spine
+from .topology import DesignError, apex_point, find
 
 CREASE_KINDS = ("groin", "ridge")
 KAPPA = 0.5523  # Bezier handle length that makes a cubic follow a quarter ellipse
@@ -106,6 +112,7 @@ class Course:
     passes: float  # how close it passes to that pier
     turn: int  # index into `trail` where a rib drawn to the pier leaves its free course
     inset: float  # how far short of the arch's plane it stops
+    up: object = None  # lantern parameter -> bearing, the whole way up to the top ring
 
 
 @dataclass(frozen=True)
@@ -140,10 +147,32 @@ def arch_profile(span: float, rise: float, shape: dict) -> tuple:
 
 
 def lantern_profile(shape: dict, crown: dict) -> tuple:
-    """The lantern, as (distance inward from its base ring, height above it): level at the base, upright at the top."""
+    """The crown's section, from its base ring to the top ring, as (distance inward, height above the base ring).
+
+    The top ring is given by the crown's radius and height; it may stand above the base ring,
+    level with it, or below it, down to the floor. crown["section"] shapes the way between:
+
+        base_slope_deg    the direction the roof leaves the base ring, measured up from the inward level:
+                          0 level (default), 90 upright, negative going down
+        top_slope_deg     the direction it arrives at the top ring: 90 upright (default), 0 level,
+                          over 90 leaning back out (a flared top), -90 straight down
+        fullness          how far it holds each direction before turning (default: a quarter ellipse)
+
+    With the defaults the crown is a lantern: level at its base, upright at its top.
+    """
+    section = crown.get("section", {})
     a = shape["lantern_radius_m"] - crown["radius_m"]
     b = crown["height_m"] - shape["lantern_base_height_m"]
-    return ((0.0, 0.0), (KAPPA * a, 0.0), (a, b * (1.0 - KAPPA)), (a, b))
+    fullness, reach = section.get("fullness", KAPPA), 0.5 * math.hypot(a, b)
+
+    def handle(slope_deg: float):
+        c, s = math.cos(math.radians(slope_deg)), math.sin(math.radians(slope_deg))
+        span = abs(a) * abs(c) + abs(b) * abs(s)
+        length = fullness * (span if span > 0.2 * reach else reach)
+        return length * c, length * s
+
+    leaving, arriving = handle(section.get("base_slope_deg", 0.0)), handle(section.get("top_slope_deg", 90.0))
+    return ((0.0, 0.0), leaving, (a - arriving[0], b - arriving[1]), (a, b))
 
 
 def cubic_at(cubic, t: float):
@@ -159,13 +188,16 @@ def cubic_at(cubic, t: float):
 
 def cubic_at_distance(cubic, distance: float):
     """Point and derivative of a profile cubic where it has travelled `distance` horizontally."""
+    x0, x1, x2, x3 = cubic[0][0], cubic[1][0], cubic[2][0], cubic[3][0]
     lo, hi = 0.0, 1.0
     for _ in range(50):
-        mid = 0.5 * (lo + hi)
-        if cubic_at(cubic, mid)[0][0] < distance:
-            lo = mid
+        t = 0.5 * (lo + hi)
+        u = 1.0 - t
+        # the horizontal coordinate alone, written out as `cubic_at` computes it: this is called very often
+        if u**3 * x0 + 3 * u * u * t * x1 + 3 * u * t * t * x2 + t**3 * x3 < distance:
+            lo = t
         else:
-            hi = mid
+            hi = t
     return cubic_at(cubic, 0.5 * (lo + hi))
 
 
@@ -200,64 +232,86 @@ def _line(p0: Vec, p1: Vec) -> BezierPath:
 
 
 class Roof:
-    """The roof of one room, evaluated at a bearing round the crown's axis and a position along the meridian."""
+    """The roof of one room, evaluated at a bearing round the crown and a distance from it.
+
+    The crown is a point, or a straight line (crown["spine_m"]). Bearing and distance are the
+    spine's own coordinates (bower/spine.py): plain polar for a point crown, and wrapped round
+    the line for a spine, so one description serves a round room and a long one.
+    """
 
     def __init__(self, room: dict):
         shape, crown = room["shape"], room["crown"]
         self.floor_z = room["floor_z_m"]
-        self.centre = tuple(crown["centre_m"])
+        self.spine = crown_spine(crown)
+        self.centre, self.period = self.spine.centre, self.spine.period
         self.top_radius, self.top_z = crown["radius_m"], self.floor_z + crown["height_m"]
         self.base_radius, self.base_z = shape["lantern_radius_m"], self.floor_z + shape["lantern_base_height_m"]
         self.spring_z = self.floor_z + shape["pier_height_m"]
         self.pier_radius, self.fan_radius, self.funnel = shape["pier_radius_m"], shape["fan_radius_m"], shape["pier_funnel_m"]
         self.lantern = lantern_profile(shape, crown)
+        narrowest = self.base_radius - max(cubic_at(self.lantern, i / 60)[0][0] for i in range(61))
+        if narrowest < 0.25:
+            raise DesignError(f"{room['id']}: the crown's section closes to within {max(narrowest, 0.0):.2f} m of its own axis; it needs a wider top ring or a gentler section")
         self.ridge_soften = shape.get("ridge_soften", 1.5)
-        self._swings = {}
         piers = {p["id"]: p["position_m"] for p in room["piers"]}
-        cx, cy = self.centre
+        # A pier's funnel stops half-way to the nearer of its two neighbours, so close-set piers do not
+        # fight over the roof between them. It depends only on the pier's own two bays.
+        ring = [(p["id"], p["position_m"]) for p in room["piers"]]
+        self.funnels = {}
+        for k, (pid, xy) in enumerate(ring):
+            nearer = min(math.dist(xy, ring[k - 1][1]), math.dist(xy, ring[(k + 1) % len(ring)][1]))
+            self.funnels[pid] = min(self.funnel, 0.5 * nearer)
 
         self.halves, self._apexes = [], []
         for bay in room["bays"]:
             apex = apex_point(room, bay)
-            at_apex = math.atan2(apex[1] - cy, apex[0] - cx)
-            self._apexes.append((at_apex % TWO_PI, apex[2]))
+            at_apex = self.spine.locate(apex)[0]
+            self._apexes.append((at_apex % self.period, apex[2]))
             for side, pid in (("L", bay["from"]), ("R", bay["to"])):
                 foot = piers[pid]
                 dx, dy = apex[0] - foot[0], apex[1] - foot[1]
                 span = math.hypot(dx, dy)
-                at_pier = math.atan2(foot[1] - cy, foot[0] - cx)
+                at_pier = self.spine.locate(foot)[0]
                 lo, hi = (at_pier, at_apex) if side == "L" else (at_apex, at_pier)
                 profile = arch_profile(span - self.pier_radius, apex[2] - self.spring_z, shape)
-                self.halves.append(Half(bay["id"], side, pid, tuple(foot), (dx / span, dy / span, 0.0), span, profile, apex, lo, lo + (hi - lo) % TWO_PI))
+                self.halves.append(Half(bay["id"], side, pid, tuple(foot), (dx / span, dy / span, 0.0), span, profile, apex, lo, lo + (hi - lo) % self.period))
         self._apexes.sort()
         self.piers = {pid: (tuple(xy), [h for h in self.halves if h.pier == pid]) for pid, xy in piers.items()}
+        self.reach = sum(self.spine.locate(xy)[1] for xy, _ in self.piers.values()) / len(self.piers)  # how far out the piers stand
 
-        # How far a rib held at a fixed angle to the meridian turns round the lantern: the integral of
-        # (distance climbed) / (radius) from each height to the top ring, tabulated up the profile.
+        # The crown's section in steps, from its base ring to the top ring: each step's length and
+        # its distance from the spine. Also how far a rib held at 45 degrees to the meridian turns
+        # round a point crown between each height and the top ring.
         steps = 120
-        self._turn, self.climb, self._per_step = [0.0] * (steps + 1), 0.0, [0.0] * steps
+        self._turn, self.climb, self._per_step, self._section = [0.0] * (steps + 1), 0.0, [0.0] * steps, [None] * steps
         for i in range(steps, 0, -1):
             (d0, z0), (d1, z1) = cubic_at(self.lantern, (i - 1) / steps)[0], cubic_at(self.lantern, i / steps)[0]
             length = math.hypot(d1 - d0, z1 - z0)
             self.climb += length
+            self._section[i - 1] = (length, self.base_radius - 0.5 * (d0 + d1))
             self._per_step[i - 1] = length / (self.base_radius - 0.5 * (d0 + d1))  # turn of a 45 degree rib over this step
             self._turn[i - 1] = self._turn[i] + self._per_step[i - 1]
         self._windings = {}
+
+    def _at(self, bearing: float, distance: float) -> tuple[float, float]:
+        """The plan position at a bearing and a distance from the spine."""
+        foot, away = self.spine.frame(bearing)
+        return foot[0] + distance * away[0], foot[1] + distance * away[1]
 
     # -- the rim: the arches -------------------------------------------------------------
 
     def half_at(self, bearing: float) -> Half:
         for half in self.halves:
-            if (bearing - half.lo) % TWO_PI <= half.hi - half.lo:
+            if (bearing - half.lo) % self.period <= half.hi - half.lo:
                 return half
-        return min(self.halves, key=lambda h: min((bearing - h.lo) % TWO_PI, (h.hi - bearing) % TWO_PI))
+        return min(self.halves, key=lambda h: min((bearing - h.lo) % self.period, (h.hi - bearing) % self.period))
 
     def rim(self, bearing: float):
-        """Where the roof starts at `bearing`: its distance from the crown's axis, its height, the arch
+        """Where the roof starts at `bearing`: its distance from the spine, its height, the arch
         half it stands on and how far along that half (from the pier) it is."""
         half = self.half_at(bearing)
-        ux, uy = math.cos(bearing), math.sin(bearing)
-        wx, wy = half.foot[0] - self.centre[0], half.foot[1] - self.centre[1]
+        foot, (ux, uy) = self.spine.frame(bearing)
+        wx, wy = half.foot[0] - foot[0], half.foot[1] - foot[1]
         dx, dy = half.direction[0], half.direction[1]
         facing = ux * dy - uy * dx
         radius = (wx * dy - wy * dx) / facing
@@ -268,10 +322,10 @@ class Roof:
 
     def eave(self, bearing: float) -> float:
         """Height at which the canopy meets the arches at `bearing`: each arch's apex height, eased between bays."""
-        theta = bearing % TWO_PI
-        ring = self._apexes + [(self._apexes[0][0] + TWO_PI, self._apexes[0][1])]
+        theta = bearing % self.period
+        ring = self._apexes + [(self._apexes[0][0] + self.period, self._apexes[0][1])]
         if theta < ring[0][0]:
-            theta += TWO_PI
+            theta += self.period
         for (b0, z0), (b1, z1) in zip(ring, ring[1:]):
             if b0 <= theta <= b1:
                 w = (theta - b0) / (b1 - b0)
@@ -281,7 +335,7 @@ class Roof:
     # -- the canopy and the lantern --------------------------------------------------------
 
     def height(self, bearing: float, radius: float) -> float:
-        """Height of the roof outside the lantern, `radius` from the crown's axis."""
+        """Height of the roof outside the lantern, `radius` from the spine."""
         rim_radius, _, half, along = self.rim(bearing)
         edge = self.eave(bearing)
         run = max(rim_radius - self.base_radius, 1e-6)
@@ -303,12 +357,12 @@ class Roof:
         z = level - (edge - rim_z) * (1.0 - min(inward / reach, 1.0)) ** 2
         # Close to a pier the roof is a funnel about the pier's own axis: its height there depends
         # on the distance from the pier, following the legs of the two arches that stand on it.
-        x, y = self.centre[0] + radius * math.cos(bearing), self.centre[1] + radius * math.sin(bearing)
-        for pier_xy, halves in self.piers.values():
+        x, y = self._at(bearing, radius)
+        for pid, (pier_xy, halves) in self.piers.items():
             away = math.hypot(x - pier_xy[0], y - pier_xy[1])
-            if away < self.funnel:
+            if away < self.funnels[pid]:
                 legs = [cubic_at_distance(h.profile, min(away - self.pier_radius, h.span - self.pier_radius))[0][1] if away > self.pier_radius else 0.0 for h in halves]
-                w = 1.0 - away / self.funnel
+                w = 1.0 - away / self.funnels[pid]
                 w = w * w * (3.0 - 2.0 * w)
                 return z + (self.spring_z + sum(legs) / len(legs) - z) * w
         return z
@@ -317,7 +371,7 @@ class Roof:
         """A point of the roof outside the lantern, and the upward normal there."""
 
         def at(b, r):
-            return (self.centre[0] + r * math.cos(b), self.centre[1] + r * math.sin(b), self.height(b, r))
+            return (*self._at(b, r), self.height(b, r))
 
         point = at(bearing, radius)
         across = sub(at(bearing + 0.004, radius), at(bearing - 0.004, radius))
@@ -325,11 +379,24 @@ class Roof:
         normal = unit(cross(inward, across))
         return point, normal if normal[2] > 0 else mul(normal, -1.0)
 
+    def top_slope(self) -> tuple[float, float]:
+        """The direction the crown's section ends in: (toward the spine, upward), as a unit pair."""
+        dd, dz = cubic_at(self.lantern, 1.0)[1]
+        length = math.hypot(dd, dz)
+        return dd / length, dz / length
+
+    def top_direction(self, bearing: float) -> Vec:
+        """The direction the roof is heading where it reaches the top ring at `bearing`: along its section, away from the base."""
+        inward, upward = self.top_slope()
+        _, (c, s) = self.spine.frame(bearing)
+        return (-c * inward, -s * inward, upward)
+
     def on_lantern(self, bearing: float, lam: float):
         """A point of the lantern, `lam` of the way from its base ring to the top ring, and the outward normal there."""
         (d, z), (dd, dz) = cubic_at(self.lantern, lam)
-        radius, c, s = self.base_radius - d, math.cos(bearing), math.sin(bearing)
-        return (self.centre[0] + radius * c, self.centre[1] + radius * s, self.base_z + z), unit((c * dz, s * dz, dd))
+        radius = self.base_radius - d
+        foot, (c, s) = self.spine.frame(bearing)
+        return (foot[0] + radius * c, foot[1] + radius * s, self.base_z + z), unit((c * dz, s * dz, dd))
 
     def meridian(self, bearing: float, t: float) -> Vec:
         """The roof point `t` of the way along the meridian at `bearing`, from the arch (0) to the crown ring (1)."""
@@ -338,16 +405,22 @@ class Roof:
             return self.on_canopy(bearing, rim_radius + (self.base_radius - rim_radius) * t / CANOPY_SHARE)[0]
         return self.on_lantern(bearing, (t - CANOPY_SHARE) / (1.0 - CANOPY_SHARE))[0]
 
+    def top_ring(self, distance: float, spacing: float) -> list:
+        """Bearings evenly spaced round the curve `distance` from the spine, about `spacing` apart."""
+        around = self.spine.perimeter(distance)
+        count = max(24, round(around / spacing))
+        return [self.spine.along(around * i / count, distance) for i in range(count)]
+
     # -- ribs -------------------------------------------------------------------------------
 
     def turn(self, lam: float) -> float:
-        """Angle a rib at 45 degrees to the meridian turns between lantern parameter `lam` and the top ring."""
+        """Angle a rib at 45 degrees to the meridian turns round a point crown between lantern parameter `lam` and the top ring."""
         x = min(max(lam, 0.0), 1.0) * (len(self._turn) - 1)
         i = min(int(x), len(self._turn) - 2)
         return self._turn[i] + (self._turn[i + 1] - self._turn[i]) * (x - i)
 
     def winding(self, lean: float, lean_top: float | None = None):
-        """How far round the crown's axis a rib turns between a lantern parameter and the top ring, as a function.
+        """How far round a point crown a rib turns between a lantern parameter and the top ring, as a function.
 
         The rib leans `lean` from the meridian at the lantern's foot. With `lean_top` its lean
         changes evenly on the way up to that angle at the top ring, so the ribs stand up
@@ -373,35 +446,7 @@ class Roof:
 
     def drape(self, xy):
         """The roof point above a plan position outside the lantern, and the upward normal there."""
-        dx, dy = xy[0] - self.centre[0], xy[1] - self.centre[1]
-        return self.on_canopy(math.atan2(dy, dx), math.hypot(dx, dy))
-
-    def _swing(self, lean: float, lean_rim: float | None):
-        """How far round the crown's axis a rib has turned by each canopy radius, as a function.
-
-        With one lean the rib is a spiral of constant angle. With `lean_rim` its angle to the
-        meridians changes evenly from `lean` at the lantern to `lean_rim` at the piers' distance.
-        """
-        if lean_rim is None or abs(lean_rim - lean) < 1e-9:
-            slope = math.tan(lean)
-            return lambda radius: slope * math.log(radius / self.base_radius)
-        if (lean, lean_rim) not in self._swings:
-            reach = sum(math.hypot(xy[0] - self.centre[0], xy[1] - self.centre[1]) for xy, _ in self.piers.values()) / len(self.piers)
-            dr, table, radius = 0.02, [0.0], self.base_radius
-            while radius < reach + 4.0:
-                mid = radius + dr / 2.0
-                angle = lean + (lean_rim - lean) * min((mid - self.base_radius) / (reach - self.base_radius), 1.0)
-                table.append(table[-1] + math.tan(angle) * dr / mid)
-                radius += dr
-            self._swings[(lean, lean_rim)] = (dr, table)
-        dr, table = self._swings[(lean, lean_rim)]
-
-        def swing(radius: float) -> float:
-            x = min(max((radius - self.base_radius) / dr, 0.0), len(table) - 1.001)
-            i = int(x)
-            return table[i] + (table[i + 1] - table[i]) * (x - i)
-
-        return swing
+        return self.on_canopy(*self.spine.locate(xy))
 
     def trace(self, arrival: float, sense: float, lean: float, spacing: float, inset: float, gather: float, top: float = 1.0, start_radius: float | None = None, lean_rim: float | None = None, lean_top: float | None = None) -> Course:
         """The free course of a rib that holds the angle `lean` to the roof's meridians.
@@ -410,21 +455,47 @@ class Roof:
         `arrival`, outward and down until it meets an arch; `sense` is +1 for a rib that turns
         counter-clockwise as it climbs. With `top` below 1 it follows the same course but starts
         that far up the lantern; with `start_radius` it starts on the canopy, that far from the
-        crown's axis. `lean_top` and `lean_rim` let its lean change up the lantern and out across
-        the canopy. It stops `inset` short of the arch's plane. The course records which pier, if
+        spine. `lean_top` and `lean_rim` let its lean change up the lantern and out across the
+        canopy. It stops `inset` short of the arch's plane. The course records which pier, if
         any, it passes within `gather` of.
+
+        Round a point crown, or round the end of a spine, the course is a spiral; along the side
+        of a spine it is a straight diagonal.
         """
-        wound = self.winding(lean, lean_top)
-        at_foot = arrival - sense * wound(0.0)
-        swing = self._swing(lean, lean_rim)
+        # Up the crown: its bearing at each step of the section, from the top ring down to the base ring.
+        steps = len(self._section)
+        table = [0.0] * (steps + 1)
+        table[steps] = arrival
+        for i in range(steps, 0, -1):
+            length, distance = self._section[i - 1]
+            angle = lean if lean_top is None else lean + (lean_top - lean) * (i - 0.5) / steps
+            table[i - 1] = self.spine.shift(table[i], -sense * math.tan(angle) * length, distance)
+
+        def up(lam: float) -> float:
+            x = min(max(lam, 0.0), 1.0) * steps
+            i = min(int(x), steps - 1)
+            return table[i] + (table[i + 1] - table[i]) * (x - i)
+
+        # Out across the canopy: its bearing every few centimetres from the lantern's base ring.
+        fine, nodes = 0.05, [table[0]]
+
+        def onward(bearing: float, start: float, end: float) -> float:
+            mid = 0.5 * (start + end)
+            angle = lean if lean_rim is None else lean + (lean_rim - lean) * min((mid - self.base_radius) / (self.reach - self.base_radius), 1.0)
+            return self.spine.swing(bearing, -sense * math.tan(angle), start, end)
 
         def at(radius: float):
-            bearing = at_foot - sense * swing(radius)
-            return bearing, (self.centre[0] + radius * math.cos(bearing), self.centre[1] + radius * math.sin(bearing))
+            k = max(0, int((radius - self.base_radius) / fine + 1e-9))
+            while len(nodes) <= k:
+                reached = self.base_radius + (len(nodes) - 1) * fine
+                nodes.append(onward(nodes[-1], reached, reached + fine))
+            reached = self.base_radius + k * fine
+            bearing = nodes[k] if radius - reached < 1e-12 else onward(nodes[k], reached, radius)
+            return bearing, self._at(bearing, radius)
 
         if start_radius is None:
-            steps = max(1, round(top * self.climb / (spacing * math.cos(lean))))
-            head = tuple(self.on_lantern(arrival - sense * wound(top * (1.0 - i / steps)), top * (1.0 - i / steps)) for i in range(steps + 1))
+            head_steps = max(1, round(top * self.climb / (spacing * math.cos(lean))))
+            head = tuple(self.on_lantern(up(top * (1.0 - i / head_steps)), top * (1.0 - i / head_steps)) for i in range(head_steps + 1))
             start = self.base_radius
         else:
             start = start_radius
@@ -434,12 +505,12 @@ class Roof:
             return radius - (self.rim(at(radius)[0])[0] - inset)
 
         # Follow the course outward in small steps to see where it ends and what it passes.
-        fine, radius, trail = 0.05, start, []
+        radius, trail = start, []
         while beyond(radius) < 0.0:
             trail.append((radius, at(radius)[1]))
             radius += fine
         if len(trail) < 3:
-            raise ValueError(f"a rib starting {start:.2f} m from the crown's axis has no room to run before the arches")
+            raise ValueError(f"a rib starting {start:.2f} m from the crown has no room to run before the arches")
         lo, hi = radius - fine, radius
         for _ in range(40):
             mid = 0.5 * (lo + hi)
@@ -454,7 +525,7 @@ class Roof:
             pier_xy = self.piers[drawn_to][0]
             turn = next((k for k, (_, q) in enumerate(trail) if math.hypot(q[0] - pier_xy[0], q[1] - pier_xy[1]) < 2.0 * self.funnel), len(trail) - 1)
             turn = min(turn, len(trail) - 2)
-        return Course(head, at, start, lo, spacing * math.cos(lean), tuple(trail), drawn_to, passes, turn, inset)
+        return Course(head, at, start, lo, spacing * math.cos(lean), tuple(trail), drawn_to, passes, turn, inset, up)
 
     def _squared(self, course: Course, within: float, shift=(0.0, 0.0)):
         """The last stretch of a free rib, turned to meet its arch squarely.
@@ -485,7 +556,7 @@ class Roof:
             return None
         tangent = to_go / (1.0 + facing)  # both tangents of the arc, from its ends to where they meet
         foot = (q0[0] + (hx + nx) * tangent + shift[0], q0[1] + (hy + ny) * tangent + shift[1])
-        _, _, landed, along = self.rim(math.atan2(foot[1] - self.centre[1], foot[0] - self.centre[0]))
+        _, _, landed, along = self.rim(self.spine.locate(foot)[0])
         if landed.bay != half.bay or along < 0.6:
             return None
         # a cubic that leaves along the rib's heading and arrives along the square to the arch
@@ -522,7 +593,7 @@ class Roof:
             if squared:
                 samples += [self.drape(q) for q in squared[1]]
                 foot = squared[1][-1]
-            _, _, half, along = self.rim(math.atan2(foot[1] - self.centre[1], foot[0] - self.centre[0]))
+            _, _, half, along = self.rim(self.spine.locate(foot)[0])
             return samples[::-1], half, along
 
         pier_xy, halves = self.piers[course.pier]
@@ -574,12 +645,8 @@ class Roof:
     def ring(self, lam: float | None, radius: float | None, spacing: float) -> list:
         """(point, normal) samples round a ring: part-way up the lantern at `lam`, or on the canopy at `radius`."""
         if lam is not None:
-            point, _ = self.on_lantern(0.0, lam)
-            radius = math.hypot(point[0] - self.centre[0], point[1] - self.centre[1])
-        count = max(24, round(TWO_PI * radius / spacing))
-        if lam is not None:
-            return [self.on_lantern(TWO_PI * i / count, lam) for i in range(count)]
-        return [self.on_canopy(TWO_PI * i / count, radius) for i in range(count)]
+            return [self.on_lantern(bearing, lam) for bearing in self.top_ring(self.base_radius - cubic_at(self.lantern, lam)[0][0], spacing)]
+        return [self.on_canopy(bearing, radius) for bearing in self.top_ring(radius, spacing)]
 
     def spiral(self, arrival: float, sense: float, lean: float, spacing: float, inset: float, gather: float, top: float = 1.0):
         """`trace` and `lay` in one step, for a rib that needs no place at a pier."""
@@ -592,7 +659,6 @@ class Roof:
 def boundary(room: dict, roof: Roof | None = None) -> tuple[dict, dict]:
     """The named nodes and boundary curves of a room."""
     roof = roof or Roof(room)
-    cx, cy = roof.centre
     nodes, edges = {}, {}
 
     def edge(edge_id: str, kind: str, start: str, end: str, path: BezierPath) -> None:
@@ -603,7 +669,7 @@ def boundary(room: dict, roof: Roof | None = None) -> tuple[dict, dict]:
 
     for pier in room["piers"]:
         pid, (x, y) = pier["id"], pier["position_m"]
-        bearing = math.atan2(y - cy, x - cx)
+        bearing = roof.spine.locate((x, y))[0]
         nodes[pid + ".base"], nodes[pid + ".spring"] = (x, y, roof.floor_z), (x, y, roof.spring_z)
         nodes[pid + ".crown"] = roof.on_lantern(bearing, 1.0)[0]
         edge(pid + ".pier", "pier", pid + ".base", pid + ".spring", _line(nodes[pid + ".base"], nodes[pid + ".spring"]))
@@ -618,10 +684,11 @@ def boundary(room: dict, roof: Roof | None = None) -> tuple[dict, dict]:
         leg = (half.foot[0] + half.direction[0] * roof.pier_radius, half.foot[1] + half.direction[1] * roof.pier_radius, roof.spring_z)
         edge(f"{bid}.arch.{half.side}", "arch", half.pier + ".spring", bid + ".apex", plane_path(leg, half.direction, [half.profile]))
         start, end = (half.pier, bid) if half.side == "L" else (bid, half.pier)
+        # the top ring between the two: an arc round a point crown, and whatever the spine makes it otherwise
         a = nodes[start + ".crown"] if start + ".crown" in nodes else roof.on_lantern(half.lo, 1.0)[0]
-        tangent = (-math.sin(half.lo), math.cos(half.lo), 0.0)
-        arc = arc_path(a, tangent, (cx - a[0], cy - a[1], 0.0), roof.top_radius, roof.top_radius * (half.hi - half.lo))
-        edge(f"{bid}.crown.{half.side}", "crown", start + ".crown", end + ".crown", arc)
+        z = nodes[end + ".crown"] if end + ".crown" in nodes else roof.on_lantern(half.hi, 1.0)[0]
+        between = [roof.on_lantern(half.lo + (half.hi - half.lo) * i / 4, 1.0)[0] for i in (1, 2, 3)]
+        edge(f"{bid}.crown.{half.side}", "crown", start + ".crown", end + ".crown", spline([a, *between, z]))
 
     return nodes, edges
 
@@ -739,3 +806,48 @@ def check_envelope(env: Envelope) -> dict:
         "collapsed_faces": collapsed,
         "min_normal_agreement_in_patch": round(agreement, 4),
     }
+
+
+# --- joined rooms -----------------------------------------------------------------------------------
+
+
+def check_connections(design: dict) -> list[dict]:
+    """How the roofs of joined rooms meet along the arch they share.
+
+    For each connection: how far apart the two rooms' versions of the arch are (they should be
+    one curve), and the angle the two roofs make with each other across it. The roofs meet in
+    a fold along the arch, as two vaults do at the arch between them: the fold is reported,
+    not hidden.
+    """
+    found = []
+    for connection in design.get("connections", []):
+        (room_a, a), (room_b, b) = (find(design, "bays", bay_id) for bay_id in connection["bays"])
+        roofs = (Roof(room_a), Roof(room_b))
+        halves = [{h.side: h for h in roof.halves if h.bay == bay["id"]} for roof, bay in zip(roofs, (a, b))]
+        gap, folds = 0.0, []
+        for side, opposite in (("L", "R"), ("R", "L")):  # the two rings run opposite ways along the arch
+            pair = (halves[0][side], halves[1][opposite])
+            for i in range(6, 21):
+                on_arch, normals = [], []
+                for roof, half in zip(roofs, pair):
+                    (along, up), _ = cubic_at(half.profile, i / 20)
+                    x = half.foot[0] + half.direction[0] * (roof.pier_radius + along)
+                    y = half.foot[1] + half.direction[1] * (roof.pier_radius + along)
+                    on_arch.append((x, y, roof.spring_z + up))
+                    dx, dy = half.direction[0], half.direction[1]
+                    inward = (-dy, dx) if -dy * (roof.centre[0] - x) + dx * (roof.centre[1] - y) > 0 else (dy, -dx)
+                    normals.append(roof.drape((x + 0.3 * inward[0], y + 0.3 * inward[1]))[1])  # the roof a little way inside the arch
+                gap = max(gap, norm(sub(on_arch[0], on_arch[1])))
+                folds.append(math.degrees(math.acos(max(-1.0, min(1.0, dot(normals[0], normals[1]))))))
+        found.append(
+            {
+                "id": connection["id"],
+                "bays": list(connection["bays"]),
+                "arch_gap_m": round(gap, 6),
+                "one_arch": gap < 1e-3,
+                "fold_at_apex_deg": round(folds[14], 1),
+                "fold_deg": [round(min(folds), 1), round(max(folds), 1)],
+                "continuity": "the roofs share the arch (position); they meet in a fold along it (not tangent)",
+            }
+        )
+    return found

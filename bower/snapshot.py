@@ -29,7 +29,7 @@ from collections import Counter
 from pathlib import Path
 
 from .joints import find_joints, joint_rows, joint_summary
-from .timber import build_timber, clearances, schedule
+from .timber import build_design_timber, clearances, schedule
 
 CENTRELINE_SCHEMA = "bower.centrelines/1"
 SNAPSHOT_SCHEMA = "bower.snapshot/1"
@@ -45,14 +45,14 @@ def centrelines(design: dict, spacing: float | None = None) -> dict:
     """
     spacing = spacing or design["timber"]["sampling"]["export_station_spacing_m"]
     members = []
-    for room in design["rooms"]:
-        for m in build_timber(room, design["timber"]):
+    for group in build_design_timber(design):
+        for m in group["members"]:
             stations = m.path.stations(spacing)
             start, end = m.path.anchors[0].co, m.path.anchors[-1].co
             members.append(
                 {
                     "id": m.id,
-                    "room": room["id"],
+                    "room": group["room_of"][m.id],
                     "parent": m.parent,
                     "role": m.role,
                     "family": m.family,
@@ -79,8 +79,8 @@ def centrelines(design: dict, spacing: float | None = None) -> dict:
 def schedules(design: dict) -> tuple[list[dict], list[dict]]:
     """The member schedule and the joint schedule of the whole design, as rows."""
     member_rows, joints = [], []
-    for room in design["rooms"]:
-        members = build_timber(room, design["timber"])
+    for group in build_design_timber(design):
+        members = group["members"]
         found = find_joints(members, design["timber"])[0]
         member_rows += schedule(members, design["timber"], clearances(members), found)
         joints += joint_rows(found)
@@ -90,10 +90,9 @@ def schedules(design: dict) -> tuple[list[dict], list[dict]]:
 def summary(design: dict) -> dict:
     """Counts and totals for the manifest."""
     members, joints = [], []
-    for room in design["rooms"]:
-        built = build_timber(room, design["timber"])
-        members += built
-        joints += find_joints(built, design["timber"])[0]
+    for group in build_design_timber(design):
+        members += group["members"]
+        joints += find_joints(group["members"], design["timber"])[0]
     points = [a.co for m in members for a in m.path.anchors]
     return {
         "rooms": [{"id": room["id"], "bays": len(room["bays"]), "piers": len(room["piers"])} for room in design["rooms"]],

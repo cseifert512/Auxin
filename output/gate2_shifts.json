@@ -9,22 +9,22 @@
           "lean_rim_deg": 62.0
         }
       },
-      "members": 106,
+      "members": 108,
       "families": {
         "rib": {
           "members": 24,
-          "length_m": 173.78,
-          "min_bend_radius_m": 0.6397
+          "length_m": 203.38,
+          "min_bend_radius_m": 0.6028
         },
         "fill": {
           "members": 24,
-          "length_m": 132.55,
-          "min_bend_radius_m": 0.7909
+          "length_m": 152.21,
+          "min_bend_radius_m": 0.6867
         },
         "fine": {
-          "members": 31,
-          "length_m": 82.34,
-          "min_bend_radius_m": 0.683
+          "members": 25,
+          "length_m": 60.83,
+          "min_bend_radius_m": 0.6055
         },
         "crown": {
           "members": 1,
@@ -33,71 +33,72 @@
         },
         "ring": {
           "members": 2,
-          "length_m": 37.13,
-          "min_bend_radius_m": 2.5117
+          "length_m": 40.29,
+          "min_bend_radius_m": 2.1072
         },
         "arch": {
-          "members": 12,
-          "length_m": 72.4,
-          "min_bend_radius_m": 1.6201
+          "members": 16,
+          "length_m": 88.62,
+          "min_bend_radius_m": 2.1906
         },
         "hoop": {
-          "members": 12,
-          "length_m": 145.64,
-          "min_bend_radius_m": 0.8061
+          "members": 16,
+          "length_m": 178.84,
+          "min_bend_radius_m": 0.3078
         }
       },
       "joints": {
-        "joints": 671,
+        "joints": 615,
         "by_kind": {
-          "alongside": 5,
-          "base": 53,
-          "cross_lap": 436,
+          "alongside": 2,
+          "base": 74,
+          "cross_lap": 384,
           "crown_seat": 24,
-          "housing": 117,
-          "mitre": 6,
+          "housing": 96,
+          "mitre": 8,
           "paired_heads": 12,
-          "pier_mitre": 6,
-          "scarf": 12
+          "pier_mitre": 8,
+          "scarf": 7
         },
-        "third_depth_laps": 59,
-        "to_review": 6,
+        "third_depth_laps": 54,
+        "to_review": 4,
         "laps_left_uncut": 0,
         "laps_whose_walls_must_follow_a_turn": 0
       },
       "lap_notches_cut": 0,
       "collisions_estimated": [],
       "mesh_intersections_in_scene": {
-        "pairs_touching_under_1mm": 9,
-        "lattice_pairs_still_intersecting": 5,
+        "pairs_touching_under_1mm": 17,
+        "lattice_pairs_still_intersecting": 4,
         "laps_not_clean": [
           [
-            "R1.rib.ccw.01",
-            "R1.B2.hoop0",
+            "R1.fill.ccw.02",
+            "R1.fine.ccw.04",
+            10.9
+          ],
+          [
+            "R1.fill.ccw.05",
+            "R1.fine.ccw.10",
+            12.4
+          ],
+          [
+            "R1.fine.ccw.15",
+            "R1.B7.hoop0",
             1.0
           ],
           [
-            "R1.rib.ccw.02",
-            "R1.fill.ccw.02",
-            5.1
-          ],
-          [
-            "R1.rib.cw.07",
-            "R1.B1.hoop0",
-            1.7
-          ],
-          [
-            "R1.rib.ccw.10",
-            "R1.fill.ccw.10",
-            5.3
-          ],
-          [
-            "R1.fine.ccw.21",
-            "R1.B1.hoop0",
-            2.6
+            "R1.fine.ccw.22",
+            "R1.B1.hoop1",
+            3.0
           ]
         ],
-        "clashes": []
+        "clashes": [
+          [
+            "R1.fine.ccw.00",
+            "R1.B2.arch.R",
+            3.0
+          ]
+        ]
       },
       "meshes_closed": true,
       "image": "gate2_shift_1_sweeping_ribs_overhead.png"
@@ -115,22 +116,22 @@
           ]
         }
       },
-      "members": 128,
+      "members": 129,
       "families": {
         "rib": {
           "members": 32,
-          "length_m": 221.16,
+          "length_m": 248.99,
           "min_bend_radius_m": 0.6903
         },
         "fill": {
           "members": 32,
-          "length_m": 147.42,
-          "min_bend_radius_m": 0.8328
+          "length_m": 174.78,
+          "min_bend_radius_m": 0.7159
         },
         "fine": {
-          "members": 43,
-          "length_m": 76.19,
-          "min_bend_radius_m": 0.4551
+          "members": 38,
+          "length_m": 69.72,
+          "min_bend_radius_m": 0.2988
         },
         "crown": {
           "members": 1,
@@ -139,33 +140,33 @@
         },
         "ring": {
           "members": 2,
-          "length_m": 37.62,
-          "min_bend_radius_m": 1.5228
+          "length_m": 38.88,
+          "min_bend_radius_m": 1.7287
         },
         "arch": {
-          "members": 12,
-          "length_m": 72.4,
-          "min_bend_radius_m": 1.6201
+          "members": 16,
+          "length_m": 88.62,
+          "min_bend_radius_m": 2.1906
         },
         "hoop": {
-          "members": 6,
-          "length_m": 72.49,
-          "min_bend_radius_m": 1.1663
+          "members": 8,
+          "length_m": 89.0,
+          "min_bend_radius_m": 0.6034
         }
       },
       "joints": {
-        "joints": 661,
+        "joints": 649,
         "by_kind": {
-          "base": 44,
-          "cross_lap": 386,
+          "base": 63,
+          "cross_lap": 374,
           "crown_seat": 32,
-          "housing": 162,
-          "mitre": 6,
+          "housing": 141,
+          "mitre": 8,
           "paired_heads": 16,
-          "pier_mitre": 6,
-          "scarf": 9
+          "pier_mitre": 8,
+          "scarf": 7
         },
-        "third_depth_laps": 121,
+        "third_depth_laps": 77,
         "to_review": 0,
         "laps_left_uncut": 0,
         "laps_whose_walls_must_follow_a_turn": 0
@@ -173,13 +174,13 @@
       "lap_notches_cut": 0,
       "collisions_estimated": [],
       "mesh_intersections_in_scene": {
-        "pairs_touching_under_1mm": 9,
+        "pairs_touching_under_1mm": 16,
         "lattice_pairs_still_intersecting": 1,
         "laps_not_clean": [
           [
-            "R1.fill.ccw.08",
-            "R1.fine.cw.09",
-            2.4
+            "R1.fill.cw.05",
+            "R1.fill.ccw.09",
+            2.2
           ]
         ],
         "clashes": []
