@@ -1,17 +1,17 @@
 {
-  "for": "Slide 6 of the presentation, in place of the two side-by-side checks. Not placed in the deck yet.",
-  "shows": "One pier of the room on one summer day, from three grown runs of the same planting on the same building with the same care, differing only in the simulator's chance. Playing, one picture turns from one run to the next: the timber does not move and the plants do. On paper the same band of each picture stands one above another.",
+  "for": "A slide of its own in the presentation (edition 08 has it as slide 9).",
+  "shows": "One corner of the room growing, from the timber standing bare through each summer to the last, three times over: three grown runs of the same planting on the same building with the same care, differing only in the simulator's chance. Then the three last summers in turn. The timber is the same every time and the plants are not. On paper the same band of each last summer stands one above another.",
   "statement": "A growth scenario on stated assumptions, not a forecast. Concept geometry; trial planting.",
   "words": {
     "title": "Grown three times",
-    "steps": ["Grow it once", "Grow it again", "And again"],
-    "now": ["One corner of the room, grown on a computer.", "The same room, grown again. We changed nothing.", "And a third time. Watch the timber, then the plants."],
+    "steps": ["Grow it once", "Grow it again", "And again", "Compare"],
+    "now": ["The timber goes up. The plants go in and grow.", "The same room again. Nothing is changed.", "And a third time.", "The same timber every time. Never the same plants."],
     "card": [
-      ["What happens", "The same room is grown three times: the same timber, the same plants in the same beds, the same gardener. The timber comes out the same. The plants do not."],
-      ["What is Bower's", "Designing the timber for plants we cannot control."],
-      ["Still to prove", "How much real plants vary. The plant numbers in the simulator are assumptions."]
+      ["What happens", "One room is grown three times on a computer, with nothing changed between them."],
+      ["What is Bower's", "Timber designed for plants we cannot control."],
+      ["Still to prove", "How much real plants vary. The simulator's plant numbers are assumptions."]
     ],
-    "alt": "One pier of a timber room with climbing plants on it. The picture turns between three growings: the timber stays exactly where it is, and the plants are different in each."
+    "alt": "One corner of a timber room. Climbing plants grow over it from bare timber to full summer, three times. The timber is the same each time; the plants end up different each time."
   },
   "as": "06-grown-again",
   "snapshot": "six-bay-radial-v1",
@@ -21,12 +21,12 @@
   "timber": "ink",
   "slot": [1280, 600],
   "size": [792, 476],
-  "scale": 2,
+  "scale": 1.5,
+  "quality": 82,
   "view": "drawing",
   "lookAt": [-3.1, -5.2, 3.5],
   "zoom": 2.6,
-  "at": "date:2036-06-21",
   "sun": [172, 14],
-  "hold": 1800,
+  "timing": { "frame": 420, "hold": 1500, "compare": 1000, "turns": 6 },
   "band": 0.34
 }

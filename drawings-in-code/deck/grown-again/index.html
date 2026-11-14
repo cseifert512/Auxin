@@ -5,16 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Bower drawing: grown three times</title>
     <!--
-      One thing happening: the same room is grown three times. The timber comes out the same; the plants do not.
+      One thing happening: a corner of the room grows, from bare timber to full summer, three times over. The
+      timber is the same every time; the plants are not. Then the three last summers in turn.
       Laid out as a station page of the factory drawings is (bower-factory): the thing itself large and moving, a
       name, one short line for what is happening now, the steps, and the same plain questions beside it.
       The pictures were made beforehand by pipeline/again.mjs; nothing is worked out here.
 
-      ?embed shows only the drawing. ?print (or reduced motion) shows the three growings one above another.
-      From a slide:  window.__play(on)   or   postMessage({ type: 'bower:play', value })
+      A step can be chosen by pressing it. ?embed shows only the drawing. ?print (or reduced motion) shows the
+      three last summers one above another. From a slide:
+        window.__play(on)   window.__step(i)   or   postMessage({ type: 'bower:play' | 'bower:step', value })
     -->
     <style>
-      :root { --paper: #eef3ea; --ink: #102820; --muted: #4d6559; --rule: rgba(16, 40, 32, 0.22); --soft: rgba(16, 40, 32, 0.07); }
+      :root { --paper: #eef3ea; --ink: #102820; --muted: #4d6559; --rule: rgba(16, 40, 32, 0.22); --soft: rgba(16, 40, 32, 0.08); }
       html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: Safiro, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; }
       body { padding: 28px; }
       body.embed { padding: 0; overflow: hidden; }
@@ -26,24 +28,23 @@
       h1 { font-size: 2.2cqw; line-height: 1.15; letter-spacing: -0.01em; font-weight: 500; margin-top: 1.6cqw; }
       .now { font-size: 1.25cqw; line-height: 1.4; margin-top: 0.8cqw; min-height: 3.5cqw; }
       .steps { list-style: none; margin-top: 1.2cqw; display: flex; flex-direction: column; gap: 0.25cqw; }
-      .steps li { font-size: 1.02cqw; line-height: 1; padding: 0.55cqw 0.9cqw; border-radius: 0.8cqw; color: var(--muted); }
-      .steps li.on { background: var(--soft); color: var(--ink); }
+      .steps li { position: relative; isolation: isolate; overflow: hidden; cursor: pointer; font-size: 1.02cqw; line-height: 1; padding: 0.55cqw 0.9cqw; border-radius: 0.8cqw; color: var(--muted); }
+      .steps li::before { content: ''; position: absolute; z-index: -1; inset: 0; width: calc(var(--p, 0) * 100%); background: var(--soft); }
+      .steps li.on { color: var(--ink); box-shadow: inset 0 0 0 0.08cqw var(--rule); }
       .card { margin-top: 1.8cqw; }
       .card h2 { font-size: 0.95cqw; line-height: 1.4; font-weight: 600; }
       .card p { font-size: 1.02cqw; line-height: 1.45; margin: 0.25cqw 0 1.1cqw; }
-      .foot { margin-top: auto; padding-bottom: 0.4cqw; display: flex; flex-direction: column; align-items: flex-start; gap: 0.7cqw; }
+      .foot { margin-top: auto; padding-bottom: 0.4cqw; }
       #pause { all: unset; cursor: pointer; font-size: 0.9cqw; padding: 0.3cqw 0.8cqw; border: 0.08cqw solid var(--rule); }
       #pause:focus-visible { border-color: var(--ink); }
 
-      /* playing: one picture, turning from one growing to the next */
-      .pictures { position: relative; }
+      /* playing: one picture, growing */
       .sheet { position: relative; aspect-ratio: 792 / 476; overflow: hidden; }
-      .sheet img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.3s linear; }
+      .sheet img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.32s linear; }
       .sheet img.on { opacity: 1; }
       .bands { display: none; }
-      .statement { font-size: 0.8cqw; line-height: 1.4; color: var(--muted); }
 
-      /* on paper, or held still: the three one above another, so the timber lines up and the plants do not */
+      /* on paper, or held still: the three last summers one above another, so the timber lines up and the plants do not */
       .piece.still .sheet, .piece.still #pause, .piece.still .steps, .piece.still .now { display: none; }
       .piece.still .bands { display: flex; flex-direction: column; gap: 0.9cqw; }
       .band { position: relative; aspect-ratio: 960 / 180; overflow: hidden; }
@@ -60,10 +61,10 @@
           <p class="now" id="now" aria-live="polite"></p>
           <ol class="steps" id="steps"></ol>
           <div class="card" id="card"></div>
-          <div class="foot"><button id="pause" type="button">Pause</button><p class="statement" id="statement"></p></div>
+          <div class="foot"><button id="pause" type="button">Pause</button></div>
         </div>
         <div class="pictures">
-          <div class="sheet" id="sheet"></div>
+          <div class="sheet" id="sheet" role="img"></div>
           <div class="bands" id="bands"></div>
         </div>
       </div>
@@ -74,6 +75,7 @@
       (() => {
         const D = window.GROWN_AGAIN;
         const W = D.words;
+        const T = { frame: 420, hold: 1500, compare: 1000, turns: 6, ...D.timing };
         const q = new URLSearchParams(location.search);
         const $ = (id) => document.getElementById(id);
         const el = (tag, props) => Object.assign(document.createElement(tag), props);
@@ -84,53 +86,75 @@
         document.documentElement.style.setProperty('--paper', D.paper);
         document.documentElement.style.setProperty('--ink', D.ink);
         $('title').textContent = W.title;
-        $('statement').textContent = D.statement;
+        $('sheet').setAttribute('aria-label', W.alt);
         for (const [asks, says] of W.card) $('card').append(el('h2', { textContent: asks }), el('p', { textContent: says }));
 
-        const frames = D.runs.map((src, i) => {
-          const img = el('img', { src, alt: i ? '' : W.alt });
-          $('sheet').append(img);
-          const step = el('li', { textContent: W.steps[i] });
-          $('steps').append(step);
-          // for paper: the same band of each picture, one above another
-          const band = el('div', { className: 'band', innerHTML: `<img src="${src}" alt=""><b>${W.steps[i]}</b>` });
+        const R = D.runs.length; // the growings
+        const N = D.runs[0].length; // the moments of each: bare timber, then every summer
+        const pictures = D.runs.map((run) => run.map((src) => $('sheet').appendChild(el('img', { src, alt: '' }))));
+        const draw = (i, k) => pictures.forEach((run, a) => run.forEach((img, b) => img.classList.toggle('on', a === i && b === k)));
+        // for paper: the same band of each last summer, one above another
+        D.runs.forEach((run, i) => {
+          const band = el('div', { className: 'band', innerHTML: `<img src="${run[N - 1]}" alt=""><b>${W.steps[i]}</b>` });
           band.style.setProperty('--lift', `${-D.band * 100}%`);
           $('bands').append(band);
-          return { img, step };
+        });
+        const steps = W.steps.map((text, s) => {
+          const li = el('li', { textContent: text });
+          li.addEventListener('click', () => { at(s, 0); play(true); });
+          return $('steps').appendChild(li);
         });
 
-        const state = { at: 0, playing: !still, seen: true, timer: 0 };
-        function show(i) {
-          state.at = ((i % frames.length) + frames.length) % frames.length;
-          frames.forEach((f, k) => {
-            f.img.classList.toggle('on', k === state.at);
-            f.step.classList.toggle('on', k === state.at);
+        // steps 0 to R-1 grow one run each; the last sets the last summers one after another
+        const state = { step: 0, k: 0, playing: !still, seen: true, timer: 0 };
+        const last = (step) => (step < R ? N - 1 : T.turns - 1);
+        function at(step, k) {
+          state.step = ((step % (R + 1)) + R + 1) % (R + 1);
+          state.k = k;
+          steps.forEach((li, s) => {
+            li.classList.toggle('on', s === state.step);
+            li.style.setProperty('--p', s < state.step ? 1 : s === state.step ? k / last(s) : 0);
           });
-          $('now').textContent = W.now[state.at];
+          $('now').textContent = W.now[state.step];
+          if (state.step < R) draw(state.step, k);
+          else draw(k % R, N - 1);
         }
         function run() {
           clearTimeout(state.timer);
           $('pause').textContent = state.playing ? 'Pause' : 'Play';
-          if (state.playing && state.seen && !document.hidden) state.timer = setTimeout(() => { show(state.at + 1); run(); }, D.hold ?? 1800);
+          if (!(state.playing && state.seen && !document.hidden)) return;
+          const growing = state.step < R;
+          const wait = growing ? (state.k === last(state.step) ? T.hold : T.frame) : T.compare;
+          state.timer = setTimeout(() => {
+            if (state.k < last(state.step)) at(state.step, state.k + 1);
+            else at(state.step + 1, 0);
+            run();
+          }, wait);
         }
         function play(on) {
           state.playing = Boolean(on) && !still;
           run();
         }
         window.__play = play;
-        addEventListener('message', (e) => { if (e.data?.type === 'bower:play') play(e.data.value); });
+        window.__step = (i) => { at(Number(i), 0); run(); };
+        addEventListener('message', (e) => {
+          const m = e.data ?? {};
+          if (m.type === 'bower:play') play(m.value);
+          else if (m.type === 'bower:step') window.__step(m.value);
+        });
         $('pause').addEventListener('click', () => play(!state.playing));
         piece.addEventListener('keydown', (e) => {
           if (e.key === ' ') play(!state.playing);
-          else if (e.key === 'ArrowRight') { play(false); show(state.at + 1); }
-          else if (e.key === 'ArrowLeft') { play(false); show(state.at - 1); }
+          else if (e.key === 'ArrowRight') { at(state.step + 1, 0); play(false); }
+          else if (e.key === 'ArrowLeft') { at(state.step - 1, 0); play(false); }
           else return;
           e.preventDefault();
         });
         // nothing moves while nobody can see it
         new IntersectionObserver(([entry]) => { state.seen = entry.isIntersecting; run(); }).observe(piece);
         document.addEventListener('visibilitychange', run);
-        show(Number(q.get('time') ?? 1) - 1);
+        at(Number(q.get('step') ?? 0), Number(q.get('k') ?? 0));
+        if (q.has('step')) state.playing = false;
         run();
       })();
     </script>
