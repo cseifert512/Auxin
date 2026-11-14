@@ -25,11 +25,51 @@ commands again.
 npm run convert                         # ../releases/<snapshot> -> scenes/<snapshot>/bower.json
 npm run plant                           # the planting, from its rule -> scenes/<snapshot>/planting.json
 npm run assemble                        # the order the joints allow -> scenes/<snapshot>/assembly.json
-npm run grow -- <snapshot> trained 10 7 --specimen=3    # ten tended years -> scenes/<snapshot>/runs/trained-10y/
+npm run grow -- <snapshot> trained 10 7 --specimen=3 --tall=wisteria:4    # ten tended years -> scenes/<snapshot>/runs/trained-10y/
 npm run compare                         # the runs of a scene side by side
 npm run studio                          # the drawing, on http://localhost:5310
 npm run film                            # exports/approach-ink/: the line of time as a film, wide and upright
 ```
+
+**Which simulator grows the plants.** The checkout beside this repository, unless `snapshot.json` names a
+`simulator` folder or `HORTI_DIR` is set. Since 14 November 2026 its `main` no longer stops a main stem at a length
+the model assumed (for the wisterias, the route of an earlier prototype's vault): how far a plant is taken is the
+gardener's plan. Each run's `run.json` says which branch and commit grew it, and what the gardener cut off, act
+by act.
+
+**The planting is a design, and there are two to choose between** (`npm run plant -- --scheme=`; the rule and
+the reasons are at the head of `pipeline/plant.mjs`):
+
+- `piers`, the one in use: **divided**. Each pier is one character and the characters alternate round the room, so
+  every plant is met on every side. A wisteria pier has two wisterias over the roof, the Chinese and the Japanese,
+  and the woodbine and an evergreen beside the doorways. A vine pier has the vine and the akebia over the roof, and evergreen honeysuckle and
+  ivy on the legs, held below the spring of the roof so that the piers are clothed in winter and the roof lets the
+  light in. The wisterias take the warmer piers.
+- `woven`: **integrated**. Every pier carries the same company (a wisteria, an akebia or the vine, a woodbine, an
+  evergreen) and nothing is held back, so the plants grow through one another and the building is one texture.
+
+Both have 24 plants, at the feet of the lines. They go in as nursery specimens standing 3 m, and the wisterias
+at 4 m, a size mature wisterias are sold at (`--specimen=3 --tall=wisteria:4`); the slow first seasons the plant
+models give a newly planted climber are kept. `cover` and `even` are the earlier trials, by the side of the room.
+
+| Run of `six-bay-radial-v1` | What it is | Routes held | Framework | Timber seen in June: inside / approach / above | Evergreens in winter |
+|---|---|---|---|---|---|
+| `trained-10y` | **divided by pier**, as modelled: what every drawing is made from | 96% | 3,042 m | 41% / 45% / 24% | 33% |
+| `woven-10y` | woven (`--plan=planting-woven.json`) | 95% | 2,733 m | 51% / 45% / 27% | 30% |
+| `high-10y` | divided by pier, every plant at the high end of what is published for a year's growth (`--band=high`) | 96% | 3,412 m | 33% / 43% / 20% | 31% |
+| `cover-10y` | earlier trial: by side, three vigorous climbers and an accent to a pier | 94% | 2,942 m | 85% / 58% / 31% | 27% |
+| `even-10y` | earlier trial: by side, every bed alike, small plants and vigorous | 83% | 2,101 m | 81% / 68% / 62% | 31% |
+| `even-loose-10y` | the same with a lighter hand (`--free=vine,akebia,honeysuckle --loose=1.2`) | 84% | 1,999 m | 79% / 65% / 58% | |
+| `capped-10y` | as the drawings were first grown: main stems stopped at an assumed length | 75% | 1,781 m | 85% / 73% / 71% | 28% |
+
+`npm run compare` sets them side by side. `--band=low` is the other end of what is published, and
+`--stems=2` lets twice as many stems share a member (it adds little on this building).
+
+**The gardener's hand is a design setting too**, not a fact about a plant. A planting plan can hold a plant below
+a height (the divided scheme does, for the evergreens on the legs). The simulator writes each plant the RHS's
+routine for a plant kept within bounds; `--free=` and `--loose=` loosen that before it is carried out. Tried on the
+earlier planting: it took the cutting from 6.8 km of stem in ten years to 0.6 km and changed what is seen by a few
+points of leaf. The knife is not what keeps a planting thin: which plants are planted is.
 
 In the studio: **Play** or drag the line of time; Space plays, the arrow keys step along it (further with Shift).
 Drag to turn the drawing, scroll to come closer. **Timber / Left to silver / Ink** draws the timber in its own
@@ -44,6 +84,8 @@ shows after it is restarted.
 
 ```bash
 npm run film -- --view=approach --timber=ink                # both proportions
+npm run film -- --view=approach --timber=wood --name=approach-timber    # the same with the timber in its colour
+npm run film -- --camera=tour --timber=wood --name=tour-timber --format=landscape    # a camera that moves
 npm run film -- --view=drawing --timber=wood --format=landscape --build=10 --grow=40
 ```
 
@@ -54,9 +96,49 @@ frame is worked out in full, so a film is smooth although the studio, live, may 
 approach is walked on, to stand before the bay in front. A film ends on the last midsummer of the run
 (`--to-the-end` for the whole of it). The films themselves are not committed; the stills are.
 
+`--camera=tour` moves the camera instead of standing it at a view: from where the approach stands it goes once
+round the building as it is put up and grows, rising to look down on the roof; then in under the arch in front;
+and from just short of the middle of the room it looks up into the crown (`tour` in `studio/src/paper.ts`). The
+path is worked out from the building's own approach view, its middle and its height, so it follows a new
+building. Nothing is written over the picture in this one.
+
 `--still=day:3399` (a day of growth) or `--still=build:0.5` (a share of the assembly) takes one picture and makes
 no film. The training lines are drawn as thin as they are, which is nearly not at all; `--lines=marked`, or
 `?lines=marked` in the studio, draws them in green to be looked at.
+
+## The live drawing, for the presentation
+
+```bash
+npm run live        # -> exports/deck/a-room-through-time/: the studio as plain files, about 12 MB
+```
+
+The room through time is the one drawing that goes to the presentation live: turned by hand, played, scrubbed,
+changed from view to view. Drawn from the whole record of a run it is far too heavy for that (a hundred megabytes
+to read, eight and a half million triangles a frame, most of them thinner than a pixel). `npm run live` makes it
+light without changing what is seen:
+
+- `pipeline/lighten.mjs` writes a light copy of each run, `scenes/<snapshot>/light/<run>.growth`: stems kept only
+  where they bend, twigs too fine to see left out with the thorns and rootlets, and, where a plant is a crowd of
+  leaves, fewer of them, each a little larger. About 5 MB, from about 100.
+- the studio, when it draws live, draws a leaf far across the room as the outline of each blade
+  (`studio/src/coarsen.ts`) and keeps the plants' own models for the leaves nearest the eye; it brings the leaves
+  up to the day a few kinds at a time while it plays, so that no frame waits for all of them.
+- a still of the established room is made first. The page shows it at once, brings the drawing up over it when
+  it is ready, and keeps it if the machine cannot draw at all.
+
+What comes out is plain files. It needs a web server (any: the presentation's own) and nothing else: nothing to
+install, nothing to run first. Set into a slide:
+
+```html
+<iframe src="a-room-through-time/index.html?embed&paper=EEF3EA&ink=102820&view=approach"></iframe>
+```
+
+`embed` leaves out the title and the words under the drawing; `paper` and `ink` are the slide's; `view` is where
+it opens (`drawing`, `approach`, `inside`, `plan`); `play` starts it by itself. On this machine's built-in
+graphics it plays at fifty to sixty frames a second, where the whole record gave fifteen.
+
+Pictures made beforehand (plates, pieces, films) still take the whole record, and so does the studio with
+`?whole`. `window.studio.bench()` and `.pools()` in the studio say what a frame costs and what is in it.
 
 ## Plates for the presentation
 
@@ -74,10 +156,6 @@ and an hour), or the room `round`: the whole room unrolled as seen turning on th
 each bay can be drawn at its own moment, so a turn of the room is also a passage of time. `shows` in each
 description says what the plate shows, for the caption.
 
-Nothing that goes to the presentation works anything out when it is shown. The studio does (it reads ten years
-of growth and draws every leaf), so the studio is for making drawings, not for showing them: what is shown is
-pictures made from it beforehand, and a page that turns through them.
-
 A description with `modes` makes a **piece** instead: a drawing to turn, scrub and play. Each mode is drawn at a
 list of moments, and those frames go into `exports/deck/<name>/` with a small player (`deck/player/`): an
 `index.html` that needs nothing but the files beside it. Dragging turns the room or moves along the day, the line
@@ -88,11 +166,11 @@ drive it (`__setMode`, `__setT`, `__play`, or the same by `postMessage`), as it 
 | Description | For |
 |---|---|
 | `04-plants-make-space` (piece) | Slide 4. Time, which it opens on: the whole building from above, on the approach and from inside, through design, assembly, planting, establishment and a year of seasons. Space: the room unrolled, from installation to established and through a year. Light: the floor in plan with its shade, frame alone beside established, through a midsummer day. Made in ink and, as `04-plants-make-space-timber`, in timber. |
-| `a-room-through-time` (piece) | A slide of its own, 16:9. What the studio draws, made beforehand as pictures so that nothing is worked out when it is shown: the building on the approach, from above and from inside, along one line of time (design, assembly, planting, establishment season by season). Changing view keeps the moment. In ink and, as `a-room-through-time-timber`, in timber. |
 | `05-shaded-room` (plate) | Slide 5, Shaded room: the shade wanted, the ways up from the soil, a pier with its lines |
 
-The views a plate can use beyond the studio's three: `plan` (from straight above, cut 1.2 m up, so that what
-shows is the floor and the shade on it) and `round`.
+The views a plate can use beyond the studio's three: `plan` (from straight above, cut 2 m up, so that what
+shows is the floor, the shade on it and the piers with what grows at them; the arches and the crown overhead are
+drawn broken, and a small red sun stands on the side the light comes from) and `round`.
 
 ### The same view, grown again
 

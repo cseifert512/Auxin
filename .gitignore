@@ -6,7 +6,9 @@ __pycache__/
 .claude/worktrees/
 .claude/settings.local.json
 
-# trial buildings: centre lines only, made by bower-blender/scripts/trial_snapshot.py; not snapshots
+# trial buildings: centre lines only, made by bower-blender/scripts/trial_snapshot.py; not snapshots.
+# The five of 14 November are kept all the same (control-6, reach-b, reach-c, through-12, through-24): they are
+# the runs the simulator's note on growth without stem caps refers to.
 releases/trial-*/
 drawings-in-code/scenes/trial-*/
 

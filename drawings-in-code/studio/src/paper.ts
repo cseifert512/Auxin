@@ -43,7 +43,7 @@ const WIDE_SHEET = 16 / 9;
 /** The field of view the plant models' levels of detail were tuned at. */
 const DETAIL_FOV = THREE.MathUtils.degToRad(40);
 /** A plan is cut this far above the floor, and a person's eye is this far above it. */
-const PLAN_CUT_M = 1.2;
+const PLAN_CUT_M = 2;
 const EYE_M = 1.65;
 
 /** The sky of three.js with the response curve the plants were coloured under (see the viewer's scene/stage.ts). */
@@ -83,7 +83,9 @@ export function makePaper(
   // ---- light: the plants are lit as the viewer lights them, so their colours are the ones they were made with ----
   const sun = new THREE.DirectionalLight(0xfff0dc, 3.4);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(4096, 4096);
+  // a picture made beforehand takes shade as fine as it comes; drawn live, half that each way is a quarter of the work
+  const whole = asked.has('whole') || asked.has('plate') || asked.has('film');
+  sun.shadow.mapSize.set(whole ? 4096 : 2048, whole ? 4096 : 2048);
   sun.shadow.bias = -0.0003;
   sun.shadow.normalBias = 0.012;
   sun.shadow.radius = 2.5;
@@ -124,16 +126,24 @@ export function makePaper(
   ground.receiveShadow = true;
   scene.add(ground);
 
-  // In plan only: what explains the shade. A circle round the building with a mark on it where the sun stands,
-  // in the factory drawings' red for what moves; and whatever else is put here (the frame overhead, in main.ts).
+  // In plan only: what explains the shade. A small sun, in the factory drawings' red for what moves, stands out
+  // beyond the building on the side the light comes from and goes round it with the day; and whatever else is put
+  // here (the frame overhead, in main.ts).
   const planOnly = new THREE.Group();
   planOnly.visible = false;
   scene.add(planOnly);
-  const sunTrack = new THREE.Mesh(new THREE.RingGeometry(0.992, 1, 240), new THREE.MeshBasicMaterial({ color: MUTED, transparent: true, opacity: 0.5, toneMapped: false }));
-  sunTrack.rotation.x = -Math.PI / 2;
-  const sunMark = new THREE.Mesh(new THREE.CircleGeometry(1, 48), new THREE.MeshBasicMaterial({ color: 0xb4492f, toneMapped: false }));
+  const sunRed = new THREE.MeshBasicMaterial({ color: 0xb4492f, toneMapped: false });
+  const sunMark = new THREE.Group();
   sunMark.rotation.x = -Math.PI / 2;
-  planOnly.add(sunTrack, sunMark);
+  sunMark.add(new THREE.Mesh(new THREE.CircleGeometry(1, 48), sunRed));
+  for (let k = 0; k < 8; k++) {
+    const ray = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.75), sunRed);
+    const turn = (k * Math.PI) / 4;
+    ray.position.set(Math.sin(turn) * 1.85, Math.cos(turn) * 1.85, 0);
+    ray.rotation.z = -turn;
+    sunMark.add(ray);
+  }
+  planOnly.add(sunMark);
   const sunRing = { x: 0, z: 0, radius: 9 };
   function placeSunMark(): void {
     const flat = Math.hypot(sunDir.x, sunDir.z) || 1;
@@ -218,8 +228,7 @@ export function makePaper(
     plan.updateProjectionMatrix();
     // the circle the sun's mark goes round: just inside the sheet
     sunRing.radius = Math.min(halfH, halfH * aspect) * 0.95;
-    sunTrack.scale.setScalar(sunRing.radius);
-    sunMark.scale.setScalar(sunRing.radius * 0.034);
+    sunMark.scale.setScalar(sunRing.radius * 0.024);
     placeSunMark();
   }
 
@@ -256,8 +265,54 @@ export function makePaper(
     moved = true;
   }
 
+  /** How high the building stands, and the approach's own lens: what a moving camera sets out from. */
+  let roofTop = 6;
+  let approachFov = approach.fov;
+  /**
+   * A camera that moves, for a film: where it is `at` seconds into a film `total` seconds long.
+   * It sets out from where the approach stands and goes once round the building, rising to look down on the roof
+   * and coming back down; then in under the arch in front; and from just short of the middle of the room it looks
+   * up into the crown, turning a little as it does. It is the approach's camera that is moved, with a wider lens
+   * once it is indoors.
+   */
+  function tour(at: number, total: number): void {
+    const c = controls.approach!;
+    // a hand on it would be held above the ground and off the timber; a film goes where it is sent
+    c.enableDamping = false;
+    c.maxPolarAngle = Math.PI;
+    c.minDistance = 0;
+    const sm = (a: number, b: number, x: number) => THREE.MathUtils.smoothstep(x, a, b);
+    const eye = toThree(standpoints.approach.eye);
+    const aim = toThree(standpoints.approach.target);
+    const mid = toThree([standpoints.middle[0]!, standpoints.middle[1]!, 0]);
+    const out = new THREE.Vector3(eye.x - mid.x, 0, eye.z - mid.z);
+    const far = out.length();
+    const from = Math.atan2(out.x, out.z);
+    out.normalize();
+    const [roundBy, inBy, upFrom, upBy] = [0.745 * total, 0.885 * total, 0.86 * total, 0.975 * total];
+    // once round: a little quicker in the middle of the turn than at its ends
+    const x = Math.min(1, at / roundBy);
+    const turn = from + Math.PI * 2 * (x + (sm(0, 1, x) - x) * 0.5);
+    // and a little nearer in the middle of it, where it is highest
+    const radius = far * (1 - 0.1 * sm(0, 1, x) - 0.14 * Math.sin(Math.PI * x) ** 2);
+    const outside = new THREE.Vector3(mid.x + Math.sin(turn) * radius, eye.y + roofTop * 0.75 * Math.sin(Math.PI * x) ** 2, mid.z + Math.cos(turn) * radius);
+    // indoors: on the side it came in by, looking across the room and then up
+    const back = out.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.6 * sm(upFrom, total, at));
+    const within = new THREE.Vector3(mid.x + back.x * 0.9, EYE_M, mid.z + back.z * 0.9);
+    const across = new THREE.Vector3(mid.x - out.x * 5, roofTop * 0.5, mid.z - out.z * 5);
+    const up = new THREE.Vector3(mid.x - back.x * 0.2, roofTop, mid.z - back.z * 0.2);
+    const s = sm(roundBy, inBy, at);
+    approach.position.lerpVectors(outside, within, s);
+    c.target.lerpVectors(aim, across.lerp(up, sm(upFrom, upBy, at)), s);
+    approach.fov = THREE.MathUtils.lerp(approachFov, inside.fov, s);
+    approach.updateProjectionMatrix();
+    c.update();
+    moved = true;
+  }
+
   /** Set the sheet up round what is drawn. */
   function frame(bounds: THREE.Box3): void {
+    roofTop = bounds.max.y;
     const centre = bounds.getCenter(new THREE.Vector3());
     home.copy(centre);
     const forward = new THREE.Vector3(Math.sin(TURN) * Math.cos(DIP), -Math.sin(DIP), -Math.cos(TURN) * Math.cos(DIP));
@@ -285,7 +340,6 @@ export function makePaper(
     plan.lookAt(centre.x, 0, centre.z);
     controls.plan!.target.set(centre.x, 0, centre.z);
     Object.assign(sunRing, { x: centre.x, z: centre.z });
-    sunTrack.position.set(centre.x, 0.02, centre.z);
     fitPlan();
     turnTo(turned.yawDeg, turned.upDeg);
 
@@ -315,7 +369,7 @@ export function makePaper(
   function resize(): boolean {
     const width = Math.max(1, canvas.clientWidth);
     const height = Math.max(1, canvas.clientHeight);
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, asked.has('whole') || asked.has('plate') || asked.has('film') ? 2 : 1.5);
     if (width === size.width && height === size.height && pixelRatio === renderer.getPixelRatio()) return false;
     size.width = width;
     size.height = height;
@@ -340,6 +394,7 @@ export function makePaper(
     if (tall) approach.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(standpoints.approachTall.acrossDeg) / 2) / approach.aspect));
     approach.updateProjectionMatrix();
     inside.updateProjectionMatrix();
+    approachFov = approach.fov;
     fitDrawing();
     fitPlan();
     turnTo(turned.yawDeg, turned.upDeg);
@@ -381,6 +436,7 @@ export function makePaper(
       const v = toThree(at).project(drawing);
       return [(v.x + 1) / 2, (1 - v.y) / 2];
     },
+    tour,
     planOnly,
     /** Come closer in a view that is looked through a lens or down from above: 1 is the whole of it. */
     zoom(id: ViewId, by: number): void {

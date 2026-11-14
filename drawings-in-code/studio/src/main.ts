@@ -15,6 +15,8 @@ import design from '@snapshot/design.json';
 import timberUrl from '@snapshot/bower.glb?url';
 import centrelinesUrl from '@snapshot/centrelines.json?url';
 import plan from '@scene/assembly.json';
+import { light, whole } from '@data';
+import { coarsenLeaves } from './coarsen.ts';
 import { type AssemblyPlan, type AssemblyState, DESIGN_SHARE, makeAssembly } from './assembly.ts';
 import { PAPER, type Standpoint, type ViewId, makePaper } from './paper.ts';
 import { type Centreline, type TimberLook, drawBeds, drawCables, drawOverhead, loadTimber } from './timber.ts';
@@ -30,10 +32,25 @@ for (const [file, href] of Object.entries(faces)) {
 }
 
 // ---- which planting ------------------------------------------------------------------------------------------------
-// Every run of the simulator that has been grown on this machine (scenes/<snapshot>/runs/<name>/growth.json).
-const grown = import.meta.glob('@scene/runs/*/growth.json', { query: '?url', import: 'default', eager: true }) as Record<string, string>;
-const runs = new Map(Object.entries(grown).map(([file, href]) => [file.split('/').at(-2)!, href]));
-const RUN_NAMES: Record<string, string> = { 'trained-10y': 'Tended, ten years', 'untended-10y': 'Untended, ten years' };
+// Every run of the simulator that has been grown on this machine, whole and light (data.ts). Drawn live it is the
+// light copy: what can be seen, and a tenth of the work. A picture made beforehand (a plate, a film), or ?whole,
+// takes the whole record.
+const wholes = new Map(Object.entries(whole).map(([file, href]) => [file.split('/').at(-2)!, href]));
+const lights = new Map(Object.entries(light).map(([file, href]) => [file.split('/').at(-1)!.replace(/\.growth$/, ''), href]));
+const LIVE = lights.size > 0 && !(wholes.size > 0 && (url.has('whole') || url.has('plate') || url.has('film')));
+const runs = LIVE ? lights : wholes;
+/** How finely the plants are drawn, 0 to 1 (PlantView.update): live, the finest models go to the few leaves nearest the eye. */
+const DETAIL = url.has('detail') ? Number(url.get('detail')) : LIVE ? 0.6 : 1;
+const RUN_NAMES: Record<string, string> = {
+  'trained-10y': 'Divided by pier: wisteria piers and vine piers',
+  'woven-10y': 'Woven: every pier the same company',
+  'high-10y': 'Divided by pier, every plant at the high end of its published growth',
+  'cover-10y': 'Earlier trial: by side, weighted to cover',
+  'even-10y': 'Earlier trial: by side, every bed alike',
+  'even-loose-10y': 'Earlier trial: by side, tended with a lighter hand',
+  'capped-10y': 'As first drawn: main stems stopped at an assumed length',
+  'untended-10y': 'Untended, ten years',
+};
 const run = runs.has(url.get('run') ?? '') ? url.get('run')! : runs.has('trained-10y') ? 'trained-10y' : [...runs.keys()][0];
 if (!run) throw new Error('no planting has been grown yet: npm run grow');
 const growthUrl = runs.get(run)!;
@@ -83,8 +100,8 @@ paper.resize();
 
 const centrelines = (await (await fetch(centrelinesUrl)).json()).members as Centreline[];
 const timber = await loadTimber(timberUrl, centrelines);
-// in plan, the arches, the rings and the crown overhead, so that the shade has something to be read against
-paper.planOnly.add(drawOverhead(centrelines, ['arch', 'ring', 'crown']));
+// in plan, the arches and the crown overhead, so that the shade has something to be read against
+paper.planOnly.add(drawOverhead(centrelines, ['arch', 'crown']));
 if (url.has('grain')) timber.setGrain(Number(url.get('grain')));
 paper.scene.add(timber.group);
 paper.frame(timber.bounds);
@@ -93,7 +110,9 @@ paper.scene.add(assembly.group);
 
 
 // ---- the plants --------------------------------------------------------------------------------------------------
-const growth = (await (await fetch(growthUrl)).json()) as RenderData;
+// a light copy is packed (gzip of its JSON)
+const fetched = await fetch(growthUrl);
+const growth = (LIVE ? JSON.parse(await new Response(fetched.body!.pipeThrough(new DecompressionStream('gzip'))).text()) : await fetched.json()) as RenderData;
 // a ring on the ground where each plant of this planting goes in
 const bower = (await (await fetch(bowerUrl)).json()) as { stations: { id: string; position: number[] }[]; cables?: { id: string; points: number[][] }[] };
 const bedsUsed = new Set(growth.plants.map((p) => p.stationId));
@@ -105,6 +124,8 @@ const steelM = (bower.cables ?? []).reduce((sum, c) => sum + c.points.slice(1).r
 paper.scene.add(steel);
 await loadLooks([...new Set(growth.plants.map((p) => p.taxonId))]);
 const plants = new PlantView(growth, makePlantMaterials({ bark: (grain) => makeBarkTextures(grain), leafTex: makeLeafTexture(), ownLeafTex: makeOwnLeafTexture }));
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+if (LIVE && !url.has('portraits')) coarsenLeaves((plants as any).leafPools);
 paper.scene.add(plants.group);
 
 // ---- the line of time --------------------------------------------------------------------------------------------
@@ -252,9 +273,24 @@ chooser.addEventListener('change', () => {
 // ---- what goes with the picture ----------------------------------------------------------------------------------
 $('subtitle').textContent = `${design.rooms[0]!.bays.length}-bay room · ${plan.members.length} timber members · trial planting of ${growth.plants.length} climbers, tended${steelM > 0 ? ` · ${Math.round(steelM)} m of training line` : ''}`;
 setLook(look);
+// Everything the drawing will need is made ready while it still says it is loading: the plants drawn once in full
+// leaf, so that their programs are built and their pictures sent to the card. Otherwise the first leaf to open
+// holds the playing up for a second or two.
+if (LIVE) {
+  plants.group.visible = true;
+  clock.uDay.value = lastDay - 200;
+  plants.update(paper.detailFrom(), lastDay - 200, DETAIL);
+  paper.shadeChanged();
+  paper.render();
+}
 $('loading').hidden = true;
+// the drawing comes up over the still, and the still is then taken away
+document.body.classList.add('ready');
+setTimeout(() => document.getElementById('poster')?.remove(), 900);
 document.querySelector<HTMLElement>('.time')!.hidden = false;
 if (url.has('bare')) document.body.classList.add('bare');
+if (url.has('embed')) document.body.classList.add('embed');
+if (url.has('tour')) document.body.classList.add('tour');
 // a film is the same sheet with nothing to press: the script that makes it asks for each frame in turn
 const filming = url.has('film') || url.has('plate');
 if (url.has('film')) document.body.classList.add('film');
@@ -280,6 +316,35 @@ let organsFrom: { x: number; y: number; z: number; view: ViewId } | null = null;
 let readAt = 0;
 let shadeAt = 0;
 let shadeOwed = true;
+
+// Playing live, the leaves are not all brought up to the day at once, which would hold a frame for a tenth of a
+// second several times a second. Each kind of leaf, flower and fruit is brought up in its turn, as many in a frame
+// as a few milliseconds allow, and the round is gone through again and again.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const insides = plants as any;
+const KINDS = ['leafPools', 'flowerPools', 'fruitPools', 'appendagePools'] as const;
+const inTurn = KINDS.flatMap((kind) => (insides[kind] as unknown[]).map((pool) => ({ kind, pool })));
+const openIn = new Map<unknown, number>();
+let turn = 0;
+let turnsOwed = false;
+function someOrgans(forMs: number): void {
+  if (!inTurn.length) return;
+  const began = performance.now();
+  const all = KINDS.map((kind) => insides[kind]);
+  let done = 0;
+  do {
+    const { kind, pool } = inTurn[turn]!;
+    for (const k of KINDS) insides[k] = k === kind ? [pool] : [];
+    plants.update(paper.detailFrom(), state.at, DETAIL);
+    if (kind === 'flowerPools') openIn.set(pool, insides.open);
+    turn = (turn + 1) % inTurn.length;
+    done++;
+  } while (done < inTurn.length && performance.now() - began < forMs);
+  KINDS.forEach((kind, k) => (insides[kind] = all[k]));
+  // the count of flowers open is kept kind by kind, since each turn counts only its own
+  insides.open = [...openIn.values()].reduce((n, x) => n + x, 0);
+  turnsOwed = true;
+}
 
 function draw(now: number): void {
   const dt = Math.min(0.1, (now - before) / 1000);
@@ -323,9 +388,17 @@ function draw(now: number): void {
     const reach = organsFrom ? Math.hypot(from.x - organsFrom.x, from.y - organsFrom.y, from.z - organsFrom.z) : Infinity;
     const viewChanged = !organsFrom || organsFrom.view !== paper.view() || reach > 0.12 * Math.max(1, from.length());
     const dayChanged = state.at !== state.drawnDay;
-    if ((dayChanged || viewChanged) && (now - organsAt > organsEveryMs || (!state.playing && now - organsAt > 60))) {
+    if (LIVE && state.playing && organsFrom && !viewChanged) {
+      if (dayChanged) {
+        someOrgans(4);
+        shadeOwed = true;
+        state.drawnDay = state.at;
+      }
+    } else if ((dayChanged || viewChanged || turnsOwed) && (now - organsAt > organsEveryMs || (!state.playing && now - organsAt > 60))) {
       const began = performance.now();
-      plants.update(paper.detailFrom(), state.at, 1);
+      plants.update(paper.detailFrom(), state.at, DETAIL);
+      for (const { pool } of insides.flowerPools as { pool: unknown }[]) openIn.delete(pool);
+      turnsOwed = false;
       organsEveryMs = Math.min(900, Math.max(220, (performance.now() - began) * 4));
       organsAt = now;
       organsFrom = { x: from.x, y: from.y, z: from.z, view: paper.view() };
@@ -370,6 +443,50 @@ Object.assign(window, {
       if (id) setView(id);
     },
     look: setLook,
+    /** The plants themselves, for looking into when something is drawn wrongly. */
+    plants,
+    /** What is being drawn of the plants, kind by kind, on the day shown: how many, at which fineness, in how many triangles. */
+    pools() {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const p = plants as any;
+      const list = (kind: string, pools: { asset: { key: string }; pool: { visible: number; triangles: number; used: number[]; slots: { tris: number }[][] } }[]) =>
+        pools.map(({ asset, pool }) => ({ kind, key: asset.key, visible: pool.visible, triangles: pool.triangles, used: pool.used, trisByFineness: pool.slots[0]!.map((s) => s.tris) }));
+      return {
+        wood: (p.wood as { triangles: number }[]).reduce((n, w) => n + w.triangles, 0),
+        pools: [...list('leaf', p.leafPools), ...list('flower', p.flowerPools), ...list('fruit', p.fruitPools), ...list('appendage', p.appendagePools)].filter((x) => x.visible > 0),
+      };
+    },
+    /** How long the drawing takes, part by part, as it stands: for finding what to cut. Times are with the GPU made to finish. */
+    bench(detail = DETAIL, frames = 6, parts: { plants?: boolean; timber?: boolean; lines?: boolean } = {}) {
+      const gl = paper.renderer.getContext();
+      const px = new Uint8Array(4);
+      const time = (f: () => void) => {
+        const t = performance.now();
+        f();
+        gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
+        return performance.now() - t;
+      };
+      plants.group.visible = parts.plants ?? true;
+      timber.group.visible = parts.timber ?? true;
+      timber.lines.visible = parts.lines ?? true;
+      const update = time(() => plants.update(paper.detailFrom(), state.at, detail));
+      paper.render();
+      paper.render();
+      let render = 0;
+      for (let i = 0; i < frames; i++) render += time(() => paper.render());
+      const seen = { ...paper.renderer.info.render };
+      let shade = 0;
+      for (let i = 0; i < 3; i++)
+        shade += time(() => {
+          paper.shadeChanged();
+          paper.render();
+        });
+      const s = plants.stats();
+      plants.group.visible = true;
+      timber.group.visible = true;
+      timber.lines.visible = true;
+      return { detail, updateMs: Math.round(update), frameMs: Number((render / frames).toFixed(1)), frameWithShadeMs: Number((shade / 3).toFixed(1)), triangles: seen.triangles, calls: seen.calls, leaves: s.leaves, plantTriangles: s.triangles, stems: s.stems };
+    },
     state: () => ({ at: state.at, built, run, look }),
     /** A place on the line of time from its name: "build:0.5", "day:3399" or "date:2031-06-20". */
     moment(name: string): number {
@@ -407,7 +524,13 @@ Object.assign(window, {
       await this.film(p.at ?? state.at, 0);
       await this.film(p.at ?? state.at, 0);
     },
-    async film(at: number, seconds: number) {
+    async film(at: number, seconds: number, tour?: [number, number]) {
+      // a camera that moves: where it is so many seconds into a film so many seconds long (paper.tour)
+      if (tour) {
+        if (paper.view() !== 'approach') setView('approach');
+        paper.tour(tour[0], tour[1]);
+        organsFrom = null;
+      }
       setPlaying(false);
       setAt(at);
       organsAt = Number.NEGATIVE_INFINITY;

@@ -2,6 +2,10 @@
 //   node pipeline/film.mjs [--name=approach-ink] [--view=approach|drawing|inside] [--timber=ink|wood|bare]
 //                          [--format=both|landscape|portrait] [--run=trained-10y]
 //                          [--fps=30] [--build=12] [--grow=36] [--hold=2] [--to-the-end] [--keep-frames]
+//                          [--crf=17]        how hard the film is packed: lower is finer and larger (a moving camera
+//                                            changes every pixel of every frame, and is packed at 21 unless told)
+//                          [--camera=tour]   a camera that moves: once round the building as it goes up and grows,
+//                                            in under the arch in front, and up into the crown from underneath
 // Writes exports/<name>/<name>-16x9.mp4 (1920 x 1080, for a presentation) and <name>-9x16.mp4 (1080 x 1920, for
 // a phone), each with a still of its last frame beside it.
 //
@@ -21,9 +25,10 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const options = Object.fromEntries(process.argv.slice(2).filter((a) => a.startsWith('--')).map((a) => a.slice(2).split('=')));
-const view = options.view ?? 'approach';
+const touring = options.camera === 'tour';
+const view = touring ? 'approach' : (options.view ?? 'approach');
 const timber = options.timber ?? 'ink';
-const name = options.name ?? `${view}-${timber}`;
+const name = options.name ?? `${touring ? 'tour' : view}-${timber}`;
 const fps = Number(options.fps ?? 30);
 const seconds = { build: Number(options.build ?? 12), planting: 1, grow: Number(options.grow ?? 36), hold: Number(options.hold ?? 2) };
 /** The sheet in the page's own units, drawn at twice that, so that type and line keep the weight they have on a good screen. */
@@ -152,7 +157,7 @@ for (const key of formats) {
 
   const page = await openPage();
   await page.send('Emulation.setDeviceMetricsOverride', { width: format.width, height: format.height, deviceScaleFactor: SCALE, mobile: false });
-  const query = new URLSearchParams({ film: '', view, timber, build: '0', ...(options.run ? { run: options.run } : {}), ...(options.lines ? { lines: options.lines } : {}) });
+  const query = new URLSearchParams({ film: '', ...(touring ? { tour: '' } : {}), view, timber, build: '0', ...(options.run ? { run: options.run } : {}), ...(options.lines ? { lines: options.lines } : {}) });
   await page.send('Page.navigate', { url: `http://localhost:${PORT}/?${query}` });
   // reading ten years of growth takes a while
   let ready = false;
@@ -181,7 +186,7 @@ for (const key of formats) {
 
   const began = performance.now();
   for (let i = 0; i < total; i++) {
-    await page.js(`window.studio.film(${momentAt(i / fps, line)}, ${1 / fps})`);
+    await page.js(`window.studio.film(${momentAt(i / fps, line)}, ${1 / fps}${touring ? `, [${i / fps}, ${total / fps}]` : ''})`);
     const shot = await page.send('Page.captureScreenshot', { format: 'jpeg', quality: 94 });
     writeFileSync(resolve(frames, `${String(i).padStart(5, '0')}.jpg`), Buffer.from(shot.data, 'base64'));
     if (i % 150 === 149) {
@@ -192,7 +197,7 @@ for (const key of formats) {
   }
   page.close();
 
-  execFileSync(ffmpeg, ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', resolve(frames, '%05d.jpg'), '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', resolve(out, `${file}.mp4`)]);
+  execFileSync(ffmpeg, ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', resolve(frames, '%05d.jpg'), '-c:v', 'libx264', '-preset', 'slow', '-crf', String(options.crf ?? (touring ? 21 : 17)), '-pix_fmt', 'yuv420p', '-movflags', '+faststart', resolve(out, `${file}.mp4`)]);
   copyFileSync(resolve(frames, `${String(total - 1).padStart(5, '0')}.jpg`), resolve(out, `${file}.jpg`));
   if (!('keep-frames' in options)) rmSync(frames, { recursive: true, force: true });
   console.log(`  written: ${resolve(out, `${file}.mp4`)} in ${((performance.now() - began) / 60000).toFixed(1)} min`);
