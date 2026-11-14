@@ -360,11 +360,93 @@ def build_room(scene, design: dict, room: dict) -> dict:
     }
 
 
-def _mesh_intersections(objects) -> dict:
-    """Pairs of member meshes that really intersect, leaving out members jointed at a shared node.
+def _mill(scene, objects, cutters: dict, solver: str) -> dict:
+    """Mill each member's mesh: subtract its cutters from it, in place, and say what came of it."""
+    done = {"members_milled": 0, "cutters": 0, "volume_removed_m3": 0.0, "left_open": []}
+    holder = bpy.data.collections.new("bower_cutters_tmp")
+    scene.collection.children.link(holder)
 
-    Two lattice members that still intersect are a lap that was not cut cleanly (or not cut at
-    all) and are counted; any other pair is listed as a clash.
+    def volume(mesh) -> float:
+        bm = bmesh.new()
+        bm.from_mesh(mesh)
+        value = bm.calc_volume(signed=True)
+        bm.free()
+        return value
+
+    try:
+        for obj in objects:
+            group = cutters.get(obj["bower_id"])
+            if not group:
+                continue
+            verts, faces = [], []
+            for cutter_verts, cutter_faces in group:
+                base = len(verts)
+                verts += cutter_verts
+                faces += [tuple(i + base for i in face) for face in cutter_faces]
+            tool_mesh = bpy.data.meshes.new("bower_cutter_tmp")
+            tool_mesh.from_pydata(verts, [], faces)
+            tool_mesh.update()
+            tool = bpy.data.objects.new("bower_cutter_tmp", tool_mesh)
+            holder.objects.link(tool)
+            before = volume(obj.data)
+            modifier = obj.modifiers.new("mill", "BOOLEAN")
+            modifier.operation, modifier.operand_type, modifier.object, modifier.solver = "DIFFERENCE", "OBJECT", tool, solver
+            if solver == "EXACT":
+                modifier.use_self = True  # the cutters of one member overlap each other
+            bpy.context.view_layer.update()
+            milled = bpy.data.meshes.new_from_object(obj.evaluated_get(bpy.context.evaluated_depsgraph_get()))
+            obj.modifiers.remove(modifier)
+            old = obj.data
+            obj.data = milled
+            bpy.data.meshes.remove(old)
+            milled.name = obj["bower_id"]
+            bpy.data.objects.remove(tool)
+            bpy.data.meshes.remove(tool_mesh)
+            # tidy what the boolean leaves: coincident vertices, collapsed faces, and faces of many sides
+            # (which the viewport's shadows cannot follow)
+            def tidied(merge: bool, split: bool):
+                bm = bmesh.new()
+                bm.from_mesh(milled)
+                if merge:
+                    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-5)
+                    bmesh.ops.dissolve_degenerate(bm, edges=bm.edges, dist=1e-5)
+                if split:
+                    bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 4])
+                return bm, bool(bm.faces) and all(e.is_manifold for e in bm.edges)
+
+            # Merging can pinch a thin wall shut, and splitting a face with a hole in it can leave a
+            # seam: each is given up in turn for a mesh it would break, down to the mesh as it was cut.
+            for merge, split in ((True, True), (False, True), (False, False)):
+                bm, sound = tidied(merge, split)
+                if sound or not (merge or split):
+                    break
+                bm.free()
+            if not sound:
+                done["left_open"].append(obj["bower_id"])
+            bm.to_mesh(milled)
+            bm.free()
+            milled.shade_smooth()
+            milled.set_sharp_from_angle(angle=radians(30))
+            done["members_milled"] += 1
+            done["cutters"] += len(group)
+            done["volume_removed_m3"] += before - volume(milled)
+            obj["bower_cutters"] = len(group)
+    finally:
+        for stray in list(holder.objects):
+            bpy.data.objects.remove(stray)
+        bpy.data.collections.remove(holder)
+    done["volume_removed_m3"] = round(done["volume_removed_m3"], 3)
+    return done
+
+
+def _mesh_intersections(objects) -> dict:
+    """Pairs of member meshes that really intersect, whether or not they are jointed, and how deeply.
+
+    Only the two halves of an arch are passed over: they meet face to face on their mitre. For
+    every other pair whose faces cross, the depth is how far a vertex of one sits inside the
+    other. Under a millimetre is counted as touching: that is the noise of faceted meshes cut a
+    few millimetres apart. Deeper pairs are listed: two lattice members are a lap that was not
+    cut cleanly, any other pair is a clash.
     """
     from mathutils.bvhtree import BVHTree
 
@@ -372,29 +454,61 @@ def _mesh_intersections(objects) -> dict:
     for o in objects:
         points = [v.co[:] for v in o.data.vertices]
         box = tuple((min(p[k] for p in points), max(p[k] for p in points)) for k in range(3))
-        trees.append((o["bower_id"], o["bower_family"] in LATTICE, set(o["bower_nodes"].split(",")), BVHTree.FromPolygons(points, [p.vertices[:] for p in o.data.polygons]), box))
-    found = {"lattice_pairs_still_intersecting": 0, "clashes": []}
-    for i, (a, lattice_a, nodes_a, tree_a, box_a) in enumerate(trees):
-        for b, lattice_b, nodes_b, tree_b, box_b in trees[i + 1 :]:
+        mitred = {n for n in o["bower_nodes"].split(",") if n.endswith(".apex")}
+        o.data.calc_loop_triangles()  # Blender's own triangulation: milled faces have many sides, notches and holes
+        trees.append((o["bower_id"], o["bower_family"] in LATTICE, mitred, BVHTree.FromPolygons(points, [t.vertices[:] for t in o.data.loop_triangles], all_triangles=True), box, o))
+
+    skyward = Vector((0.31, 0.17, 0.93)).normalized()  # an arbitrary direction, off every axis of the model
+
+    def inside(guest, host_tree, around, radius) -> float:
+        """How far the deepest vertex of `guest` near a point sits inside the solid of `host_tree`, in metres.
+
+        A vertex is inside if a ray from it leaves the solid an odd number of times.
+        """
+        deepest = 0.0
+        for v in guest.data.vertices:
+            if (v.co - around).length >= radius:
+                continue
+            crossings, origin = 0, v.co.copy()
+            for _ in range(64):
+                hit = host_tree.ray_cast(origin, skyward)[0]
+                if hit is None:
+                    break
+                crossings += 1
+                origin = hit + skyward * 1e-5
+            if crossings % 2:
+                deepest = max(deepest, (v.co - host_tree.find_nearest(v.co)[0]).length)
+        return deepest
+
+    found = {"pairs_touching_under_1mm": 0, "lattice_pairs_still_intersecting": 0, "laps_not_clean": [], "clashes": []}
+    for i, (a, lattice_a, nodes_a, tree_a, box_a, obj_a) in enumerate(trees):
+        for b, lattice_b, nodes_b, tree_b, box_b, obj_b in trees[i + 1 :]:
             if nodes_a & nodes_b or any(box_a[k][0] > box_b[k][1] or box_b[k][0] > box_a[k][1] for k in range(3)):
                 continue
-            if not tree_a.overlap(tree_b):
+            hits = tree_a.overlap(tree_b)
+            if not hits:
                 continue
-            if lattice_a and lattice_b:
+            crossing = [obj_a.data.vertices[obj_a.data.loop_triangles[fa].vertices[0]].co for fa, _ in hits]
+            centre = sum(crossing, Vector()) / len(crossing)
+            radius = max((p - centre).length for p in crossing) + 0.15
+            depth = max(inside(obj_a, tree_b, centre, radius), inside(obj_b, tree_a, centre, radius))
+            if depth < 0.001:
+                found["pairs_touching_under_1mm"] += 1
+            elif lattice_a and lattice_b:
                 found["lattice_pairs_still_intersecting"] += 1
+                found["laps_not_clean"].append([a, b, round(depth * 1000.0, 1)])
             else:
-                found["clashes"].append([a, b])
+                found["clashes"].append([a, b, round(depth * 1000.0, 1)])
     return found
 
 
 def _build_room_timber(scene, design: dict, room: dict, tags: dict, built: list) -> dict:
     """Write a room's primary members and return what was checked: source geometry, scene geometry, clearances."""
     members = build_timber(room, design["timber"])
-    joints, notches = find_joints(members, design["timber"])
-    if not design["timber"].get("joints", {}).get("cut_meshes", True):
-        notches = {}
+    joints, notches, cutters = find_joints(members, design["timber"])
     reports = [build_member(scene, m, design["timber"]["sampling"], tags, notches.get(m.id, ())) for m in members]
     meshes = [bpy.data.objects[r["objects"]["timber"]] for r in reports]
+    milled = _mill(scene, meshes, cutters, design["timber"].get("joints", {}).get("solver", "EXACT")) if cutters else None
     built.extend(meshes)
     built.extend(bpy.data.objects[r["objects"]["centreline"]] for r in reports)
     families = {}
@@ -416,11 +530,12 @@ def _build_room_timber(scene, design: dict, room: dict, tags: dict, built: list)
         "members": len(members),
         "joints": joint_summary(joints),
         "lap_notches_cut": sum(len(v) for v in notches.values()),
+        "milled": milled,
         "families": families,
         "total_length_m": round(sum(r["length_m"] for r in reports), 1),
         "total_volume_m3": round(sum(r["volume_m3"] for r in reports), 2),
         "max_centreline_deviation_m": max(r["centreline_check"]["max_deviation_m"] for r in reports),
-        "meshes_closed": all(r["mesh_check"]["closed_manifold"] for r in reports),
+        "meshes_closed": all(r["mesh_check"]["closed_manifold"] for r in reports) and not (milled and milled["left_open"]),
         "collisions_estimated": estimate["collisions"],
         "notches_estimated": len(estimate["notches"]),
         "mesh_intersections_in_scene": _mesh_intersections(meshes),

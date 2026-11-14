@@ -456,13 +456,14 @@ class Roof:
             turn = min(turn, len(trail) - 2)
         return Course(head, at, start, lo, spacing * math.cos(lean), tuple(trail), drawn_to, passes, turn, inset)
 
-    def _squared(self, course: Course, within: float):
+    def _squared(self, course: Course, within: float, shift=(0.0, 0.0)):
         """The last stretch of a free rib, turned to meet its arch squarely.
 
-        Inside `within` of the arch's plane the rib leaves its course on a circular arc that
-        arrives square to the arch. Returns the index into the course's trail where it leaves,
-        and the plan points of the arc from there to its foot; None where the rib cannot be
-        squared (it runs along the arch, or would land in a pier or on another bay).
+        Inside `within` of the arch's plane the rib leaves its course on an arc that arrives
+        square to the arch. `shift` moves its foot along the arch from where that arc would
+        land, to keep it clear of a neighbour. Returns the index into the course's trail where
+        it leaves, and the plan points of the arc from there to its foot; None where the rib
+        cannot be squared (it runs along the arch, or would land in a pier or on another bay).
         """
         _, _, half, _ = self.rim(course.at(course.end)[0])
         dx, dy = half.direction[0], half.direction[1]
@@ -483,20 +484,22 @@ class Roof:
         if facing < 0.2:
             return None
         tangent = to_go / (1.0 + facing)  # both tangents of the arc, from its ends to where they meet
-        corner = (q0[0] + hx * tangent, q0[1] + hy * tangent)
-        foot = (corner[0] + nx * tangent, corner[1] + ny * tangent)
+        foot = (q0[0] + (hx + nx) * tangent + shift[0], q0[1] + (hy + ny) * tangent + shift[1])
         _, _, landed, along = self.rim(math.atan2(foot[1] - self.centre[1], foot[0] - self.centre[0]))
         if landed.bay != half.bay or along < 0.6:
             return None
+        # a cubic that leaves along the rib's heading and arrives along the square to the arch
+        c1 = (q0[0] + hx * tangent * 2.0 / 3.0, q0[1] + hy * tangent * 2.0 / 3.0)
+        c2 = (foot[0] - nx * tangent * 2.0 / 3.0, foot[1] - ny * tangent * 2.0 / 3.0)
         pieces = max(2, round(2.0 * tangent / course.step))
         arc = []
         for i in range(1, pieces + 1):
             t = i / pieces
             u = 1.0 - t
-            arc.append(tuple(u * u * q0[j] + 2.0 * u * t * corner[j] + t * t * foot[j] for j in (0, 1)))
+            arc.append(tuple(u**3 * q0[j] + 3.0 * u * u * t * c1[j] + 3.0 * u * t * t * c2[j] + t**3 * foot[j] for j in (0, 1)))
         return k, arc
 
-    def lay(self, course: Course, slot=None, square: float = 0.0):
+    def lay(self, course: Course, slot=None, square: float = 0.0, shift=(0.0, 0.0)):
         """A traced rib's (point, normal) samples from its foot to its upper end, with the arch half
         it lands on and how far along that half it lands.
 
@@ -509,7 +512,7 @@ class Roof:
         """
         samples, step = list(course.head), course.step
         if course.pier is None:
-            squared = self._squared(course, square) if square > 0.0 else None
+            squared = self._squared(course, square, shift) if square > 0.0 else None
             last = course.trail[squared[0]][0] if squared else course.end
             pieces = max(1, round((last - course.start) / step)) if last - course.start > 0.3 * step else 0
             for i in range(1, pieces + 1):

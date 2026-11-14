@@ -58,7 +58,14 @@ def shifted(**changes):
 MEMBERS = timber(BASE)
 BY_ID = {m.id: m for m in MEMBERS}
 REPORT = clearances(MEMBERS)
-JOINTS, NOTCHES = find_joints(MEMBERS, BASE["timber"])
+JOINTS, _, CUTTERS = find_joints(MEMBERS, BASE["timber"])  # as set: every joint milled
+
+
+def closed_and_solid(verts, faces) -> bool:
+    """A mesh every edge of which is shared by exactly two faces wound opposite ways, enclosing a positive volume."""
+    edges = Counter((a, b) for f in faces for a, b in zip(f, f[1:] + f[:1]))
+    volume = sum(dot(verts[f[0]], cross(verts[f[k]], verts[f[k + 1]])) / 6.0 for f in faces for k in range(1, len(f) - 1))
+    return all(n == 1 for n in edges.values()) and all((b, a) in edges for a, b in edges) and volume > 0.0
 
 
 def test_every_bay_gets_its_arch_and_hoops_and_the_room_its_lattice():
@@ -193,17 +200,51 @@ def test_every_crossing_of_the_lattice_is_a_lap_set_out_on_both_members():
             assert crossings[m.id] >= 6, f"{m.id} crosses only {crossings[m.id]} members"
     for bay in ROOM["bays"]:  # rib ends cross the hoops on their way to the arch: the laddered band
         assert crossings[f"{bay['id']}.hoop0"] >= 6
-    uncut = [j for j in laps if "not cut in the model" in j.review]
-    assert len(uncut) <= 0.1 * len(laps), f"{len(uncut)} of {len(laps)} laps cannot be cut as drawn"
+    assert not [j for j in JOINTS if j.review], "a joint is flagged as needing its own detail"
     rows = joint_rows(JOINTS)
     assert len(rows) == len(JOINTS) and all(row["a_operation"] == "lap" and row["b_operation"] == "lap" for row in rows if row["kind"] == "cross_lap")
 
 
-def test_the_notched_member_meshes_are_closed_and_lose_only_their_notches():
+def test_every_joint_comes_with_the_volume_to_mill_out_of_each_member():
+    laps = Counter(c.member for j in JOINTS if j.kind == "cross_lap" for c in j.cuts)
+    pockets = Counter(c.member for j in JOINTS if j.kind in ("housing", "crown_seat") for c in j.cuts if c.operation == "housing")
+    mitres = Counter(c.member for j in JOINTS if j.kind == "pier_mitre" for c in j.cuts)
+    for m in MEMBERS:
+        mine = CUTTERS.get(m.id, [])
+        assert len(mine) >= laps[m.id] + pockets[m.id] + mitres[m.id], m.id
+        assert all(closed_and_solid(verts, faces) for verts, faces in mine), f"a cutter for {m.id} is not a closed solid"
+    assert set(CUTTERS) == {m.id for m in MEMBERS}  # every member is cut somewhere
+    # a plain member mesh is closed too, rings included: those have no ends
+    for m in MEMBERS:
+        assert closed_and_solid(*sweep(m, m.path.stations(0.08))), m.id
+
+
+def test_a_member_crossed_on_both_faces_at_one_place_keeps_a_third_of_its_depth():
+    thirds = [j for j in JOINTS if j.kind == "cross_lap" and abs(j.cuts[0].depth_m - j.cuts[1].depth_m) > 0.05]
+    assert thirds, "this room has places where three members meet"
+    by_member = defaultdict(list)
+    for j in JOINTS:
+        if j.kind == "cross_lap":
+            for cut in j.cuts:
+                by_member[cut.member].append(cut)
+    for member_id, cuts in by_member.items():
+        depth = BY_ID[member_id].depth
+        for a in cuts:
+            for b in cuts:
+                if a.face == "outer" and b.face == "inner" and abs(a.at_m - b.at_m) < (a.length_m + b.length_m) / 2.0:
+                    assert a.depth_m + b.depth_m <= 0.75 * depth, f"{member_id} is left under a quarter of its depth at {a.at_m} m"
+
+
+def test_the_simpler_notch_model_is_still_available_and_says_what_it_cannot_cut():
     def volume(verts, faces):
         return sum(dot(verts[f[0]], cross(verts[f[k]], verts[f[k + 1]])) / 6.0 for f in faces for k in range(1, len(f) - 1))
 
-    cut_laps = Counter(c.member for j in JOINTS if j.kind == "cross_lap" and "not cut in the model" not in j.review for c in j.cuts)
+    joints, NOTCHES, cutters = find_joints(MEMBERS, shifted(joints__cut_meshes="notches")["timber"])
+    assert not cutters
+    laps = [j for j in joints if j.kind == "cross_lap"]
+    uncut = [j for j in laps if "not cut in the model" in j.review]
+    assert 0 < len(uncut) <= 0.2 * len(laps)
+    cut_laps = Counter(c.member for j in laps if "not cut in the model" not in j.review for c in j.cuts)
     for m in MEMBERS:
         stations = m.path.stations(0.08)
         notches = NOTCHES.get(m.id, [])
@@ -237,9 +278,10 @@ def regenerated(edited):
     assert {m.id for m in members if tier(m) == "fine"} <= possible
     bays = [b["id"] for b in edited["rooms"][0]["bays"]]
     assert {m.id for m in members if m.family in ("arch", "hoop")} == set().union(*(bay_parts(b) for b in bays))
-    joints, notches = find_joints(members, edited["timber"])
+    joints, _, cutters = find_joints(members, edited["timber"])
     laps = [j for j in joints if j.kind == "cross_lap"]
-    assert len(laps) > 200 and sum("not cut in the model" in j.review for j in laps) <= 0.15 * len(laps)
+    assert len(laps) > 200 and sum(1 for j in joints if j.review) <= 0.02 * len(laps)
+    assert all(closed_and_solid(verts, faces) for group in cutters.values() for verts, faces in group)
     return members
 
 

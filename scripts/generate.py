@@ -28,7 +28,7 @@ def write_schedule(design: dict, path, joints_path=None) -> str:
     rows, joints = [], []
     for room in design["rooms"]:
         members = build_timber(room, design["timber"])
-        found, _ = find_joints(members, design["timber"])
+        found = find_joints(members, design["timber"])[0]
         rows += schedule(members, design["timber"], clearances(members), found)
         joints += joint_rows(found)
     Path(path).parent.mkdir(exist_ok=True)

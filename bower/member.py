@@ -5,6 +5,7 @@ way of looking at it.
 """
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 from .centreline import BezierPath, Station, add, arc_path, mul
@@ -111,17 +112,19 @@ def fit_notches(member: Member, notches) -> tuple[list, list]:
     return [f[0] for f in sorted(fitted, key=lambda f: f[0].lo)], rejected
 
 
-def _ring(station: Station, half_width: float, half_depth: float, plane, step=None):
+def _ring(station: Station, half_width: float, depth, plane, step=None):
     """The four corners of the section at a station, optionally slid along the member onto a plane.
 
-    With `step`, (face, floor plane), the two corners on that face of the section are brought in
-    to the floor plane instead. Returns the corners and how far each was slid along the member
+    `depth` is the half depth, or (offset of the -depth face, offset of the +depth face). With
+    `step`, (face, floor plane), the two corners on that face of the section are brought in to
+    the floor plane instead. Returns the corners and how far each was slid along the member
     (positive is onward).
     """
+    minus, plus = (-depth, depth) if isinstance(depth, (int, float)) else depth
     corners = []
     for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
         edge = add(station.point, mul(station.width_axis, sx * half_width))
-        off = sy * half_depth
+        off = plus if sy > 0 else minus
         if step and step[0] == sy:
             point, normal = step[1]
             off = sum((point[k] - edge[k]) * normal[k] for k in range(3)) / sum(station.depth_axis[k] * normal[k] for k in range(3))
@@ -167,17 +170,75 @@ def sweep(member: Member, stations: list[Station], notches=()):
     past_end = max(0.0, -min(built[-1][1]))
     last, length = len(rings) - 1, path.length
     keep = [k for k, r in enumerate(rings) if k in (0, last) or r[2] or (r[0] > past_start + 1e-3 and length - r[0] > past_end + 1e-3)]
-    verts = [corner for k in keep for corner in built[k][0]]
+    # A ring member comes back to where it started: its last ring is its first again, and it has no ends.
+    closed = not member.start_cut and not member.end_cut and sum((a - b) ** 2 for a, b in zip(path.anchors[0].co, path.anchors[-1].co)) < 1e-12
+    return _tube([built[k][0] for k in (keep[:-1] if closed else keep)], closed)
+
+
+def _tube(rings: list, closed: bool = False) -> tuple[list, list]:
+    """A closed quad mesh through rings of four corners: capped at both ends, or, for a member
+    that comes back to where it started, joined end to start with no caps."""
+    verts = [corner for ring in rings for corner in ring]
+    count = len(rings)
     faces = []
-    for j in range(len(keep) - 1):
-        a, b = 4 * j, 4 * j + 4
+    for j in range(count if closed else count - 1):
+        a, b = 4 * j, 4 * ((j + 1) % count)
         for k in range(4):
             k2 = (k + 1) % 4
             faces.append((a + k, a + k2, b + k2, b + k))
-    end = 4 * (len(keep) - 1)
-    faces.append((3, 2, 1, 0))
-    faces.append((end, end + 1, end + 2, end + 3))
-    return verts, faces
+    if closed:
+        return verts, faces
+    end = 4 * (count - 1)
+    return verts, faces + [(3, 2, 1, 0), (end, end + 1, end + 2, end + 3)]
+
+
+def block(path: BezierPath, lo: float, hi: float, half_width: float, depth, spacing: float = 0.03, lo_plane=None, hi_plane=None, step=None, stations=None):
+    """The volume a rectangle sweeps along a path between two stations, as a closed mesh.
+
+    This is what a cutter removes: it follows the path's own frames, so its sides turn with the
+    member it stands for. `depth`, `step` and the end planes are as for a section ring: a face
+    can be held to a floor plane, and either end slid onto a plane. On a closed path the
+    stations wrap round.
+
+    Given `stations`, the stations of that member's own mesh, the block is built through exactly
+    those (reaching out to the next one beyond each end), so that it wraps the member's mesh
+    and not just its ideal curve.
+    """
+    length = path.length
+    closed = sum((a - b) ** 2 for a, b in zip(path.anchors[0].co, path.anchors[-1].co)) < 1e-12
+    if not closed:
+        lo, hi = max(lo, 0.0), min(hi, length)
+    if stations is None:
+        count = max(2, math.ceil((hi - lo) / spacing))
+        along = [lo + (hi - lo) * k / count for k in range(count + 1)]
+    else:
+        every = sorted({s + turn for s in stations for turn in ((-length, 0.0, length) if closed else (0.0,))})
+        lo = max((s for s in every if s <= lo + 1e-9), default=lo)
+        hi = min((s for s in every if s >= hi - 1e-9), default=hi)
+        along = [lo] + [s for s in every if lo + 1e-9 < s < hi - 1e-9] + [hi]
+        count = len(along) - 1
+    built = []
+    for k, s in enumerate(along):
+        plane = lo_plane if k == 0 else hi_plane if k == count else None
+        built.append((s, *_ring(path.station_at(s % length if closed else s), half_width, depth, plane, step)))
+    # as in a member's own mesh, rings that a slanted end has been slid past are left out
+    past_lo, past_hi = max(0.0, max(built[0][2])), max(0.0, -min(built[-1][2]))
+    rings = [corners for k, (s, corners, _) in enumerate(built) if k in (0, count) or (s - lo > past_lo + 1e-3 and hi - s > past_hi + 1e-3)]
+    if stations is not None:
+        # Between a member's stations its mesh runs straight, and a long panel between two rings that
+        # are turned against each other is ambiguous. Rings are added along those straight runs so
+        # that the block's panels are short and hug the mesh they wrap.
+        fine = [rings[0]]
+        for one, other in zip(rings, rings[1:]):
+            fine += [[tuple(a[k] + (b[k] - a[k]) * i / 4 for k in range(3)) for a, b in zip(one, other)] for i in (1, 2, 3, 4)]
+        rings = fine
+    return _tube(rings)
+
+
+def box(origin, axes, extents) -> tuple[list, list]:
+    """A closed box mesh: from `origin`, between extents[k] = (lo, hi) along each of three unit `axes`."""
+    verts = [tuple(origin[i] + sum(axes[k][i] * extents[k][bit] for k, bit in enumerate((bx, by, bz))) for i in range(3)) for bz in (0, 1) for by in (0, 1) for bx in (0, 1)]
+    return verts, [(0, 2, 3, 1), (4, 5, 7, 6), (0, 1, 5, 4), (2, 6, 7, 3), (0, 4, 6, 2), (1, 3, 7, 5)]
 
 
 def diagnostics(member: Member, export_spacing: float) -> dict:

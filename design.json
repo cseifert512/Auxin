@@ -107,7 +107,7 @@
     "sections_m": {
       "arch": [0.26, 0.4],
       "inner": [0.14, 0.32],
-      "crown": [0.3, 0.14],
+      "crown": [0.26, 0.1],
       "hoop": [0.09, 0.22],
       "ring": [0.1, 0.22],
       "rib": [0.08, 0.22],
@@ -148,7 +148,8 @@
       "lap_clearance_m": 0.003,
       "housing_depth_m": 0.05,
       "max_piece_length_m": 12.0,
-      "cut_meshes": true
+      "cut_meshes": "milled",
+      "solver": "EXACT"
     },
     "piers": {"legs": true, "gap_m": 0.03, "ring_radius_m": 0.34},
     "bend_radius_review_m": 3.0,

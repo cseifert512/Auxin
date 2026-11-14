@@ -81,6 +81,7 @@ class Build:
         self.place = {}  # member ID -> plan position of its leg at a pier
         self.knee = timber.get("piers", {}).get("knee_drop_m")  # None: each leg's knee matches its first run in the roof
         self.rim_inset = 0.0  # how far short of an arch's plane a rib stops: set once the arches are known
+        self.rim_band = 0.0  # how far inside the arches their hoops reach
         # the widest circle about the crown's axis that stays inside every arch
         self.clear_radius = min(self.roof.rim(2.0 * math.pi * i / 360)[0] for i in range(360))
 
@@ -174,6 +175,7 @@ class SpiralLattice:
         lean_rim_deg        optional: the angle they have turned to by the time they reach the piers' distance
         pair_gap_m          optional: the two ribs that share a point on the top ring arrive side by side this far apart
         land_square_m       within this distance of an arch a rib turns to meet it squarely (0: it holds its course)
+        land_gap_m          squared ribs are moved along the arch until neighbouring feet stand this far apart
         sample_spacing_m    distance between the points a rib is drawn through
         gather_m            a rib passing nearer than this to a pier is drawn into it
         tiers               each {family, phases, from, gathers, ring_family}:
@@ -212,17 +214,23 @@ class SpiralLattice:
                 raise DesignError(f"lattice tier family {family!r} is not one of {LATTICE}")
             top, radius, apart = 1.0, None, 0.0
             if start == "top":
-                if cfg.get("pair_gap_m") is not None:  # half the angle between the two ribs of a pair, at the top ring
-                    apart = (b.section[family][0] + cfg["pair_gap_m"]) / (2.0 * roof.top_radius * math.cos(self.lean_top or self.lean))
+                if cfg.get("pair_gap_m") is not None:
+                    # Half the angle between the two ribs of a pair at the top ring: enough for the gap to
+                    # hold at their inner edges, which stand nearer the crown's axis than their centrelines.
+                    width, depth = b.section[family]
+                    apart = (width / math.cos(self.lean_top or self.lean) + cfg["pair_gap_m"]) / (2.0 * (roof.top_radius - depth / 2.0))
             elif "lantern" in start:
                 # The ring at the head of the tier is nudged to where it crosses the ribs clear of their own crossings.
                 near = [min(max(start["lantern"] + 0.1 * (k - 20) / 20, 0.05), 0.95) for k in range(41)]
                 top = clearest(near, wound, lambda lam: math.hypot(roof.on_lantern(0.0, lam)[0][0] - roof.centre[0], roof.on_lantern(0.0, lam)[0][1] - roof.centre[1]), phases)
             else:
-                radius = min(start["radius_m"], b.clear_radius - 0.8)
+                widest = b.clear_radius - max(0.8, b.rim_band + 0.35)  # stay inside the arches and clear of their hoops
+                if widest < roof.base_radius + 0.3:
+                    widest = b.clear_radius - 0.8  # a tight room: keep the tier, and let its ring run near the hoops
+                radius = min(start["radius_m"], widest)
                 if radius < roof.base_radius + 0.3:
                     continue  # the room is too tight here for a tier that starts on the canopy
-                near = [min(max(radius + 0.3 * (k - 20) / 20, roof.base_radius + 0.3), b.clear_radius - 0.8) for k in range(41)]
+                near = [min(max(radius + 0.3 * (k - 20) / 20, roof.base_radius + 0.3), widest) for k in range(41)]
                 radius = clearest(near, lambda r: wound(0.0) + swing(r), lambda r: r, phases)
             present.append((phases, apart))
             heads = []
@@ -254,10 +262,11 @@ class SpiralLattice:
     def members(self) -> None:
         b, roof, rid = self.b, self.b.roof, self.b.rid
         square, spacing = self.cfg.get("land_square_m", 0.0), self.cfg["sample_spacing_m"]
+        shifts = self._spread_landings(square) if square > 0.0 else {}
         for rib_id, family, head, course, to_top in self.ribs:
             foot, cut = rib_id + ".foot", None
             slot = b.place.get(rib_id)
-            samples, half, along = roof.lay(course, slot, square)
+            samples, half, along = roof.lay(course, slot, square, shifts.get(rib_id, (0.0, 0.0)))
             if slot:
                 samples = roof.stand(samples, roof.piers[course.pier][0], b.knee)
             else:
@@ -290,6 +299,45 @@ class SpiralLattice:
                 lo, hi = (lo, mid) if wound(mid) < row * math.pi / self.count else (mid, hi)
             if lo > 0.02:  # the row falls inside the lantern
                 self._ring(f"{rid}.ring.row{row}", "ring", roof.ring(0.5 * (lo + hi), None, spacing), (f"{rid}.ring.row{row}",))
+
+    def _spread_landings(self, square: float) -> dict:
+        """How far to move each squared rib's foot along its arch so that no two land on top of each other.
+
+        Ribs of the two hands turn to meet an arch side by side, and some would arrive at almost
+        the same place. Along each bay their feet are pushed apart until neighbours stand at
+        least timber["lattice"]["land_gap_m"] clear. Returns plan shifts by rib ID.
+        """
+        b, roof = self.b, self.b.roof
+        gap = self.cfg.get("land_gap_m", 0.04)
+        bays, along_bay = defaultdict(list), {}
+        for half in roof.halves:
+            if half.side == "L":
+                along_bay[half.bay] = (half.foot, half.direction)
+        for rib_id, family, _, course, _ in self.ribs:
+            if course.pier is None:
+                samples, half, _ = roof.lay(course, None, square)
+                origin, direction = along_bay[half.bay]
+                foot = samples[0][0]
+                bays[half.bay].append([(foot[0] - origin[0]) * direction[0] + (foot[1] - origin[1]) * direction[1], b.section[family][0], rib_id])
+        shifts = {}
+        for bay, feet in bays.items():
+            feet.sort()
+            start = [f[0] for f in feet]
+            for _ in range(40):
+                moved = False
+                for one, other in zip(feet, feet[1:]):
+                    short = (one[1] + other[1]) / 2.0 + gap - (other[0] - one[0])
+                    if short > 1e-4:
+                        one[0] -= short / 2.0
+                        other[0] += short / 2.0
+                        moved = True
+                if not moved:
+                    break
+            direction = along_bay[bay][1]
+            for (now, _, rib_id), was in zip(feet, start):
+                if abs(now - was) > 1e-6:
+                    shifts[rib_id] = ((now - was) * direction[0], (now - was) * direction[1])
+        return shifts
 
     def _ring(self, ring_id: str, family: str, samples: list, nodes: tuple) -> None:
         """A ring lying in the roof surface, flush with the ribs it crosses."""
@@ -327,6 +375,7 @@ class EdgeArches:
         self.b, self.cfg = b, cfg
         self.offsets = list(cfg.get("hoops_m", []))
         self.rim_width = b.section["arch"][0]
+        b.rim_band = max(self.offsets, default=0.0) + (cfg.get("hoop_nudge_m", 0.12) if self.offsets else 0.0)
 
     def claims(self) -> list:
         roof, out = self.b.roof, []
