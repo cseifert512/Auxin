@@ -1,0 +1,19 @@
+node_modules/
+dist/
+studio/.vite*/
+
+# made by `npm run grow` in about twenty seconds; run.json beside it says from what
+scenes/*/runs/*/growth.json
+scenes/*/runs/*.log
+scenes/*/*.log
+
+# films are made by `npm run film`; the still beside each is kept
+exports/*/frames/
+exports/**/*.mp4
+
+.claude/settings.local.json
+
+*.log
+
+# scratch pictures while plates are made
+exports/deck/.work/
