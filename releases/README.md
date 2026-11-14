@@ -8,6 +8,7 @@ snapshot under a new name.
 | Snapshot | Date | What it is |
 |---|---|---|
 | `six-bay-v1` | 2026-11-14 | One six-bay room, every joint milled. Source commit `342d327`, tag `model/six-bay-v1`. |
+| `six-bay-radial-v1` | 2026-11-14 | The same room set out regularly: piers on one 6.2 m circle about the crown, equal bays, one apex height (4.6 m), so every bay is the same and each is its own mirror image. From `design/six_bay_radial.json`. Made on `5ee3b94` plus work not yet committed; not tagged yet. |
 
 ## What a snapshot holds
 
