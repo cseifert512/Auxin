@@ -1,0 +1,22 @@
+{
+  "for": "Slide 4, Plants make space. Tab: Time",
+  "shows": "One turn of the room is also a passage of time: each bay is drawn at a later moment than the one before. From the north-east pier clockwise: installation; a first summer; a third summer; established, in May; established, in late October; established, in January.",
+  "slot": [1117, 326],
+  "scale": 2,
+  "paper": "EEF3EA",
+  "ink": "102820",
+  "timber": "ink",
+  "round": {
+    "from": 34,
+    "slices": 72,
+    "raise": 0.2,
+    "sectors": [
+      { "until": 63, "at": "build:1", "sun": [80, 13] },
+      { "until": 116, "at": "date:2027-07-10", "sun": [191, 14] },
+      { "until": 184, "at": "date:2029-07-10", "sun": [191, 14] },
+      { "until": 238, "at": "date:2035-05-18", "sun": [138, 14] },
+      { "until": 302, "at": "date:2035-10-25", "sun": [298, 13] },
+      { "until": 360, "at": "date:2036-01-15", "sun": [15, 12.5] }
+    ]
+  }
+}

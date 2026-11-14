@@ -1,5 +1,5 @@
 // A frozen snapshot of the building -> the file the plant simulator reads.
-//   node pipeline/convert.mjs [snapshot] [--no-lines] [--boughs=hoop[01]$] [--spacing=0.9]
+//   node pipeline/convert.mjs [snapshot] [--no-lines] [--carry=ground|ground+ribs|all|<pattern>] [--out=bower-x.json]
 // Reads  releases/<snapshot>/centrelines.json and design.json
 // Writes scenes/<snapshot>/bower.json
 //
@@ -12,9 +12,9 @@
 // a sheaf of members gathered to the ground like a trunk. The simulator will
 // not take a bed more than 1.5 m from something to climb.
 //
-// Unless --no-lines is given, the building is also strung with training lines:
-// thin cable on its outside, laid out from its own joints (lines.mjs), with
-// the beds at the feet of those lines. Without them the beds are a ring round
+// Unless --no-lines is given, the members that reach the ground each carry a
+// training line: thin cable held off the outer face, following the member
+// (lines.mjs), with a bed at its foot. Without them the beds are a ring round
 // each pier and the plants have the timber alone.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -77,8 +77,8 @@ for (const room of design.rooms) {
 }
 
 // the training lines, and the beds at their feet in place of the rings
-const lines = 'no-lines' in options ? null : trainingLines(from, design, { ...(options.boughs ? { boughs: options.boughs } : {}), ...(options.spacing ? { spacingM: Number(options.spacing) } : {}) });
-if (lines) stations = lines.beds.map((b) => ({ ...b, note: `at the foot of a training line beside pier ${b.id.split('.').slice(1, 3).join('.')}` }));
+const lines = 'no-lines' in options ? null : trainingLines(from, design, options.carry ? { carry: options.carry } : {});
+if (lines) stations = lines.beds.map((b) => ({ id: b.id, position: b.position, note: `at the foot of the line on ${b.climbs}` }));
 
 // a full-frame lens of this focal length sees this far across, top to bottom
 const fovOf = (lensMm) => round((2 * Math.atan(12 / lensMm) * 180) / Math.PI, 1);
@@ -95,8 +95,8 @@ const bower = {
   id: snapshot,
   name: `the ${design.rooms.map((r) => `${r.bays.length}-bay`).join(' and ')} room, snapshot ${snapshot}`,
   frame: 'x east, y north, z up, metres',
-  // a line stands a little proud of the timber it is fixed to: near enough to count as touching it
-  ...(lines ? { joinToleranceM: 0.04 } : {}),
+  // a line is held off the timber by its gap: this tells the simulator that still counts as touching it
+  ...(lines ? { joinToleranceM: Number((lines.gapM + 0.005).toFixed(3)) } : {}),
   members,
   ...(lines ? { cables: lines.cables } : {}),
   stations,
@@ -104,7 +104,8 @@ const bower = {
 };
 
 mkdirSync(to, { recursive: true });
-writeFileSync(resolve(to, 'bower.json'), `${JSON.stringify(bower)}\n`);
+const file = options.out ?? 'bower.json';
+writeFileSync(resolve(to, file), `${JSON.stringify(bower)}\n`);
 console.log(`${snapshot}: ${members.length} members, ${feet.length} of their ends on the ground at ${design.rooms.reduce((n, r) => n + r.piers.length, 0)} piers, ${stations.length} beds, ${viewpoints.length} viewpoints`);
-if (lines) console.log(`  training lines: ${lines.summary.boughs} boughs (${lines.summary.boughM} m) and ${lines.summary.branches} branches (${lines.summary.branchM} m) of ${lines.cables[0]?.diameterMm} mm cable, fixed at ${lines.summary.fixingsUsed} of ${lines.summary.fixings} lap joints`);
-console.log(`written: ${resolve(to, 'bower.json')}`);
+if (lines) console.log(`  training lines: ${lines.summary.lines} members carry one (${Object.entries(lines.summary.byFamily).map(([f, m]) => `${f} ${m} m`).join(', ')}): ${lines.summary.lengthM} m of ${lines.cables[0]?.diameterMm} mm cable, ${Math.round(lines.gapM * 1000)} mm off the timber, on about ${lines.summary.standoffs} standoffs`);
+console.log(`written: ${resolve(to, file)}`);

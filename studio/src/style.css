@@ -295,3 +295,12 @@ body.film .time {
     bottom: 64px;
   }
 }
+
+/* a plate: the drawing alone */
+body.plate .title,
+body.plate .tools,
+body.plate .time,
+body.plate .statement,
+body.plate .loading {
+  display: none !important;
+}

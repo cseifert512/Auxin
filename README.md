@@ -52,18 +52,41 @@ approach is walked on, to stand before the bay in front. A film ends on the last
 no film. The training lines are drawn as thin as they are, which is nearly not at all; `--lines=marked`, or
 `?lines=marked` in the studio, draws them in green to be looked at.
 
+## Plates for the presentation
+
+```bash
+npm run plate                     # every plate described in plates/ -> exports/deck/<name>.png and .webp
+npm run plate -- 04-time          # one of them
+```
+
+A plate is a drawing made to fit one space in the presentation, on that page's paper and in its ink, with
+nothing on it but the drawing. Each is described in `plates/<name>.json`, not drawn by hand, so the same command
+makes it again from a new snapshot. A description is a `row` of panels (a view at a moment, with the sun of a day
+and an hour), or the room `round`: the whole room unrolled as seen turning on the spot in the middle of it, where
+each bay can be drawn at its own moment, so a turn of the room is also a passage of time. `shows` in each
+description says what the plate shows, for the caption.
+
+| Plate | For |
+|---|---|
+| `04-space` | Slide 4, Space: the room unrolled at installation, and established in midsummer |
+| `04-light` | Slide 4, Light: the floor in plan with its shade, frame alone, established summer, winter |
+| `04-time` | Slide 4, Time: one turn of the room, each bay at a later moment and season |
+| `05-shaded-room` | Slide 5, Shaded room: the shade wanted, the ways up from the soil, a pier with its lines |
+
+The views a plate can use beyond the studio's three: `plan` (from straight above, cut 1.2 m up, so that what
+shows is the floor and the shade on it) and `round`.
+
 ## What is where
 
 - `pipeline/convert.mjs` writes the simulator's input from a snapshot, and adds what the building model does not
   hold yet: the training lines, where plants go into the ground, and where a visitor stands. Plants go in where
   the timber meets the ground and nowhere else: at the piers. `--no-lines` leaves the timber bare.
-- `pipeline/lines.mjs` lays out the training lines: thin cable on the outside of the structure, fixed only at the
-  lap joints the building already has. They lead plants up the way the loads come down. A *bough* follows the
-  hoop inside each arch, from the ground at one pier, over the bay, to the ground at the next; *branches* leave
-  it and run from joint to joint straight up the slope to the crown, across the open cells of the lattice.
-  Nothing is strung across an opening. It is a rule, not a drawing: it reads any snapshot's joints, so it goes
-  on working as the building changes. `--boughs=` and `--spacing=` say which members carry boughs and how far
-  apart the branches leave them. Where a cable is fixed and how it is tensioned are not worked out.
+- `pipeline/lines.mjs` lays out the training lines. A line belongs to a member: thin cable held about 3 inches
+  off its outer face on standoffs, going where the member goes, up the leg, through the curve of the pier and out
+  over the roof. By default every member that reaches the ground carries one, with a bed at its foot
+  (`--carry=ground+ribs`, `all`, or a pattern for others). It is a rule, not a drawing: it reads any snapshot,
+  so it goes on working as the building changes. Standoffs and tension are not worked out, and the rule belongs
+  in the building's own generator once it is settled.
 - `pipeline/plant.mjs` writes the planting from a rule: every bed takes a plant, and which plants a pier takes
   depends on the side of the room it stands on.
 - `pipeline/assemble.mjs` reads the joint schedule for what has to be in place before what (a member lapped

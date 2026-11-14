@@ -1,0 +1,15 @@
+{
+  "for": "Slide 4, Plants make space. Tab: Light",
+  "shows": "The floor of the room in plan, cut 1.2 m up, with the shade that falls on it: the frame alone at midsummer; the same day once planting is established; a midwinter noon. Left to right.",
+  "slot": [1117, 326],
+  "scale": 2,
+  "paper": "EEF3EA",
+  "ink": "102820",
+  "timber": "ink",
+  "gutter": 14,
+  "row": [
+    { "view": "plan", "at": "build:1", "sun": [172, 14], "shade": 0.36 },
+    { "view": "plan", "at": "date:2036-06-21", "sun": [172, 14], "shade": 0.36 },
+    { "view": "plan", "at": "date:2036-01-15", "sun": [15, 12.5], "shade": 0.36 }
+  ]
+}

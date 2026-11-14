@@ -15,7 +15,7 @@ import design from '../../releases/six-bay-v1/design.json';
 import timberUrl from '../../releases/six-bay-v1/bower.glb?url';
 import plan from '../../scenes/six-bay-v1/assembly.json';
 import { type AssemblyPlan, type AssemblyState, DESIGN_SHARE, makeAssembly } from './assembly.ts';
-import { type Standpoint, type ViewId, makePaper } from './paper.ts';
+import { PAPER, type Standpoint, type ViewId, makePaper } from './paper.ts';
 import { type TimberLook, drawBeds, drawCables, loadTimber } from './timber.ts';
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
@@ -62,9 +62,22 @@ const approachTall = (() => {
   const far = (bay.width / 2 + 0.35) / Math.tan((acrossDeg * Math.PI) / 360) / Math.hypot(out[0]!, out[1]!);
   return { eye: [bay.mid[0]! + out[0]! * far, bay.mid[1]! + out[1]! * far, from[2]!], target: [bay.mid[0]!, bay.mid[1]!, 2.0], acrossDeg };
 })();
-const paper = makePaper($<HTMLCanvasElement>('sheet'), { approach: view('exterior'), inside: view('interior'), approachTall });
+const paper = makePaper($<HTMLCanvasElement>('sheet'), { approach: view('exterior'), inside: view('interior'), approachTall, middle: design.rooms[0]!.crown.centre_m });
 // mid-afternoon in early summer, from the south-west: towards the sun, as (east, up, south)
-paper.setSun(new THREE.Vector3(-0.609, 0.669, 0.426));
+/**
+ * Towards the sun on a day of the year and at an hour by the sun, in southern England (51.5 N), as (east, up,
+ * south). Good enough to put shade on the right side of things; it is not an almanac.
+ */
+function sunAt(dayOfYear: number, hour: number): THREE.Vector3 {
+  const lat = (51.5 * Math.PI) / 180;
+  const lean = ((-23.44 * Math.PI) / 180) * Math.cos((2 * Math.PI * (dayOfYear + 10)) / 365);
+  const turn = ((hour - 12) * 15 * Math.PI) / 180;
+  const up = Math.asin(Math.sin(lat) * Math.sin(lean) + Math.cos(lat) * Math.cos(lean) * Math.cos(turn));
+  const round = Math.atan2(Math.sin(turn), Math.cos(turn) * Math.sin(lat) - Math.tan(lean) * Math.cos(lat)) + Math.PI;
+  return new THREE.Vector3(Math.cos(up) * Math.sin(round), Math.sin(up), -Math.cos(up) * Math.cos(round));
+}
+const sunAsked = (url.get('sun') ?? '').split(',').map(Number);
+paper.setSun(sunAsked.length === 2 && sunAsked.every(Number.isFinite) ? sunAt(sunAsked[0]!, sunAsked[1]!) : new THREE.Vector3(-0.609, 0.669, 0.426));
 paper.resize();
 
 const timber = await loadTimber(timberUrl);
@@ -205,7 +218,7 @@ function setView(id: ViewId): void {
   for (const b of viewButtons) b.setAttribute('aria-pressed', String(b.dataset['view'] === id));
 }
 for (const b of viewButtons) b.addEventListener('click', () => setView(b.dataset['view'] as ViewId));
-if (['drawing', 'approach', 'inside'].includes(url.get('view') ?? '')) setView(url.get('view') as ViewId);
+if (['drawing', 'approach', 'inside', 'plan', 'round'].includes(url.get('view') ?? '')) setView(url.get('view') as ViewId);
 
 // ---- timber, and which planting ----------------------------------------------------------------------------------
 let look: TimberLook = url.get('timber') === 'ink' ? 'ink' : url.get('timber') === 'bare' ? 'bare' : 'wood';
@@ -238,8 +251,11 @@ $('loading').hidden = true;
 document.querySelector<HTMLElement>('.time')!.hidden = false;
 if (url.has('bare')) document.body.classList.add('bare');
 // a film is the same sheet with nothing to press: the script that makes it asks for each frame in turn
-const filming = url.has('film');
-if (filming) document.body.classList.add('film');
+const filming = url.has('film') || url.has('plate');
+if (url.has('film')) document.body.classList.add('film');
+// a plate is the drawing alone, on the paper of the page it is going to: no title, no line of time, no words
+if (url.has('plate')) document.body.classList.add('plate');
+document.body.style.background = `#${PAPER.toString(16).padStart(6, '0')}`;
 setPlaying(state.playing);
 setAt(state.at);
 describe();
@@ -349,6 +365,13 @@ Object.assign(window, {
     },
     look: setLook,
     state: () => ({ at: state.at, built, run, look }),
+    /** A place on the line of time from its name: "build:0.5", "day:3399" or "date:2031-06-20". */
+    moment(name: string): number {
+      const [what, value = ''] = name.split(':');
+      if (what === 'build') return atBuild(Number(value));
+      if (what === 'date') return (Date.parse(`${value}T00:00:00Z`) - start) / DAY_MS;
+      return Number(value);
+    },
     /** The line of time, for a script that will draw along it. */
     line: () => {
       // the last midsummer of the run: a film ends there, in full leaf, and not in the December the run stops in
@@ -360,6 +383,22 @@ Object.assign(window, {
      * One frame of a film: the picture at `at` on the line of time, `seconds` after the frame before it, worked out
      * in full and drawn before this returns.
      */
+    /**
+     * One plate: the picture set up as asked, then drawn. `at` is a place on the line of time; `sun` a day of the
+     * year and an hour; `yaw` and `up` turn the view from the middle of the room; `shade` is how dark shade is drawn.
+     */
+    async plate(p: { view?: ViewId; at?: number; timber?: TimberLook; sun?: [number, number]; yaw?: number; up?: number; shade?: number; lookAt?: number[]; zoom?: number }) {
+      if (p.timber) setLook(p.timber);
+      if (p.sun) paper.setSun(sunAt(p.sun[0], p.sun[1]));
+      if (p.shade !== undefined) paper.setShade(p.shade);
+      if (p.view) setView(p.view);
+      if (p.yaw !== undefined) paper.turnTo(p.yaw, p.up ?? 80);
+      if (p.view === 'drawing') paper.focus(p.lookAt ?? null, p.zoom ?? 1);
+      organsFrom = null;
+      state.drawnAt = Number.NaN;
+      await this.film(p.at ?? state.at, 0);
+      await this.film(p.at ?? state.at, 0);
+    },
     async film(at: number, seconds: number) {
       setPlaying(false);
       setAt(at);

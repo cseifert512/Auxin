@@ -1,0 +1,15 @@
+{
+  "for": "Slide 5, Growth changes the geometry. Tab: Shaded room",
+  "shows": "Left, under 'We want': the floor in plan at midsummer noon once planting is established, with the shade on it. Middle, under 'We ask': the building with every way up from the soil marked in green, a line riding each member that reaches the ground. Right, under 'We reconsider': one pier close to, the lines held off its members and plants on them in a third summer.",
+  "slot": [1117, 200],
+  "scale": 2,
+  "paper": "EEF3EA",
+  "ink": "102820",
+  "timber": "ink",
+  "gutter": 14,
+  "row": [
+    { "view": "plan", "at": "date:2036-06-21", "sun": [172, 12.5], "shade": 0.36 },
+    { "view": "drawing", "at": "build:1", "lines": "marked", "sun": [172, 14] },
+    { "view": "drawing", "at": "date:2029-07-10", "lines": "marked", "lookAt": [-3.9, -4.6, 2.3], "zoom": 2.6, "sun": [172, 14] }
+  ]
+}

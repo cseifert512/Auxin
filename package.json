@@ -14,6 +14,7 @@
     "compare": "node pipeline/compare.mjs",
     "plant": "node pipeline/plant.mjs",
     "film": "node pipeline/film.mjs",
+    "plate": "node pipeline/plate.mjs",
     "studio": "node ../Horti-code-ture/node_modules/vite/bin/vite.js --config studio/vite.config.js",
     "studio:build": "node ../Horti-code-ture/node_modules/vite/bin/vite.js build --config studio/vite.config.js"
   },
