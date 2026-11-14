@@ -20,7 +20,7 @@ The panel is how the model is played with. Open it once per Blender session:
 
 ```python
 import runpy
-runpy.run_path(r"C:\BOWER\project-auxin\bower-blender\scripts\panel.py")["main"]()
+runpy.run_path(r"C:\BOWER\Auxin\bower-blender\scripts\panel.py")["main"]()
 ```
 
 then press N in the 3D viewport and choose the **Bower** tab
@@ -273,7 +273,7 @@ In Blender (5.1 or later), from the Python console, the Text Editor or the MCP c
 
 ```python
 import runpy
-runpy.run_path(r"C:\BOWER\project-auxin\bower-blender\scripts\generate.py")["main"]()
+runpy.run_path(r"C:\BOWER\Auxin\bower-blender\scripts\generate.py")["main"]()
 ```
 
 | Script | What it does |

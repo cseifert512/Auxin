@@ -60,7 +60,7 @@ In Blender, with the building model's scene:
 
 ```python
 import runpy
-runpy.run_path(r"C:\BOWER\project-auxin\bower-blender\scripts\export_snapshot.py")["main"]("eight-bay-v1", commit="<git commit>")
+runpy.run_path(r"C:\BOWER\Auxin\bower-blender\scripts\export_snapshot.py")["main"]("eight-bay-v1", commit="<git commit>")
 ```
 
 The script rebuilds the scene from `design.json` first, so a snapshot is what

@@ -21,6 +21,7 @@ Read the part's own notes before changing it. They still apply in full.
 - `bower-blender/README.md`: the generator, its parameters, joints, training lines, the ground at a pier, tests.
 - `drawings-in-code/README.md`: the pipeline, the studio, films and plates. `drawings-in-code/docs/for-the-building-model.md` is the planting side's brief for the building.
 - `releases/README.md`: what a snapshot holds and how one is made.
+- `docs/studies.md`: a proposal, not built: handing the drawings a design change as it happens, with its reasons, so they can show the building changing for the plants.
 
 ## How the parts reach each other
 
