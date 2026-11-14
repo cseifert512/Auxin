@@ -25,6 +25,8 @@ if (!existsSync(resolve(horti, 'packages/core/src/sim/engine.ts'))) {
 const core = (file) => import(pathToFileURL(resolve(horti, 'packages/core/src', file)).href);
 
 // options: --bower=<file in the scene folder>  --plan=<file in the scene folder>  --specimen=<metres each plant stands when it goes in>  --name=<run folder>
+//          --tall=wisteria:4,vitis:3.5   plants (by a word of their taxon ID) that go in standing some other height: a
+//                            mature plant bought at the size it is sold at
 //          --band=low|high   every plant at the low or the high end of what is published for a year's growth, where a range is given
 //          --stems=<times>   how many stems the gardener lets share one member, as a multiple of what each plant's model
 //                            assumes (2 to a member, 3 to a main one: a training decision the models carry as a number)
@@ -66,9 +68,12 @@ if (options.band) process.env.HORTI_GROWTH_BAND = options.band;
 const band = process.env.HORTI_GROWTH_BAND ?? null;
 const stock = loadGrowable(resolve(horti, 'species'));
 // A specimen also has all its main stems under way: the model starts some of a young plant's in later seasons.
-const specimen = (model) => {
-  const why = `planted as a nursery specimen standing ${specimenM} m, not a young plant`;
-  const tall = withParam(model, 'architecture.nurseryCaneM', specimenM, why);
+const tallOnes = Object.fromEntries((options.tall ?? '').split(',').filter(Boolean).map((t) => [t.split(':')[0], Number(t.split(':')[1])]));
+const standing = (taxonId) => Object.entries(tallOnes).find(([word]) => taxonId.includes(word))?.[1] ?? specimenM;
+const specimen = (model, taxonId) => {
+  const m = standing(taxonId);
+  const why = `planted as a nursery specimen standing ${m} m, not a young plant`;
+  const tall = withParam(model, 'architecture.nurseryCaneM', m, why);
   const starts = model.params['architecture.trunkStemStartYears']?.value;
   return Array.isArray(starts) ? withParam(tall, 'architecture.trunkStemStartYears', starts.map(() => 0), `${why}: every main stem already growing`) : tall;
 };
@@ -81,8 +86,8 @@ const fuller = (model) => {
   }
   return m;
 };
-const asGrown = (model) => (stemsTimes ? fuller(specimenM ? specimen(model) : model) : specimenM ? specimen(model) : model);
-const taxa = specimenM || stemsTimes ? new Map([...stock].map(([id, t]) => [id, { ...t, model: asGrown(t.model) }])) : stock;
+const asGrown = (model, id) => (stemsTimes ? fuller(specimenM ? specimen(model, id) : model) : specimenM ? specimen(model, id) : model);
+const taxa = specimenM || stemsTimes ? new Map([...stock].map(([id, t]) => [id, { ...t, model: asGrown(t.model, id) }])) : stock;
 const scenario = plantingOn(design.bower, parsePlantingPlan(read(plantingFile), plantingFile), { taxa, care, years, seed, viewpoints: design.viewpoints });
 // The gardener's hand. The routines the simulator writes for each plant are the RHS's for a plant kept within
 // bounds. How closely this building's plants are kept is a matter of design, so the plan of visits can be loosened
@@ -149,7 +154,7 @@ writeFileSync(resolve(out, 'report.json'), JSON.stringify(report, null, 2));
 writeFileSync(resolve(out, 'report.txt'), `${text}\n`);
 writeFileSync(
   resolve(out, 'run.json'),
-  `${JSON.stringify({ snapshot, bower: options.bower ?? 'bower.json', plan: options.plan ?? 'planting.json', specimenM, band, stemsTimes, gardener, care, years, seed, gardenerCut: cut, simulator: { repository: 'horti-code-ture', branch, commit }, toCheck: design.warnings, notModelledOrAssumed: notes, reseated: seated.summary, thinned: thinned.summary, cleared: cleared.summary }, null, 2)}\n`,
+  `${JSON.stringify({ snapshot, bower: options.bower ?? 'bower.json', plan: options.plan ?? 'planting.json', specimenM, tall: Object.keys(tallOnes).length ? tallOnes : null, band, stemsTimes, gardener, care, years, seed, gardenerCut: cut, simulator: { repository: 'horti-code-ture', branch, commit }, toCheck: design.warnings, notModelledOrAssumed: notes, reseated: seated.summary, thinned: thinned.summary, cleared: cleared.summary }, null, 2)}\n`,
 );
 console.log(`\n${text}`);
 console.log(`\nwritten: ${out}`);

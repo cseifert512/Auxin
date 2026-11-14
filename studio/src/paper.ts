@@ -43,7 +43,7 @@ const WIDE_SHEET = 16 / 9;
 /** The field of view the plant models' levels of detail were tuned at. */
 const DETAIL_FOV = THREE.MathUtils.degToRad(40);
 /** A plan is cut this far above the floor, and a person's eye is this far above it. */
-const PLAN_CUT_M = 1.2;
+const PLAN_CUT_M = 2;
 const EYE_M = 1.65;
 
 /** The sky of three.js with the response curve the plants were coloured under (see the viewer's scene/stage.ts). */
@@ -126,16 +126,24 @@ export function makePaper(
   ground.receiveShadow = true;
   scene.add(ground);
 
-  // In plan only: what explains the shade. A circle round the building with a mark on it where the sun stands,
-  // in the factory drawings' red for what moves; and whatever else is put here (the frame overhead, in main.ts).
+  // In plan only: what explains the shade. A small sun, in the factory drawings' red for what moves, stands out
+  // beyond the building on the side the light comes from and goes round it with the day; and whatever else is put
+  // here (the frame overhead, in main.ts).
   const planOnly = new THREE.Group();
   planOnly.visible = false;
   scene.add(planOnly);
-  const sunTrack = new THREE.Mesh(new THREE.RingGeometry(0.992, 1, 240), new THREE.MeshBasicMaterial({ color: MUTED, transparent: true, opacity: 0.5, toneMapped: false }));
-  sunTrack.rotation.x = -Math.PI / 2;
-  const sunMark = new THREE.Mesh(new THREE.CircleGeometry(1, 48), new THREE.MeshBasicMaterial({ color: 0xb4492f, toneMapped: false }));
+  const sunRed = new THREE.MeshBasicMaterial({ color: 0xb4492f, toneMapped: false });
+  const sunMark = new THREE.Group();
   sunMark.rotation.x = -Math.PI / 2;
-  planOnly.add(sunTrack, sunMark);
+  sunMark.add(new THREE.Mesh(new THREE.CircleGeometry(1, 48), sunRed));
+  for (let k = 0; k < 8; k++) {
+    const ray = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.75), sunRed);
+    const turn = (k * Math.PI) / 4;
+    ray.position.set(Math.sin(turn) * 1.85, Math.cos(turn) * 1.85, 0);
+    ray.rotation.z = -turn;
+    sunMark.add(ray);
+  }
+  planOnly.add(sunMark);
   const sunRing = { x: 0, z: 0, radius: 9 };
   function placeSunMark(): void {
     const flat = Math.hypot(sunDir.x, sunDir.z) || 1;
@@ -220,8 +228,7 @@ export function makePaper(
     plan.updateProjectionMatrix();
     // the circle the sun's mark goes round: just inside the sheet
     sunRing.radius = Math.min(halfH, halfH * aspect) * 0.95;
-    sunTrack.scale.setScalar(sunRing.radius);
-    sunMark.scale.setScalar(sunRing.radius * 0.034);
+    sunMark.scale.setScalar(sunRing.radius * 0.024);
     placeSunMark();
   }
 
@@ -279,7 +286,6 @@ export function makePaper(
     plan.lookAt(centre.x, 0, centre.z);
     controls.plan!.target.set(centre.x, 0, centre.z);
     Object.assign(sunRing, { x: centre.x, z: centre.z });
-    sunTrack.position.set(centre.x, 0.02, centre.z);
     fitPlan();
     turnTo(turned.yawDeg, turned.upDeg);
 

@@ -25,7 +25,7 @@ commands again.
 npm run convert                         # releases/<snapshot> -> scenes/<snapshot>/bower.json
 npm run plant                           # the planting, from its rule -> scenes/<snapshot>/planting.json
 npm run assemble                        # the order the joints allow -> scenes/<snapshot>/assembly.json
-npm run grow -- <snapshot> trained 10 7 --specimen=3    # ten tended years -> scenes/<snapshot>/runs/trained-10y/
+npm run grow -- <snapshot> trained 10 7 --specimen=3 --tall=wisteria:4    # ten tended years -> scenes/<snapshot>/runs/trained-10y/
 npm run compare                         # the runs of a scene side by side
 npm run studio                          # the drawing, on http://localhost:5310
 npm run film                            # exports/approach-ink/: the line of time as a film, wide and upright
@@ -41,20 +41,22 @@ by act.
 the reasons are at the head of `pipeline/plant.mjs`):
 
 - `piers`, the one in use: **divided**. Each pier is one character and the characters alternate round the room, so
-  every plant is met on every side. A wisteria pier has wisteria and woodbine over the roof, and a rose and an
-  evergreen beside the doorways. A vine pier has the vine and the akebia over the roof, and evergreen honeysuckle and
+  every plant is met on every side. A wisteria pier has two wisterias over the roof, the Chinese and the Japanese,
+  and the woodbine and an evergreen beside the doorways. A vine pier has the vine and the akebia over the roof, and evergreen honeysuckle and
   ivy on the legs, held below the spring of the roof so that the piers are clothed in winter and the roof lets the
   light in. The wisterias take the warmer piers.
 - `woven`: **integrated**. Every pier carries the same company (a wisteria, an akebia or the vine, a woodbine, an
   evergreen) and nothing is held back, so the plants grow through one another and the building is one texture.
 
-Both have 24 plants, at the feet of the lines. `cover` and `even` are the earlier trials, by the side of the room.
+Both have 24 plants, at the feet of the lines. They go in as nursery specimens standing 3 m, and the wisterias
+at 4 m, a size mature wisterias are sold at (`--specimen=3 --tall=wisteria:4`); the slow first seasons the plant
+models give a newly planted climber are kept. `cover` and `even` are the earlier trials, by the side of the room.
 
 | Run of `six-bay-radial-v1` | What it is | Routes held | Framework | Timber seen in June: inside / approach / above | Evergreens in winter |
 |---|---|---|---|---|---|
-| `trained-10y` | **divided by pier**, as modelled: what every drawing is made from | 93% | 2,721 m | 70% / 52% / 35% | 30% |
-| `woven-10y` | woven (`--plan=planting-woven.json`) | 91% | 2,579 m | 54% / 47% / 34% | 30% |
-| `high-10y` | divided by pier, every plant at the high end of what is published for a year's growth (`--band=high`) | 96% | 3,323 m | 56% / 46% / 21% | 29% |
+| `trained-10y` | **divided by pier**, as modelled: what every drawing is made from | 96% | 3,042 m | 41% / 45% / 24% | 33% |
+| `woven-10y` | woven (`--plan=planting-woven.json`) | 95% | 2,733 m | 51% / 45% / 27% | 30% |
+| `high-10y` | divided by pier, every plant at the high end of what is published for a year's growth (`--band=high`) | 96% | 3,412 m | 33% / 43% / 20% | 31% |
 | `cover-10y` | earlier trial: by side, three vigorous climbers and an accent to a pier | 94% | 2,942 m | 85% / 58% / 31% | 27% |
 | `even-10y` | earlier trial: by side, every bed alike, small plants and vigorous | 83% | 2,101 m | 81% / 68% / 62% | 31% |
 | `even-loose-10y` | the same with a lighter hand (`--free=vine,akebia,honeysuckle --loose=1.2`) | 84% | 1,999 m | 79% / 65% / 58% | |
@@ -158,8 +160,9 @@ drive it (`__setMode`, `__setT`, `__play`, or the same by `postMessage`), as it 
 | `04-plants-make-space` (piece) | Slide 4. Time, which it opens on: the whole building from above, on the approach and from inside, through design, assembly, planting, establishment and a year of seasons. Space: the room unrolled, from installation to established and through a year. Light: the floor in plan with its shade, frame alone beside established, through a midsummer day. Made in ink and, as `04-plants-make-space-timber`, in timber. |
 | `05-shaded-room` (plate) | Slide 5, Shaded room: the shade wanted, the ways up from the soil, a pier with its lines |
 
-The views a plate can use beyond the studio's three: `plan` (from straight above, cut 1.2 m up, so that what
-shows is the floor and the shade on it) and `round`.
+The views a plate can use beyond the studio's three: `plan` (from straight above, cut 2 m up, so that what
+shows is the floor, the shade on it and the piers with what grows at them; the arches and the crown overhead are
+drawn broken, and a small red sun stands on the side the light comes from) and `round`.
 
 ## What is where
 

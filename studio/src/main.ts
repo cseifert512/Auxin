@@ -100,8 +100,8 @@ paper.resize();
 
 const centrelines = (await (await fetch(centrelinesUrl)).json()).members as Centreline[];
 const timber = await loadTimber(timberUrl, centrelines);
-// in plan, the arches, the rings and the crown overhead, so that the shade has something to be read against
-paper.planOnly.add(drawOverhead(centrelines, ['arch', 'ring', 'crown']));
+// in plan, the arches and the crown overhead, so that the shade has something to be read against
+paper.planOnly.add(drawOverhead(centrelines, ['arch', 'crown']));
 if (url.has('grain')) timber.setGrain(Number(url.get('grain')));
 paper.scene.add(timber.group);
 paper.frame(timber.bounds);

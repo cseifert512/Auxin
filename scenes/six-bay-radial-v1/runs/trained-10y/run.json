@@ -3,6 +3,9 @@
   "bower": "bower.json",
   "plan": "planting.json",
   "specimenM": 3,
+  "tall": {
+    "wisteria": 4
+  },
   "band": null,
   "stemsTimes": null,
   "gardener": null,
@@ -20,24 +23,20 @@
         "stemRemovedM": 6
       },
       "monitor": {
-        "visits": 30,
+        "visits": 60,
         "stemRemovedM": 0
       },
       "shorten_side_shoots": {
-        "visits": 156,
-        "stemRemovedM": 16512
+        "visits": 129,
+        "stemRemovedM": 16909
       },
       "spur_prune": {
-        "visits": 57,
-        "stemRemovedM": 145
+        "visits": 114,
+        "stemRemovedM": 435
       },
       "trim_to_bounds": {
         "visits": 120,
-        "stemRemovedM": 1266
-      },
-      "deadhead_or_select_flowers": {
-        "visits": 135,
-        "stemRemovedM": 0
+        "stemRemovedM": 1479
       }
     },
     "byPlant": {
@@ -58,14 +57,14 @@
         "stemRemovedM": 0
       },
       "wisteria: plant": {
-        "visits": 2,
-        "stemRemovedM": 0
-      },
-      "honeysuckle: plant": {
         "visits": 3,
         "stemRemovedM": 0
       },
-      "rose: plant": {
+      "japanese-wisteria: plant": {
+        "visits": 3,
+        "stemRemovedM": 0
+      },
+      "honeysuckle: plant": {
         "visits": 3,
         "stemRemovedM": 0
       },
@@ -73,65 +72,53 @@
         "visits": 2,
         "stemRemovedM": 0
       },
-      "japanese-wisteria: plant": {
-        "visits": 1,
-        "stemRemovedM": 0
-      },
       "honeysuckle: hard_prune": {
         "visits": 3,
         "stemRemovedM": 6
       },
       "wisteria: monitor": {
-        "visits": 20,
+        "visits": 30,
         "stemRemovedM": 0
       },
       "japanese-wisteria: monitor": {
-        "visits": 10,
+        "visits": 30,
         "stemRemovedM": 0
       },
       "vine: shorten_side_shoots": {
         "visits": 90,
-        "stemRemovedM": 15605
+        "stemRemovedM": 15923
       },
       "wisteria: spur_prune": {
-        "visits": 38,
-        "stemRemovedM": 86
+        "visits": 57,
+        "stemRemovedM": 169
       },
       "japanese-wisteria: spur_prune": {
-        "visits": 19,
-        "stemRemovedM": 59
-      },
-      "rose: shorten_side_shoots": {
-        "visits": 27,
-        "stemRemovedM": 199
+        "visits": 57,
+        "stemRemovedM": 266
       },
       "ivy: trim_to_bounds": {
         "visits": 27,
-        "stemRemovedM": 20
+        "stemRemovedM": 22
       },
       "honeysuckle: trim_to_bounds": {
         "visits": 27,
-        "stemRemovedM": 17
+        "stemRemovedM": 25
       },
       "spring-clematis: trim_to_bounds": {
         "visits": 18,
-        "stemRemovedM": 264
-      },
-      "rose: deadhead_or_select_flowers": {
-        "visits": 135,
-        "stemRemovedM": 0
+        "stemRemovedM": 422
       },
       "honeysuckle: shorten_side_shoots": {
         "visits": 27,
-        "stemRemovedM": 704
+        "stemRemovedM": 983
       },
       "akebia: trim_to_bounds": {
         "visits": 48,
-        "stemRemovedM": 966
+        "stemRemovedM": 1011
       },
       "ivy: shorten_side_shoots": {
         "visits": 12,
-        "stemRemovedM": 4
+        "stemRemovedM": 2
       }
     }
   },
@@ -154,11 +141,11 @@
     "P2.wisteria: the shoots of Wisteria sinensis that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant",
     "P2.wisteria: the long shoots of Wisteria sinensis set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant",
     "P2.wisteria: the leaves of Wisteria sinensis turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant",
+    "P2.japanese-wisteria: the shoots of Wisteria floribunda 'Macrobotrys' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant",
+    "P2.japanese-wisteria: the long shoots of Wisteria floribunda 'Macrobotrys' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant",
+    "P2.japanese-wisteria: the leaves of Wisteria floribunda 'Macrobotrys' turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant",
     "P2.honeysuckle: the shoots of Lonicera periclymenum 'Graham Thomas' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant",
     "P2.honeysuckle: the flowering side shoots and long shoots of Lonicera periclymenum 'Graham Thomas' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant",
-    "P2.rose: the shoots of Rosa 'The Generous Gardener' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant",
-    "P2.rose: the flowering side shoots of Rosa 'The Generous Gardener' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant",
-    "P2.rose: the leaves of Rosa 'The Generous Gardener' turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant",
     "P2.spring-clematis: the long shoots of Clematis armandi set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant",
     "P3.vine: the shoots of Vitis coignetiae that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant",
     "P3.vine: the leaves of Vitis coignetiae turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant",
@@ -172,11 +159,11 @@
     "P4.japanese-wisteria: the shoots of Wisteria floribunda 'Macrobotrys' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant",
     "P4.japanese-wisteria: the long shoots of Wisteria floribunda 'Macrobotrys' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant",
     "P4.japanese-wisteria: the leaves of Wisteria floribunda 'Macrobotrys' turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant",
+    "P4.wisteria: the shoots of Wisteria sinensis that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant",
+    "P4.wisteria: the long shoots of Wisteria sinensis set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant",
+    "P4.wisteria: the leaves of Wisteria sinensis turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant",
     "P4.honeysuckle: the shoots of Lonicera periclymenum 'Graham Thomas' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant",
     "P4.honeysuckle: the flowering side shoots and long shoots of Lonicera periclymenum 'Graham Thomas' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant",
-    "P4.rose: the shoots of Rosa 'The Generous Gardener' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant",
-    "P4.rose: the flowering side shoots of Rosa 'The Generous Gardener' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant",
-    "P4.rose: the leaves of Rosa 'The Generous Gardener' turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant",
     "P4.evergreen-honeysuckle: the shoots of Lonicera henryi that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant",
     "P4.evergreen-honeysuckle: the flowering side shoots and long shoots of Lonicera henryi set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant",
     "P4.evergreen-honeysuckle: the leaves of Lonicera henryi turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant",
@@ -192,14 +179,14 @@
     "P6.wisteria: the shoots of Wisteria sinensis that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant",
     "P6.wisteria: the long shoots of Wisteria sinensis set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant",
     "P6.wisteria: the leaves of Wisteria sinensis turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant",
+    "P6.japanese-wisteria: the shoots of Wisteria floribunda 'Macrobotrys' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.inflorescenceFreshMassKg, mechanics.fruitFreshMassKg, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant",
+    "P6.japanese-wisteria: the long shoots of Wisteria floribunda 'Macrobotrys' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant",
+    "P6.japanese-wisteria: the leaves of Wisteria floribunda 'Macrobotrys' turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant",
     "P6.honeysuckle: the shoots of Lonicera periclymenum 'Graham Thomas' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant",
     "P6.honeysuckle: the flowering side shoots and long shoots of Lonicera periclymenum 'Graham Thomas' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant",
-    "P6.rose: the shoots of Rosa 'The Generous Gardener' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.woodModulusMPa, mechanics.greenShootModulusMPa, mechanics.woodSetDays, mechanics.stemFreshDensityKgM3, mechanics.leafFreshMassPerAreaKgM2, mechanics.searcherReachM, tropism.turnPerM, tropism.lightShare, mechanics.leanDeg, mechanics.leafWeightOffsetShare, attachment.graspReachM. How far they stand out, where they droop and what they reach are not findings about this plant",
-    "P6.rose: the flowering side shoots of Rosa 'The Generous Gardener' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, sideShoots.breakSpreadDays, sideShoots.startTowardsLight, organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant",
-    "P6.rose: the leaves of Rosa 'The Generous Gardener' turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant",
     "P6.spring-clematis: the long shoots of Clematis armandi set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant"
   ],
-  "reseated": "98622 supported stem points: 7.5% stood more than 10 mm inside the real timber and 37.7% were moved by more than 5 mm (the furthest 109 mm); 58.2% could not be placed on a member and follow their neighbours",
-  "thinned": "1491913 stem points recorded, 744501 kept: unsupported shoots thinned to one point every 25 mm",
-  "cleared": "7.4% of stem points stood more than 5 mm inside the timber; 27950 stretches of stem were taken out of it (the furthest moved 247 mm), leaving 0.1%"
+  "reseated": "110816 supported stem points: 8.1% stood more than 10 mm inside the real timber and 39.8% were moved by more than 5 mm (the furthest 109 mm); 55.1% could not be placed on a member and follow their neighbours",
+  "thinned": "1550733 stem points recorded, 735426 kept: unsupported shoots thinned to one point every 25 mm",
+  "cleared": "7.3% of stem points stood more than 5 mm inside the timber; 28073 stretches of stem were taken out of it (the furthest moved 202 mm), leaving 0.1%"
 }

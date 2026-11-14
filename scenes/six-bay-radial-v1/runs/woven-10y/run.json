@@ -3,6 +3,9 @@
   "bower": "bower.json",
   "plan": "planting-woven.json",
   "specimenM": 3,
+  "tall": {
+    "wisteria": 4
+  },
   "band": null,
   "stemsTimes": null,
   "gardener": null,
@@ -25,15 +28,15 @@
       },
       "shorten_side_shoots": {
         "visits": 156,
-        "stemRemovedM": 10652
+        "stemRemovedM": 9335
       },
       "spur_prune": {
         "visits": 114,
-        "stemRemovedM": 390
+        "stemRemovedM": 550
       },
       "trim_to_bounds": {
         "visits": 129,
-        "stemRemovedM": 1109
+        "stemRemovedM": 1107
       }
     },
     "byPlant": {
@@ -79,35 +82,35 @@
       },
       "vine: shorten_side_shoots": {
         "visits": 90,
-        "stemRemovedM": 8761
+        "stemRemovedM": 7410
       },
       "wisteria: spur_prune": {
         "visits": 57,
-        "stemRemovedM": 71
+        "stemRemovedM": 172
       },
       "japanese-wisteria: spur_prune": {
         "visits": 57,
-        "stemRemovedM": 319
+        "stemRemovedM": 378
       },
       "ivy: trim_to_bounds": {
         "visits": 27,
-        "stemRemovedM": 34
+        "stemRemovedM": 32
       },
       "honeysuckle: trim_to_bounds": {
         "visits": 54,
-        "stemRemovedM": 61
+        "stemRemovedM": 51
       },
       "honeysuckle: shorten_side_shoots": {
         "visits": 54,
-        "stemRemovedM": 1887
+        "stemRemovedM": 1922
       },
       "akebia: trim_to_bounds": {
         "visits": 48,
-        "stemRemovedM": 1014
+        "stemRemovedM": 1024
       },
       "ivy: shorten_side_shoots": {
         "visits": 12,
-        "stemRemovedM": 4
+        "stemRemovedM": 3
       }
     }
   },
@@ -176,7 +179,7 @@
     "P6.ivy: the shoots of Hedera helix that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.stemFreshDensityKgM3, mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant",
     "P6.ivy: the leaves of Hedera helix turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
   ],
-  "reseated": "96527 supported stem points: 8.3% stood more than 10 mm inside the real timber and 38.4% were moved by more than 5 mm (the furthest 109 mm); 56.4% could not be placed on a member and follow their neighbours",
-  "thinned": "978987 stem points recorded, 503674 kept: unsupported shoots thinned to one point every 25 mm",
-  "cleared": "8.0% of stem points stood more than 5 mm inside the timber; 20826 stretches of stem were taken out of it (the furthest moved 232 mm), leaving 0.2%"
+  "reseated": "103167 supported stem points: 8.4% stood more than 10 mm inside the real timber and 39.6% were moved by more than 5 mm (the furthest 109 mm); 54.6% could not be placed on a member and follow their neighbours",
+  "thinned": "954622 stem points recorded, 487457 kept: unsupported shoots thinned to one point every 25 mm",
+  "cleared": "8.7% of stem points stood more than 5 mm inside the timber; 21930 stretches of stem were taken out of it (the furthest moved 271 mm), leaving 0.2%"
 }

@@ -1,0 +1,1 @@
+import{t as e}from"./stand-in-CLCGVy47.js";var t={...e(`sarcococca-confusa`),provisional:!0};export{t as look};

@@ -11,11 +11,13 @@
 //
 //   piers   Divided. Each pier is one character, and the characters alternate round the room, so that every one
 //           of them is met on every side and no plant is on one side only.
-//             the wisteria pier   wisteria and woodbine over the roof: flower in May, then scent and flower from
-//                                 June to September, on a frame that lasts. Beside the doorways, where flowers are
-//                                 met at the height of a face, a rose, and an evergreen so that no pier is bare
-//                                 in winter: the spring clematis (flower in March, before anything else) where the
-//                                 pier is warm enough for it, the evergreen honeysuckle where it is not.
+//             the wisteria pier   two wisterias over the roof, the Chinese and the Japanese: they flower one after
+//                                 the other through May, the second with the longest racemes, and twine opposite
+//                                 ways. Beside the doorways, where scent and flower are met at the height of a face,
+//                                 the woodbine, which carries on from June to September and takes the shade under
+//                                 the wisterias, and an evergreen so that no pier is bare in winter: the spring
+//                                 clematis (flower in March, before anything else) where the pier is warm enough
+//                                 for it, the evergreen honeysuckle where it is not.
 //             the vine pier       the vine and the akebia over the roof: the largest leaf and the densest cover,
 //                                 and the autumn. Evergreen honeysuckle and ivy on the legs, held below the spring
 //                                 of the roof, so that in winter the piers are clothed and the roof lets the light in.
@@ -59,7 +61,7 @@ const DESIGNED = {
   piers: {
     says: 'each pier one character, wisteria piers and vine piers alternating round the room',
     characters: [
-      { roof: [WISTERIAS, ['lonicera-periclymenum-graham-thomas']], door: [['rosa-the-generous-gardener'], { warm: ['clematis-armandi'], cool: ['lonicera-henryi'] }], held: [] },
+      { roof: [WISTERIAS, [...WISTERIAS].reverse()], door: [['lonicera-periclymenum-graham-thomas'], { warm: ['clematis-armandi'], cool: ['lonicera-henryi'] }], held: [] },
       { roof: [['vitis-coignetiae'], ['akebia-quinata']], door: [['lonicera-henryi'], ['hedera-helix']], held: ['lonicera-henryi', 'hedera-helix'] },
     ],
   },
