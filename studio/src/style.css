@@ -346,3 +346,11 @@ body.plate #sheet {
   opacity: 1;
   transition: none;
 }
+
+/* a film with a camera that moves (?tour): the picture fills the sheet, and nothing is written over it */
+body.tour .title,
+body.tour .tools,
+body.tour .time,
+body.tour .statement {
+  display: none;
+}

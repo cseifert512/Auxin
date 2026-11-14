@@ -85,6 +85,7 @@ shows after it is restarted.
 ```bash
 npm run film -- --view=approach --timber=ink                # both proportions
 npm run film -- --view=approach --timber=wood --name=approach-timber    # the same with the timber in its colour
+npm run film -- --camera=tour --timber=wood --name=tour-timber --format=landscape    # a camera that moves
 npm run film -- --view=drawing --timber=wood --format=landscape --build=10 --grow=40
 ```
 
@@ -94,6 +95,12 @@ presentation) and `<name>-9x16.mp4` (1080 x 1920, for a phone), with a still of 
 frame is worked out in full, so a film is smooth although the studio, live, may not be. On the upright sheet the
 approach is walked on, to stand before the bay in front. A film ends on the last midsummer of the run
 (`--to-the-end` for the whole of it). The films themselves are not committed; the stills are.
+
+`--camera=tour` moves the camera instead of standing it at a view: from where the approach stands it goes once
+round the building as it is put up and grows, rising to look down on the roof; then in under the arch in front;
+and from just short of the middle of the room it looks up into the crown (`tour` in `studio/src/paper.ts`). The
+path is worked out from the building's own approach view, its middle and its height, so it follows a new
+building. Nothing is written over the picture in this one.
 
 `--still=day:3399` (a day of growth) or `--still=build:0.5` (a share of the assembly) takes one picture and makes
 no film. The training lines are drawn as thin as they are, which is nearly not at all; `--lines=marked`, or

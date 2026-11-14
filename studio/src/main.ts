@@ -290,6 +290,7 @@ setTimeout(() => document.getElementById('poster')?.remove(), 900);
 document.querySelector<HTMLElement>('.time')!.hidden = false;
 if (url.has('bare')) document.body.classList.add('bare');
 if (url.has('embed')) document.body.classList.add('embed');
+if (url.has('tour')) document.body.classList.add('tour');
 // a film is the same sheet with nothing to press: the script that makes it asks for each frame in turn
 const filming = url.has('film') || url.has('plate');
 if (url.has('film')) document.body.classList.add('film');
@@ -522,7 +523,13 @@ Object.assign(window, {
       await this.film(p.at ?? state.at, 0);
       await this.film(p.at ?? state.at, 0);
     },
-    async film(at: number, seconds: number) {
+    async film(at: number, seconds: number, tour?: [number, number]) {
+      // a camera that moves: where it is so many seconds into a film so many seconds long (paper.tour)
+      if (tour) {
+        if (paper.view() !== 'approach') setView('approach');
+        paper.tour(tour[0], tour[1]);
+        organsFrom = null;
+      }
       setPlaying(false);
       setAt(at);
       organsAt = Number.NEGATIVE_INFINITY;

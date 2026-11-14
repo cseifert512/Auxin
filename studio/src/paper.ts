@@ -258,8 +258,54 @@ export function makePaper(
     moved = true;
   }
 
+  /** How high the building stands, and the approach's own lens: what a moving camera sets out from. */
+  let roofTop = 6;
+  let approachFov = approach.fov;
+  /**
+   * A camera that moves, for a film: where it is `at` seconds into a film `total` seconds long.
+   * It sets out from where the approach stands and goes once round the building, rising to look down on the roof
+   * and coming back down; then in under the arch in front; and from just short of the middle of the room it looks
+   * up into the crown, turning a little as it does. It is the approach's camera that is moved, with a wider lens
+   * once it is indoors.
+   */
+  function tour(at: number, total: number): void {
+    const c = controls.approach!;
+    // a hand on it would be held above the ground and off the timber; a film goes where it is sent
+    c.enableDamping = false;
+    c.maxPolarAngle = Math.PI;
+    c.minDistance = 0;
+    const sm = (a: number, b: number, x: number) => THREE.MathUtils.smoothstep(x, a, b);
+    const eye = toThree(standpoints.approach.eye);
+    const aim = toThree(standpoints.approach.target);
+    const mid = toThree([standpoints.middle[0]!, standpoints.middle[1]!, 0]);
+    const out = new THREE.Vector3(eye.x - mid.x, 0, eye.z - mid.z);
+    const far = out.length();
+    const from = Math.atan2(out.x, out.z);
+    out.normalize();
+    const [roundBy, inBy, upFrom, upBy] = [0.745 * total, 0.885 * total, 0.86 * total, 0.975 * total];
+    // once round: a little quicker in the middle of the turn than at its ends
+    const x = Math.min(1, at / roundBy);
+    const turn = from + Math.PI * 2 * (x + (sm(0, 1, x) - x) * 0.5);
+    // and a little nearer in the middle of it, where it is highest
+    const radius = far * (1 - 0.1 * sm(0, 1, x) - 0.14 * Math.sin(Math.PI * x) ** 2);
+    const outside = new THREE.Vector3(mid.x + Math.sin(turn) * radius, eye.y + roofTop * 0.75 * Math.sin(Math.PI * x) ** 2, mid.z + Math.cos(turn) * radius);
+    // indoors: on the side it came in by, looking across the room and then up
+    const back = out.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.6 * sm(upFrom, total, at));
+    const within = new THREE.Vector3(mid.x + back.x * 0.9, EYE_M, mid.z + back.z * 0.9);
+    const across = new THREE.Vector3(mid.x - out.x * 5, roofTop * 0.5, mid.z - out.z * 5);
+    const up = new THREE.Vector3(mid.x - back.x * 0.2, roofTop, mid.z - back.z * 0.2);
+    const s = sm(roundBy, inBy, at);
+    approach.position.lerpVectors(outside, within, s);
+    c.target.lerpVectors(aim, across.lerp(up, sm(upFrom, upBy, at)), s);
+    approach.fov = THREE.MathUtils.lerp(approachFov, inside.fov, s);
+    approach.updateProjectionMatrix();
+    c.update();
+    moved = true;
+  }
+
   /** Set the sheet up round what is drawn. */
   function frame(bounds: THREE.Box3): void {
+    roofTop = bounds.max.y;
     const centre = bounds.getCenter(new THREE.Vector3());
     home.copy(centre);
     const forward = new THREE.Vector3(Math.sin(TURN) * Math.cos(DIP), -Math.sin(DIP), -Math.cos(TURN) * Math.cos(DIP));
@@ -340,6 +386,7 @@ export function makePaper(
     if (tall) approach.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(standpoints.approachTall.acrossDeg) / 2) / approach.aspect));
     approach.updateProjectionMatrix();
     inside.updateProjectionMatrix();
+    approachFov = approach.fov;
     fitDrawing();
     fitPlan();
     turnTo(turned.yawDeg, turned.upDeg);
@@ -374,6 +421,7 @@ export function makePaper(
     setView,
     turnTo,
     focus,
+    tour,
     planOnly,
     /** Come closer in a view that is looked through a lens or down from above: 1 is the whole of it. */
     zoom(id: ViewId, by: number): void {
