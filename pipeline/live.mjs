@@ -1,5 +1,7 @@
 // The drawing that is drawn live, made ready to go into the presentation.
-//   node pipeline/live.mjs
+//   node pipeline/live.mjs [--runs=trained-10y,woven-10y] [--also=high-10y,...]
+//     --runs   the plantings that go to the presentation with it (the first is the one it opens on): trained-10y
+//     --also   plantings made light as well, for looking at in the studio, and not sent: woven-10y and high-10y
 // Writes exports/deck/a-room-through-time/   (index.html and what it needs: plain files)
 //
 // Three things, in order:
@@ -19,8 +21,10 @@ import { resolve } from 'node:path';
 import { root, startStudio } from './headless.mjs';
 
 const snapshot = JSON.parse(readFileSync(resolve(root, 'snapshot.json'), 'utf8')).snapshot;
-// a run kept only to compare with (capped-..., as the drawings were first grown) does not go to the presentation
-const runs = readdirSync(resolve(root, 'scenes', snapshot, 'runs')).filter((r) => !r.startsWith('capped') && existsSync(resolve(root, 'scenes', snapshot, 'runs', r, 'growth.json')));
+const options = Object.fromEntries(process.argv.slice(2).filter((a) => a.startsWith('--')).map((a) => a.slice(2).split('=')));
+const grown = (r) => existsSync(resolve(root, 'scenes', snapshot, 'runs', r, 'growth.json'));
+const runs = (options.runs ?? 'trained-10y').split(',').filter(grown);
+const also = (options.also ?? 'woven-10y,high-10y').split(',').filter((r) => grown(r) && !runs.includes(r));
 rmSync(resolve(root, 'scenes', snapshot, 'light'), { recursive: true, force: true });
 if (!runs.length) throw new Error(`no planting has been grown on ${snapshot}: npm run grow`);
 const node = (args, env = {}) => execFileSync(process.execPath, args, { cwd: root, stdio: 'inherit', env: { ...process.env, ...env } });
@@ -47,6 +51,9 @@ try {
 // 3
 const horti = resolve(process.env.HORTI_DIR ?? resolve(root, '../Horti-code-ture'));
 node([resolve(horti, 'node_modules/vite/bin/vite.js'), 'build', '--mode', 'deck', '--config', 'studio/vite.config.js', '--logLevel', 'warn']);
+
+// and, now that what is sent is made, the others to look at in the studio
+for (const run of also) node(['--max-old-space-size=6000', 'pipeline/lighten.mjs', snapshot, run]);
 
 const out = resolve(root, 'exports/deck/a-room-through-time');
 const sizeOf = (dir) => readdirSync(dir, { withFileTypes: true }).reduce((n, f) => n + (f.isDirectory() ? sizeOf(resolve(dir, f.name)) : statSync(resolve(dir, f.name)).size), 0);

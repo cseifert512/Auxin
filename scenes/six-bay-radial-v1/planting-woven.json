@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "name": "Planting woven: every pier the same company, grown through one another (24 plants)",
+  "plants": [
+    {"plantId":"P1.wisteria","taxonId":"wisteria-sinensis","stationId":"bed.R1.P1.2"},
+    {"plantId":"P1.akebia","taxonId":"akebia-quinata","stationId":"bed.R1.P1.3"},
+    {"plantId":"P1.honeysuckle","taxonId":"lonicera-periclymenum-graham-thomas","stationId":"bed.R1.P1.1"},
+    {"plantId":"P1.evergreen-honeysuckle","taxonId":"lonicera-henryi","stationId":"bed.R1.P1.4"},
+    {"plantId":"P2.japanese-wisteria","taxonId":"wisteria-floribunda-macrobotrys","stationId":"bed.R1.P2.2"},
+    {"plantId":"P2.vine","taxonId":"vitis-coignetiae","stationId":"bed.R1.P2.3"},
+    {"plantId":"P2.honeysuckle","taxonId":"lonicera-periclymenum-graham-thomas","stationId":"bed.R1.P2.1"},
+    {"plantId":"P2.ivy","taxonId":"hedera-helix","stationId":"bed.R1.P2.4"},
+    {"plantId":"P3.wisteria","taxonId":"wisteria-sinensis","stationId":"bed.R1.P3.2"},
+    {"plantId":"P3.akebia","taxonId":"akebia-quinata","stationId":"bed.R1.P3.3"},
+    {"plantId":"P3.honeysuckle","taxonId":"lonicera-periclymenum-graham-thomas","stationId":"bed.R1.P3.1"},
+    {"plantId":"P3.evergreen-honeysuckle","taxonId":"lonicera-henryi","stationId":"bed.R1.P3.4"},
+    {"plantId":"P4.japanese-wisteria","taxonId":"wisteria-floribunda-macrobotrys","stationId":"bed.R1.P4.2"},
+    {"plantId":"P4.vine","taxonId":"vitis-coignetiae","stationId":"bed.R1.P4.3"},
+    {"plantId":"P4.honeysuckle","taxonId":"lonicera-periclymenum-graham-thomas","stationId":"bed.R1.P4.1"},
+    {"plantId":"P4.ivy","taxonId":"hedera-helix","stationId":"bed.R1.P4.4"},
+    {"plantId":"P5.wisteria","taxonId":"wisteria-sinensis","stationId":"bed.R1.P5.2"},
+    {"plantId":"P5.akebia","taxonId":"akebia-quinata","stationId":"bed.R1.P5.3"},
+    {"plantId":"P5.honeysuckle","taxonId":"lonicera-periclymenum-graham-thomas","stationId":"bed.R1.P5.1"},
+    {"plantId":"P5.evergreen-honeysuckle","taxonId":"lonicera-henryi","stationId":"bed.R1.P5.4"},
+    {"plantId":"P6.japanese-wisteria","taxonId":"wisteria-floribunda-macrobotrys","stationId":"bed.R1.P6.2"},
+    {"plantId":"P6.vine","taxonId":"vitis-coignetiae","stationId":"bed.R1.P6.3"},
+    {"plantId":"P6.honeysuckle","taxonId":"lonicera-periclymenum-graham-thomas","stationId":"bed.R1.P6.1"},
+    {"plantId":"P6.ivy","taxonId":"hedera-helix","stationId":"bed.R1.P6.4"}
+  ]
+}

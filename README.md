@@ -37,25 +37,37 @@ the model assumed (for the wisterias, the route of an earlier prototype's vault)
 gardener's plan. Each run's `run.json` says which branch and commit grew it, and what the gardener cut off, act
 by act.
 
-| Run of `six-bay-radial-v1` | What it is |
-|---|---|
-| `trained-10y` | the planting as modelled, with no assumed stem lengths: what every drawing is made from |
-| `high-10y` | the same with every plant at the high end of what is published for a year's growth (`--band=high`) |
-| `capped-10y` | as the drawings were first grown, on the simulator's `main`: kept to compare with |
+**The planting is a design, and there are two to choose between** (`npm run plant -- --scheme=`; the rule and
+the reasons are at the head of `pipeline/plant.mjs`):
 
-| `cover-10y` | the same building, the same number of plants and the same rules, planted for cover: three vigorous climbers and one accent at each pier (`npm run plant -- --palette=cover --out=planting-cover.json`, then `--plan=planting-cover.json`). Ten years on it holds 94% of the routes where `trained-10y` holds 83%, and from above 31% of the timber is seen in June where 62% was |
-| `loose-10y` | the same as `trained-10y` with a lighter hand: the vine, the akebias and the honeysuckles not cut back to keep them in, and growth let stand 1.2 m off the timber (`--free=vine,akebia,honeysuckle --loose=1.2`) |
+- `piers`, the one in use: **divided**. Each pier is one character and the characters alternate round the room, so
+  every plant is met on every side. A wisteria pier has wisteria and woodbine over the roof, and a rose and an
+  evergreen beside the doorways. A vine pier has the vine and the akebia over the roof, and evergreen honeysuckle and
+  ivy on the legs, held below the spring of the roof so that the piers are clothed in winter and the roof lets the
+  light in. The wisterias take the warmer piers.
+- `woven`: **integrated**. Every pier carries the same company (a wisteria, an akebia or the vine, a woodbine, an
+  evergreen) and nothing is held back, so the plants grow through one another and the building is one texture.
+
+Both have 24 plants, at the feet of the lines. `cover` and `even` are the earlier trials, by the side of the room.
+
+| Run of `six-bay-radial-v1` | What it is | Routes held | Framework | Timber seen in June: inside / approach / above | Evergreens in winter |
+|---|---|---|---|---|---|
+| `trained-10y` | **divided by pier**, as modelled: what every drawing is made from | 93% | 2,721 m | 70% / 52% / 35% | 30% |
+| `woven-10y` | woven (`--plan=planting-woven.json`) | 91% | 2,579 m | 54% / 47% / 34% | 30% |
+| `high-10y` | divided by pier, every plant at the high end of what is published for a year's growth (`--band=high`) | 96% | 3,323 m | 56% / 46% / 21% | 29% |
+| `cover-10y` | earlier trial: by side, three vigorous climbers and an accent to a pier | 94% | 2,942 m | 85% / 58% / 31% | 27% |
+| `even-10y` | earlier trial: by side, every bed alike, small plants and vigorous | 83% | 2,101 m | 81% / 68% / 62% | 31% |
+| `even-loose-10y` | the same with a lighter hand (`--free=vine,akebia,honeysuckle --loose=1.2`) | 84% | 1,999 m | 79% / 65% / 58% | |
+| `capped-10y` | as the drawings were first grown: main stems stopped at an assumed length | 75% | 1,781 m | 85% / 73% / 71% | 28% |
 
 `npm run compare` sets them side by side. `--band=low` is the other end of what is published, and
 `--stems=2` lets twice as many stems share a member (it adds little on this building).
 
-**The gardener's hand is a design setting**, not a fact about a plant. The simulator writes each plant the RHS's
-routine for a plant kept within bounds, and on this building that routine cuts off 6.8 km of stem in ten years,
-4.1 km of it from the one vine. `--free=` and `--loose=` loosen it before it is carried out. Tried: it takes the
-cutting down to 0.6 km and changes what is seen by only a few points of leaf, so the knife is not what keeps the
-planting thin. What does is which plants are planted: in `trained-10y` six of the twenty-four carry two thirds
-of all the growth, and `cover-10y`, with the same number of plants, has 40% more framework. After that, how much
-each plant grows in a year (`--band`), and how many plants there are.
+**The gardener's hand is a design setting too**, not a fact about a plant. A planting plan can hold a plant below
+a height (the divided scheme does, for the evergreens on the legs). The simulator writes each plant the RHS's
+routine for a plant kept within bounds; `--free=` and `--loose=` loosen that before it is carried out. Tried on the
+earlier planting: it took the cutting from 6.8 km of stem in ten years to 0.6 km and changed what is seen by a few
+points of leaf. The knife is not what keeps a planting thin: which plants are planted is.
 
 In the studio: **Play** or drag the line of time; Space plays, the arrow keys step along it (further with Shift).
 Drag to turn the drawing, scroll to come closer. **Timber / Left to silver / Ink** draws the timber in its own
