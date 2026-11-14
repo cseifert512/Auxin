@@ -1,0 +1,151 @@
+{
+  "schema": "bower.snapshot/1",
+  "name": "six-bay-radial-v1",
+  "created": "2026-11-14",
+  "source_commit": "5ee3b94fc6fed6805ff08f9a274c154fac4cbdff+uncommitted",
+  "generated_from": "design.json in this folder, by scripts/export_snapshot.py",
+  "units": "m",
+  "axes": {
+    "up": "+Z",
+    "north": "+Y",
+    "bower.glb": "glTF convention: +Y up, metres"
+  },
+  "status": "Concept geometry. Sections, joint depths and clearances are provisional; nothing here is a structural, fabrication or horticultural check.",
+  "model": {
+    "rooms": [
+      {
+        "id": "R1",
+        "bays": 6,
+        "piers": 6
+      }
+    ],
+    "members": 111,
+    "members_by_family": {
+      "arch": 12,
+      "crown": 1,
+      "fill": 24,
+      "fine": 36,
+      "hoop": 12,
+      "rib": 24,
+      "ring": 2
+    },
+    "total_length_m": 621.6,
+    "total_volume_m3": 17.12,
+    "joints": {
+      "joints": 631,
+      "by_kind": {
+        "base": 48,
+        "cross_lap": 390,
+        "crown_seat": 24,
+        "housing": 132,
+        "mitre": 6,
+        "paired_heads": 12,
+        "pier_mitre": 6,
+        "scarf": 13
+      },
+      "third_depth_laps": 72,
+      "to_review": 0,
+      "laps_left_uncut": 0,
+      "laps_whose_walls_must_follow_a_turn": 0
+    },
+    "bounds_m": {
+      "min": [
+        -6.15,
+        -5.37,
+        0.0
+      ],
+      "max": [
+        6.15,
+        5.37,
+        6.32
+      ]
+    }
+  },
+  "checks_at_export": [
+    {
+      "room": "R1",
+      "meshes_closed": true,
+      "collisions_estimated": 0,
+      "milled": {
+        "members_milled": 111,
+        "cutters": 984,
+        "volume_removed_m3": 1.43,
+        "left_open": []
+      },
+      "mesh_intersections_in_scene": {
+        "pairs_touching_under_1mm": 6,
+        "lattice_pairs_still_intersecting": 6,
+        "laps_not_clean": [
+          [
+            "R1.fine.ccw.02",
+            "R1.B2.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.ccw.06",
+            "R1.B3.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.ccw.10",
+            "R1.B4.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.ccw.14",
+            "R1.B5.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.ccw.18",
+            "R1.B6.hoop0",
+            1.7
+          ],
+          [
+            "R1.fine.ccw.22",
+            "R1.B1.hoop0",
+            1.7
+          ]
+        ],
+        "clashes": []
+      },
+      "max_centreline_deviation_m": 1.9892685507069636e-06
+    }
+  ],
+  "tools": {
+    "blender": "5.3.0",
+    "bower.blend": "library of the collection BOWER_V1 and everything in it",
+    "bower.glb": "glTF binary of collection 21_PRIMARY_MESHES"
+  },
+  "files": {
+    "bower.blend": {
+      "bytes": 2138967,
+      "sha256": "d93f38f634891d1ed9cd24168978f88aaa3bffc2866b3332dc26ca831cf5ecd2"
+    },
+    "bower.glb": {
+      "bytes": 4486520,
+      "sha256": "465418470a10f19f4d9d9d5cc151d7141c6fd9117b8e46307011417f9bca8431"
+    },
+    "centrelines.json": {
+      "bytes": 441006,
+      "sha256": "81d61384654489bbc152401706f6259e917c87fdcd8b84ce032700c421cc3d36"
+    },
+    "design.json": {
+      "bytes": 8227,
+      "sha256": "6bf649afde7e64379180121326f2284c24b124c3b50833e52ff6c627b307e1bc"
+    },
+    "joints.csv": {
+      "bytes": 95387,
+      "sha256": "d0983d68736f25bbbc27b287c8aec205fc64234e5ab5cc7d825a8e6955c417c1"
+    },
+    "members.csv": {
+      "bytes": 17202,
+      "sha256": "3dafecfb0a83fbb22445096959c41503c1f114da8f33b99dff5c6da4e8b32ec7"
+    }
+  },
+  "use": {
+    "blender": "File > Link > bower.blend > Collection. Link 21_PRIMARY_MESHES for the timber, 20_PRIMARY_CENTERLINES for the centreline curves, or BOWER_V1 for everything generated.",
+    "other tools": "bower.glb holds the timber meshes; each mesh carries its member ID.",
+    "data": "centrelines.json, members.csv and joints.csv are keyed by member ID."
+  }
+}

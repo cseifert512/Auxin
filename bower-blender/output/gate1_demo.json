@@ -1,0 +1,329 @@
+{
+  "design": "C:\\BOWER\\bower-blender\\design.json",
+  "base": {
+    "piers": [
+      "R1.P1",
+      "R1.P2",
+      "R1.P3",
+      "R1.P4",
+      "R1.P5",
+      "R1.P6"
+    ],
+    "bays": [
+      "R1.B1",
+      "R1.B2",
+      "R1.B3",
+      "R1.B4",
+      "R1.B5",
+      "R1.B6"
+    ]
+  },
+  "steps": [
+    {
+      "step": "1_move_pier",
+      "edit": "drag handle H_R1.P3 from (5.37, -0.56) to (5.90, 0.30) and apply handles",
+      "change": {
+        "op": "move_pier",
+        "added": [],
+        "removed": [],
+        "modified": [
+          "R1.P3",
+          "R1.B2",
+          "R1.B3"
+        ]
+      },
+      "ids_after": {
+        "piers": [
+          "R1.P1",
+          "R1.P2",
+          "R1.P3",
+          "R1.P4",
+          "R1.P5",
+          "R1.P6"
+        ],
+        "bays": [
+          "R1.B1",
+          "R1.B2",
+          "R1.B3",
+          "R1.B4",
+          "R1.B5",
+          "R1.B6"
+        ]
+      },
+      "identical_bays": [
+        "R1.B1",
+        "R1.B4",
+        "R1.B5",
+        "R1.B6"
+      ],
+      "reshaped_bays": [
+        "R1.B2",
+        "R1.B3"
+      ],
+      "envelope": {
+        "ok": true,
+        "problems": [],
+        "vertices": 1716,
+        "faces": 1632,
+        "patches": 24,
+        "open_rims": 2,
+        "shared_curves": 30,
+        "shared_curves_joined_full_length": 30,
+        "collapsed_faces": 0,
+        "min_normal_agreement_in_patch": 0.9202
+      },
+      "scene_check": {
+        "vertices": 1716,
+        "faces": 1632,
+        "rim_edges": 264,
+        "non_manifold_edges": 0,
+        "sharp_edges": 252,
+        "max_vertex_deviation_m": 3.228003135087221e-07
+      },
+      "stale_objects_removed": 0,
+      "image": "gate1_demo_1_move_pier_overhead.png"
+    },
+    {
+      "step": "2_crown_height",
+      "edit": "set_crown(R1, height_m=7.2), up from 6.0",
+      "change": {
+        "op": "set_crown",
+        "added": [],
+        "removed": [],
+        "modified": [
+          "R1.crown"
+        ]
+      },
+      "ids_after": {
+        "piers": [
+          "R1.P1",
+          "R1.P2",
+          "R1.P3",
+          "R1.P4",
+          "R1.P5",
+          "R1.P6"
+        ],
+        "bays": [
+          "R1.B1",
+          "R1.B2",
+          "R1.B3",
+          "R1.B4",
+          "R1.B5",
+          "R1.B6"
+        ]
+      },
+      "identical_bays": [],
+      "reshaped_bays": [
+        "R1.B1",
+        "R1.B2",
+        "R1.B3",
+        "R1.B4",
+        "R1.B5",
+        "R1.B6"
+      ],
+      "envelope": {
+        "ok": true,
+        "problems": [],
+        "vertices": 1716,
+        "faces": 1632,
+        "patches": 24,
+        "open_rims": 2,
+        "shared_curves": 30,
+        "shared_curves_joined_full_length": 30,
+        "collapsed_faces": 0,
+        "min_normal_agreement_in_patch": 0.9171
+      },
+      "scene_check": {
+        "vertices": 1716,
+        "faces": 1632,
+        "rim_edges": 264,
+        "non_manifold_edges": 0,
+        "sharp_edges": 252,
+        "max_vertex_deviation_m": 3.226139353210607e-07
+      },
+      "stale_objects_removed": 0,
+      "image": "gate1_demo_2_crown_height_overhead.png"
+    },
+    {
+      "step": "3_add_bay",
+      "edit": "add_bay(R1.B1): split the front bay with a new pier",
+      "change": {
+        "op": "add_bay",
+        "added": [
+          "R1.P7",
+          "R1.B7"
+        ],
+        "removed": [],
+        "modified": [
+          "R1.B1"
+        ]
+      },
+      "ids_after": {
+        "piers": [
+          "R1.P1",
+          "R1.P7",
+          "R1.P2",
+          "R1.P3",
+          "R1.P4",
+          "R1.P5",
+          "R1.P6"
+        ],
+        "bays": [
+          "R1.B1",
+          "R1.B7",
+          "R1.B2",
+          "R1.B3",
+          "R1.B4",
+          "R1.B5",
+          "R1.B6"
+        ]
+      },
+      "identical_bays": [
+        "R1.B2",
+        "R1.B3",
+        "R1.B4",
+        "R1.B5",
+        "R1.B6"
+      ],
+      "reshaped_bays": [
+        "R1.B1"
+      ],
+      "envelope": {
+        "ok": true,
+        "problems": [],
+        "vertices": 2002,
+        "faces": 1904,
+        "patches": 28,
+        "open_rims": 2,
+        "shared_curves": 35,
+        "shared_curves_joined_full_length": 35,
+        "collapsed_faces": 0,
+        "min_normal_agreement_in_patch": 0.9132
+      },
+      "scene_check": {
+        "vertices": 2002,
+        "faces": 1904,
+        "rim_edges": 308,
+        "non_manifold_edges": 0,
+        "sharp_edges": 294,
+        "max_vertex_deviation_m": 3.228003135087221e-07
+      },
+      "stale_objects_removed": 0,
+      "image": "gate1_demo_3_add_bay_overhead.png"
+    },
+    {
+      "step": "4_remove_bay",
+      "edit": "remove_bay(R1.B2): collapse the south-east bay",
+      "change": {
+        "op": "remove_bay",
+        "added": [],
+        "removed": [
+          "R1.B2",
+          "R1.P3"
+        ],
+        "modified": [
+          "R1.P2",
+          "R1.B1",
+          "R1.B3"
+        ]
+      },
+      "ids_after": {
+        "piers": [
+          "R1.P1",
+          "R1.P2",
+          "R1.P4",
+          "R1.P5",
+          "R1.P6"
+        ],
+        "bays": [
+          "R1.B1",
+          "R1.B3",
+          "R1.B4",
+          "R1.B5",
+          "R1.B6"
+        ]
+      },
+      "identical_bays": [
+        "R1.B4",
+        "R1.B5",
+        "R1.B6"
+      ],
+      "reshaped_bays": [
+        "R1.B1",
+        "R1.B3"
+      ],
+      "envelope": {
+        "ok": true,
+        "problems": [],
+        "vertices": 1430,
+        "faces": 1360,
+        "patches": 20,
+        "open_rims": 2,
+        "shared_curves": 25,
+        "shared_curves_joined_full_length": 25,
+        "collapsed_faces": 0,
+        "min_normal_agreement_in_patch": 0.9327
+      },
+      "scene_check": {
+        "vertices": 1430,
+        "faces": 1360,
+        "rim_edges": 220,
+        "non_manifold_edges": 0,
+        "sharp_edges": 210,
+        "max_vertex_deviation_m": 3.228003135087221e-07
+      },
+      "stale_objects_removed": 7,
+      "image": "gate1_demo_4_remove_bay_overhead.png"
+    }
+  ],
+  "all_four_in_sequence": {
+    "ids_after": {
+      "piers": [
+        "R1.P1",
+        "R1.P7",
+        "R1.P2",
+        "R1.P4",
+        "R1.P5",
+        "R1.P6"
+      ],
+      "bays": [
+        "R1.B1",
+        "R1.B7",
+        "R1.B3",
+        "R1.B4",
+        "R1.B5",
+        "R1.B6"
+      ]
+    },
+    "identical_bays": [],
+    "reshaped_bays": [
+      "R1.B1",
+      "R1.B3",
+      "R1.B4",
+      "R1.B5",
+      "R1.B6"
+    ],
+    "envelope": {
+      "ok": true,
+      "problems": [],
+      "vertices": 1716,
+      "faces": 1632,
+      "patches": 24,
+      "open_rims": 2,
+      "shared_curves": 30,
+      "shared_curves_joined_full_length": 30,
+      "collapsed_faces": 0,
+      "min_normal_agreement_in_patch": 0.851
+    },
+    "scene_check": {
+      "vertices": 1716,
+      "faces": 1632,
+      "rim_edges": 264,
+      "non_manifold_edges": 0,
+      "sharp_edges": 252,
+      "max_vertex_deviation_m": 3.0553872814443755e-07
+    },
+    "stale_objects_removed": 0,
+    "image": "gate1_demo_5_all_four_overhead.png"
+  }
+}

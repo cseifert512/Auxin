@@ -1,0 +1,473 @@
+{
+  "design": "C:\\BOWER\\bower-blender\\design.json",
+  "pair": "C:\\BOWER\\bower-blender\\design\\two_rooms.json",
+  "second_room": {
+    "bay": "R1.B3",
+    "bays": 6,
+    "shape": {
+      "lantern_base_height_m": 4.5
+    },
+    "timber": {
+      "lattice": {
+        "ribs_per_family": 8,
+        "tiers": [
+          {
+            "family": "rib",
+            "phases": [
+              0.0
+            ],
+            "from": "top"
+          },
+          {
+            "family": "fill",
+            "phases": [
+              0.5
+            ],
+            "from": {
+              "lantern": 0.22
+            }
+          },
+          {
+            "family": "fine",
+            "phases": [
+              0.25,
+              0.75
+            ],
+            "from": {
+              "radius_m": 2.7
+            },
+            "gathers": false
+          }
+        ]
+      },
+      "arches": {
+        "hoops_m": [
+          0.5
+        ]
+      }
+    }
+  },
+  "connections": [
+    {
+      "id": "C1",
+      "bays": [
+        "R1.B3",
+        "R2.B1"
+      ],
+      "arch_gap_m": 0.0,
+      "one_arch": true,
+      "fold_at_apex_deg": 14.4,
+      "fold_deg": [
+        5.5,
+        87.0
+      ],
+      "continuity": "the roofs share the arch (position); they meet in a fold along it (not tangent)"
+    }
+  ],
+  "first_room_once_joined": {
+    "members_identical": 108,
+    "members_reshaped": [],
+    "members_with_other_joints": [
+      "R1.B3.arch.L",
+      "R1.B3.arch.R"
+    ],
+    "members_added": [],
+    "members_removed": []
+  },
+  "edits": [
+    {
+      "edit": "set_layout(R2, outline radius 4.417 -> 5.2 m): the second room made larger",
+      "change": {
+        "op": "set_layout",
+        "added": [],
+        "removed": [],
+        "modified": [
+          "R2.P3",
+          "R2.P4",
+          "R2.P5",
+          "R2.P6",
+          "R2.B2",
+          "R2.B3",
+          "R2.B4",
+          "R2.B5",
+          "R2.B6",
+          "R2.crown"
+        ]
+      },
+      "first_room": {
+        "members_identical": 108,
+        "members_reshaped": [],
+        "members_with_other_joints": [
+          "R1.B3.arch.L",
+          "R1.B3.arch.R"
+        ],
+        "members_added": [],
+        "members_removed": []
+      },
+      "connections": [
+        {
+          "id": "C1",
+          "bays": [
+            "R1.B3",
+            "R2.B1"
+          ],
+          "arch_gap_m": 0.0,
+          "one_arch": true,
+          "fold_at_apex_deg": 18.2,
+          "fold_deg": [
+            8.7,
+            86.5
+          ],
+          "continuity": "the roofs share the arch (position); they meet in a fold along it (not tangent)"
+        }
+      ],
+      "timber": {
+        "rooms": [
+          "R1",
+          "R2"
+        ],
+        "members": 177,
+        "members_by_room": {
+          "R1": 108,
+          "R2": 69
+        },
+        "total_length_m": 1084.0,
+        "joints": {
+          "joints": 907,
+          "by_kind": {
+            "base": 105,
+            "cross_lap": 529,
+            "crown_seat": 40,
+            "housing": 171,
+            "mitre": 13,
+            "paired_heads": 20,
+            "pier_mitre": 16,
+            "scarf": 13
+          },
+          "third_depth_laps": 95,
+          "to_review": 0,
+          "laps_left_uncut": 0,
+          "laps_whose_walls_must_follow_a_turn": 0
+        },
+        "collisions_estimated": [],
+        "meshes_closed": true,
+        "milled": null
+      },
+      "image": "gate3_edit_1_resize_overhead.png"
+    },
+    {
+      "edit": "set_crown(R2): its crown moved 0.6 m and raised 0.5 m",
+      "change": {
+        "op": "set_crown",
+        "added": [],
+        "removed": [],
+        "modified": [
+          "R2.crown"
+        ]
+      },
+      "first_room": {
+        "members_identical": 108,
+        "members_reshaped": [],
+        "members_with_other_joints": [
+          "R1.B3.arch.L",
+          "R1.B3.arch.R"
+        ],
+        "members_added": [],
+        "members_removed": []
+      },
+      "connections": [
+        {
+          "id": "C1",
+          "bays": [
+            "R1.B3",
+            "R2.B1"
+          ],
+          "arch_gap_m": 0.0,
+          "one_arch": true,
+          "fold_at_apex_deg": 17.6,
+          "fold_deg": [
+            7.9,
+            86.9
+          ],
+          "continuity": "the roofs share the arch (position); they meet in a fold along it (not tangent)"
+        }
+      ],
+      "timber": {
+        "rooms": [
+          "R1",
+          "R2"
+        ],
+        "members": 178,
+        "members_by_room": {
+          "R1": 108,
+          "R2": 70
+        },
+        "total_length_m": 1061.4,
+        "joints": {
+          "joints": 917,
+          "by_kind": {
+            "base": 107,
+            "cross_lap": 537,
+            "crown_seat": 40,
+            "housing": 171,
+            "mitre": 13,
+            "paired_heads": 20,
+            "pier_mitre": 16,
+            "scarf": 13
+          },
+          "third_depth_laps": 116,
+          "to_review": 0,
+          "laps_left_uncut": 0,
+          "laps_whose_walls_must_follow_a_turn": 0
+        },
+        "collisions_estimated": [],
+        "meshes_closed": true,
+        "milled": null
+      },
+      "image": "gate3_edit_2_move_crown_overhead.png"
+    },
+    {
+      "edit": "move_pier(R1.P4): a pier the two rooms share moved 0.5 m",
+      "change": {
+        "op": "move_pier",
+        "added": [],
+        "removed": [],
+        "modified": [
+          "R1.P4",
+          "R2.P1",
+          "R1.B3",
+          "R1.B4",
+          "R2.B1",
+          "R2.B6"
+        ]
+      },
+      "first_room": {
+        "members_identical": 48,
+        "members_reshaped": [
+          "R1.B1.hoop1",
+          "R1.B2.hoop0",
+          "R1.B2.hoop1",
+          "R1.B3.arch.L",
+          "R1.B3.arch.R",
+          "R1.B3.hoop0",
+          "R1.B3.hoop1",
+          "R1.B4.arch.L",
+          "R1.B4.arch.R",
+          "R1.B4.hoop0",
+          "R1.B4.hoop1",
+          "R1.B5.hoop0",
+          "R1.B5.hoop1",
+          "R1.fill.ccw.00",
+          "R1.fill.ccw.01",
+          "R1.fill.ccw.02",
+          "R1.fill.ccw.03",
+          "R1.fill.ccw.04",
+          "R1.fill.cw.00",
+          "R1.fill.cw.08",
+          "R1.fill.cw.09",
+          "R1.fill.cw.10",
+          "R1.fill.cw.11",
+          "R1.fine.ccw.01",
+          "R1.fine.ccw.04",
+          "R1.fine.ccw.07",
+          "R1.fine.ccw.10",
+          "R1.fine.ccw.12",
+          "R1.fine.ccw.13",
+          "R1.fine.ccw.16",
+          "R1.fine.ccw.19",
+          "R1.fine.ccw.21",
+          "R1.fine.ccw.22",
+          "R1.fine.cw.00",
+          "R1.fine.cw.02",
+          "R1.fine.cw.03",
+          "R1.fine.cw.05",
+          "R1.fine.cw.06",
+          "R1.fine.cw.08",
+          "R1.fine.cw.11",
+          "R1.fine.cw.12",
+          "R1.fine.cw.14",
+          "R1.fine.cw.15",
+          "R1.fine.cw.17",
+          "R1.fine.cw.18",
+          "R1.fine.cw.20",
+          "R1.fine.cw.21",
+          "R1.rib.ccw.00",
+          "R1.rib.ccw.01",
+          "R1.rib.ccw.02",
+          "R1.rib.ccw.03",
+          "R1.rib.ccw.04",
+          "R1.rib.ccw.08",
+          "R1.rib.cw.00",
+          "R1.rib.cw.08",
+          "R1.rib.cw.09",
+          "R1.rib.cw.10",
+          "R1.rib.cw.11",
+          "R1.ring.fine"
+        ],
+        "members_with_other_joints": [
+          "R1.B5.arch.L",
+          "R1.B5.arch.R"
+        ],
+        "members_added": [
+          "R1.fine.ccw.09"
+        ],
+        "members_removed": [
+          "R1.fine.ccw.06"
+        ]
+      },
+      "connections": [
+        {
+          "id": "C1",
+          "bays": [
+            "R1.B3",
+            "R2.B1"
+          ],
+          "arch_gap_m": 0.0,
+          "one_arch": true,
+          "fold_at_apex_deg": 14.5,
+          "fold_deg": [
+            3.2,
+            84.8
+          ],
+          "continuity": "the roofs share the arch (position); they meet in a fold along it (not tangent)"
+        }
+      ],
+      "timber": {
+        "rooms": [
+          "R1",
+          "R2"
+        ],
+        "members": 174,
+        "members_by_room": {
+          "R1": 108,
+          "R2": 66
+        },
+        "total_length_m": 1034.8,
+        "joints": {
+          "joints": 873,
+          "by_kind": {
+            "base": 105,
+            "cross_lap": 501,
+            "crown_seat": 40,
+            "housing": 165,
+            "mitre": 13,
+            "paired_heads": 20,
+            "pier_mitre": 16,
+            "scarf": 13
+          },
+          "third_depth_laps": 82,
+          "to_review": 0,
+          "laps_left_uncut": 0,
+          "laps_whose_walls_must_follow_a_turn": 0
+        },
+        "collisions_estimated": [],
+        "meshes_closed": true,
+        "milled": null
+      },
+      "image": "gate3_edit_3_shared_pier_overhead.png"
+    }
+  ],
+  "second_room_removed": {
+    "change": {
+      "op": "remove_room",
+      "added": [],
+      "removed": [
+        "R2",
+        "C1"
+      ],
+      "modified": [
+        "R1.B3"
+      ]
+    },
+    "first_room_as_it_was_alone": true
+  },
+  "built": {
+    "rooms": [
+      "R1",
+      "R2"
+    ],
+    "members": 175,
+    "members_by_room": {
+      "R1": 108,
+      "R2": 67
+    },
+    "total_length_m": 1040.7,
+    "joints": {
+      "joints": 875,
+      "by_kind": {
+        "base": 107,
+        "cross_lap": 501,
+        "crown_seat": 40,
+        "housing": 165,
+        "mitre": 13,
+        "paired_heads": 20,
+        "pier_mitre": 16,
+        "scarf": 13
+      },
+      "third_depth_laps": 87,
+      "to_review": 0,
+      "laps_left_uncut": 0,
+      "laps_whose_walls_must_follow_a_turn": 0
+    },
+    "collisions_estimated": [],
+    "meshes_closed": true,
+    "milled": {
+      "members_milled": 175,
+      "cutters": 1283,
+      "volume_removed_m3": 2.622,
+      "left_open": []
+    },
+    "laps_not_clean": 7,
+    "clashes": 1,
+    "deepest_overlaps_mm": [
+      [
+        "R2.fine.ccw.02",
+        "R2.B4.hoop0",
+        4.3
+      ],
+      [
+        "R1.rib.ccw.01",
+        "R1.rib.cw.08",
+        3.1
+      ],
+      [
+        "R1.fill.ccw.00",
+        "R1.B2.arch.R",
+        3.0
+      ],
+      [
+        "R1.rib.ccw.02",
+        "R1.B3.hoop0",
+        2.0
+      ],
+      [
+        "R1.fill.ccw.09",
+        "R1.B8.hoop0",
+        2.0
+      ],
+      [
+        "R1.fine.ccw.06",
+        "R1.B4.hoop0",
+        1.9
+      ],
+      [
+        "R1.rib.ccw.05",
+        "R1.B5.hoop0",
+        1.3
+      ],
+      [
+        "R1.rib.ccw.11",
+        "R1.B1.hoop0",
+        1.0
+      ]
+    ]
+  },
+  "images": [
+    "gate3_plan.png",
+    "gate3_overhead.png",
+    "gate3_exterior.png",
+    "gate3_through.png",
+    "gate3_back.png",
+    "gate3_shared_pier.png"
+  ]
+}

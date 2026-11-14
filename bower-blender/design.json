@@ -1,0 +1,525 @@
+{
+  "schema": "bower.design/1",
+  "note": "Authored control topology for Bower V1. Dimensions are provisional design values, not engineered sizes.",
+  "units": "m",
+  "axes": {
+    "up": "+Z",
+    "north": "+Y"
+  },
+  "sampling": {
+    "across": 10,
+    "up": 16,
+    "curve_resolution_u": 16
+  },
+  "rooms": [
+    {
+      "id": "R1",
+      "floor_z_m": 0.0,
+      "crown": {
+        "centre_m": [
+          0.05,
+          0.1
+        ],
+        "height_m": 6.3,
+        "radius_m": 1.0
+      },
+      "shape": {
+        "pier_height_m": 1.6,
+        "pier_radius_m": 0.1,
+        "arch_shoulder": 0.4,
+        "arch_point_deg": 30.0,
+        "arch_reach": 0.62,
+        "fan_radius_m": 3.0,
+        "pier_funnel_m": 2.8,
+        "ridge_soften": 1.5,
+        "lantern_radius_m": 2.9,
+        "lantern_base_height_m": 4.8
+      },
+      "piers": [
+        {
+          "id": "R1.P1",
+          "position_m": [
+            -3.85,
+            -4.93
+          ]
+        },
+        {
+          "id": "R1.P2",
+          "position_m": [
+            1.125,
+            -5.972
+          ]
+        },
+        {
+          "id": "R1.P3",
+          "position_m": [
+            5.16,
+            -3.426
+          ]
+        },
+        {
+          "id": "R1.P4",
+          "position_m": [
+            6.188,
+            0.87
+          ]
+        },
+        {
+          "id": "R1.P5",
+          "position_m": [
+            3.165,
+            4.84
+          ]
+        },
+        {
+          "id": "R1.P6",
+          "position_m": [
+            -0.815,
+            5.988
+          ]
+        },
+        {
+          "id": "R1.P7",
+          "position_m": [
+            -5.02,
+            3.804
+          ]
+        },
+        {
+          "id": "R1.P8",
+          "position_m": [
+            -6.317,
+            -1.205
+          ]
+        }
+      ],
+      "bays": [
+        {
+          "id": "R1.B1",
+          "from": "R1.P1",
+          "to": "R1.P2",
+          "type": "open",
+          "apex_height_m": 4.76,
+          "apex_shift": 0.0,
+          "apex_out_m": 0.0
+        },
+        {
+          "id": "R1.B2",
+          "from": "R1.P2",
+          "to": "R1.P3",
+          "type": "open",
+          "apex_height_m": 4.62,
+          "apex_shift": 0.0,
+          "apex_out_m": 0.0
+        },
+        {
+          "id": "R1.B3",
+          "from": "R1.P3",
+          "to": "R1.P4",
+          "type": "open",
+          "apex_height_m": 4.54,
+          "apex_shift": 0.0,
+          "apex_out_m": 0.0
+        },
+        {
+          "id": "R1.B4",
+          "from": "R1.P4",
+          "to": "R1.P5",
+          "type": "open",
+          "apex_height_m": 4.59,
+          "apex_shift": 0.0,
+          "apex_out_m": 0.0
+        },
+        {
+          "id": "R1.B5",
+          "from": "R1.P5",
+          "to": "R1.P6",
+          "type": "open",
+          "apex_height_m": 4.51,
+          "apex_shift": 0.0,
+          "apex_out_m": 0.0
+        },
+        {
+          "id": "R1.B6",
+          "from": "R1.P6",
+          "to": "R1.P7",
+          "type": "open",
+          "apex_height_m": 4.61,
+          "apex_shift": 0.0,
+          "apex_out_m": 0.0
+        },
+        {
+          "id": "R1.B7",
+          "from": "R1.P7",
+          "to": "R1.P8",
+          "type": "open",
+          "apex_height_m": 4.63,
+          "apex_shift": 0.0,
+          "apex_out_m": 0.0
+        },
+        {
+          "id": "R1.B8",
+          "from": "R1.P8",
+          "to": "R1.P1",
+          "type": "open",
+          "apex_height_m": 4.53,
+          "apex_shift": 0.0,
+          "apex_out_m": 0.0
+        }
+      ],
+      "next_pier": 9,
+      "next_bay": 9,
+      "layout": {
+        "bays": 8,
+        "bay_weights": [
+          1.062,
+          1.007,
+          0.927,
+          1.1,
+          0.925,
+          1.01,
+          1.06,
+          0.902
+        ]
+      }
+    }
+  ],
+  "context": {
+    "ground_radius_m": 40.0,
+    "scale_figure": {
+      "position_m": [
+        1.6,
+        -6.6
+      ],
+      "height_m": 1.75
+    }
+  },
+  "views": [
+    {
+      "id": "plan",
+      "projection": "ortho",
+      "location_m": [
+        0.0,
+        0.0,
+        30.0
+      ],
+      "target_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "ortho_scale_m": 23.0
+    },
+    {
+      "id": "elevation",
+      "projection": "ortho",
+      "location_m": [
+        0.0,
+        -30.0,
+        3.2
+      ],
+      "target_m": [
+        0.0,
+        0.0,
+        3.2
+      ],
+      "ortho_scale_m": 18.0
+    },
+    {
+      "id": "interior",
+      "projection": "persp",
+      "location_m": [
+        0.6,
+        -4.0,
+        1.65
+      ],
+      "target_m": [
+        0.0,
+        1.0,
+        4.4
+      ],
+      "lens_mm": 16.0
+    },
+    {
+      "id": "exterior",
+      "projection": "persp",
+      "location_m": [
+        1.2,
+        -21.0,
+        1.7
+      ],
+      "target_m": [
+        0.2,
+        0.0,
+        3.0
+      ],
+      "lens_mm": 40.0
+    },
+    {
+      "id": "overhead",
+      "projection": "persp",
+      "location_m": [
+        11.0,
+        -14.5,
+        13.0
+      ],
+      "target_m": [
+        0.0,
+        0.0,
+        2.5
+      ],
+      "lens_mm": 35.0
+    },
+    {
+      "id": "detail_pier",
+      "projection": "persp",
+      "location_m": [
+        -7.6,
+        -10.2,
+        2.9
+      ],
+      "target_m": [
+        -3.7,
+        -4.6,
+        3.0
+      ],
+      "lens_mm": 32.0
+    },
+    {
+      "id": "detail_arch",
+      "projection": "persp",
+      "location_m": [
+        -11.5,
+        -7.0,
+        7.4
+      ],
+      "target_m": [
+        -4.4,
+        -2.0,
+        4.0
+      ],
+      "lens_mm": 45.0
+    },
+    {
+      "id": "detail_crown",
+      "projection": "persp",
+      "location_m": [
+        4.6,
+        -5.4,
+        8.6
+      ],
+      "target_m": [
+        0.05,
+        0.1,
+        5.7
+      ],
+      "lens_mm": 50.0
+    },
+    {
+      "id": "detail_notches",
+      "projection": "persp",
+      "location_m": [
+        -7.9,
+        -5.0,
+        6.6
+      ],
+      "target_m": [
+        -4.7,
+        -2.4,
+        4.35
+      ],
+      "lens_mm": 60.0
+    }
+  ],
+  "timber": {
+    "note": "Primary members. Sections and the review radius are provisional concept values pending engineering and a fabricator's limits.",
+    "sections_m": {
+      "arch": [
+        0.26,
+        0.4
+      ],
+      "inner": [
+        0.14,
+        0.32
+      ],
+      "crown": [
+        0.26,
+        0.1
+      ],
+      "hoop": [
+        0.09,
+        0.22
+      ],
+      "ring": [
+        0.1,
+        0.22
+      ],
+      "rib": [
+        0.08,
+        0.22
+      ],
+      "fill": [
+        0.07,
+        0.22
+      ],
+      "fine": [
+        0.06,
+        0.22
+      ]
+    },
+    "arches": {
+      "note": "type: edge | paired | none. hoops_m belongs to edge; reveal_m and crest_m belong to paired.",
+      "type": "edge",
+      "hoops_m": [
+        0.5,
+        1.0
+      ],
+      "hoop_nudge_m": 0.12,
+      "hoop_sample_spacing_m": 0.45,
+      "reveal_m": 0.38,
+      "crest_m": 0.25
+    },
+    "lattice": {
+      "note": "type: spiral | none. A tier starts at the top ring, part-way up the lantern, or at a ring on the canopy.",
+      "type": "spiral",
+      "ribs_per_family": 12,
+      "lean_deg": 40.0,
+      "lean_top_deg": 12.0,
+      "lean_rim_deg": null,
+      "pair_gap_m": 0.01,
+      "land_square_m": 1.6,
+      "sample_spacing_m": 0.45,
+      "gather_m": 1.1,
+      "tiers": [
+        {
+          "family": "rib",
+          "phases": [
+            0.0
+          ],
+          "from": "top"
+        },
+        {
+          "family": "fill",
+          "phases": [
+            0.5
+          ],
+          "from": {
+            "lantern": 0.22
+          }
+        },
+        {
+          "family": "fine",
+          "phases": [
+            0.25,
+            0.75
+          ],
+          "from": {
+            "radius_m": 4.2
+          },
+          "gathers": false
+        }
+      ],
+      "ring_rows": []
+    },
+    "crown": {
+      "seat_m": 0.03
+    },
+    "joints": {
+      "note": "lap_order: a member earlier in the list goes in first and is notched on its outer face. Depths and clearances are provisional.",
+      "lap_order": [
+        "ring",
+        "hoop",
+        "cw",
+        "ccw"
+      ],
+      "lap_clearance_m": 0.003,
+      "housing_depth_m": 0.05,
+      "max_piece_length_m": 12.0,
+      "cut_meshes": "milled",
+      "solver": "EXACT"
+    },
+    "piers": {
+      "legs": true,
+      "gap_m": 0.03,
+      "ring_radius_m": 0.34
+    },
+    "training_lines": {
+      "note": "Steel cables held off the timber on standoffs, for plants to climb. carry: grounded | all | none. face: outer | inner. Dimensions are provisional.",
+      "carry": "grounded",
+      "families": [
+        "rib",
+        "fill",
+        "fine",
+        "hoop"
+      ],
+      "face": "outer",
+      "gap_m": 0.075,
+      "cable_diameter_m": 0.004,
+      "standoff_spacing_m": 0.9,
+      "standoff_sag_m": 0.012,
+      "clear_m": 0.025,
+      "foot_clear_m": 0.1,
+      "end_clear_m": 0.3
+    },
+    "bend_radius_review_m": 3.0,
+    "sampling": {
+      "curve_resolution_u": 12,
+      "mesh_station_spacing_m": 0.08,
+      "export_station_spacing_m": 0.1
+    }
+  },
+  "ground": {
+    "note": "What shares the ground at a pier: root zones (authored: one plant's soil), footings and feeders (generated). A draft at one pier, R1.P6. footings.type: piles | pad. Sizes are provisional; nothing here is a foundation design.",
+    "root_zones": [
+      {
+        "id": "R1.P6.root.1",
+        "position_m": [
+          -0.551,
+          6.542
+        ],
+        "radius_m": 0.5,
+        "depth_m": 0.6,
+        "plant": "wisteria"
+      },
+      {
+        "id": "R1.P6.root.2",
+        "position_m": [
+          -1.183,
+          6.479
+        ],
+        "radius_m": 0.5,
+        "depth_m": 0.6,
+        "plant": "wisteria"
+      }
+    ],
+    "footings": {
+      "type": "piles",
+      "piles": {
+        "cap_margin_m": 0.1,
+        "cap_depth_m": 0.12,
+        "feet_above_soil_m": 0.3,
+        "shaft_m": 0.09,
+        "helix_m": 0.3,
+        "length_m": 2.5,
+        "spacing_m": 0.9,
+        "reach_m": 0.6,
+        "least": 3,
+        "plant_clear_m": 0.3
+      },
+      "pad": {
+        "margin_m": 0.25,
+        "least_m": 0.08,
+        "root_clear_m": 0.1,
+        "depth_m": 0.5
+      }
+    },
+    "feeders": {
+      "reach_m": 0.6,
+      "overlap_m": 0.5,
+      "beyond_m": 0.3
+    }
+  },
+  "display": {
+    "envelope": false
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "schema": "bower.gate0/1",
+  "note": "Gate 0 fixture: one hand-authored member. Section and radius are provisional test values, not engineered sizes.",
+  "units": "m",
+  "axes": {"up": "+Z", "north": "+Y"},
+  "sampling": {
+    "curve_resolution_u": 24,
+    "mesh_station_spacing_m": 0.05,
+    "export_station_spacing_m": 0.1
+  },
+  "members": [
+    {
+      "id": "G0-RIB-001",
+      "role": "primary",
+      "parent": null,
+      "section": {"shape": "rect", "width_m": 0.14, "depth_m": 0.32},
+      "centreline": {
+        "type": "arc",
+        "start_m": [2.5, 0.0, 0.0],
+        "start_tangent": [0.0, 0.0, 1.0],
+        "bend_toward": [1.0, 0.0, 0.0],
+        "radius_m": 4.5,
+        "length_m": 5.0
+      }
+    }
+  ]
+}
