@@ -115,6 +115,8 @@
   function draw() {
     const frames = state.mode.frames;
     const n = frames.length;
+    // a moment that is no moment (not a number, or off either end of the line) is the start
+    if (!(state.t >= 0 && state.t <= 1)) state.t = 0;
     // the run of frames, with a rest on the last before it goes back to the first
     const along = n > 1 ? Math.min(1, state.t / (1 - HOLD_AT_END)) * (n - 1) : 0;
     const i = Math.min(n - 1, Math.floor(along));
@@ -143,8 +145,18 @@
 
   let before = performance.now();
   function tick(now) {
-    const dt = Math.min(0.1, (now - before) / 1000);
+    // time that stands still or runs backwards (a clock set, a frame forced) moves nothing
+    const dt = Math.min(0.1, Math.max(0, (now - before) / 1000)) || 0;
     before = now;
+    // whatever goes wrong in one frame, the next is still asked for: the drawing never stops for good
+    try {
+      step(now, dt);
+    } catch (problem) {
+      console.warn(problem);
+    }
+    requestAnimationFrame(tick);
+  }
+  function step(now, dt) {
     fit();
     const resting = now - state.touched < REST_MS;
     if (state.playing && state.seen && !resting && !document.hidden) {
@@ -156,7 +168,6 @@
       dirty = false;
       draw();
     }
-    requestAnimationFrame(tick);
   }
 
   // ---- a hand on it --------------------------------------------------------------------------------------------------
