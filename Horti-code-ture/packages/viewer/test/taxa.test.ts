@@ -76,11 +76,14 @@ describe('the mixed planting', () => {
 
   it('still draws a plant of an unknown taxon in leaf, and says its look is provisional', () => {
     const data = structuredClone(run.data);
-    data.plants[0]!.taxonId = 'no-such-taxon';
+    // A plant that flowers within these four years. (Until 14 November 2026 the first wisteria did, at the prototype's
+    // 2.6 m a season; at the 2.1 m its leader now makes it has no flower yet, so the first plant that has is taken.)
+    const plant = data.plants.find((p) => data.flowers.some((f) => f.plantId === p.id))!;
+    plant.taxonId = 'no-such-taxon';
     const view = new PlantView(data, materials());
-    expect(view.provisionalLooks).toEqual([data.plants[0]!.label]);
+    expect(view.provisionalLooks).toEqual([plant.label]);
     // it has flowers in the data and no flower model: said too
-    expect(view.withoutFlowers).toEqual([data.plants[0]!.label]);
+    expect(view.withoutFlowers).toEqual([plant.label]);
     const day = view.timeline.calendar.dayOf('2030-07-20');
     view.update(camera, day, 1);
     const seasons = seasonsOf(data, 2030);

@@ -448,7 +448,10 @@ describe('the growth model of Vitis coignetiae', () => {
     // what the file itself gives (the engine fills the optional parameters it leaves out as unknown)
     const written = Object.keys((read(`species/${ID}/model.json`) as { params: Record<string, unknown> }).params);
     const entries = Object.entries(model.params).filter(([k]) => written.includes(k));
-    expect(entries.every(([, p]) => p.status !== 'unknown')).toBe(true);
+    // One thing it says outright is not known: no length of stem is published for the vine, and the file says why
+    // there is none (until 14 November 2026 an RHS height stood there as a cap on the length of a stem).
+    expect(entries.filter(([, p]) => p.status === 'unknown').map(([k]) => k)).toEqual(['architecture.maxStemLengthM']);
+    expect(model.params['architecture.maxStemLengthM'].basis).toMatch(/No length of stem is published/);
     for (const [key, p] of entries) expect(p.basis ?? '', key).not.toMatch(/placeholder/i);
     const published = entries.filter(([, p]) => p.status === 'published_plant_profile' || p.status === 'peer_reviewed').map(([k]) => k);
     // (pruning.winterBudsKept since 12 November 2026: Bean's "one or two buds", of the genus, now acted on by the vine's routine)

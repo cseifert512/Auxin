@@ -10,7 +10,7 @@ import type { Bower } from '../bower/types.ts';
 import type { Site } from '../light/site.ts';
 import type { Vec3 } from '../math/vec3.ts';
 import type { TaxonProfile } from '../taxon.ts';
-import type { AppendageKind, AttachmentStatus, BudEnd, BudStage, GardenerEventType } from '../vocab.ts';
+import type { AppendageKind, AttachmentStatus, BudEnd, BudStage, GardenerEventType, StemsLedUp } from '../vocab.ts';
 import type { FreeShoot } from './free-shoot.ts';
 import type { LightFrom } from './light-from.ts';
 import type { GrowthModel } from './model.ts';
@@ -49,8 +49,12 @@ export type Tip =
   | { state: 'on_route'; edgeId: string; toNode: string; path: StemPath; d: number; emitted: number; run: number }
   /** `rod` is the shoot as its mechanics see it, kept from its first free length on (`free-shoot.ts`). */
   | { state: 'free'; dir: Vec3; grownM: number; planM: number; rod?: FreeShoot }
-  /** `retry` is set where the shoot stopped for want of a hold: a gardener who starts tying in can set it going again. */
-  | { state: 'stopped'; reason: string; retry?: { nodeId: string; came: string | null } };
+  /**
+   * `retry` is set where the shoot stopped for want of a hold: a gardener who starts tying in can set it going again.
+   * `held` is set where a gardener stopped it under the height the training plan holds the plant below, and is where
+   * it was on its support: a later plan that takes the plant higher sets it going again from there.
+   */
+  | { state: 'stopped'; reason: string; retry?: { nodeId: string; came: string | null }; held?: Extract<Tip, { state: 'on_route' }> };
 
 export interface Axis {
   id: string;
@@ -79,6 +83,11 @@ export interface Axis {
   alive: number;
   /** Set when the whole axis has gone. */
   removedDay: number | null;
+  /**
+   * The length at which it stops. A lateral, a long shoot and a side shoot each have one, planned when they start.
+   * A main stem has one only where a length of stem is published for its taxon (`architecture.maxStemLengthM`);
+   * otherwise `Infinity`: it goes on while it has support ahead and the training plan allows.
+   */
   targetLengthM: number;
   ratePerSeasonM: number;
   intent: Intent;
@@ -318,8 +327,11 @@ export interface Plant {
   pendingWhips: PendingWhip[];
   /** Stubs left by a hard prune, which will shoot again at the next bud break. */
   pendingRegrowth: string[];
-  /** Standing instruction from the gardener: tie framework growth along the timber sub-lattice. */
-  training: { tieToTimber: boolean; by: string | null };
+  /**
+   * Standing instructions from the gardener: whether framework growth is tied in along the timber sub-lattice, and
+   * how far and in what form the framework is taken (`TrainingPlan`).
+   */
+  training: { tieToTimber: boolean; by: string | null } & TrainingPlan;
   /** Last calendar year in which the plant was summer-pruned. */
   summerPrunedYear: number | null;
   /** Last calendar year whose season start has been processed. */
@@ -336,6 +348,33 @@ export interface Plant {
 // ---------------------------------------------------------------------------
 // Scenario
 // ---------------------------------------------------------------------------
+/**
+ * How far a gardener takes a plant's framework.
+ *   top_of_support  it is led on for as long as there is support ahead of it
+ *   height          nothing of the framework is led higher than `heightM` above the plant's foot (its root
+ *                   station): a stem that comes to that height on a rising member is stopped there, and none is
+ *                   started up a member from it
+ */
+export type TrainingExtent = { to: 'top_of_support' } | { to: 'height'; heightM: number };
+
+/**
+ * A gardener's plan for the framework of one plant. Every part of it is a decision made for that plant on that
+ * building; none is a fact about the plant's kind. What bounds a plant's own stems, where anything published does,
+ * is its growth model's `architecture.maxStemLengthM`.
+ */
+export interface TrainingPlan {
+  extent: TrainingExtent;
+  /**
+   * Which of the plant's main stems are set to make height when they start: the first alone, the others running
+   * level as the lowest tier, or every one. It acts on a stem as it starts, so a change made by a later
+   * `train_leader` reaches only the stems that start after it.
+   */
+  stemsLedUp: StemsLedUp;
+}
+
+/** The plan of a plant nobody has said anything about: to the top of the support, the first stem making the height. */
+export const DEFAULT_TRAINING: TrainingPlan = { extent: { to: 'top_of_support' }, stemsLedUp: 'first' };
+
 export interface Planting {
   plantId: string;
   taxonId: string;
@@ -344,10 +383,13 @@ export interface Planting {
   date: string;
   /** Whether the gardener ties framework growth in from planting day. */
   tieToTimber?: boolean;
+  /** How far and in what form the framework is taken, from planting day. Left out: `DEFAULT_TRAINING`. */
+  train?: Partial<TrainingPlan>;
 }
 
 export type GardenerAction =
-  | { type: 'train_leader'; plantId: string; tieToTimber: boolean }
+  /** `train` changes the plan from this day on; a part of it left out stays as it was. */
+  | { type: 'train_leader'; plantId: string; tieToTimber: boolean; train?: Partial<TrainingPlan> }
   | { type: 'spur_prune'; plantId: string; season: 'summer' | 'winter' }
   | { type: 'hard_prune'; plantId: string; target: { axisId: string } | { leader: number } | { allSpursOn: { leader: number } } | { allStems: true }; keepM: number }
   | { type: 'monitor'; plantId: string }

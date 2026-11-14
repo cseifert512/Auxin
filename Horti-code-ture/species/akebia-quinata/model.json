@@ -87,7 +87,11 @@
       "value": 3,
       "unit": "m",
       "status": "provisional_design_assumption",
-      "basis": "The RHS has it reach 8 to 12 m in 5 to 10 years, which is 0.8 to 2.4 m of height a year over the whole of that time; where it is invasive, in warmer summers, 6 to 12 m a year is reported (Weber 2003 and EPPO 2021, in the GB risk assessment, https://www.nonnativespecies.org/assets/Uploads/Akebia-quinata-RA-final_topub-v2.pdf). Three metres for a leading stem in a British summer lies between the two. Not measured."
+      "range": [
+        1,
+        3
+      ],
+      "basis": "No measurement of a season's extension was found. The RHS has it reach 8 to 12 m in 5 to 10 years (https://www.rhs.org.uk/plants/747/akebia-quinata/details), which is 0.8 to 2.4 m of height a year with the slow years counted in; an unsourced gardening site gives \"2–3 m of new growth a year once established\" (https://www.nature-and-garden.com/gardening/akebia-quinata.html). The range is 1 to 3 m from those two, and the value is its top, for a leading stem. Where the plant is invasive, in warmer summers, the GB risk assessment cites \"6-12m/yr (Weber, 2003; EPPO, 2021)\" (https://www.nonnativespecies.org/assets/Uploads/Akebia-quinata-RA-final_topub-v2.pdf) and itself says that summer temperatures may be too low in Britain. That figure is the plant's mature size in feet turned into metres and may never have been a rate; it is not used."
     },
     "extension.lateralMPerSeasonByOrder": {
       "value": [
@@ -111,7 +115,7 @@
         0.8
       ],
       "status": "provisional_design_assumption",
-      "basis": "Copied from the Wisteria sinensis model for want of anything better. Not a measurement or a description of this plant."
+      "basis": "Sources disagree and none gives a quantity: \"fast to establish\" (University of Arkansas extension, https://uaex.uada.edu/yard-garden/resource-library/plant-week/akebia-1-9-2015.aspx); slow in its first season while it roots (nature-and-garden.com, unsourced). The two factors are those of the Wisteria sinensis model as it stood, kept as a choice: one reduced season and part of the next. No range is given, because nothing published bounds them."
     },
     "architecture.trunkStemStartYears": {
       "value": [
@@ -135,7 +139,7 @@
       "status": "provisional_design_assumption",
       "basis": "Copied from the Wisteria sinensis model for want of anything better. Not a measurement or a description of this plant."
     },
-    "architecture.leaderLengthM": {
+    "architecture.maxStemLengthM": {
       "value": [
         9.1,
         12.2
@@ -143,7 +147,7 @@
       "unit": "m",
       "status": "published_plant_profile",
       "source": "https://www.treesandshrubsonline.org/articles/akebia/akebia-quinata/",
-      "basis": "Bean: a twining shrub \"30 to 40 ft\" in length, in metres: a length of stem, which is what this caps. The RHS height band, 8 to 12 m, agrees."
+      "basis": "Bean: \"A twining shrub 30 to 40 ft in length\", in metres. A length of stem, which is what this bounds: Bean writes \"in length\", not high. A University of Michigan page gives \"Up to 20m long, usually between 8 and 15m\" in Japan, citing Kawagoe and Suzuki (2003), whose paper was not read (https://climbers.lsa.umich.edu/akebia-quinata/). The RHS band of 8 to 12 m is a height and is not what this rests on."
     },
     "architecture.lateralLengthMByOrder": {
       "value": [

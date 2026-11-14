@@ -101,7 +101,12 @@
       "value": 0.8,
       "unit": "m",
       "status": "provisional_design_assumption",
-      "basis": "Chosen to fall inside what the RHS publishes, which are sizes and not rates: 8 to 12 m in 10 to 20 years (plant record); \"the height of a two-storey house in 15-20 years\" and \"several standard fence panels in a decade\" (ivy on buildings). 0.8 m a season after the establishment years gives 8 m in about 11 years and 12 m in about 16. In forest shade it is slower: 30 to 40 years to reach a canopy 15 to 20 m up (Schnitzler and Heuze 2006, cited by the US Forest Service review)."
+      "source": "https://mail.silava.lv/images/articles/Latvijas-Vegetacija/2025-35/2025-LatVeg-35-Laivins-et-al.pdf",
+      "range": [
+        0.29,
+        0.97
+      ],
+      "basis": "Measured on ivy climbing forest trees in Latvia, at the cold edge of its range: a year's extension of 0.29 to 0.97 m as the mean of each site, and 0.76 m a year over seven years at one of them (Laiviņš, Šnepsts and Treimane 2025, Latvijas Veģetācija 35, read in its English summary and, in translation, its Latvian text; the authors call the data fragmentary). The range is those site means. The value lies inside them, and inside what else is published: a German nursery catalogue's 70 to 100 cm a year from the third year (https://www.lve-baumschule.com/hedera-helix/6353819), and the RHS's sizes, 8 to 12 m in 10 to 20 years (https://www.rhs.org.uk/plants/43091/hedera-helix/details) and \"the height of a two-storey house\" in 15 to 20 years (https://www.rhs.org.uk/prevention-protection/ivy-on-buildings). Not measured in Britain, nor on timber."
     },
     "extension.lateralMPerSeasonByOrder": {
       "value": [
@@ -122,12 +127,22 @@
     },
     "extension.establishmentFactorByYear": {
       "value": [
-        0.3,
-        0.65,
-        1
+        0.2,
+        0.2
       ],
       "status": "provisional_design_assumption",
-      "basis": "Ivy is slow to start and then quick: gardeners say it sleeps, creeps and then leaps. The three factors are chosen to give that shape; no source gives numbers."
+      "source": "https://www.lve-baumschule.com/hedera-helix/6353819",
+      "range": [
+        [
+          0.125,
+          0.125
+        ],
+        [
+          0.25,
+          0.25
+        ]
+      ],
+      "basis": "The one quantity found, in a nursery catalogue: \"initially 10-20 cm a year, from the 3rd to 6th year 70-100 (200) cm\". Two slow seasons and then the full rate. The factors are 10, 15 and 20 cm as shares of the 0.8 m this model gives a leading stem: the low end, the value and the high end. Until 14 November 2026 three factors chosen for their shape stood here (0.3, 0.65, 1), a gentler start than the catalogue's. Not measured; no source was found for the gardeners' saying that ivy sleeps, creeps and then leaps."
     },
     "architecture.trunkStemStartYears": {
       "value": [
@@ -152,14 +167,11 @@
       "status": "provisional_design_assumption",
       "basis": "Ivy branches freely at every order as it spreads over a surface; four orders are enough to fill a lattice. Chosen."
     },
-    "architecture.leaderLengthM": {
-      "value": [
-        8,
-        12
-      ],
+    "architecture.maxStemLengthM": {
+      "value": null,
       "unit": "m",
-      "status": "provisional_design_assumption",
-      "basis": "The RHS ultimate-height band (https://www.rhs.org.uk/plants/43091/hedera-helix/details) used as a cap on the length of a main stem. A height band is not a route length, and old ivy goes far beyond it (to 30 m: Metcalfe 2005), so this is a working cap."
+      "status": "unknown",
+      "basis": "No length of stem is published as such. \"Climbing, sometimes reaching 30 m\" (Metcalfe 2005, Journal of Ecology 93: 632), the RHS's \"can grow to 30m\" (https://www.rhs.org.uk/prevention-protection/ivy-on-buildings) and Bean's \"at least 100 ft in height\" are heights climbed. Until 14 November 2026 the RHS ultimate-height band of 8 to 12 m stood here as a cap on the length of a stem, which old ivy passes several times over. It was taken away."
     },
     "architecture.lateralLengthMByOrder": {
       "value": [

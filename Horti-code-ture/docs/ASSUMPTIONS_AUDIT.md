@@ -700,3 +700,15 @@ Two departures from the routines as handed over, both because the engine regrows
 - The species profiles still say these routines are not modelled.
 
 Tests: `packages/core/test/care.test.ts` (the six routines), and the changed cases in `annual`, `light`, `mixed`, `palette`, `report` and `sensitivity` tests and in the viewer tests of the trumpet vine and *Clematis armandii*.
+
+## 14. The planned length of a main stem, which was the prototype's route
+
+Added 14 November 2026. Section 2.4 lists, among the prototype's unlabelled numbers, "Planned length: leader beyond the eave 5–6.5 m". It came into the core as `architecture.leaderLengthM`, 7 to 8.6 m for *Wisteria sinensis* once the rib leg was added, labelled a provisional assumption carried over from the prototype, and every main stem of every plant stopped at its taxon's figure. For most taxa that figure was an RHS height band, although the same files say that a height is not a route length. It decided which plants reached the crown of any structure whose routes were longer than the prototype's 4.4 m, and the first building it was asked about, the six-bay room, has 10 to 11 m.
+
+| Assumption | Verdict | What was done |
+|---|---|---|
+| A main stem stops at a length planned for its taxon (the prototype's "planned length"; `architecture.leaderLengthM`) | **False** as a fact about plants: for the wisterias it was the route of the prototype's vault, for eight others a height used as a length | The parameter is gone. `architecture.maxStemLengthM` is optional and given only with a published length of stem, or a published size that is plainly the size of the plant's stems, and its source. Six plants have none |
+| The prototype's 2.6 m a season for a wisteria leader | **Unsupported**: nothing measured was found for either wisteria | 2.1 m, the one British figure, with the one published range, 0.61 to 3.05 m |
+| A stem set on making height drops that heading by a chance of 0.12 at each node (`routing.roleDropChance`) | **Tuned to the prototype's short route**: on fifteen nodes it leaves one stem in seven heading up | Unchanged for a plant nobody gardens. A main stem that a gardener leads up keeps its heading and is taken the shortest route to the top |
+
+The whole of it, with the sources, the ranking of the growth numbers and the six-bay room before and after: `docs/GROWTH_WITHOUT_STEM_CAPS.md`. Tests: `packages/core/test/stem-length.test.ts`, and the changed cases in `dome`, `annual`, `care`, `free-shoot`, `habits`, `mixed`, `palette` and `sensitivity`.

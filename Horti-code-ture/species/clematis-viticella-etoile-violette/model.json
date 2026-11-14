@@ -134,14 +134,15 @@
       "status": "provisional_design_assumption",
       "basis": "Only an unpruned plant keeps branches long enough to branch again; two orders of them are allowed. A placeholder."
     },
-    "architecture.leaderLengthM": {
+    "architecture.maxStemLengthM": {
       "value": [
-        2.8,
+        2.5,
         4
       ],
       "unit": "m",
       "status": "provisional_design_assumption",
-      "basis": "Stem length from the ground at which a stem stops. Set from the published heights (RHS and Clematis on the Web 2.5 to 4 m; Bean 8 to 12 ft for C. viticella; International Clematis Society 10 to 15 ft), a little above the lower figure because a stem tied along a lattice runs farther than it climbs. A height is not a route length, so this is an assumption."
+      "source": "https://www.rhs.org.uk/plants/92936/clematis-etoile-violette-vt/details",
+      "basis": "The plant's published height, 2.5 to 4 m (the RHS record and Clematis on the Web; Bean has 8 to 12 ft for C. viticella, the International Clematis Society 10 to 15 ft), read as the length of a stem. The reading can be defended for this plant: it is cut to 15 to 30 cm every February, so the height it stands at by flowering is what one stem makes in a season up its support. It is still a height read as a length, not a published length of stem, and the status says so. Until 14 November 2026 the low end stood at 2.8 m, raised a little because a stem tied along a lattice runs farther than it climbs: that was a guess laid on a published figure, and it is taken out."
     },
     "architecture.lateralLengthMByOrder": {
       "value": [

@@ -544,7 +544,7 @@ describe('the growth model and the shape numbers', () => {
     // the height a stem can reach is the height the RHS gives
     const height = characterRange(morphology, 'habit.heightM');
     expect(height).toEqual(profile.size.rhsUltimateHeightM.value);
-    expect(param(model, 'architecture.leaderLengthM')[1]).toBeLessThanOrEqual(height[1]);
+    expect(known(model, 'architecture.maxStemLengthM')).toEqual(height);
     expect(param(model, 'extension.leaderMPerSeason')).toBeGreaterThanOrEqual(height[0]);
     expect(param(model, 'extension.leaderMPerSeason')).toBeLessThanOrEqual(height[1]);
     expect(model.names.flowerHeld).toBe('facing_out');

@@ -160,9 +160,11 @@ describe('a flower whose stem is cut while it is open', () => {
     const sim = run({ ...base, events: [cut] });
     const day = sim.calendar.dayOf('2029-08-10');
     const before = toRenderData(run(base)).flowers.filter((f) => flowerState(f, day).phase === 'open');
-    expect(before.length).toBeGreaterThan(5);
+    // Some are open to be cut: how many is not what is held. (More than five until 14 November 2026; three now, on a
+    // plant nobody prunes whose main stem is led straight up its rib and bears its laterals at other nodes.)
+    expect(before.length).toBeGreaterThan(2);
     const data = toRenderData(sim);
-    expect(data.flowers.filter((f) => f.spentDay === day).length).toBeGreaterThan(5);
+    expect(data.flowers.filter((f) => f.spentDay === day).length).toBeGreaterThan(2);
     expect(data.flowers.filter((f) => flowerState(f, day).phase !== 'absent')).toHaveLength(0);
     expect(data.flowers.filter((f) => f.year === 2029 && f.spentDay < 0)).toHaveLength(0);
   });

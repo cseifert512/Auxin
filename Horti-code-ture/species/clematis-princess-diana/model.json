@@ -141,14 +141,15 @@
       "status": "provisional_design_assumption",
       "basis": "Side branches from buds on kept stems arise only on a plant left unpruned; two orders of them are allowed. Assumed."
     },
-    "architecture.leaderLengthM": {
+    "architecture.maxStemLengthM": {
       "value": [
         2,
         2.6
       ],
       "unit": "m",
       "status": "provisional_design_assumption",
-      "basis": "Length of a season's stem, measured along itself from the ground. Read from the heights given for a plant cut down each year: 2.0-2.5 m (Clematis on the Web; Graham Rice for the RHS), 2.5 m and 3 m in warmer climates (International Clematis Society); the RHS record's ultimate-height band is 2.5-4 m. A height is not a route length: a stem led sideways is assumed to grow as long as one grown upright."
+      "source": "https://www.rhs.org.uk/plants/118677/clematis-princess-diana-t/details",
+      "basis": "Length of a season's stem, measured along itself from the ground. Read from the heights published for a plant cut down each year: 2.0 to 2.5 m (Clematis on the Web; Graham Rice for the RHS), 2.5 m and 3 m in warmer climates (International Clematis Society); the RHS record's ultimate-height band is 2.5 to 4 m. The reading can be defended for this plant, whose height by flowering is what one stem makes in a season. It is still a height read as a length, not a published length of stem, and the status says so."
     },
     "architecture.lateralLengthMByOrder": {
       "value": [

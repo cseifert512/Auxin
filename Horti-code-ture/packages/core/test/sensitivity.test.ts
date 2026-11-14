@@ -52,6 +52,11 @@ describe('how far the readings move when unmeasured densities are multiplied', (
   // 581 to 443 and 373). The winter clematis's own framework falls from 48.0 m to 44.4 m and 37.3 m; the others' move by
   // up to 6.3% either way (the first wisteria, 93.1 m to 87.3 m). Without light acting, larger leaves still move no
   // framework and no height by a millimetre: the whole of that is the light.
+  //
+  // Since 14 November 2026 a main stem has no planned length to stop at, so in the sixth year the frameworks are still
+  // growing and what shade does to a neighbour shows as room: with four times the leaf the winter clematis makes 21.8%
+  // less (43.2 m to 33.8 m), the second wisteria and the honeysuckle about 4% less, and the first wisteria, which finds
+  // the members they did not reach, 9.9% more (91.7 m to 100.7 m). With twice the leaf the others move by up to 3.3%.
   it('changes the leaves, and through their shade and their weight the flowers and, through light, the framework, when only their size is varied', () => {
     const plain = new Simulation(make(taxa)).runUntil(END);
     for (const [id, factor] of [
@@ -69,7 +74,7 @@ describe('how far the readings move when unmeasured densities are multiplied', (
         if (s.plantId === 'winter-clematis') {
           expect(other.frameworkM, id).toBeLessThan(s.frameworkM);
           expect(other.frameworkM, id).toBeGreaterThan(0.75 * s.frameworkM);
-        } else expect(Math.abs(other.frameworkM - s.frameworkM), `${id} ${s.plantId}`).toBeLessThan(0.07 * s.frameworkM);
+        } else expect(Math.abs(other.frameworkM - s.frameworkM), `${id} ${s.plantId}`).toBeLessThan(0.12 * s.frameworkM);
       }
     }
     // with light left out, the framework and the height of every plant are the same to the millimetre
@@ -89,8 +94,10 @@ describe('how far the readings move when unmeasured densities are multiplied', (
     // three times the shoots of the year come near three times as often to something they can take hold of
     // (SIMULATION_KEY.md section 4.3, "Unsupported shoots", (f)): the route held can only rise by that, and the
     // framework, below, is the same to the metre
-    expect(row('side_shoots_x3').routeHeldShare).toBeGreaterThanOrEqual(row('as_modelled').routeHeldShare);
-    expect(row('side_shoots_x3').routeHeldShare - row('as_modelled').routeHeldShare).toBeLessThan(0.05);
+    // Until 14 November 2026 it never fell. With frameworks that are still growing in the sixth year, the shade of three
+    // times the side shoots holds the winter clematis back by a hundredth (43.2 m to 42.7 m) and the route held is 0.8
+    // of a point lower, 88.1% for 88.9%: it moves by little either way.
+    expect(Math.abs(row('side_shoots_x3').routeHeldShare - row('as_modelled').routeHeldShare)).toBeLessThan(0.05);
     // Until 13 November 2026 the framework was the same to the metre with light acting. The winter clematis now has side
     // shoots of its own, and three times as many of them shade its neighbours and turn their free shoots: the frameworks
     // move by up to 2.6% (the winter clematis, 48.0 m to 46.8 m; the first wisteria by 0.13 m). With light left out they

@@ -142,7 +142,7 @@
       "status": "provisional_design_assumption",
       "basis": "Clematis branch freely from the opposite buds at each node; three orders of branch above the main stems are allowed. A limit of the model, not an observation."
     },
-    "architecture.leaderLengthM": {
+    "architecture.maxStemLengthM": {
       "value": [
         3,
         4

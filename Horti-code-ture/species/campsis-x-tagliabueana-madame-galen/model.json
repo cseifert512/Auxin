@@ -87,7 +87,12 @@
       "value": 2,
       "unit": "m",
       "status": "provisional_design_assumption",
-      "basis": "RHS growing guide: \"Older plants can grow very large (up to 10m or 30ft high)\"; RHS plant record: 8 to 12 m in 5 to 10 years, of a genus of \"fast-growing deciduous climbers\". Two metres of stem a season, with the slow start below, reaches the 10 m middle of that band in about six seasons. A size band is not a growth rate: a choice."
+      "source": "https://www.clematis.com.pl/en/vines-in-garden/climbers/373-campsis-radicans/",
+      "range": [
+        1,
+        2
+      ],
+      "basis": "A specialist climber nursery gives the hybrid \"1-2 m of new growth a year\": the range, and the value is its top, for a leading stem. A German catalogue calls 'Mme Galen' itself \"slow-growing\" (https://www.lve-baumschule.com/campsis-tagliabuana-mme-galen/6353163) and Missouri Botanical Garden \"more restrained\" than its American parent. The RHS record's 8 to 12 m in 5 to 10 years is 0.8 to 2.4 m of height a year, and the RHS guide's 10 m after ten years is 1 m a year. The 1.5 to 3 m a year that is published is of Campsis radicans, the more vigorous parent. Not measured."
     },
     "extension.lateralMPerSeasonByOrder": {
       "value": [
@@ -135,14 +140,11 @@
       "status": "provisional_design_assumption",
       "basis": "Main stems, their branches and one more order make the framework; everything beyond is a shoot of the year. A choice."
     },
-    "architecture.leaderLengthM": {
-      "value": [
-        8,
-        12
-      ],
+    "architecture.maxStemLengthM": {
+      "value": null,
       "unit": "m",
-      "status": "provisional_design_assumption",
-      "basis": "The RHS ultimate-height band used as a cap on the length of a main stem. A height band is not a route length, so this is a stand-in."
+      "status": "unknown",
+      "basis": "No length of stem is published for this cultivar. NC State Extension has the hybrid spread \"15 to 25 feet long\" (https://plants.ces.ncsu.edu/plants/campsis-x-tagliabueana), the numbers Missouri Botanical Garden gives as its height, and less than the 8 to 12 m of height the RHS gives 'Madame Galen': not a length to stop a stem at. Until 14 November 2026 that RHS height band stood here as a cap on the length of a stem. A height is not a length of stem, and it was taken away."
     },
     "architecture.lateralLengthMByOrder": {
       "value": [

@@ -914,7 +914,8 @@ describe('flowering again where a flower has gone over', () => {
     const wisteria = (values: Values) => run(one(vary(library, WISTERIA, values), WISTERIA, 6), END);
     const a = wisteria(AGAIN);
     const b = wisteria({});
-    expect(a.buds.filter((x) => x.openDay !== null).length).toBeGreaterThan(20);
+    // enough flowers to compare (17 in six years, at the 2.1 m a season the wisteria's leader now makes; more than 20 at the prototype's 2.6 m)
+    expect(a.buds.filter((x) => x.openDay !== null).length).toBeGreaterThan(10);
     expect(followers(a)).toHaveLength(0);
     expect(JSON.stringify(toRenderData(a).flowers)).toBe(JSON.stringify(toRenderData(b).flowers));
   });

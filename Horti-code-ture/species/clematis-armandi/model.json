@@ -134,14 +134,15 @@
       "status": "provisional_design_assumption",
       "basis": "Main stems, their branches and the branches of those follow the structure; anything finer is a shoot of the year. A limit of the model, not a count from a plant."
     },
-    "architecture.leaderLengthM": {
+    "architecture.maxStemLengthM": {
       "value": [
         5,
         8
       ],
       "unit": "m",
       "status": "provisional_design_assumption",
-      "basis": "A cap on the length of a main stem: \"Stems to 6 m long\" (Huang et al. 2024, https://zenodo.org/records/15001723); 4 to 8 m high (RHS); 4.5 to 9 m (https://internationalclematissociety.org/?p=735). A height band is not a route length, so this is an assumption taken from those figures."
+      "source": "https://zenodo.org/records/15001723",
+      "basis": "One length of stem is published: \"Stems to 6 m long\" (Huang et al. 2024). Against it stand heights that a 6 m stem could not reach: 4 to 8 m (RHS, https://www.rhs.org.uk/plants/3923/clematis-armandi/details) and 4.5 to 9 m (https://internationalclematissociety.org/?p=735). The range is taken across the three, and is an assumption for that reason: the published figures do not agree."
     },
     "architecture.lateralLengthMByOrder": {
       "value": [

@@ -15,6 +15,9 @@
  * may be `unknown`; the part is then left out of the run, and the run says
  * so. Zero, with its basis, says the plant does not have the part.
  *
+ * So is the length at which a main stem stops (`architecture.maxStemLengthM`): unknown, a stem has no length of
+ * its own to stop at, and how far it goes is the support's and the gardener's to decide.
+ *
  * So are the things a plant may or may not do (keep part of its foliage
  * through winter, flower again after a flower has gone over, grow its
  * flowering side shoots on from year to year) and the numbers that set one
@@ -75,7 +78,17 @@ export const GROWTH_PARAMS = {
   /** Length of the cane the plant arrives with. */
   'architecture.nurseryCaneM': 'number',
   'architecture.maxBranchOrder': 'number',
-  'architecture.leaderLengthM': 'range',
+  /**
+   * The length at which a main stem stops, measured along the stem from the ground, each stem's drawn from the
+   * range. To be given only where a length of STEM is published for the plant, or where its published size is so
+   * small and so plainly the size of its stems that the reading can be defended, and then with that source: a height
+   * a plant is said to reach is not the length of the stem that reaches it, and a length that suited some other
+   * structure is not a fact about a plant.
+   * Unknown: nothing bounds the length of this plant's main stems. One goes on for as long as it has support ahead
+   * of it and the gardener's training plan allows (`TrainingPlan` in types.ts), at the pace
+   * `extension.leaderMPerSeason` gives it. How far a plant is taken is then a decision about the building.
+   */
+  'architecture.maxStemLengthM': 'range',
   'architecture.lateralLengthMByOrder': 'list',
   'architecture.lateralLengthSpread': 'number',
   /** Chance that a lattice node passed by a shoot bears a lateral, by the order of the bearing shoot. */
@@ -339,6 +352,7 @@ type Shape<K extends GrowthParamKey> = (typeof GROWTH_PARAMS)[K] extends 'number
  * parameter must have a value. Read them with `known`, not `param`.
  */
 export const GROWTH_PARAMS_OPTIONAL = [
+  'architecture.maxStemLengthM',
   'mechanics.greenShootModulusMPa',
   'mechanics.woodModulusMPa',
   'mechanics.woodSetDays',
@@ -414,6 +428,7 @@ const sizes = z.tuple([z.number().positive(), z.number().positive()]).refine(([a
 const waits = z.tuple([z.number().int().min(1), z.number().int().min(1)]).refine(([a, b]) => a <= b, 'a range is [low, high]');
 const positive = z.number().positive('a stiffness, a density or a time is more than nothing');
 const optionalShapes: { [K in OptionalParamKey]: z.ZodType } = {
+  'architecture.maxStemLengthM': sizes,
   'mechanics.greenShootModulusMPa': positive,
   'mechanics.woodModulusMPa': positive,
   'mechanics.woodSetDays': positive,
@@ -609,6 +624,56 @@ export function withUnknown(model: GrowthModel, key: OptionalParamKey): GrowthMo
   const empty: Sourced<never> = was.unit !== undefined ? { value: null, status: 'unknown', unit: was.unit } : { value: null, status: 'unknown' };
   return { ...model, params: { ...model.params, [key]: empty } };
 }
+
+/** Which end of the ranges its sources give a model is run at. */
+export type BandEnd = 'low' | 'high';
+
+/** How fast a plant's stems extend: the parameters that move together when its vigour is taken lower or higher. */
+const EXTENSION_KEYS = ['extension.leaderMPerSeason', 'extension.lateralMPerSeasonByOrder', 'extension.whipMPerSeason'] as const;
+
+/**
+ * A copy of a model run at the low or the high end of what its sources give for how fast it grows, so that a
+ * result can be reported as a band ("reaches the crown in year four to seven") and not as one date.
+ *
+ * Two parameters carry a `range` for this: `extension.leaderMPerSeason`, a year's extension of a leading stem,
+ * and `extension.establishmentFactorByYear`, how much slower the first seasons after planting are. The low end
+ * takes the low of both and the high end the high of both, so the band is the widest the two allow. A range of
+ * extension is published of a plant's shoots, not of its leaders alone, so the laterals and the long shoots of the
+ * year are scaled by the same ratio as the leader: the plant is less or more vigorous as a whole.
+ *
+ * A parameter with no `range` is left as it is: nothing says how far it might be out, and the model is then run at
+ * its one value at both ends. Each change is labelled a variation, and a run's report lists it.
+ */
+export function atBandEnd(model: GrowthModel, end: BandEnd): GrowthModel {
+  const at = end === 'low' ? 0 : 1;
+  let out = model;
+  const leader = model.params['extension.leaderMPerSeason'];
+  if (leader.value !== null && leader.range) {
+    const to = leader.range[at];
+    const ratio = leader.value > 0 ? to / leader.value : 1;
+    const why = `the ${end} end of the range given for a year's extension, [${leader.range.join(', ')}] m`;
+    // the end of a sourced range is as well sourced as the range: the status and the source stay
+    out = { ...out, params: { ...out.params, 'extension.leaderMPerSeason': { ...leader, value: to, basis: `Varied for this scenario (was ${JSON.stringify(leader.value)}): ${why}. ${leader.basis ?? ''}`.trim() } } };
+    if (ratio !== 1) {
+      const scaled = `${why}: every stem's extension is scaled with the leader's, by ${ratio.toFixed(2)}`;
+      out = withParam(out, 'extension.lateralMPerSeasonByOrder', model.params['extension.lateralMPerSeasonByOrder'].value!.map((v) => v * ratio), scaled);
+      out = withParam(out, 'extension.whipMPerSeason', model.params['extension.whipMPerSeason'].value! * ratio, scaled);
+    }
+  }
+  const slow = model.params['extension.establishmentFactorByYear'];
+  if (slow.value !== null && slow.range) {
+    out = { ...out, params: { ...out.params, 'extension.establishmentFactorByYear': { ...slow, value: slow.range[at], basis: `Varied for this scenario (was ${JSON.stringify(slow.value)}): the ${end} end of the range given for the first seasons after planting. ${slow.basis ?? ''}`.trim() } } };
+  }
+  return out;
+}
+
+/** Whether a model says how far out its extension might be: without a range, a band has nothing to run it between. */
+export function hasBand(model: GrowthModel): boolean {
+  return !!model.params['extension.leaderMPerSeason'].range || !!model.params['extension.establishmentFactorByYear'].range;
+}
+
+/** The extension parameters of a model, for a reader who wants to say what a band was run between. */
+export const BAND_PARAMS = [...EXTENSION_KEYS, 'extension.establishmentFactorByYear'] as const satisfies readonly GrowthParamKey[];
 
 /** Every parameter with its status: the model's part of a run's assumptions report. */
 export function modelProvenance(model: GrowthModel): ProvenanceEntry[] {

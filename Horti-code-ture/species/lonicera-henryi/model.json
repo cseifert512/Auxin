@@ -88,7 +88,11 @@
       "unit": "m",
       "status": "peer_reviewed",
       "source": "https://link.springer.com/article/10.1007/s00035-005-0710-2",
-      "basis": "Weber (2005), Botanica Helvetica 115: 77-81, abstract: \"Current-year shoots were 47-150 cm long\", measured at one forest site near Zurich. The leading stems are taken to make the top of that range. One shaded site, not a garden; the RHS band (4 to 8 m in 2 to 5 years) is consistent with it."
+      "range": [
+        0.47,
+        1.5
+      ],
+      "basis": "Weber (2005), Botanica Helvetica 115: 77-81, abstract: \"Current-year shoots were 47-150 cm long\", measured at one forest site near Zurich. The range is that; the leading stems are taken to make its top. One shaded site, not a garden. Only the abstract was read: a search excerpt of the full text dates the measuring to the end of May, and if that is right 1.5 m is less than a whole season's growth of the longest shoot. The RHS band (4 to 8 m in 2 to 5 years) is consistent with more."
     },
     "extension.lateralMPerSeasonByOrder": {
       "value": [
@@ -136,14 +140,15 @@
       "status": "provisional_design_assumption",
       "basis": "Copied from the Wisteria sinensis model for want of anything better. Not a measurement or a description of this plant."
     },
-    "architecture.leaderLengthM": {
+    "architecture.maxStemLengthM": {
       "value": [
-        4,
+        5,
         10
       ],
       "unit": "m",
-      "status": "provisional_design_assumption",
-      "basis": "Length each main stem is allowed to reach. Low end: the RHS ultimate height band (4 to 8 m), a height and not a route length. High end: Info Flora, shoots \"bis zu 10 m\" long; Bean records a plant about 30 ft into a laurel at Trewithen."
+      "status": "published_plant_profile",
+      "source": "https://www.infoflora.ch/assets/content/documents/neophyten/inva_loni_hen_d.pdf",
+      "basis": "Info Flora, the Swiss national flora centre, gives the length of its shoots twice: \"mit bis zu 10 m langen Trieben\" (factsheet, 2020) and \"Zweige bis 5 m lang\" (species page, https://www.infoflora.ch/de/flora/lonicera-henryi.html). Lengths of stem, which is what this bounds; each main stem's is drawn between the two. Bean's plant that \"climbed 30 ft into a laurel\" at Trewithen and the RHS band of 4 to 8 m are heights, and the low end here no longer rests on the RHS band."
     },
     "architecture.lateralLengthMByOrder": {
       "value": [

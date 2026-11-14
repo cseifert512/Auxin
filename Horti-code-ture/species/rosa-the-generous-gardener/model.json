@@ -136,14 +136,15 @@
       "status": "provisional_design_assumption",
       "basis": "Main canes carry branch canes, which carry one further order. The short flowering side shoots are counted apart (sideShoots)."
     },
-    "architecture.leaderLengthM": {
+    "architecture.maxStemLengthM": {
       "value": [
         3.4,
         4.6
       ],
       "unit": "m",
       "status": "provisional_design_assumption",
-      "basis": "The length at which a main cane stops. The breeder gives 15 ft (4.5 m) as a climber (https://www.davidaustinroses.co.uk/products/the-generous-gardener-climbing-rose), the RHS \"up to 4.5m\" (https://www.rhs.org.uk/plants/196207/rosa-the-generous-gardener-ausdrawn-cl/details), HelpMeFind 150 to 450 cm (https://www.helpmefind.com/rose/l.php?l=2.37005). Those are heights; a cane tied along a lattice is longer than the height it reaches, so this is a choice of that order and not a reading."
+      "source": "https://www.davidaustinroses.co.uk/products/the-generous-gardener-climbing-rose",
+      "basis": "The length at which a main cane stops. The breeder gives 15 ft (4.5 m) as a climber, the RHS \"up to 4.5m\" (https://www.rhs.org.uk/plants/196207/rosa-the-generous-gardener-ausdrawn-cl/details), HelpMeFind 150 to 450 cm (https://www.helpmefind.com/rose/l.php?l=2.37005). Those are the sizes of a plant whose size is the length of its canes, tied to their support, so they are read as lengths of cane: a reading of published sizes, not a published length of stem, and the status says so. The range is a choice of that order."
     },
     "architecture.lateralLengthMByOrder": {
       "value": [
