@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "id": "rosa-the-generous-gardener",
+  "names": {
+    "label": "Rosa 'The Generous Gardener'",
+    "rhs": {
+      "name": "Rosa The Generous Gardener ('Ausdrawn') (Cl)",
+      "plantId": 196207,
+      "status": "trade",
+      "url": "https://www.rhs.org.uk/plants/196207/rosa-the-generous-gardener-ausdrawn-cl/details",
+      "note": "'The Generous Gardener' is a trade designation; the cultivar epithet is 'Ausdrawn'."
+    },
+    "kew": null,
+    "synonyms": [
+      "Rosa 'Ausdrawn'",
+      "Rosa 'The Generous Gardener'"
+    ],
+    "common": [
+      "Climbing rose The Generous Gardener"
+    ]
+  },
+  "palette": {
+    "standing": "core",
+    "role": "Repeat pink flowers and scent at low to middle height."
+  },
+  "lifeForm": "woody_climber",
+  "ukCultivation": "perennial",
+  "leafHabit": {
+    "value": "deciduous",
+    "status": "published_plant_profile",
+    "source": "https://www.rhs.org.uk/plants/196207/rosa-the-generous-gardener-ausdrawn-cl/details"
+  },
+  "attachment": {
+    "mechanism": "scramble_and_tie",
+    "selfAttaching": false,
+    "maxGraspDiameterMm": {
+      "value": null,
+      "unit": "mm",
+      "status": "unknown"
+    },
+    "supportNeeds": "Open frame with strong, discreet tie points and access for cutting; thorn-safe clearance from visitors."
+  },
+  "flowering": {
+    "wood": {
+      "value": "current_season",
+      "status": "published_plant_profile",
+      "source": "https://www.gardenersworld.com/plants/the-difference-between-climbing-and-rambling-roses/",
+      "basis": "BBC Gardeners' World Magazine: \"Climbing roses flower on growth produced in the current year\", unlike ramblers, which flower on the previous year's growth. A statement about climbing roses as a class (RHS pruning group 17), not about this cultivar. The flowering shoots are side shoots from the tied-in framework of older canes, which is why the RHS shortens flowered side shoots in winter and keeps the framework."
+    },
+    "rhsPruningGroup": "17",
+    "monthsUK": {
+      "value": [
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/196207/rosa-the-generous-gardener-ausdrawn-cl/details",
+      "basis": "Months read from the RHS season wording (spring = Mar-May, summer = Jun-Aug, autumn = Sep-Nov, winter = Dec-Feb; early, mid and late are the first, second and third month)."
+    },
+    "display": "Strongly scented semi-double pale-pink flowers, repeat-flowering.",
+    "scented": true
+  },
+  "size": {
+    "rhsUltimateHeightM": {
+      "value": [
+        4,
+        8
+      ],
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/196207/rosa-the-generous-gardener-ausdrawn-cl/details",
+      "unit": "m"
+    },
+    "rhsYearsToUltimate": {
+      "value": [
+        5,
+        10
+      ],
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/196207/rosa-the-generous-gardener-ausdrawn-cl/details",
+      "unit": "years"
+    }
+  },
+  "hardiness": {
+    "value": "H6",
+    "status": "published_plant_profile",
+    "source": "https://www.rhs.org.uk/plants/196207/rosa-the-generous-gardener-ausdrawn-cl/details"
+  },
+  "site": {
+    "aspect": "Full sun or partial shade; flowers best where light reaches the cane framework.",
+    "soil": "Moist but well-drained, fertile."
+  },
+  "management": {
+    "calendar": [
+      {
+        "event": "spur_prune",
+        "months": [
+          12,
+          1,
+          2
+        ],
+        "note": "RHS pruning group 17: routine pruning between December and February, after the flowers have faded. Remove dead, diseased or dying wood, then cut flowered side shoots back by two thirds; where congested, cut out an old cane at the base."
+      },
+      {
+        "event": "tie_in",
+        "months": [
+          9,
+          10,
+          11,
+          12,
+          1,
+          2
+        ],
+        "note": "RHS: in autumn tie in or shorten long whippy shoots before winter winds; at the winter prune tie in the new shoots needed to fill the support."
+      },
+      {
+        "event": "deadhead_or_select_flowers",
+        "months": [
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "note": "RHS: deadhead during the flowering season to encourage repeat flowering. Months are the flowering envelope above."
+      },
+      {
+        "event": "feed_or_mulch",
+        "months": [
+          3,
+          4,
+          7
+        ],
+        "note": "RHS rose guide: feed in March or April before flowering and again in midsummer after the first flush, then mulch."
+      }
+    ],
+    "notes": "Every attachment is a gardener tie. Tie in new canes, prune, renew old canes, deadhead where wanted; inspect where thorns meet the public. The RHS describes it as growing up to 4.5 m although its size band is 4-8 m."
+  },
+  "hazards": [
+    "Thorns near public circulation.",
+    "Falling flowers."
+  ],
+  "regional": [],
+  "sources": [
+    {
+      "label": "RHS plant profile",
+      "url": "https://www.rhs.org.uk/plants/196207/rosa-the-generous-gardener-ausdrawn-cl/details"
+    },
+    {
+      "label": "RHS: pruning climbing roses (pruning group 17)",
+      "url": "https://www.rhs.org.uk/plants/roses/climbing/pruning-guide"
+    },
+    {
+      "label": "RHS: how to grow roses",
+      "url": "https://www.rhs.org.uk/plants/roses/growing-guide"
+    },
+    {
+      "label": "BBC Gardeners' World Magazine: climbing and rambling roses",
+      "url": "https://www.gardenersworld.com/plants/the-difference-between-climbing-and-rambling-roses/"
+    },
+    {
+      "label": "David Austin Roses: the breeder's description",
+      "url": "https://www.davidaustinroses.co.uk/products/the-generous-gardener-climbing-rose"
+    },
+    {
+      "label": "David Austin Roses: English Roses for shaded spots",
+      "url": "https://eu.davidaustinroses.com/blogs/news/shady-areas"
+    },
+    {
+      "label": "NC State Extension plant record",
+      "url": "https://plants.ces.ncsu.edu/plants/rosa-the-generous-gardener-ausdrawn/"
+    },
+    {
+      "label": "HelpMeFind Roses",
+      "url": "https://www.helpmefind.com/rose/l.php?l=2.37005"
+    },
+    {
+      "label": "Provender Nurseries factsheet",
+      "url": "https://www.provendernurseries.co.uk/factsheets/rosa-the-generous-gardener-ausdrawn"
+    },
+    {
+      "label": "BBC Gardeners' World Magazine plant record",
+      "url": "https://www.gardenersworld.com/plants/rosa-the-generous-gardener/"
+    },
+    {
+      "label": "Demotes-Mainard and others 2013: leaf and internode expansion of a garden rose ('Radrazz')",
+      "url": "https://www.frontiersin.org/journals/plant-science/articles/10.3389/fpls.2013.00418/full"
+    },
+    {
+      "label": "Gallenmueller and others 2015: rose prickles as attachment devices (Rosa arvensis 'Splendens')",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4667892/"
+    }
+  ]
+}

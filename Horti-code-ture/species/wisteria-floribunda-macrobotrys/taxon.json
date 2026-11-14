@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "id": "wisteria-floribunda-macrobotrys",
+  "names": {
+    "label": "Wisteria floribunda 'Macrobotrys'",
+    "rhs": {
+      "name": "Wisteria floribunda f. multijuga 'Kyushaku'",
+      "plantId": 372711,
+      "status": "accepted",
+      "url": "https://www.rhs.org.uk/plants/372711/wisteria-floribunda-f-multijuga-kyushaku/details"
+    },
+    "kew": "Wisteria floribunda (Willd.) DC.",
+    "synonyms": [
+      "Wisteria floribunda 'Macrobotrys'",
+      "Wisteria floribunda 'Multijuga'",
+      "Wisteria floribunda 'Longissima'",
+      "Wisteria floribunda 'Naga-noda'",
+      "Wisteria longissima"
+    ],
+    "common": [
+      "Japanese wisteria",
+      "Long-racemed Japanese wisteria"
+    ]
+  },
+  "palette": {
+    "standing": "primary",
+    "role": "Alternative permanent canopy where very long hanging racemes are the design goal."
+  },
+  "lifeForm": "woody_climber",
+  "ukCultivation": "perennial",
+  "leafHabit": {
+    "value": "deciduous",
+    "status": "published_plant_profile",
+    "source": "https://www.rhs.org.uk/plants/99665/wisteria-floribunda-macrobotrys/details"
+  },
+  "attachment": {
+    "mechanism": "stem_twining",
+    "selfAttaching": true,
+    "handedness": {
+      "value": "left_handed",
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/wisteria/growing-guide",
+      "basis": "RHS: \"twine clockwise\", no viewpoint stated. Clockwise viewed from above per Valder (1995) and three Japanese tree guides: a left-handed helix, the opposite of W. sinensis."
+    },
+    "maxGraspDiameterMm": {
+      "value": null,
+      "unit": "mm",
+      "status": "unknown"
+    },
+    "supportNeeds": "Long woody routes along the glulam and its sub-lattice, plus free vertical hanging clearance beneath for racemes of a metre or more, clear of cross-members, lighting and visitors."
+  },
+  "flowering": {
+    "wood": {
+      "value": "previous_season",
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/wisteria/frequently-asked-questions",
+      "basis": "RHS: wisteria flower buds start to develop in late summer of the previous year."
+    },
+    "rhsPruningGroup": null,
+    "monthsUK": {
+      "value": [
+        5,
+        6
+      ],
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/99665/wisteria-floribunda-macrobotrys/details",
+      "basis": "RHS record ('Kyushaku'): flowers \"produced in late spring\", which is May by the season rule (spring = Mar-May, summer = Jun-Aug, autumn = Sep-Nov, winter = Dec-Feb; early, mid and late are the first, second and third month). June is not stated by any source read: it rests on Bean (Trees and Shrubs Online), who says W. floribunda flowers \"two or three weeks later\" than W. sinensis, which \"flowers towards the end of May\"."
+    },
+    "display": "Lilac-blue to violet pendulous racemes that can reach 1 m or more.",
+    "scented": true
+  },
+  "size": {
+    "rhsUltimateHeightM": {
+      "value": [
+        8,
+        12
+      ],
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/99665/wisteria-floribunda-macrobotrys/details",
+      "unit": "m"
+    },
+    "rhsYearsToUltimate": {
+      "value": [
+        10,
+        20
+      ],
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/99665/wisteria-floribunda-macrobotrys/details",
+      "unit": "years"
+    }
+  },
+  "hardiness": {
+    "value": "H6",
+    "status": "published_plant_profile",
+    "source": "https://www.rhs.org.uk/plants/99665/wisteria-floribunda-macrobotrys/details"
+  },
+  "site": {
+    "aspect": "Full sun or partial shade; south or west facing, sheltered; generous overhead clearance.",
+    "soil": "Moist but well-drained."
+  },
+  "management": {
+    "calendar": [
+      {
+        "event": "spur_prune",
+        "months": [
+          7,
+          8
+        ],
+        "note": "Summer: cut the whippy green shoots of the current year back to five or six leaves."
+      },
+      {
+        "event": "spur_prune",
+        "months": [
+          1,
+          2
+        ],
+        "note": "Winter: cut the same shoots back to two or three buds."
+      }
+    ],
+    "notes": "Train and selectively thin; two-stage wisteria pruning while protecting productive laterals; inspect for attachment constriction."
+  },
+  "hazards": [
+    "Harmful if eaten (RHS).",
+    "Long racemes need clear height above circulation.",
+    "Mature woody mass and wind response are not validated."
+  ],
+  "regional": [],
+  "sources": [
+    {
+      "label": "RHS plant profile (accepted name)",
+      "url": "https://www.rhs.org.uk/plants/372711/wisteria-floribunda-f-multijuga-kyushaku/details"
+    },
+    {
+      "label": "RHS record for the synonym 'Macrobotrys'",
+      "url": "https://www.rhs.org.uk/plants/99665/wisteria-floribunda-macrobotrys/details"
+    },
+    {
+      "label": "RHS wisteria growing guide (twining direction)",
+      "url": "https://www.rhs.org.uk/plants/wisteria/growing-guide"
+    },
+    {
+      "label": "Trees and Shrubs Online (Bean): Wisteria floribunda",
+      "url": "https://www.treesandshrubsonline.org/articles/wisteria/wisteria-floribunda/"
+    },
+    {
+      "label": "RHS wisteria problems: frequently asked questions (flower-bud formation, shade, frost)",
+      "url": "https://www.rhs.org.uk/plants/wisteria/frequently-asked-questions"
+    },
+    {
+      "label": "Compton and others (2019), The Callerya Group redefined and Tribe Wisterieae emended, PhytoKeys 125: 1-112 (genus description and key to species)",
+      "url": "https://doi.org/10.3897/phytokeys.125.34877"
+    },
+    {
+      "label": "Royal Botanic Gardens Victoria, HortFlora: Wisteria floribunda 'Macrobotrys'",
+      "url": "https://hortflora.rbg.vic.gov.au/taxon/f659be88-5340-11e7-b82b-005056b0018f"
+    },
+    {
+      "label": "Chris Lane, Choosing from the best, The Garden, May 2019 (flowering times and flower colours of 'Kyushaku'), as reproduced",
+      "url": "https://whitehousefarmgardenandarboretum.com/wp-content/uploads/2024/01/choosing-from-the-best-wisteria-chris-lane.pdf"
+    },
+    {
+      "label": "Japanese floras as compiled on ja.wikipedia: Fuji (Wisteria floribunda); the compilation was read, not the floras",
+      "url": "https://ja.wikipedia.org/wiki/%E3%83%95%E3%82%B8_(%E6%A4%8D%E7%89%A9)"
+    },
+    {
+      "label": "NC State Extension Gardener Plant Toolbox: Wisteria floribunda",
+      "url": "https://plants.ces.ncsu.edu/plants/wisteria-floribunda"
+    },
+    {
+      "label": "University of Connecticut Plant Database: Wisteria floribunda",
+      "url": "https://plantdatabase.uconn.edu/detail.php?pid=548"
+    },
+    {
+      "label": "Ohio State University plant facts: Wisteria (shoot growth)",
+      "url": "https://plantfacts.osu.edu/tmi/Plantlist/wisteria.html"
+    },
+    {
+      "label": "Kwantlen Polytechnic University plant database: Wisteria floribunda",
+      "url": "https://plantdatabase.kpu.ca/PlantPrint/wifl"
+    },
+    {
+      "label": "US Forest Service, Fire Effects Information System: Wisteria floribunda and W. sinensis",
+      "url": "https://www.fs.usda.gov/database/feis/plants/vine/wisspp/all.html"
+    },
+    {
+      "label": "Useful Temperate Plants: Wisteria floribunda (aspect and shelter)",
+      "url": "https://temperate.theferns.info/plant/Wisteria+floribunda"
+    },
+    {
+      "label": "Seattle Japanese Garden: Japanese wisteria (bark, leaves, 'Macrobotrys')",
+      "url": "https://www.seattlejapanesegarden.org/blog/2025/5/14/japanese-wisteria"
+    },
+    {
+      "label": "Sekisui House planting guide: Fuji (flower-bud formation, order of opening)",
+      "url": "https://www.sekisuihouse.co.jp/planting/fuji_book.pdf"
+    }
+  ]
+}

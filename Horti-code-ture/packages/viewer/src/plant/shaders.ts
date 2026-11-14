@@ -1,0 +1,536 @@
+// Shader patches, ported from the Wisteria prototype (Wisteria/src/shaders.js).
+//
+// Each organ type gets a small vertex "program" spliced into three.js'
+// standard material, so lighting, shadows and tone mapping stay stock.
+//
+// What changed in the port: the prototype's programs worked out the season
+// themselves from a clock, with the dates of leaf flush, flowering and leaf
+// fall written in as constants. These programs know no dates.
+//   wood     asks the adapter's clock whether a point exists yet and how
+//            thick it is (CLOCK_GLSL, from adapter.ts)
+//   organs   are handed explicit states per instance (aState), which the
+//            adapter computes from the engine's dates
+// Also left out: the circumnutation of shoot tips. Its direction is a trait
+// of one twiner and must not be applied to every stem.
+//
+// How organs take light is here too, and is the same for every taxon:
+//   thin tissue   a leaf or a petal is lit on whichever face the sun is on, and
+//                 shows the sun's light through it on the other. Both are the
+//                 sun's light, so both are shadowed by what stands in its way
+//                 (timber, a stem, another leaf), and neither by the leaf
+//                 itself: its shadow is looked up on the side the sun is on,
+//                 decided at each pixel
+//   held light    thin tissue shaded by more of the same close by (a petal deep
+//                 in a rose, a leaf under a leaf) is not in the dark: if the
+//                 sun reaches the organ at all, a share of it comes through,
+//                 coloured by the tissue. The share is the look's translucency
+//   soft shade    thin tissue scatters light within itself: the edge of its
+//                 shade is soft, more so the more light the look says comes
+//                 through, so relief between a leaf's veins does not show as
+//                 black dashes when the sun is low across the blade
+//   gloss         from the roughness the taxon's look gives a surface. A leaf's
+//                 underside is matt whatever its upper side is, and no leaf is
+//                 a mirror at a grazing angle
+//   wood          a stem is shaded where it lies against its support
+// How much light comes through is the look's `translucency`; nothing else
+// about a taxon is known here.
+//
+// The programs belong to no taxon. What differs between taxa reaches them as
+// uniforms, set per material from the taxon's look (look.ts): a leaf's
+// palette, the tint of a bud, the colours and ages of the wood, the colour a
+// fruit ripens to.
+import * as THREE from 'three';
+import { CLOCK_GLSL, clock } from './adapter.ts';
+import type { LeafPalette, Triple, WoodLook } from './look.ts';
+
+export const shared = {
+  uTime: { value: 0 },
+  uWind: { value: 0.6 },
+  uWindDir: { value: new THREE.Vector2(0.92, 0.39) },
+  uSunDirView: { value: new THREE.Vector3(0, 1, 0) },
+  /** Unit vector towards the sun in the world frame: thin organs lean their shadow look-up towards it. */
+  uSunDirWorld: { value: new THREE.Vector3(0, 1, 0) },
+  uSunColor: { value: new THREE.Color(1, 1, 1) },
+};
+
+const COMMON = /* glsl */ `
+uniform float uTime, uWind;
+uniform vec2 uWindDir;
+uniform vec3 uSunDirWorld;
+${CLOCK_GLSL}
+
+vec2 swayVec(float ph, vec2 xz) {
+  float gust = 0.55 + 0.45 * sin(uTime * 0.37 - dot(xz, uWindDir) * 0.7);
+  float a = sin(uTime * 1.55 + ph) * 0.6 + sin(uTime * 2.9 + ph * 1.9) * 0.22 + 0.3;
+  float b = sin(uTime * 1.15 + ph * 1.3) * 0.5 + sin(uTime * 3.3 + ph * 0.7) * 0.18;
+  return (uWindDir * a + vec2(-uWindDir.y, uWindDir.x) * b * 0.7) * gust * uWind;
+}
+
+// Motion a stem imparts to whatever grows on it: young wood bends in the
+// wind. flex is 1 for a new shoot and 0 for old wood.
+vec3 hostOffset(vec3 c, vec3 anchor, float ph, float flex) {
+  float w = distance(c, anchor) * flex * 0.035;
+  vec2 s = swayVec(ph * 6.0, anchor.xz);
+  return vec3(s.x * w, 0.0, s.y * w);
+}
+
+// Nothing may be pushed INTO its support: drop the inward part of a motion.
+vec3 offSupport(vec3 off, vec3 sup) {
+  float l = length(sup);
+  if (l < 0.01) return off;
+  vec3 d = sup / l;
+  return off - d * min(0.0, dot(off, d));
+}
+
+vec3 pendulum(vec3 p, vec3 pivot, float amp) {
+  float d = distance(p, pivot);
+  vec2 s = swayVec(dot(pivot, vec3(1.7, 0.9, 2.3)), pivot.xz) * amp;
+  return vec3(s.x * d, dot(s, s) * d * 0.5, s.y * d);
+}
+`;
+
+interface Program {
+  head: string;
+  begin: string;
+  world: string;
+  fragHead?: string;
+  fragColor?: string;
+}
+
+export type ProgramKind = 'wood' | 'leaf' | 'flower' | 'fruit' | 'appendage' | 'litter';
+
+const PROGRAMS: Record<ProgramKind, Program> = {
+  // ---- stems: there or not, and how thick, by the adapter's clock -------------
+  wood: {
+    head: /* glsl */ `
+      attribute vec4 aLife;    // day born, day removed, radius at the end of the run (m), furrow depth
+      attribute vec4 aSup;     // direction away from the support (zero if unsupported), radius scale
+      attribute vec4 aAnchor;  // base of the stem, phase
+      uniform vec2 uFurrowDays, uSwayDays;  // the taxon's: ages over which furrows deepen and a stem stiffens
+      uniform float uFurrow;                // the taxon's: how deep its furrows get
+      varying float vAge;
+      varying float vContact;               // 1 on the side of the stem that lies against its support
+    `,
+    // position is where the stem TOUCHES its support. The centre stands one
+    // radius out from there, so the stem thickens away from the structure,
+    // never into it.
+    begin: /* glsl */ `
+      float age = uDay - aLife.x;
+      float alive = stemPresent( aLife.x, aLife.y );
+      float r = stemRadius( aLife.x, aLife.z );
+      vec3 centre = position + aSup.xyz * r;
+      // bark furrows deepen with age and only ever cut inwards
+      float skin = r * aSup.w * max( 0.1, 1.0 - aLife.w * uFurrow * smoothstep( uFurrowDays.x, uFurrowDays.y, age ) );
+      vec3 transformed = centre + normal * ( skin * alive );
+      vAge = age;
+      vContact = max( 0.0, -dot( normal, aSup.xyz ) );
+    `,
+    world: /* glsl */ `
+      float flex = 1.0 - smoothstep( uSwayDays.x, uSwayDays.y, uDay - aLife.x );
+      vec3 wOff = offSupport( hostOffset( position, aAnchor.xyz, aAnchor.w, flex ), aSup.xyz );
+    `,
+    fragHead: /* glsl */ `varying float vAge; varying float vContact; uniform vec2 uGreenDays, uBrownDays; uniform vec3 uWoodYoung, uWoodMature, uWoodOld;`,
+    // young shoot -> smooth mature bark -> old bark, in the taxon's colours (WoodLook)
+    fragColor: /* glsl */ `
+      {
+        vec3 tex = diffuseColor.rgb;
+        float yng = 1.0 - smoothstep( uGreenDays.x, uGreenDays.y, vAge );
+        float mid = 1.0 - smoothstep( uBrownDays.x, uBrownDays.y, vAge );
+        vec3 green = uWoodYoung * ( 0.75 + 0.6 * tex.g );
+        vec3 brown = uWoodMature * ( 0.5 + 1.1 * tex.g );
+        vec3 grey = tex * uWoodOld;
+        diffuseColor.rgb = mix( mix( grey, brown, mid ), green, yng );
+        // little light reaches the side of a stem that lies against timber or cable
+        diffuseColor.rgb *= 1.0 - 0.45 * vContact * vContact * vContact * vContact;
+      }
+    `,
+  },
+
+  // ---- compound leaves ----------------------------------------------------------
+  leaf: {
+    head: /* glsl */ `
+      attribute vec4 aPart;
+      attribute vec4 aState;  // expansion, autumn colour, fall (unused: the data gives a leaf's last day, not its falling), -
+      attribute vec4 aHost;   // base of the bearing stem, stem phase
+      attribute vec4 aSup;    // the stem's direction away from its support, how freely it sways
+      attribute vec4 aSeat;   // from the stem's contact line out to its surface, where the leaf stands
+      attribute vec4 aBlade;  // the turn of the blade about where it joins its stalk, in the leaf's own frame (a quaternion; identity: as authored)
+      varying vec3 vLeaf;     // young, autumn, variation
+      vec3 hortiTurn( vec4 q, vec3 v ) { return v + 2.0 * cross( q.xyz, cross( q.xyz, v ) + q.w * v ); }
+    `,
+    begin: /* glsl */ `
+      float grown = aState.x;
+      // leaflets do not all let go together
+      float fall = clamp( aState.z * 1.25 - max( aPart.w, 0.0 ) * 0.25, 0.0, 1.0 );
+      float lifeS = grown * ( 1.0 - fall );
+      vec3 transformed = position;
+      // unfolding: leaflets start clasped along the rachis and droop
+      float isBlade = step( 0.0, aPart.w );
+      float open = smoothstep( 0.1, 0.9, grown );
+      vec3 rel = transformed - aPart.xyz;
+      rel.x *= mix( 0.25, 1.0, mix( 1.0, open, isBlade ) );
+      rel.y -= isBlade * ( 1.0 - open ) * length( rel.xz ) * 0.9;
+      // the blade held in the world (BladeHold, hold.ts): turned where it joins its stalk; the stalk stays as authored
+      rel = mix( rel, hortiTurn( aBlade, rel ), isBlade );
+      transformed = ( aPart.xyz + rel ) * lifeS;
+      vLeaf = vec3( 1.0 - grown, aState.y, aPart.w );
+    `,
+    world: /* glsl */ `
+      vec3 org = instanceMatrix[3].xyz;
+      vec3 wOff = aSeat.xyz + offSupport( hostOffset( org, aHost.xyz, aHost.w, aSup.w ), aSup.xyz )
+                + pendulum( wp, org, 0.07 );
+      wOff.y -= fall * fall * 0.35;
+    `,
+    // the colours are the taxon's (LeafPalette): mature, newly unfolded, autumn
+    fragHead: /* glsl */ `varying vec3 vLeaf; uniform vec3 uLeafGreenA, uLeafGreenB, uLeafYoung, uLeafAutumnA, uLeafAutumnB;`,
+    fragColor: /* glsl */ `
+      {
+        float lum = diffuseColor.g;
+        // a leaf texture of a taxon's own draws its veins towards the palette's vein colour where its blue is below its
+        // green (LeafTexture in look.ts); in a grey texture the two are equal and nothing is tinted
+        float vein = clamp( ( diffuseColor.g - diffuseColor.b ) / max( diffuseColor.g, 0.001 ), 0.0, 1.0 );
+        float v = clamp( vLeaf.z, 0.0, 1.0 );
+        vec3 green = mix( uLeafGreenA, uLeafGreenB, v );
+        vec3 autumn = mix( uLeafAutumnA, uLeafAutumnB, v * v );
+        vec3 c = mix( green, uLeafYoung, vLeaf.x * 0.85 );
+        c = mix( c, autumn, vLeaf.y );
+        c = mix( c, mix( uLeafGreenB, uLeafAutumnB, vLeaf.y ), vein );
+        diffuseColor.rgb = c * lum * 1.45;
+      }
+    `,
+  },
+
+  // ---- flowers and inflorescences (first written for the wisteria raceme) ---------
+  flower: {
+    head: /* glsl */ `
+      attribute vec4 aPart;   // flower base, t along the raceme (<0: rachis)
+      attribute vec4 aState;  // elongation, share opened, share shed, stalk present
+      attribute vec4 aInst;   // swing room (0..1), random, -, -
+      varying float vOpen;
+    `,
+    begin: /* glsl */ `
+      float isR = step( aPart.w, -0.5 );
+      float ft = mix( aPart.w, -aPart.w - 1.0, isR );
+      float el = aState.x;
+      // opening, then petal fall, each run up the raceme from its base
+      float open = smoothstep( ft - 0.12, ft + 0.12, aState.y * 1.24 - 0.12 );
+      float fall = smoothstep( ft - 0.12, ft + 0.12, aState.z * 1.24 - 0.12 );
+      float fs = mix( 0.3, 1.0, open ) * ( 1.0 - fall ) * smoothstep( 0.0, 0.45, el + 0.25 - ft * 0.25 );
+      float rs = ( 0.4 + 0.6 * el ) * aState.w;
+      vec3 base = aPart.xyz;
+      vec3 rel = position - base;
+      base.y *= mix( 0.2, 1.0, el );
+      base.xz *= mix( 0.5, 1.0, el );
+      vec3 transformed = base + rel * mix( fs, rs, isR );
+      vOpen = mix( open, 1.0, isR );
+    `,
+    world: /* glsl */ `
+      vec3 wOff = pendulum( wp, instanceMatrix[3].xyz, 0.13 * aInst.x );
+    `,
+    fragHead: /* glsl */ `varying float vOpen; uniform vec3 uBudTint;`,
+    fragColor: /* glsl */ `
+      diffuseColor.rgb *= mix( uBudTint, vec3( 1.0 ), vOpen );
+    `,
+  },
+
+  // ---- fruit (first written for the wisteria pod) --------------------------------------
+  fruit: {
+    head: /* glsl */ `
+      attribute vec4 aState;  // size, ripeness, how freely it swings, -
+      attribute vec4 aPart;   // where the model has one: t < 0 is axis (a stalk)
+      uniform float uFruitStalk;  // 1: the axis keeps its unripe colour (FruitAsset.stalkKeepsColour)
+      varying float vRipe;
+    `,
+    begin: /* glsl */ `
+      vec3 transformed = position * aState.x;
+      // a model without aPart reads (0, 0, 0, 1): all of it ripens
+      vRipe = aState.y * ( 1.0 - uFruitStalk * step( aPart.w, -0.5 ) );
+    `,
+    world: /* glsl */ `
+      vec3 wOff = pendulum( wp, instanceMatrix[3].xyz, 0.13 * aState.z );
+    `,
+    // the vertex colours are the unripe fruit; it turns to the taxon's ripe colour, still shaded by them
+    fragHead: /* glsl */ `varying float vRipe; uniform vec3 uFruitRipe; uniform vec2 uFruitShade;`,
+    fragColor: /* glsl */ `
+      diffuseColor.rgb = mix( diffuseColor.rgb, uFruitRipe * ( uFruitShade.x + diffuseColor.g * uFruitShade.y ), vRipe );
+    `,
+  },
+
+  // ---- what a plant holds on with: tendrils, coiled stalks, rootlets, prickles ---------
+  appendage: {
+    head: /* glsl */ `
+      attribute vec4 aState;  // -, how far it has aged (0..1), how freely it moves, random
+      attribute vec4 aHost;   // base of the bearing stem, stem phase
+      attribute vec4 aSup;    // the stem's direction away from its support, how freely the stem sways
+      attribute vec4 aSeat;   // from the stem's contact line out to its surface, where it stands
+      varying float vAged;
+    `,
+    begin: /* glsl */ `
+      vec3 transformed = position;
+      vAged = aState.y;
+    `,
+    world: /* glsl */ `
+      vec3 org = instanceMatrix[3].xyz;
+      vec3 wOff = aSeat.xyz + offSupport( hostOffset( org, aHost.xyz, aHost.w, aSup.w ), aSup.xyz )
+                + pendulum( wp, org, 0.07 * aState.z );
+    `,
+    fragHead: /* glsl */ `varying float vAged; uniform vec3 uAged; uniform float uAges;`,
+    fragColor: /* glsl */ `
+      diffuseColor.rgb = mix( diffuseColor.rgb, uAged, vAged * uAges );
+    `,
+  },
+
+  // ---- ground litter: each scrap shows once the amount lying passes its threshold ----
+  litter: {
+    head: /* glsl */ `
+      attribute vec4 aInst;   // threshold (0..1), kind (0 petal, 1 leaf), -, -
+      uniform vec2 uLitter;   // how much lies on the ground: petals, leaves (0..1)
+    `,
+    begin: /* glsl */ `
+      float lying = mix( uLitter.x, uLitter.y, aInst.y );
+      vec3 transformed = position * smoothstep( aInst.x, aInst.x + 0.04, lying );
+    `,
+    world: /* glsl */ `vec3 wOff = vec3( 0.0 );`,
+  },
+};
+
+const PROJECT = (world: string) => /* glsl */ `
+vec4 mvPosition = vec4( transformed, 1.0 );
+#ifdef USE_INSTANCING
+  mvPosition = instanceMatrix * mvPosition;
+#endif
+vec3 wp = mvPosition.xyz;
+${world}
+mvPosition.xyz += wOff;
+mvPosition = modelViewMatrix * mvPosition;
+gl_Position = projectionMatrix * mvPosition;
+`;
+
+const WORLDPOS = /* glsl */ `
+#if defined( USE_ENVMAP ) || defined( DISTANCE ) || defined ( USE_SHADOWMAP ) || defined ( USE_TRANSMISSION ) || NUM_SPOT_LIGHT_COORDS > 0
+  vec4 worldPosition = vec4( wp + wOff, 1.0 );
+  worldPosition = modelMatrix * worldPosition;
+#endif
+`;
+
+export interface PatchOptions {
+  /** Back-lit glow of thin tissue. */
+  translucency?: number;
+  /** Soft rim light (velvety petals, leaf bloom). */
+  sheen?: number;
+  /** For the leaf program: the taxon's leaf colours. */
+  palette?: LeafPalette;
+  /** For the flower program: the tint of an unopened flower. */
+  budTint?: Triple;
+  /** For the wood program: the taxon's wood. */
+  wood?: WoodLook;
+  /** For the fruit program: what the fruit ripens to (FruitAsset.ripe and ripeShade). */
+  ripe?: Triple;
+  ripeShade?: readonly [number, number];
+  /** For the fruit program: whether its stalks keep their unripe colour. */
+  stalkKeeps?: boolean;
+  /** For the appendage program: what it turns to with age, or null if it keeps its colours. */
+  aged?: Triple | null;
+}
+
+/** The colours of the leaf the prototype was built for; used where a material names none. */
+const DEFAULT_PALETTE: LeafPalette = { greenA: [0.145, 0.3, 0.05], greenB: [0.19, 0.36, 0.065], young: [0.4, 0.27, 0.085], autumnA: [0.8, 0.56, 0.05], autumnB: [0.62, 0.36, 0.06] };
+const DEFAULT_BUD_TINT: Triple = [0.62, 0.55, 0.86];
+/** Wood for a material that names none (a test's stand-in material): the ages and colours the prototype's one bark had. */
+const DEFAULT_WOOD: WoodLook = { young: [0.21, 0.3, 0.085], mature: [0.3, 0.2, 0.115], old: [0.8, 0.76, 0.71], woodyDays: [110, 440], oldDays: [550, 2000], furrowDays: [290, 1825], furrow: 1, stiffDays: [55, 585], relief: 3, roughness: 0.94 };
+
+/** The organs that are thin and seen from both sides. */
+const THIN: readonly ProgramKind[] = ['leaf', 'flower', 'appendage', 'litter'];
+/**
+ * The lines of three.js's own shaders that the light on thin tissue is hung on. If a release moves them, the stock
+ * lighting is used for that part (and `THIN_TISSUE_LIGHT` says so).
+ */
+const DIRECT_LIGHT = THREE.ShaderChunk.lights_physical_pars_fragment;
+const DIRECT_IRRADIANCE = 'vec3 irradiance = dotNL * directLight.color;';
+const inDirectLight = DIRECT_LIGHT.split(DIRECT_IRRADIANCE).length === 2 && DIRECT_LIGHT.includes('material.diffuseContribution');
+const LIGHTS_BEGIN = THREE.ShaderChunk.lights_fragment_begin;
+/** Where three.js shadows the light of a directional light: the whole statement, and what it hands `getShadow` between the map and the place looked up. */
+const SUN_SHADOW = /directLight\.color \*= \( directLight\.visible && receiveShadow \) \? getShadow\( directionalShadowMap\[ i \], ([^;]*?), vDirectionalShadowCoord\[ i \] \) : 1\.0;/.exec(LIGHTS_BEGIN);
+/** Whether this three.js lets the light through thin tissue take the sun's shadow, and thin tissue be shadowed from the sun's side. */
+export const THIN_TISSUE_LIGHT = { shadowed: inDirectLight, fromTheSunSide: SUN_SHADOW !== null };
+
+const THIN_VARYINGS = /* glsl */ `
+varying vec3 vHortiNormalW;     // the surface normal in the world, as the mesh has it (not turned to face the eye)
+varying vec4 vHortiShadowBack;  // where to look the sun's shadow up for the face the normal points away from
+varying vec4 vHortiShadowFar;   // and from a little way towards the sun, clear of the organ itself
+`;
+
+const THIN_VERTEX = /* glsl */ `
+#if defined( USE_SHADOWMAP ) && NUM_DIR_LIGHT_SHADOWS > 0
+  vHortiNormalW = shadowWorldNormal;
+  vHortiShadowBack = directionalShadowMatrix[ 0 ] * ( worldPosition - vec4( shadowWorldNormal * directionalLightShadows[ 0 ].shadowNormalBias, 0 ) );
+  vHortiShadowFar = directionalShadowMatrix[ 0 ] * ( worldPosition + vec4( uSunDirWorld * uHortiReach, 0 ) );
+#endif
+`;
+
+/** The sun's shadow on thin tissue, in place of three.js's own statement. `how` is what three.js hands `getShadow` besides the map and the place. */
+const THIN_SHADOW = (how: string) => /* glsl */ `
+		if ( directLight.visible && receiveShadow ) {
+			// lit from either side: the shadow is looked up on the side of the surface the sun is on. Deciding that here, at
+			// the pixel, keeps a blade whose surface turns through edge-on to the sun from being looked up inside itself.
+			vec4 hortiNear = dot( vHortiNormalW, uSunDirWorld ) < 0.0 ? vHortiShadowBack : vDirectionalShadowCoord[ i ];
+			float hortiLit = getShadow( directionalShadowMap[ i ], ${how}, hortiNear );
+			vec3 hortiLight = vec3( hortiLit );
+			if ( uHeld > 0.0 && hortiLit < 0.98 ) {
+				// Shaded by something close. If the sun reaches the organ at all, what shades it is mostly more of the same thin
+				// tissue, and a share of the light comes through it, taking its colour: the heart of a pale flower glows.
+				float hortiReached = getShadow( directionalShadowMap[ i ], ${how}, vHortiShadowFar );
+				vec3 hortiTint = diffuseColor.rgb / max( max( diffuseColor.r, max( diffuseColor.g, diffuseColor.b ) ), 0.001 );
+				hortiLight = max( hortiLight, uHeld * hortiReached * mix( vec3( 1.0 ), hortiTint, 0.7 ) );
+			}
+			directLight.color *= hortiLight;
+		}
+`;
+
+/** A leaf's two faces: the upper as glossy as its look says, the underside matt; neither a mirror for the sky at a grazing angle. */
+const LEAF_GLOSS = /* glsl */ `
+{
+  float hortiUnder = step( dot( normalize( vNormal ), normalize( vViewPosition ) ), 0.0 );
+  float hortiGloss = 1.0 - material.roughness;
+  material.roughness = mix( material.roughness, max( material.roughness, 0.9 ), hortiUnder );
+  material.specularF90 = mix( mix( 0.12, 0.7, hortiGloss ), 0.04, hortiUnder );
+}
+`;
+
+/** A leaf's normal, turned with its blade (aBlade) where the vertex is the blade's. */
+const LEAF_NORMAL = /* glsl */ `
+#include <beginnormal_vertex>
+if ( aPart.w >= 0.0 ) objectNormal = hortiTurn( aBlade, objectNormal );
+`;
+
+/** How much litter lies on the ground, shared by every litter material. */
+export const litter = { uLitter: { value: new THREE.Vector2(0, 0) } };
+
+/** Splice an organ program into a built-in material. */
+export function patch<M extends THREE.Material>(
+  material: M,
+  kind: ProgramKind,
+  { translucency = 0, sheen = 0, palette = DEFAULT_PALETTE, budTint = DEFAULT_BUD_TINT, wood = DEFAULT_WOOD, ripe = [0.2, 0.145, 0.085], ripeShade = [0.6, 2], stalkKeeps = false, aged = null }: PatchOptions = {},
+): M {
+  const prog = PROGRAMS[kind];
+  // one compiled program per kind; what is the taxon's is in uniforms, so each material keeps its own
+  const own: Record<string, { value: THREE.Vector3 | THREE.Vector2 | number }> =
+    kind === 'leaf'
+      ? {
+          uLeafGreenA: { value: new THREE.Vector3(...palette.greenA) },
+          uLeafGreenB: { value: new THREE.Vector3(...palette.greenB) },
+          uLeafYoung: { value: new THREE.Vector3(...palette.young) },
+          uLeafAutumnA: { value: new THREE.Vector3(...palette.autumnA) },
+          uLeafAutumnB: { value: new THREE.Vector3(...palette.autumnB) },
+        }
+      : kind === 'flower'
+        ? { uBudTint: { value: new THREE.Vector3(...budTint) } }
+        : kind === 'wood'
+          ? {
+              uGreenDays: { value: new THREE.Vector2(...wood.woodyDays) },
+              uBrownDays: { value: new THREE.Vector2(...wood.oldDays) },
+              uFurrowDays: { value: new THREE.Vector2(...wood.furrowDays) },
+              uSwayDays: { value: new THREE.Vector2(...wood.stiffDays) },
+              uFurrow: { value: wood.furrow },
+              uWoodYoung: { value: new THREE.Vector3(...wood.young) },
+              uWoodMature: { value: new THREE.Vector3(...wood.mature) },
+              uWoodOld: { value: new THREE.Vector3(...wood.old) },
+            }
+          : kind === 'fruit'
+            ? { uFruitRipe: { value: new THREE.Vector3(...ripe) }, uFruitShade: { value: new THREE.Vector2(...ripeShade) }, uFruitStalk: { value: stalkKeeps ? 1 : 0 } }
+            : kind === 'appendage'
+              ? { uAged: { value: new THREE.Vector3(...(aged ?? [0, 0, 0])) }, uAges: { value: aged ? 1 : 0 } }
+              : {};
+  material.onBeforeCompile = (shader) => {
+    Object.assign(shader.uniforms, {
+      uTime: shared.uTime,
+      uWind: shared.uWind,
+      uWindDir: shared.uWindDir,
+      ...clock,
+    });
+    if (kind === 'litter') shader.uniforms['uLitter'] = litter.uLitter;
+    Object.assign(shader.uniforms, own);
+    shader.uniforms['uSunDirWorld'] = shared.uSunDirWorld;
+    let vs = shader.vertexShader
+      .replace('#include <common>', '#include <common>\n' + COMMON + prog.head)
+      .replace('#include <begin_vertex>', prog.begin)
+      // a leaf's blade turns with its hold: its normals with it
+      .replace('#include <beginnormal_vertex>', kind === 'leaf' ? LEAF_NORMAL : '#include <beginnormal_vertex>')
+      .replace('#include <project_vertex>', PROJECT(prog.world))
+      .replace('#include <worldpos_vertex>', WORLDPOS);
+    // A leaf or a petal is lit from either side. three.js looks its shadow up a little way off the surface along the
+    // normal, which for the face turned from the sun is a step into the leaf's own shadow. The same step the other
+    // way, and a longer one straight towards the sun, are worked out here; which is used is decided at each pixel.
+    const thin = THIN.includes(kind) && SUN_SHADOW !== null;
+    if (thin) {
+      shader.uniforms['uHortiReach'] = { value: kind === 'flower' ? 0.08 : 0.05 };
+      vs = vs.replace('#include <common>', '#include <common>\n' + THIN_VARYINGS + '\nuniform float uHortiReach;').replace('#include <shadowmap_vertex>', '#include <shadowmap_vertex>\n' + THIN_VERTEX);
+    }
+    shader.vertexShader = vs;
+    if ((material as THREE.Material & { isMeshDepthMaterial?: boolean }).isMeshDepthMaterial) return;
+    let fs = shader.fragmentShader;
+    let head = prog.fragHead ?? '';
+    if (prog.fragColor) fs = fs.replace('#include <color_fragment>', '#include <color_fragment>\n' + prog.fragColor);
+    if (thin) {
+      // how much of the sun's light the tissue holds when it is shaded by more of its own kind
+      shader.uniforms['uHeld'] = { value: Math.min(0.85, Math.max(0, translucency)) };
+      head += '\n' + THIN_VARYINGS + '\nuniform vec3 uSunDirWorld;\nuniform float uHeld;';
+      fs = fs.replace('#include <lights_fragment_begin>', LIGHTS_BEGIN.replace(SUN_SHADOW![0], THIN_SHADOW(SUN_SHADOW![1]!)));
+    }
+    if (kind === 'leaf') fs = fs.replace('#include <lights_physical_fragment>', '#include <lights_physical_fragment>\n' + LEAF_GLOSS);
+    if (translucency > 0) {
+      // light through the tissue, warmed by it where it is a leaf: as strong as the old glow where nothing shades it
+      const tint = sheen > 0 ? [1, 1, 1] : [1.25, 1.2, 0.7];
+      shader.uniforms['uThrough'] = { value: new THREE.Vector3(...tint).multiplyScalar(translucency * 0.32 * Math.PI) };
+      head += '\nuniform vec3 uThrough;';
+      if (inDirectLight) {
+        // Added where three.js adds each light's own diffuse light, so that it is the light's colour and takes its shadow.
+        // Thin tissue scatters light within itself, so the edge of its shade is soft: a part of a blade turned a little
+        // from the sun is not black beside a part turned a little towards it, and what comes through from behind
+        // begins before the surface is edge-on. Without this the relief modelled between a leaf's veins, lit at a
+        // grazing angle, shows as rows of dark dashes.
+        shader.uniforms['uWrap'] = { value: Math.min(0.5, 0.15 + 0.6 * translucency) };
+        head += '\nuniform float uWrap;';
+        fs = fs.replace(
+          '#include <lights_physical_pars_fragment>',
+          DIRECT_LIGHT.replace(
+            DIRECT_IRRADIANCE,
+            DIRECT_IRRADIANCE +
+              `
+	float hortiNL = dot( geometryNormal, directLight.direction );
+	float hortiFront = saturate( ( hortiNL + uWrap ) / ( 1.0 + uWrap ) );
+	float hortiBack = saturate( ( uWrap - hortiNL ) / ( 1.0 + uWrap ) );
+	reflectedLight.directDiffuse += ( vec3( hortiFront - dotNL ) + uThrough * hortiBack ) * directLight.color * BRDF_Lambert( material.diffuseContribution );`,
+          ),
+        );
+      } else {
+        // a three.js whose lighting code is laid out otherwise: the glow as it was, unshadowed
+        shader.uniforms['uSunDirView'] = shared.uSunDirView;
+        shader.uniforms['uSunColor'] = shared.uSunColor;
+        head += '\nuniform vec3 uSunDirView;\nuniform vec3 uSunColor;';
+        fs = fs.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += diffuseColor.rgb * uThrough / 3.14159 * uSunColor / 0.32 * max( 0.0, dot( -normal, uSunDirView ) );');
+      }
+    }
+    if (sheen > 0) {
+      shader.uniforms['uSunColor'] = shared.uSunColor;
+      if (!head.includes('uniform vec3 uSunColor;')) head += '\nuniform vec3 uSunColor;';
+      fs = fs.replace(
+        '#include <emissivemap_fragment>',
+        /* glsl */ `#include <emissivemap_fragment>
+        {
+          // grazing-angle sheen: velvety petals
+          float rim = pow( 1.0 - abs( dot( normal, normalize( vViewPosition ) ) ), 3.0 );
+          totalEmissiveRadiance += diffuseColor.rgb * uSunColor * ${sheen.toFixed(3)} * rim;
+        }`,
+      );
+    }
+    shader.fragmentShader = fs.replace('#include <common>', '#include <common>\n' + head);
+  };
+  material.customProgramCacheKey = () => `horti3-${kind}-${translucency > 0 ? 'through' : 'opaque'}-${sheen}`;
+  return material;
+}
+
+/** The material an organ's shadow is cast with. Wood needs the taxon's look here too: its furrows and its sway shape the shadow. */
+export function depthMaterial(kind: ProgramKind, options: PatchOptions = {}): THREE.MeshDepthMaterial {
+  return patch(new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking }), kind, options);
+}

@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "id": "akebia-quinata",
+  "names": {
+    "label": "Akebia quinata",
+    "rhs": {
+      "name": "Akebia quinata",
+      "plantId": 747,
+      "status": "correct",
+      "url": "https://www.rhs.org.uk/plants/747/akebia-quinata/details"
+    },
+    "kew": "Akebia quinata (Thunb. ex Houtt.) Decne.",
+    "synonyms": [],
+    "common": [
+      "Chocolate vine",
+      "Five-leaf akebia"
+    ]
+  },
+  "palette": {
+    "standing": "optional",
+    "role": "Fast semi-evergreen spring texture, subject to invasiveness screening."
+  },
+  "lifeForm": "woody_climber",
+  "ukCultivation": "perennial",
+  "leafHabit": {
+    "value": "semi_evergreen",
+    "status": "published_plant_profile",
+    "source": "https://www.rhs.org.uk/plants/747/akebia-quinata/details",
+    "basis": "RHS: semi-evergreen. Flora of China calls it deciduous: expect it mostly leafless in cold winters."
+  },
+  "attachment": {
+    "mechanism": "stem_twining",
+    "selfAttaching": true,
+    "handedness": {
+      "value": "right_handed",
+      "status": "published_plant_profile",
+      "source": "https://www.gutenberg.org/files/2485/2485-h/2485-h.htm",
+      "basis": "Darwin: Akebia quinata \"moves against the sun\", that is anticlockwise seen from above: a right-handed helix. The University of Michigan CLIMBERS page says it twines \"dextrally ... from left to right as it ascends\", but it uses the same words for Lonicera, which Darwin records as following the sun, so that wording cannot fix the geometry."
+    },
+    "maxGraspDiameterMm": {
+      "value": null,
+      "unit": "mm",
+      "status": "unknown"
+    },
+    "supportNeeds": "Strong free-running route with room to restrain its growth."
+  },
+  "flowering": {
+    "wood": {
+      "value": "previous_season",
+      "status": "provisional_design_assumption",
+      "basis": "Inferred from two sources that point the same way; neither says it outright. The RHS record says pruning group 11 \"after flowering\", and the RHS guide to that group gives that timing to climbers that flower on the previous year's growth. Flora of China describes the racemes as axillary on short branches, with scaly bracts, opening in April and May: they come from buds carried over winter on older stems."
+    },
+    "rhsPruningGroup": "11",
+    "monthsUK": {
+      "value": [
+        3
+      ],
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/747/akebia-quinata/details",
+      "basis": "Months read from the RHS season wording (spring = Mar-May, summer = Jun-Aug, autumn = Sep-Nov, winter = Dec-Feb; early, mid and late are the first, second and third month)."
+    },
+    "display": "Fragrant reddish-purple flowers; occasional purple fruit only where cross-pollinated.",
+    "scented": true
+  },
+  "size": {
+    "rhsUltimateHeightM": {
+      "value": [
+        8,
+        12
+      ],
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/747/akebia-quinata/details",
+      "unit": "m"
+    },
+    "rhsYearsToUltimate": {
+      "value": [
+        5,
+        10
+      ],
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/747/akebia-quinata/details",
+      "unit": "years"
+    }
+  },
+  "hardiness": {
+    "value": "H6",
+    "status": "published_plant_profile",
+    "source": "https://www.rhs.org.uk/plants/747/akebia-quinata/details"
+  },
+  "site": {
+    "aspect": "Full sun or partial shade; several aspects possible.",
+    "soil": "Moist but well-drained."
+  },
+  "management": {
+    "calendar": [
+      {
+        "event": "thin_canopy",
+        "months": [
+          5,
+          6
+        ],
+        "note": "Prune after flowering to limit vigour."
+      }
+    ],
+    "notes": "Prune after flowering to limit vigour; inspect its spread; decide whether fruit should be allowed to develop."
+  },
+  "hazards": [],
+  "regional": [
+    {
+      "region": "Great Britain",
+      "status": "Not listed. It is one of five plants in the first cycle of species the GB Committee is considering for the list of species of special concern; no recommendation or ministerial decision has been published (NNSS page read 11 November 2026, which records decisions up to September 2026). NNSS risk assessment: medium risk. Listing would ban sale and planting. Do not specify for a Bower without checking the current status.",
+      "source": "https://www.nonnativespecies.org/legislation/species-of-special-concern"
+    }
+  ],
+  "sources": [
+    {
+      "label": "RHS plant profile",
+      "url": "https://www.rhs.org.uk/plants/747/akebia-quinata/details"
+    },
+    {
+      "label": "GB NNSS risk assessment",
+      "url": "https://www.nonnativespecies.org/assets/Uploads/Akebia-quinata-RA-final_topub-v2.pdf"
+    },
+    {
+      "label": "NNSS: species of special concern, and species being considered for listing",
+      "url": "https://www.nonnativespecies.org/legislation/species-of-special-concern"
+    },
+    {
+      "label": "RHS: pruning established climbers (pruning groups 11 to 13)",
+      "url": "https://www.rhs.org.uk/plants/types/climbers/established-pruning-guide"
+    },
+    {
+      "label": "Darwin, The Movements and Habits of Climbing Plants",
+      "url": "https://www.gutenberg.org/files/2485/2485-h/2485-h.htm"
+    },
+    {
+      "label": "University of Michigan CLIMBERS",
+      "url": "https://climbers.lsa.umich.edu/akebia-quinata/"
+    },
+    {
+      "label": "Bean, Trees and Shrubs Hardy in the British Isles (Trees and Shrubs Online)",
+      "url": "https://www.treesandshrubsonline.org/articles/akebia/akebia-quinata/"
+    },
+    {
+      "label": "Flora of China: Akebia quinata",
+      "url": "https://www.efloras.org/florataxon.aspx?flora_id=2&taxon_id=200008288"
+    },
+    {
+      "label": "Flora of China: Akebia",
+      "url": "https://www.efloras.org/florataxon.aspx?flora_id=2&taxon_id=100921"
+    },
+    {
+      "label": "Flora of North America: Akebia quinata",
+      "url": "https://floranorthamerica.org/Akebia_quinata"
+    },
+    {
+      "label": "Flora Reipublicae Popularis Sinicae, in an English rendering",
+      "url": "https://baike.baidu.com/en/item/Akebia%20quinata/25006"
+    },
+    {
+      "label": "Zou et al. 2023, Germplasm resources and genetic improvement of Akebia, Plant Diversity 45",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10772107"
+    },
+    {
+      "label": "Huang et al. 2022, The Akebia genus as a novel forest crop, Frontiers in Plant Science 13:936571",
+      "url": "https://www.frontiersin.org/articles/10.3389/fpls.2022.936571/full"
+    },
+    {
+      "label": "Virginia Tech dendrology fact sheet: fiveleaf akebia",
+      "url": "https://dendro.cnre.vt.edu/dendrology/syllabus/factsheet.cfm?ID=948"
+    },
+    {
+      "label": "NC State Extension plant toolbox",
+      "url": "https://plants.ces.ncsu.edu/plants/akebia-quinata/"
+    },
+    {
+      "label": "Purdue Arboretum",
+      "url": "https://www.arboretum.purdue.edu/explorer/plants/21318"
+    },
+    {
+      "label": "Oregon State University landscape plants",
+      "url": "https://landscapeplants.oregonstate.edu/plants/akebia-quinata"
+    },
+    {
+      "label": "Chinese Pharmacopoeia 2020, the stem as a drug, as given by ShennongAlpha",
+      "url": "https://shennongalpha.westlake.edu.cn/knowledge/nmm-00b1"
+    },
+    {
+      "label": "Useful Temperate Plants",
+      "url": "https://temperate.theferns.info/plant/Akebia+quinata"
+    }
+  ]
+}

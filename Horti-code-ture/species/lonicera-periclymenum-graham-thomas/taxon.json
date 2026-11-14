@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "id": "lonicera-periclymenum-graham-thomas",
+  "names": {
+    "label": "Lonicera periclymenum 'Graham Thomas'",
+    "rhs": {
+      "name": "Lonicera periclymenum 'Graham Thomas'",
+      "plantId": 74793,
+      "status": "accepted",
+      "url": "https://www.rhs.org.uk/plants/74793/lonicera-periclymenum-graham-thomas/details"
+    },
+    "kew": "Lonicera periclymenum L.",
+    "synonyms": [
+      "Lonicera 'Graham Thomas'"
+    ],
+    "common": [
+      "Honeysuckle",
+      "Woodbine"
+    ]
+  },
+  "palette": {
+    "standing": "core",
+    "role": "Summer scent, pollinator interest and berries at human scale."
+  },
+  "lifeForm": "woody_climber",
+  "ukCultivation": "perennial",
+  "leafHabit": {
+    "value": "deciduous",
+    "status": "published_plant_profile",
+    "source": "https://www.rhs.org.uk/plants/74793/lonicera-periclymenum-graham-thomas/details"
+  },
+  "attachment": {
+    "mechanism": "stem_twining",
+    "selfAttaching": true,
+    "handedness": {
+      "value": "left_handed",
+      "status": "published_plant_profile",
+      "source": "https://www.wildlifetrusts.org/wildlife-explorer/wildflowers/honeysuckle",
+      "basis": "Climbs clockwise seen from above (Wildlife Trusts; grouped with hop against bindweed in older texts): a left-handed helix. No peer-reviewed species-level source was retrieved."
+    },
+    "maxGraspDiameterMm": {
+      "value": null,
+      "unit": "mm",
+      "status": "unknown"
+    },
+    "supportNeeds": "Guided support with sun on the upper shoots and a cooler root zone; a lane distinct from the evergreen honeysuckle."
+  },
+  "flowering": {
+    "wood": {
+      "value": "both",
+      "status": "provisional_design_assumption",
+      "basis": "A reconciliation of sources that disagree, not a published statement. For previous-season wood: Gardens Illustrated says L. periclymenum and its cultivars \"flower on stems that have grown the previous year\"; the RHS record says prune after flowering, and the RHS honeysuckle guide says types pruned after flowering bear flowers \"on short sideshoots on the previous season's growth\". For current-season wood: Bean's supplement (Trees and Shrubs Online) says 'Graham Thomas' \"if cut back in winter will flower from June to October\", and the RHS record notes a long flowering season. Taken together: a first flush from last year's stems, continued on new growth."
+    },
+    "rhsPruningGroup": "11",
+    "monthsUK": {
+      "value": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "status": "published_plant_profile",
+      "source": "https://www.treesandshrubsonline.org/articles/lonicera/lonicera-periclymenum/",
+      "basis": "Bean's supplement (Trees and Shrubs Online), of this cultivar: \"if cut back in winter will flower from June to October\". Stated in months. The RHS record names no months: its season grid shows flowers in summer only and its text says \"long flowering season\"; the earlier value of June to August came from that."
+    },
+    "display": "Fragrant white flowers ageing to cream-yellow over a long period; red berries.",
+    "scented": true
+  },
+  "size": {
+    "rhsUltimateHeightM": {
+      "value": [
+        4,
+        8
+      ],
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/74793/lonicera-periclymenum-graham-thomas/details",
+      "unit": "m"
+    },
+    "rhsYearsToUltimate": {
+      "value": [
+        5,
+        10
+      ],
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/74793/lonicera-periclymenum-graham-thomas/details",
+      "unit": "years"
+    }
+  },
+  "hardiness": {
+    "value": "H6",
+    "status": "published_plant_profile",
+    "source": "https://www.rhs.org.uk/plants/74793/lonicera-periclymenum-graham-thomas/details"
+  },
+  "site": {
+    "aspect": "Full sun or partial shade; aspect flexible; partial shade often favourable.",
+    "soil": "Fertile, moist but well-drained."
+  },
+  "management": {
+    "calendar": [
+      {
+        "event": "thin_canopy",
+        "months": [
+          8,
+          9
+        ],
+        "note": "RHS pruning group 11: prune after flowering, as needed."
+      }
+    ],
+    "notes": "Prune and control after flowering as needed; keep a lane separate from the evergreen honeysuckle."
+  },
+  "hazards": [
+    "Berries are ornamental, not food.",
+    "Can entangle neighbouring climbers."
+  ],
+  "regional": [],
+  "sources": [
+    {
+      "label": "RHS plant profile",
+      "url": "https://www.rhs.org.uk/plants/74793/lonicera-periclymenum-graham-thomas/details"
+    },
+    {
+      "label": "RHS: how to grow climbing honeysuckle",
+      "url": "https://www.rhs.org.uk/plants/honeysuckle/climbing/growing-guide"
+    },
+    {
+      "label": "RHS: pruning established climbers (pruning groups 11 to 13)",
+      "url": "https://www.rhs.org.uk/plants/types/climbers/established-pruning-guide"
+    },
+    {
+      "label": "Trees and Shrubs Online (Bean): Lonicera periclymenum",
+      "url": "https://www.treesandshrubsonline.org/articles/lonicera/lonicera-periclymenum/"
+    },
+    {
+      "label": "Gardens Illustrated: honeysuckle, how to grow and prune",
+      "url": "https://www.gardensillustrated.com/plants/honeysuckle-lonicera-how-to-grow/"
+    },
+    {
+      "label": "Wildlife Trusts: honeysuckle",
+      "url": "https://www.wildlifetrusts.org/wildlife-explorer/wildflowers/honeysuckle"
+    },
+    {
+      "label": "BSBI: Lonicera periclymenum in Co. Fermanagh (species account)",
+      "url": "https://bsbi.org/in-your-area/local-botany/co-fermanagh/fermanagh-species-accounts/lonicera-periclymenum-l"
+    },
+    {
+      "label": "Flora of New Zealand, vol. IV: Lonicera periclymenum",
+      "url": "https://www.nzflora.info/factsheet/Taxon/Lonicera-periclymenum.html"
+    },
+    {
+      "label": "Useful Temperate Plants database: Lonicera periclymenum (cites Beckett and Beckett 1979)",
+      "url": "https://temperate.theferns.info/plant/Lonicera+periclymenum"
+    },
+    {
+      "label": "University of Connecticut plant database: Lonicera periclymenum",
+      "url": "https://plantdatabase.uconn.edu/detail.php?pid=266"
+    },
+    {
+      "label": "Darwin (1875), The Movements and Habits of Climbing Plants",
+      "url": "https://www.gutenberg.org/files/2485/2485-h/2485-h.htm"
+    },
+    {
+      "label": "Go Botany (Native Plant Trust): Lonicera periclymenum",
+      "url": "https://gobotany.nativeplanttrust.org/species/lonicera/periclymenum/"
+    },
+    {
+      "label": "RHS: degrees of sun and shade",
+      "url": "https://www.rhs.org.uk/garden-design/shade-gardening"
+    }
+  ]
+}

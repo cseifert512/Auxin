@@ -1,0 +1,110 @@
+# Horti-code-ture
+
+**Bower's computational horticulture: specification, taxon library and growth simulator.**  
+**Version:** 0.2 — 11 November 2026  
+**Baseline climate:** temperate United Kingdom; site-specific adaptation required everywhere else.  
+**Point of departure:** the procedural *Wisteria sinensis* prototype in [`Wisteria/`](Wisteria/).
+
+## What this is
+
+Three things in one repository:
+
+1. **A specification** — the root documents: planting logic, simulation data concepts, biological and mechanical constraints, gardener interventions and a staged development programme.
+2. **A candidate taxon library** — [`species/`](species/): 17 named taxa and cultivars, each with a human-readable `SPECIES_PROFILE.md`.
+3. **A simulator under construction** — [`packages/core`](packages/core): the data contract and simulation core that the specification describes. The earlier [`Wisteria/`](Wisteria/) prototype is kept as a visual and behavioural reference; it is a single-species time-lapse, not the model the specification asks for.
+
+This is **not** a verified biological prediction model, a planting specification ready for construction, or a source of structural loads.
+
+## Layout
+
+| Path | Contents |
+|---|---|
+| `PROJECT_CONTEXT.md` and the other root `.md` files | The specification. Read these before making global decisions. |
+| `species/<id>/` | One folder per taxon. Folder names are ASCII ids; botanical names, accepted names and synonyms are recorded inside: a profile in prose, validated data, the taxon's growth model and its morphology. |
+| `packages/core/` | `@horti/core` — TypeScript, no rendering dependencies. Vocabulary, provenance rules, the structure as timber and cables with its route graph, reference Bowers, attachment rules, the daily-step growth engine, and the render-data contract a viewer draws from. |
+| `species/<id>/model.json` | The numbers the engine assumes for a taxon, each labelled with its evidence status. Sixteen: every climber in the library. *Wisteria sinensis* is carried over from the prototype; the other fifteen are derived from it or from one another, mostly copies and placeholders and marked as such. The shrub has none, because it does not climb. A model also says which parts the plant has (fruit, tendrils, coiled leaf stalks, clinging rootlets, prickles, flowering side shoots, more than one leaf form); a part whose numbers are unknown is left out of a run, and the run says so. |
+| `species/<id>/morphology.json` | The shape numbers a drawing of the taxon uses (leaflet and petal counts, proportions, colours as floras name them), each with its evidence status. Being filled in taxon by taxon. |
+| `packages/viewer/` | `@horti/viewer` — three.js and Vite. Renders a Bower from the core at the prototype's visual quality, a design overlay (reach from a root station under a route budget, material summary), and the plants of any render data: the growth engine's scenarios, run in the browser, or a hand-made render test. Opens a designed Bower and its planting plan from two files, chosen or dropped on the window, and grows and reports on it. Holds no growth logic. What a taxon looks like is one module of its own (`src/plant/taxa/<id>.ts`: leaf forms, flowers, fruit, holdfasts, bark), written from its morphology; `TAXON_LOOKS.md` says how. |
+| `Wisteria/` | The original three.js prototype of *W. sinensis* on a glulam vault. Self-contained (`npm install` inside it). |
+| `examples/` | A small arbour and the 15 m hemisphere as Bower descriptions, each with a planting plan: the two files a design is run from. |
+| `docs/ASSUMPTIONS_AUDIT.md` | What was tested on 11 November 2026, what held, what did not, and what was changed. |
+
+## Reading order
+
+1. [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) — why this exists and how to decide between competing implementations.
+2. [KEY.md](KEY.md) — species relationships, planting palette, global architecture versus local plant supports.
+3. [SIMULATION_KEY.md](SIMULATION_KEY.md) — modelling objectives, domain entities, dynamics, equations, outputs and assumptions.
+4. [CONSTRAINTS_AND_PHENOLOGY.md](CONSTRAINTS_AND_PHENOLOGY.md) — attachment mechanics, buds, flowering, dormancy, seasonal development and physical limits.
+5. [HORTICULTURAL_INTERVENTIONS.md](HORTICULTURAL_INTERVENTIONS.md) — gardener events, pruning, training, replanting and monitoring.
+6. [DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md) — agent roles, milestones and acceptance checks.
+7. [SOURCES_AND_ASSUMPTIONS.md](SOURCES_AND_ASSUMPTIONS.md) — literature and the evidence-confidence policy.
+8. [docs/ASSUMPTIONS_AUDIT.md](docs/ASSUMPTIONS_AUDIT.md) — the tested state of all of the above.
+9. Each `species/<id>/SPECIES_PROFILE.md`.
+
+## Running it
+
+Requires Node 24 or later.
+
+```bash
+npm install          # workspace tooling for packages/*
+npm run check        # type-check and run the core tests
+npm run simulate     # ten years of trained wisteria on the vault: yearly account, gardener's log, design report; files in out/
+npm run simulate -- untended 10   # the same plants with nobody gardening
+npm run simulate -- mixed trained 8   # wisteria, evergreen honeysuckle, summer clematis and winter clematis together
+npm run simulate -- dome trained 12   # three wisterias on the 15 m hemisphere
+npm run simulate -- trial untended 7  # one plant of each way of climbing, nobody gardening
+npm run simulate -- palette trained 12  # the KEY.md reference palette, one plant at each of the dome's twelve ribs
+npm run sensitivity -- palette trained 12  # the same run with leaf area and side shoots multiplied: which readings hold
+npm run viewer:dev   # the viewer on http://localhost:5193: both reference Bowers or a design read from files, the design overlay, plants through time
+npm run viewer:build # static build in packages/viewer/dist
+npm run portrait -- lonicera-henryi   # one plant of a taxon on a small standard frame: stills of the whole plant in four seasons and close on each organ, and a contact sheet, in out/portraits/
+```
+
+### Your own Bower
+
+A structure does not have to be one of the two reference shells. Two small JSON files describe a design:
+
+- **what is built** (`*.bower.json`): the centre line of every timber member as a list of points, with its section and whether it is primary glulam or sub-lattice; the line and diameter of every cable; where the root stations are; optionally headroom or exclusion zones and the places a visitor stands. Points are metres, x east, y north, z up, and the file has to say so.
+- **what is planted** (`*.planting.json`): which taxon goes in at which station.
+
+The first file may also say where the Bower stands, in an optional `site` section: latitude and longitude, the compass bearing its y axis points to if that is not north, and what stands near enough to cast shade (walls, buildings on a footprint, trees). Left out, southern England and an open site are assumed, and the report says so. [`examples/arbour-in-a-yard.bower.json`](examples/arbour-in-a-yard.bower.json) is the arbour with such a section.
+
+Nothing in the first file names a joint or a route. Elements are joined where their bodies touch, each is cut into stretches between its joints, and those stretches are the routes plants travel, so the file can be written straight out of a CAD model. Reading it reports what a designer should check: a cable fixed to nothing, or timber no plant can arrive at.
+
+```bash
+npm run simulate -- design examples/arbour.bower.json examples/arbour.planting.json trained 8
+npm run simulate -- design examples/hemisphere-15m.bower.json examples/hemisphere-15m.planting.json
+npm run simulate -- design examples/arbour-in-a-yard.bower.json examples/arbour.planting.json   # the same arbour behind a wall: see LIGHT in its report
+npm run export-bower -- hemisphere examples/hemisphere-15m.bower.json   # how the second example was written
+```
+
+[`examples/arbour.bower.json`](examples/arbour.bower.json) is short enough to read as the format's documentation; the schema is in [`packages/core/src/bower/description.ts`](packages/core/src/bower/description.ts).
+
+The prototype is separate:
+
+```bash
+npm --prefix Wisteria install
+npm run prototype:dev           # time-lapse viewer on http://localhost:5173
+npm run prototype:audit         # interference audit (stem vs structure, stem vs stem)
+npm run prototype:assumptions   # measures what the prototype actually assumes
+```
+
+## Scope and status
+
+- **17 named taxa/cultivars**, including *Wisteria sinensis* and *W. floribunda* 'Macrobotrys'. Several are alternatives rather than plants to combine in one Bower.
+- One non-climber (*Sarcococca confusa*) is included intentionally as an adjacent winter-scent shrub.
+- A single evergreen-plus-deciduous planting composition is a **design framework**, not an instruction to install all species.
+- Mechanistic differences are fundamental: twining stems, twining petioles, tendrils, aerial roots, scrambling canes, and non-climbing shrubs.
+- **The specification invents no plant growth rates, support-diameter tolerances, frost responses, wind loads or flowering probabilities.** The prototype does contain such numbers as unlabelled constants; they are catalogued in the audit. The new core admits a number only with an evidence status attached, so every assumption shows up in the reports that depend on it.
+- A gardener is an active agent in the simulation; plants are not assumed to grow successfully without intervention.
+
+## Working rules for agents
+
+- Never equate published mature height with annual shoot growth or the reachable route across a curved Bower.
+- Keep the manufactured Bower graph separate from the living plant graph. *Wood age* in flowering biology refers to the plant's own shoots, **not** manufactured Bower timber.
+- The timber is the growing surface. Plants may climb any member; a sub-lattice of lighter timber and slender steel cables helps the finer ones. Keep visible steel to a minimum: cables, never rods.
+- Preserve lineage: removing a living stem also removes its attached leaves, buds, flowers and support contacts.
+- Differentiate `evidence`, `model assumption`, `design target`, `unresolved question` and `site-dependent decision`. The canonical status list, and how these words map on to it, is in [`packages/core/src/vocab.ts`](packages/core/src/vocab.ts).
+- Do not hard-code flowering months as proof of blooming; represent environmental and plant-history gating as the model matures.
+- Do not represent the mathematical outputs as validated structural loads.
+- All geographic deployments need ecology/horticulture review, including checks for invasive species, biosecurity and public safety.

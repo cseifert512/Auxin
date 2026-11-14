@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "id": "clematis-viticella-etoile-violette",
+  "names": {
+    "label": "Clematis viticella 'Étoile Violette'",
+    "rhs": {
+      "name": "Clematis 'Étoile Violette' (Vt)",
+      "plantId": 92936,
+      "status": "accepted",
+      "url": "https://www.rhs.org.uk/plants/92936/clematis-etoile-violette-vt/details"
+    },
+    "kew": null,
+    "synonyms": [
+      "Clematis viticella 'Étoile Violette'",
+      "Clematis [Fantasy]",
+      "Clematis [Violet Star]"
+    ],
+    "common": [
+      "Clematis 'Étoile Violette'"
+    ]
+  },
+  "palette": {
+    "standing": "core",
+    "role": "Mid to late summer flower at lower and middle height."
+  },
+  "lifeForm": "woody_climber",
+  "ukCultivation": "perennial",
+  "leafHabit": {
+    "value": "deciduous",
+    "status": "published_plant_profile",
+    "source": "https://www.rhs.org.uk/plants/131849/clematis-viticella-%C3%A9toile-violette/details"
+  },
+  "attachment": {
+    "mechanism": "petiole_twining",
+    "selfAttaching": true,
+    "maxGraspDiameterMm": {
+      "value": null,
+      "unit": "mm",
+      "status": "unknown"
+    },
+    "supportNeeds": "Fine support that a leaf stalk can clasp, with access for hard pruning every year."
+  },
+  "flowering": {
+    "wood": {
+      "value": "current_season",
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/clematis/group-three-pruning-guide",
+      "basis": "RHS pruning group 3: flowers on growth made in that season."
+    },
+    "rhsPruningGroup": "Clematis group 3",
+    "monthsUK": {
+      "value": [
+        7,
+        8
+      ],
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/131849/clematis-viticella-%C3%A9toile-violette/details",
+      "basis": "Months read from the RHS season wording (spring = Mar-May, summer = Jun-Aug, autumn = Sep-Nov, winter = Dec-Feb; early, mid and late are the first, second and third month)."
+    },
+    "display": "Velvety deep-purple flowers.",
+    "scented": false
+  },
+  "size": {
+    "rhsUltimateHeightM": {
+      "value": [
+        2.5,
+        4
+      ],
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/131849/clematis-viticella-%C3%A9toile-violette/details",
+      "unit": "m"
+    },
+    "rhsYearsToUltimate": {
+      "value": [
+        2,
+        5
+      ],
+      "status": "published_plant_profile",
+      "source": "https://www.rhs.org.uk/plants/131849/clematis-viticella-%C3%A9toile-violette/details",
+      "unit": "years"
+    }
+  },
+  "hardiness": {
+    "value": "H6",
+    "status": "published_plant_profile",
+    "source": "https://www.rhs.org.uk/plants/131849/clematis-viticella-%C3%A9toile-violette/details"
+  },
+  "site": {
+    "aspect": "Full sun or partial shade; adaptable to aspect and exposure.",
+    "soil": "Moist but well-drained; neutral to alkaline preferred."
+  },
+  "management": {
+    "calendar": [
+      {
+        "event": "hard_prune",
+        "months": [
+          2,
+          3
+        ],
+        "note": "Group 3: cut all stems back to 15-30 cm above the ground."
+      }
+    ],
+    "notes": "Cut back in late winter, then retrain the new growth and watch for entanglement in the canopy."
+  },
+  "hazards": [
+    "Skin irritant; harmful to pets (rabbits) if eaten (RHS)."
+  ],
+  "regional": [],
+  "sources": [
+    {
+      "label": "RHS plant profile (accepted name)",
+      "url": "https://www.rhs.org.uk/plants/92936/clematis-etoile-violette-vt/details"
+    },
+    {
+      "label": "RHS clematis pruning group 3",
+      "url": "https://www.rhs.org.uk/plants/clematis/group-three-pruning-guide"
+    },
+    {
+      "label": "RHS clematis growing guide",
+      "url": "https://www.rhs.org.uk/plants/clematis/growing-guide"
+    },
+    {
+      "label": "Clematis on the Web: Clematis ‘Étoile Violette’",
+      "url": "https://clematisontheweb.org/clemdetail/?dbkey=26"
+    },
+    {
+      "label": "Bean, Trees and Shrubs Online: Clematis viticella (with ‘Etoile Violette’)",
+      "url": "https://www.treesandshrubsonline.org/articles/clematis/clematis-viticella/"
+    },
+    {
+      "label": "Bean, Trees and Shrubs Online: Clematis (the genus)",
+      "url": "https://www.treesandshrubsonline.org/articles/clematis/"
+    },
+    {
+      "label": "International Clematis Society, Clematis of the Month, October 1997",
+      "url": "https://internationalclematissociety.org/?p=522"
+    },
+    {
+      "label": "Royal Botanic Gardens Victoria, Horticultural Flora: Clematis viticella",
+      "url": "https://hortflora.rbg.vic.gov.au/taxon/ad8ccfba-5340-11e7-b82b-005056b0018f"
+    },
+    {
+      "label": "Darwin, The Movements and Habits of Climbing Plants (1875)",
+      "url": "https://www.gutenberg.org/files/2485/2485-h/2485-h.htm"
+    },
+    {
+      "label": "HelpMeFind: Clematis ‘Etoile Violette’",
+      "url": "https://helpmefind.com/gardening/l.php?l=2.50110"
+    }
+  ]
+}
