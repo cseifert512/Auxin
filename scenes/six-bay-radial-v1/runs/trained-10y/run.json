@@ -4,13 +4,180 @@
   "plan": "planting.json",
   "specimenM": 3,
   "band": null,
+  "stemsTimes": null,
   "care": "trained",
   "years": 10,
   "seed": 7,
+  "gardenerCut": {
+    "byAct": {
+      "plant": {
+        "visits": 24,
+        "stemRemovedM": 0
+      },
+      "hard_prune": {
+        "visits": 13,
+        "stemRemovedM": 235
+      },
+      "monitor": {
+        "visits": 20,
+        "stemRemovedM": 0
+      },
+      "shorten_side_shoots": {
+        "visits": 82,
+        "stemRemovedM": 5187
+      },
+      "spur_prune": {
+        "visits": 38,
+        "stemRemovedM": 101
+      },
+      "trim_to_bounds": {
+        "visits": 129,
+        "stemRemovedM": 1249
+      },
+      "deadhead_or_select_flowers": {
+        "visits": 90,
+        "stemRemovedM": 0
+      }
+    },
+    "byPlant": {
+      "wisteria: plant": {
+        "visits": 1,
+        "stemRemovedM": 0
+      },
+      "rose: plant": {
+        "visits": 2,
+        "stemRemovedM": 0
+      },
+      "star-jasmine: plant": {
+        "visits": 2,
+        "stemRemovedM": 0
+      },
+      "winter-clematis: plant": {
+        "visits": 2,
+        "stemRemovedM": 0
+      },
+      "honeysuckle: plant": {
+        "visits": 2,
+        "stemRemovedM": 0
+      },
+      "akebia: plant": {
+        "visits": 3,
+        "stemRemovedM": 0
+      },
+      "summer-clematis: plant": {
+        "visits": 1,
+        "stemRemovedM": 0
+      },
+      "evergreen-honeysuckle: plant": {
+        "visits": 4,
+        "stemRemovedM": 0
+      },
+      "hydrangea: plant": {
+        "visits": 1,
+        "stemRemovedM": 0
+      },
+      "ivy: plant": {
+        "visits": 2,
+        "stemRemovedM": 0
+      },
+      "japanese-wisteria: plant": {
+        "visits": 1,
+        "stemRemovedM": 0
+      },
+      "spring-clematis: plant": {
+        "visits": 1,
+        "stemRemovedM": 0
+      },
+      "trumpet-vine: plant": {
+        "visits": 1,
+        "stemRemovedM": 0
+      },
+      "vine: plant": {
+        "visits": 1,
+        "stemRemovedM": 0
+      },
+      "winter-clematis: hard_prune": {
+        "visits": 2,
+        "stemRemovedM": 5
+      },
+      "honeysuckle: hard_prune": {
+        "visits": 2,
+        "stemRemovedM": 4
+      },
+      "wisteria: monitor": {
+        "visits": 10,
+        "stemRemovedM": 0
+      },
+      "japanese-wisteria: monitor": {
+        "visits": 10,
+        "stemRemovedM": 0
+      },
+      "vine: shorten_side_shoots": {
+        "visits": 30,
+        "stemRemovedM": 4137
+      },
+      "wisteria: spur_prune": {
+        "visits": 19,
+        "stemRemovedM": 37
+      },
+      "japanese-wisteria: spur_prune": {
+        "visits": 19,
+        "stemRemovedM": 64
+      },
+      "rose: shorten_side_shoots": {
+        "visits": 18,
+        "stemRemovedM": 308
+      },
+      "summer-clematis: hard_prune": {
+        "visits": 9,
+        "stemRemovedM": 225
+      },
+      "ivy: trim_to_bounds": {
+        "visits": 18,
+        "stemRemovedM": 11
+      },
+      "honeysuckle: trim_to_bounds": {
+        "visits": 18,
+        "stemRemovedM": 16
+      },
+      "winter-clematis: trim_to_bounds": {
+        "visits": 18,
+        "stemRemovedM": 18
+      },
+      "star-jasmine: trim_to_bounds": {
+        "visits": 18,
+        "stemRemovedM": 3
+      },
+      "spring-clematis: trim_to_bounds": {
+        "visits": 9,
+        "stemRemovedM": 287
+      },
+      "rose: deadhead_or_select_flowers": {
+        "visits": 90,
+        "stemRemovedM": 0
+      },
+      "honeysuckle: shorten_side_shoots": {
+        "visits": 18,
+        "stemRemovedM": 729
+      },
+      "trumpet-vine: shorten_side_shoots": {
+        "visits": 8,
+        "stemRemovedM": 12
+      },
+      "akebia: trim_to_bounds": {
+        "visits": 48,
+        "stemRemovedM": 913
+      },
+      "ivy: shorten_side_shoots": {
+        "visits": 8,
+        "stemRemovedM": 1
+      }
+    }
+  },
   "simulator": {
     "repository": "horti-code-ture",
     "branch": "claude/growth-without-stem-caps-e1458d",
-    "commit": "cc7c09ec950f78d4522611e2230b72d5533b4ce5"
+    "commit": "431e29add182b3ab278d06f2bc77bf99bc1a3386"
   },
   "toCheck": [],
   "notModelledOrAssumed": [

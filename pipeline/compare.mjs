@@ -16,7 +16,8 @@ for (const run of runs) {
   const r = JSON.parse(readFileSync(resolve(runsDir, run, 'report.json'), 'utf8'));
   const setup = JSON.parse(readFileSync(resolve(runsDir, run, 'run.json'), 'utf8'));
   const s = r.structure;
-  console.log(`\n${run}: ${r.plants.length} plants${setup.specimenM ? `, planted standing ${setup.specimenM} m` : ', planted as young canes'}, on ${setup.bower ?? 'bower.json'}; simulator ${setup.simulator?.branch ?? 'main'} at ${String(setup.simulator?.commit).slice(0, 7)}${setup.band ? `, every plant at the ${setup.band} end of its published range` : ''}${setup.stemsTimes ? `, ${setup.stemsTimes} times the stems to a member` : ''}`);
+  console.log(`\n${run}: ${r.plants.length} plants${setup.specimenM ? `, planted standing ${setup.specimenM} m` : ', planted as young canes'}, on ${setup.bower ?? 'bower.json'}; simulator ${setup.simulator?.branch ?? 'main'} at ${String(setup.simulator?.commit).slice(0, 7)}${setup.band ? `, every plant at the ${setup.band} end of its published range` : ''}${setup.stemsTimes ? `, ${setup.stemsTimes} times the stems to a member` : ''}${setup.gardener ? `; gardener: ${setup.gardener.notKeptIn?.length ? `${setup.gardener.notKeptIn.join(', ')} not kept in` : ''}${setup.gardener.letStandOffM ? ` growth let stand ${setup.gardener.letStandOffM} m off` : ''}` : ''}`);
+  if (setup.gardenerCut) console.log(`  cut off       ${Object.entries(setup.gardenerCut.byAct).filter(([, c]) => c.stemRemovedM > 0).map(([act, c]) => `${act} ${c.stemRemovedM} m`).join(', ')}`);
   console.log(`  routes        ${s.routeM.toFixed(0)} m, of which steel cable ${s.steelCableM.toFixed(0)} m (${pct(s.steelShareOfRoute).trim()})`);
   console.log(`  held          ${pct(r.routes.heldShare).trim()} of the routes carry a plant in ${r.year}; ${r.routes.freeM.toFixed(0)} m carry nothing`);
   const self = sum(r.plants, (p) => p.heldUnaided);

@@ -28,6 +28,12 @@ const core = (file) => import(pathToFileURL(resolve(horti, 'packages/core/src', 
 //          --band=low|high   every plant at the low or the high end of what is published for a year's growth, where a range is given
 //          --stems=<times>   how many stems the gardener lets share one member, as a multiple of what each plant's model
 //                            assumes (2 to a member, 3 to a main one: a training decision the models carry as a number)
+// The gardener's hand, which is a decision about this building and not a fact about a plant:
+//          --free=vine,akebia   plants (by the name in their plant ID) that are not cut back to keep them in: their yearly
+//                            shortening of side shoots and trimming to bounds are left out. Pruning a plant needs in order
+//                            to flower (a wisteria's spurs, a late clematis cut down in February) is kept.
+//          --loose=<metres>  growth that stands off the timber is let stand this far before it is trimmed, where the
+//                            routine trims nearer
 const options = Object.fromEntries(process.argv.slice(2).filter((a) => a.startsWith('--')).map((a) => a.slice(2).split('=')));
 const [snapshot = JSON.parse(readFileSync(new URL('../snapshot.json', import.meta.url), 'utf8')).snapshot, careArg = 'trained', yearsArg = '10', seedArg = '7'] = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 const care = careArg === 'untended' ? 'untended' : 'trained';
@@ -78,9 +84,38 @@ const fuller = (model) => {
 const asGrown = (model) => (stemsTimes ? fuller(specimenM ? specimen(model) : model) : specimenM ? specimen(model) : model);
 const taxa = specimenM || stemsTimes ? new Map([...stock].map(([id, t]) => [id, { ...t, model: asGrown(t.model) }])) : stock;
 const scenario = plantingOn(design.bower, parsePlantingPlan(read(plantingFile), plantingFile), { taxa, care, years, seed, viewpoints: design.viewpoints });
+// The gardener's hand. The routines the simulator writes for each plant are the RHS's for a plant kept within
+// bounds. How closely this building's plants are kept is a matter of design, so the plan of visits can be loosened
+// here before it is carried out; what was changed goes into run.json.
+const free = (options.free ?? '').split(',').filter(Boolean);
+const looseM = options.loose ? Number(options.loose) : null;
+const kindOf = (plantId) => plantId.split('.').slice(1).join('.').replace(/\.\d+$/, '');
+let visits = scenario.events;
+if (free.length) visits = visits.filter((e) => !(free.includes(kindOf(e.plantId)) && (e.type === 'shorten_side_shoots' || e.type === 'trim_to_bounds')));
+if (looseM) visits = visits.map((e) => (e.type === 'trim_to_bounds' && e.freeBeyondM < looseM ? { ...e, freeBeyondM: looseM } : e));
+const gardener = free.length || looseM ? { notKeptIn: free, letStandOffM: looseM, visitsLeftOut: scenario.events.length - visits.length } : null;
+if (gardener) console.log(`the gardener's hand: ${free.length ? `${free.join(', ')} not cut back to keep them in (${gardener.visitsLeftOut} visits left out)` : ''}${free.length && looseM ? '; ' : ''}${looseM ? `growth let stand ${looseM} m off the timber before it is trimmed` : ''}`);
 t0 = performance.now();
-const sim = new Simulation(scenario).runUntil(`${2027 + years - 1}-12-31`);
+const sim = new Simulation(gardener ? { ...scenario, events: visits } : scenario).runUntil(`${2027 + years - 1}-12-31`);
 console.log(`\n${scenario.name}\n${sim.day + 1} days simulated in ${((performance.now() - t0) / 1000).toFixed(1)} s`);
+
+// What the gardener's visits took off, act by act and plant by plant: the care plan's own account of itself.
+const cut = { byAct: {}, byPlant: {} };
+for (const e of sim.events) {
+  const kind = e.plantId.split('.').slice(1).join('.').replace(/\.\d+$/, '');
+  for (const [table, key] of [[cut.byAct, e.type], [cut.byPlant, `${kind}: ${e.type}`]]) {
+    table[key] ??= { visits: 0, stemRemovedM: 0 };
+    table[key].visits++;
+    table[key].stemRemovedM += e.effects.stemRemovedM;
+  }
+}
+for (const table of [cut.byAct, cut.byPlant]) for (const row of Object.values(table)) row.stemRemovedM = Math.round(row.stemRemovedM);
+const most = (table, n) => Object.entries(table).filter(([, r]) => r.stemRemovedM > 0).sort((a, b) => b[1].stemRemovedM - a[1].stemRemovedM).slice(0, n);
+console.log(`
+what the gardener cut off in ${years} years:`);
+for (const [act, r] of most(cut.byAct, 8)) console.log(`  ${act.padEnd(22)} ${String(r.stemRemovedM).padStart(6)} m in ${r.visits} visits`);
+console.log('  of which, most:');
+for (const [what, r] of most(cut.byPlant, 10)) console.log(`    ${what.padEnd(44)} ${String(r.stemRemovedM).padStart(6)} m`);
 
 const notes = sim.decisions.filter((d) => ['not_modelled', 'part_not_modelled', 'assumed', 'generic_shoot'].includes(d.kind)).map((d) => `${d.plantId}: ${d.text}`);
 const report = designReport(sim);
@@ -114,7 +149,7 @@ writeFileSync(resolve(out, 'report.json'), JSON.stringify(report, null, 2));
 writeFileSync(resolve(out, 'report.txt'), `${text}\n`);
 writeFileSync(
   resolve(out, 'run.json'),
-  `${JSON.stringify({ snapshot, bower: options.bower ?? 'bower.json', plan: options.plan ?? 'planting.json', specimenM, band, stemsTimes, care, years, seed, simulator: { repository: 'horti-code-ture', branch, commit }, toCheck: design.warnings, notModelledOrAssumed: notes, reseated: seated.summary, thinned: thinned.summary, cleared: cleared.summary }, null, 2)}\n`,
+  `${JSON.stringify({ snapshot, bower: options.bower ?? 'bower.json', plan: options.plan ?? 'planting.json', specimenM, band, stemsTimes, gardener, care, years, seed, gardenerCut: cut, simulator: { repository: 'horti-code-ture', branch, commit }, toCheck: design.warnings, notModelledOrAssumed: notes, reseated: seated.summary, thinned: thinned.summary, cleared: cleared.summary }, null, 2)}\n`,
 );
 console.log(`\n${text}`);
 console.log(`\nwritten: ${out}`);

@@ -31,11 +31,11 @@ npm run studio                          # the drawing, on http://localhost:5310
 npm run film                            # exports/approach-ink/: the line of time as a film, wide and upright
 ```
 
-**Which simulator grows the plants.** `snapshot.json` may name a `simulator` folder. It does now: the simulator's
-branch `claude/growth-without-stem-caps`, where a main stem no longer stops at a length the model assumed (for the
-wisterias, the route of an earlier prototype's vault) and how far a plant is taken is the gardener's plan. That
-branch is not merged into the simulator's `main`; when it is, take the setting out. Each run's `run.json` says
-which branch and commit grew it.
+**Which simulator grows the plants.** The checkout beside this repository, unless `snapshot.json` names a
+`simulator` folder or `HORTI_DIR` is set. Since 14 November 2026 its `main` no longer stops a main stem at a length
+the model assumed (for the wisterias, the route of an earlier prototype's vault): how far a plant is taken is the
+gardener's plan. Each run's `run.json` says which branch and commit grew it, and what the gardener cut off, act
+by act.
 
 | Run of `six-bay-radial-v1` | What it is |
 |---|---|
@@ -43,8 +43,17 @@ which branch and commit grew it.
 | `high-10y` | the same with every plant at the high end of what is published for a year's growth (`--band=high`) |
 | `capped-10y` | as the drawings were first grown, on the simulator's `main`: kept to compare with |
 
+| `loose-10y` | the same as `trained-10y` with a lighter hand: the vine, the akebias and the honeysuckles not cut back to keep them in, and growth let stand 1.2 m off the timber (`--free=vine,akebia,honeysuckle --loose=1.2`) |
+
 `npm run compare` sets them side by side. `--band=low` is the other end of what is published, and
 `--stems=2` lets twice as many stems share a member (it adds little on this building).
+
+**The gardener's hand is a design setting**, not a fact about a plant. The simulator writes each plant the RHS's
+routine for a plant kept within bounds, and on this building that routine cuts off 6.8 km of stem in ten years,
+4.1 km of it from the one vine. `--free=` and `--loose=` loosen it before it is carried out. Tried: it takes the
+cutting down to 0.6 km and changes what is seen by only a few points of leaf, so the knife is not what keeps the
+planting thin. What does is how much each plant grows in a year (`--band`), how many of the plants are vigorous
+ones, and how many there are.
 
 In the studio: **Play** or drag the line of time; Space plays, the arrow keys step along it (further with Shift).
 Drag to turn the drawing, scroll to come closer. **Timber / Left to silver / Ink** draws the timber in its own
