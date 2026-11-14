@@ -128,9 +128,21 @@ shows is the floor and the shade on it) and `round`.
 - `studio/` is the drawing.
 - `sketches/` is for trying things, and nothing in it is a drawing for the deck. `sketches/design-space/` moves
   one control of the building through a few values and draws the timber going from one to the next, with what
-  can be measured off the centre lines counting beside it. Timber only: nothing is grown. Its states are made by
+  can be measured off the centre lines counting beside it. Its states are made by
   `python scripts/sweep_states.py` in `bower-blender` (about two minutes, no Blender) and are not in git. Open
-  `index.html` afterwards; it needs no server.
+  `index.html` afterwards; it needs no server. A change can also have the same planting grown at its two ends,
+  which adds a line of time to the page and the stems of each end to the drawing:
+
+  ```bash
+  cd ../bower-blender && python scripts/trial_snapshot.py trial-pier-120 timber.piers.ring_radius_m=1.2
+  cd ../drawings-in-code
+  npm run convert -- trial-pier-120 && npm run plant -- trial-pier-120
+  npm run grow -- trial-pier-120 trained 10 7 --specimen=3
+  node sketches/design-space/grown.mjs pier-opens six-bay-radial-v1/trained-10y-new-growth trial-pier-120/trained-10y
+  ```
+
+  A trial is centre lines only, written into `../releases/trial-*/` because that is where the steps above read
+  from. It is not a snapshot: no milled meshes, no manifest, not in git, and the studio cannot draw it.
 
 ## What this is not
 

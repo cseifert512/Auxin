@@ -5,3 +5,7 @@ __pycache__/
 # sessions' own worktrees and local settings
 .claude/worktrees/
 .claude/settings.local.json
+
+# trial buildings: centre lines only, made by bower-blender/scripts/trial_snapshot.py; not snapshots
+releases/trial-*/
+drawings-in-code/scenes/trial-*/

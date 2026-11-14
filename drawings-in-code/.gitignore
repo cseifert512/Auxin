@@ -17,6 +17,8 @@ exports/**/*.mp4
 
 # made by `python scripts/sweep_states.py` in bower-blender, in about two minutes
 sketches/*/states.js
+# made by `node sketches/design-space/grown.mjs` from two grown runs
+sketches/*/grown-*.js
 
 # scratch pictures while plates are made
 exports/deck/.work/

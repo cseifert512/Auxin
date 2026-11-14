@@ -24,9 +24,14 @@
   button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   #bar { grid-column: 1; padding: 10px 16px 16px; border-top: 1px solid var(--rule); }
   #sweeps { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-  #scrub { display: flex; gap: 12px; align-items: center; }
+  #scrub, #time { display: flex; gap: 12px; align-items: center; }
+  #time { margin-top: 8px; }
+  #time[hidden] { display: none; }
   #scrub input { flex: 1; min-width: 0; accent-color: var(--red); }
-  #value { font: 13px ui-monospace, Consolas, monospace; min-width: 13ch; text-align: right; }
+  #time input { flex: 1; min-width: 0; accent-color: #3F7D3A; }
+  .lab { min-width: 58px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--soft); }
+  #value, #tvalue { font: 13px ui-monospace, Consolas, monospace; min-width: 13ch; text-align: right; }
+  th { font-weight: 400; font-size: 12px; color: var(--soft); text-align: right; padding: 2px 0 2px 10px; }
   aside { grid-row: 1 / span 2; grid-column: 2; border-left: 1px solid var(--rule); padding: 22px 22px 18px; overflow: auto; }
   h1 { font: 400 26px/1.15 Georgia, "Times New Roman", serif; margin: 0 0 6px; }
   .k { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--soft); margin: 16px 0 2px; }
@@ -57,10 +62,15 @@
       <input id="s" type="range" min="0" max="1" step="0.001" value="0" aria-label="Along the change">
       <span id="value"></span>
     </div>
+    <div id="time" hidden>
+      <span class="lab">Time</span>
+      <input id="t" type="range" min="0" max="1" step="1" value="0" aria-label="Days after planting">
+      <span id="tvalue"></span>
+    </div>
   </div>
   <aside>
     <h1 id="title"></h1>
-    <p class="note">One control of <span id="base"></span>, moved. Timber only: nothing is grown here.</p>
+    <p class="note">One control of <span id="base"></span>, moved. <span id="lead"></span></p>
     <p class="k">What moves</p><p id="param"></p>
     <p class="k">The plant needs</p><p id="need"></p>
     <p class="k">Where the building disagrees</p><p id="dis"></p>
@@ -68,6 +78,12 @@
     <p class="src" id="src"></p>
     <p class="k">Read off the centre lines</p>
     <table id="meas"></table>
+    <div id="grownBlock" hidden>
+      <p class="k">The same planting, grown at each end</p>
+      <table id="grown"></table>
+      <p class="note">Stems only, drawn at the two ends of the change: plants cannot be blended between two buildings, so they clear while the timber moves. <span id="setup"></span></p>
+      <p class="note" id="statement"></p>
+    </div>
     <p class="note">Rough measures; hold the pointer on one for how it is taken. Between the written states the timber and the numbers are blended in a straight line. <span class="moving">Red</span> is whatever is moving, arriving or leaving. The faint lines are where it started.</p>
   </aside>
 </div>
@@ -116,7 +132,7 @@
   }
 
   const VIEWS = [["room", "Room"], ["plan", "Plan"], ["side", "Side"], ["pier", "One pier"]];
-  let sweep = D.sweeps[0], s = 0, view = "room", playing = false, began = 0;
+  let sweep = D.sweeps[0], s = 0, day = 0, view = "room", playing = false, began = 0;
   let yaw = -0.5, pitch = 0.6, zoom = 1;
   const canvas = $("c"), ctx = canvas.getContext("2d");
   let W = 0, H = 0, cam = null;
@@ -194,6 +210,11 @@
       stroke(points, member, RED, alpha * (0.4 + 0.6 * Math.min(1, rate)) * (view === "pier" ? 0.35 : 1), width);
       if (flat) feet(points, member, RED, alpha);
     }
+    const grown = window.GROWN && window.GROWN[sweep.id];
+    if (grown && grown.ready) {  // the plants of whichever end is near, clearing as the timber leaves it
+      const show = Math.max(0, 1 - Math.min(s, last - s) / last / 0.1);
+      if (show > 0) plants(s < last / 2 ? grown.start : grown.end, show);
+    }
     if (view === "pier") {  // a one-metre bar, the only dimension on the sheet
       const x = 24, y = H - 28;
       ctx.strokeStyle = ctx.fillStyle = "rgba(16,40,32,.8)";
@@ -203,6 +224,56 @@
       ctx.fillText("1 m", x + cam.scale + 8, y + 4);
     }
     card(k, t);
+  }
+
+  // Every stem point that has been laid down by the chosen day and not yet cut away.
+  function plants(end, alpha) {
+    ctx.globalAlpha = alpha * 0.85;
+    let key = -1;
+    for (const st of end.stems) {
+      if (st.key !== key) {
+        if (key >= 0) ctx.stroke();
+        key = st.key;
+        ctx.beginPath();
+        ctx.strokeStyle = `hsl(${78 + (st.plant * 37) % 84} 52% 33%)`;
+        ctx.lineWidth = st.frame ? 1.7 : 0.8;
+      }
+      let open = false;
+      for (let i = 0; i < st.born.length; i++) {
+        if (st.born[i] > day || (st.gone[i] >= 0 && st.gone[i] <= day)) { open = false; continue; }
+        const p = px(st.xyz[i * 3], st.xyz[i * 3 + 1], st.xyz[i * 3 + 2]);
+        if (open) ctx.lineTo(p[0], p[1]); else { ctx.moveTo(p[0], p[1]); open = true; }
+      }
+    }
+    if (key >= 0) ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  const percent = (v) => Math.round(v * 100) + "%";
+  function grownTable(grown) {
+    const year = day / 365.25, lastValue = sweep.values[sweep.values.length - 1], unit = UNIT[sweep.unit] || "";
+    $("tvalue").textContent = year.toFixed(1) + " years";
+    const at = (end) => end.report.byYear.filter((y) => y.year <= year + 0.25).pop();  // the run ends a little short of ten whole years after planting
+    const a = at(grown.start), b = at(grown.end), A = grown.start.report, B = grown.end.report;
+    const inside = (r) => r.june.find((v) => v.id === "interior") || r.june[0];
+    const row = (label, x, y) => `<tr><td>${label}</td><td class="n">${x}</td><td class="n">${y}</td></tr>`;
+    const rows = [`<tr><th></th><th>${sweep.values[0]}${unit}</th><th>${lastValue}${unit}</th></tr>`];
+    if (a && b) {
+      rows.push(row(`Plants at the crown, year ${a.year}`, a.atCrown, b.atCrown));
+      rows.push(row(`Framework, year ${a.year}`, a.frameworkM.toFixed(0) + " m", b.frameworkM.toFixed(0) + " m"));
+    }
+    if (A.sunHours != null) {
+      rows.push(row("Direct sun on a plant, midsummer", A.sunHours.toFixed(1) + " h", B.sunHours.toFixed(1) + " h"));
+      rows.push(row("Plants in full sun", `${A.fullSun} of ${A.plants}`, `${B.fullSun} of ${B.plants}`));
+      rows.push(row("Growth the light allows", percent(A.lightGrowth), percent(B.lightGrowth)));
+    }
+    rows.push(row("Routes for plants", A.routeM.toFixed(0) + " m", B.routeM.toFixed(0) + " m"));
+    rows.push(row("Routes holding a plant, year 10", percent(A.heldShare), percent(B.heldShare)));
+    rows.push(row("Gardener's tie-ins, ten years", A.tieIns, B.tieIns));
+    rows.push(row("Cable", A.cableM.toFixed(0) + " m", B.cableM.toFixed(0) + " m"));
+    rows.push(row("Timber seen from inside, June", percent(inside(A).timberSeen), percent(inside(B).timberSeen)));
+    rows.push(row("Leaf fills that view, June", percent(inside(A).leafFills), percent(inside(B).leafFills)));
+    $("grown").innerHTML = rows.join("");
   }
 
   const number = (v, digits) => (v == null ? "n/a" : v.toFixed(digits));
@@ -221,6 +292,19 @@
     const near = sweep.at[Math.round(k + t)].size;
     rows.push(`<tr title="Members in the nearest written state. The fine tier of the lattice is chosen afresh at each state, so members come and go."><td>Members</td><td class="n">${near}</td><td class="n d">${near === sweep.at[0].size ? "" : (near > sweep.at[0].size ? "+" : "−") + Math.abs(near - sweep.at[0].size)}</td></tr>`);
     $("meas").innerHTML = rows.join("");
+    const grown = window.GROWN && window.GROWN[sweep.id];
+    if (grown && grown.ready) grownTable(grown);
+  }
+
+  // A grown file has arrived: make its stems ready to draw, plant by plant.
+  function arrived(id) {
+    const grown = window.GROWN[id];
+    for (const end of [grown.start, grown.end]) {
+      for (const st of end.stems) { st.xyz = Float32Array.from(st.mm, (v) => v / 1000); st.key = st.plant * 2 + st.frame; }
+      end.stems.sort((x, y) => x.key - y.key);
+    }
+    grown.ready = true;
+    if (sweep.id === id) choose(sweep);
   }
 
   function choose(sw) {
@@ -240,6 +324,16 @@
     $("cost").textContent = sw.costs;
     $("src").textContent = sw.source ? "From " + sw.source : "";
     for (const b of $("sweeps").children) b.setAttribute("aria-pressed", b.dataset.id === sw.id);
+    const grown = window.GROWN && window.GROWN[sw.id], has = !!(grown && grown.ready);
+    $("time").hidden = $("grownBlock").hidden = !has;
+    $("lead").textContent = has ? "The planting is grown at the two ends only; in between there is timber and nothing else." : "Timber only: nothing is grown on this one.";
+    if (has) {
+      const u = grown.end.setup;
+      day = grown.start.lastDay;
+      $("t").max = day; $("t").value = day;
+      $("statement").textContent = grown.start.statement;
+      $("setup").textContent = `Care ${u.care}, seed ${u.seed}, planted standing ${u.specimenM} m, simulator ${u.simulator}.`;
+    }
     set(0);
   }
 
@@ -286,6 +380,13 @@
   $("base").textContent = D.base;
   $("s").oninput = (e) => { play(false); set(+e.target.value); };
   $("play").onclick = () => play(!playing);
+  $("t").oninput = (e) => { day = +e.target.value; draw(); };
+  for (const sw of D.sweeps) {  // the grown ends of a change, where grown.mjs has written them
+    const tag = document.createElement("script");
+    tag.src = `grown-${sw.id}.js`;
+    tag.onload = () => arrived(sw.id);
+    document.head.append(tag);
+  }
   let held = null;
   canvas.onpointerdown = (e) => { held = [e.clientX, e.clientY]; canvas.setPointerCapture(e.pointerId); };
   canvas.onpointerup = () => { held = null; };
