@@ -1,5 +1,5 @@
 // Serves this folder so the deck opens at the same addresses it has on the website.
-//   node deck/serve.mjs [port]        then http://localhost:5312/designx/v7
+//   node deck/serve.mjs [port]        then http://localhost:5312/designx/v8
 //
 // Nothing is built and nothing is installed: the deck is plain files. A server is used instead of opening the
 // file because the customer film is sought through, which needs byte ranges, and because each edition expects
@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const port = Number(process.argv[2] ?? process.env.PORT ?? 5312);
-const newest = '/designx/v7';
+const newest = '/designx/v8';
 
 const types = {
   '.html': 'text/html; charset=utf-8',

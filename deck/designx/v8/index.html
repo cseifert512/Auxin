@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#0B1D18">
+  <meta name="description" content="Buildings that grow. One room followed through time, what its plants asked of it, and the means to make many.">
+  <title>Buildings That Grow · Bower × MIT–LUMA</title>
+  <script>
+    // As the earlier editions do: this page lives at /designx/v8 with no file name, so say where its files are
+    // before any of them is asked for. Opened from disk, they are beside it.
+    const base = document.createElement('base');
+    base.href = location.protocol === 'file:' ? new URL('./', location.href).href : '/designx/v8/';
+    document.head.append(base);
+    document.documentElement.classList.add('js');
+    for (const file of ['../4/fonts.css', 'site.css']) {
+      const sheet = document.createElement('link');
+      sheet.rel = 'stylesheet'; sheet.href = file;
+      document.head.append(sheet);
+    }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#room">Skip to the room</a>
+
+  <header class="mast">
+    <a class="mark" href="#open" aria-label="Bower, to the top">bower</a>
+    <p class="clock" id="clock" hidden><span id="clock-what"></span><b id="clock-when"></b></p>
+  </header>
+
+  <main>
+    <!-- 1. the name -->
+    <section id="open" class="dark open">
+      <p class="kicker">MIT DesignX × LUMA · 2026</p>
+      <h1>Buildings <em>that grow.</em></h1>
+      <p class="lede">And the means to make many.</p>
+      <p class="cue"><i aria-hidden="true"></i>Scroll. It is the only control here, and it is time.</p>
+    </section>
+
+    <!-- 2. why -->
+    <section id="why" class="dark why">
+      <blockquote class="reveal">
+        <p>We mine, pour, and cut; we assemble inert objects that begin decaying the moment they’re complete; and we’ve quietly accepted that the largest thing our species makes — the built world — is also <em>the most severed from the living one.</em></p>
+      </blockquote>
+    </section>
+
+    <!-- 3. the whole, first: scroll is years -->
+    <section id="room" class="scene paper" data-scene="frames" data-what="The room" data-src="frames/time-" data-count="34" data-panels="3" style="--len: 8">
+      <div class="stage">
+        <header class="scene-head">
+          <p class="kicker">One Bower, followed all the way</p>
+          <h2>A room, <em>through time.</em></h2>
+        </header>
+        <figure class="drawing">
+          <div class="fit">
+            <canvas aria-label="The same room from above, on the approach and from inside: first as a design in dashed line, then assembled member by member, planted, and grown through its seasons."></canvas>
+            <ol class="panels"><li>From above</li><li>On the approach</li><li>Inside</li></ol>
+          </div>
+        </figure>
+        <div class="notes">
+          <p data-from="0" data-to="0.055"><b>The design.</b> A plan of rooms, bays and crowns. The roof, the timber and every joint are made from it.</p>
+          <p data-from="0.055" data-to="0.47"><b>Assembly.</b> Each member is milled to its own shape and carries its own name. They go up one by one.</p>
+          <p data-from="0.47" data-to="0.535"><b>Planting.</b> Grown specimens go in where the timber meets the ground.</p>
+          <p data-from="0.535" data-to="0.745"><b>Establishing.</b> A gardener ties in and prunes. The timber is what the plants climb.</p>
+          <p data-from="0.745" data-to="1.01"><b>Established,</b> and still changing: leaf, flower, leaf fall, bare stem, leaf again.</p>
+        </div>
+        <footer class="scene-foot">
+          <div class="rail" aria-hidden="true"><i></i><ol></ol></div>
+          <p class="statement">A growth scenario on stated assumptions, not a forecast. Concept geometry; trial planting.</p>
+        </footer>
+      </div>
+    </section>
+
+    <!-- 4. what makes it hard -->
+    <section id="hard" class="dark hard">
+      <p class="big reveal">A building like this is not finished when it is built. Nobody can yet draw, promise or price one whose finished state is years away, and partly <em>not theirs to decide.</em></p>
+      <p class="bet reveal">Variability is the essence of nature and the enemy of industry; Bower’s bet is to make variability manufacturable.</p>
+    </section>
+
+    <!-- 5. taken apart: scroll is one day -->
+    <section id="light" class="scene paper" data-scene="frames" data-what="The floor of the room" data-src="frames/light-" data-count="37" data-panels="3" style="--len: 5">
+      <div class="stage">
+        <header class="scene-head">
+          <p class="kicker">The same room, one midsummer day</p>
+          <h2>Growth changes <em>the light.</em></h2>
+        </header>
+        <figure class="drawing">
+          <div class="fit">
+            <canvas aria-label="Three plans of the room on one midsummer day, with the shade on its floor: as installed, establishing and established. The sun mark moves round and the shade with it."></canvas>
+            <ol class="panels"><li>At installation</li><li>Establishing</li><li>Established</li></ol>
+          </div>
+        </figure>
+        <div class="notes">
+          <p data-from="0" data-to="1.01"><b>Shade on the floor,</b> from six in the morning to six at night. The frame is dashed overhead; the red mark is the sun. What the timber alone shades, and what the planting adds, are different rooms.</p>
+        </div>
+        <footer class="scene-foot">
+          <div class="rail" aria-hidden="true"><i></i><ol></ol></div>
+          <p class="statement">A growth scenario on stated assumptions, not a forecast. Concept geometry; trial planting.</p>
+        </footer>
+      </div>
+    </section>
+
+    <!-- 6. the room as it is stood in -->
+    <section id="around" class="paper around">
+      <header class="scene-head reveal">
+        <p class="kicker">Turning on the spot, in the middle of it</p>
+        <h2>Planting becomes <em>part of the room.</em></h2>
+      </header>
+      <figure class="strip reveal">
+        <img data-src="frames/space.webp" alt="The whole room unrolled into one long elevation: six pointed arches of timber lattice, with climbers up each pier and into the roof." width="2234" height="652">
+      </figure>
+    </section>
+
+    <!-- 7. the case: what the plants asked of the building -->
+    <section id="found" class="paper found">
+      <header class="scene-head reveal">
+        <p class="kicker">What growing it told us</p>
+        <h2>The plants found <em>the joints.</em></h2>
+      </header>
+      <ol class="account">
+        <li class="reveal"><b>We grew this room three times,</b> with the same planting and the same care.</li>
+        <li class="reveal"><b>It has 631 milled joints.</b> Clinging plants reached 13 of them every time, and 9 more some of the time.</li>
+        <li class="reveal"><b>At each, the notch left a slot</b> 3 mm wide and 110 mm deep, straight ahead of the stem.</li>
+        <li class="reveal"><b>So those laps are cut differently.</b> The wall bears on a 30 mm land and opens 40 mm either side: a pocket a stem can lie in.</li>
+        <li class="reveal"><b>Eighteen laps are cut this way.</b> The room was rebuilt with them, and grown again.</li>
+      </ol>
+      <figure class="plate reveal">
+        <div class="plate-scroll">
+          <img data-src="frames/joints.webp" alt="One lap joint of the roof drawn three times, as every lap is cut, cut splayed, and the splayed lap after years of growth with ivy on it; then the whole room grown." width="2234" height="652">
+          <ol class="panels four"><li>As every lap is cut</li><li>As this one is cut now</li><li>The same lap, grown</li><li>The room, on the building as now cut</li></ol>
+        </div>
+      </figure>
+      <p class="statement">Simulated, not built. That a stem wedges a gap is taken from what clinging plants do to fences and cladding; the simulator does not show it. The splayed lap’s sizes are provisional and its strength is not checked. Four housings the planting named still want a detail of their own.</p>
+    </section>
+
+    <!-- 8. the means to make many: scroll is seconds -->
+    <section id="line" class="factory line">
+      <header class="scene-head reveal">
+        <p class="kicker">The means to make many</p>
+        <h2>Different parts. <em>A repeatable process.</em></h2>
+        <p class="sub">Fourteen connected operations, from timber preparation to a finished rib.</p>
+      </header>
+      <figure class="sheet reveal">
+        <iframe data-factory="overview" data-src="../5/factory/overview.html" title="Process overview: factory development drawing" tabindex="-1"></iframe>
+      </figure>
+    </section>
+
+    <section id="make" class="scene factory" data-scene="factory" data-what="The line" style="--len: 6">
+      <div class="stage">
+        <header class="scene-head">
+          <p class="kicker">Three of the fourteen</p>
+          <h2>Form. Measure. <em>Machine.</em></h2>
+        </header>
+        <figure class="sheet">
+          <div class="fit">
+            <iframe data-station="Form" data-seconds="34" data-src="../5/factory/05-press.html" title="05 · Press: factory development drawing" tabindex="-1"></iframe>
+            <iframe data-station="Measure" data-seconds="34" data-src="../5/factory/07-scan.html" title="07 · Scan: factory development drawing" tabindex="-1"></iframe>
+            <iframe data-station="Machine" data-seconds="34" data-src="../5/factory/11-cut.html" title="11 · Cut: factory development drawing" tabindex="-1"></iframe>
+          </div>
+        </figure>
+        <div class="notes">
+          <p data-from="0" data-to="0.3334"><b>Form.</b> Robot-set pins shape the glued layers; yokes hold them in place.</p>
+          <p data-from="0.3334" data-to="0.6667"><b>Measure.</b> A scan compares the rib with its target.</p>
+          <p data-from="0.6667" data-to="1.01"><b>Machine.</b> Joint geometry becomes a cutting sequence. A splayed lap is one more.</p>
+        </div>
+        <footer class="scene-foot">
+          <div class="rail" aria-hidden="true"><i></i><ol></ol></div>
+          <p class="statement">Factory development studies by Daniel Guerra. Proposed process, not an operating line. Scan deviations are illustrative.</p>
+        </footer>
+      </div>
+    </section>
+
+    <!-- 9. what is not designed yet -->
+    <section id="next" class="dark hard">
+      <p class="kicker reveal">What is not designed yet</p>
+      <p class="big reveal">Every study here changed the building and held the planting still. Which plant goes where, and why, is <em>the next thing to design.</em></p>
+    </section>
+
+    <!-- 10. the first places -->
+    <section id="first" class="paper first">
+      <header class="scene-head reveal">
+        <p class="kicker">Where the first ones could stand</p>
+        <h2>The first <em>customers.</em></h2>
+      </header>
+      <div class="places">
+        <figure class="reveal"><img data-src="../assets/buyer-private.webp" alt="Concept image: a planted timber room in a private garden."><figcaption><b>A legacy.</b>Private gardens</figcaption></figure>
+        <figure class="reveal"><img data-src="../assets/higgsfield/cultural-destination.webp" alt="Concept image: a planted timber pavilion at a cultural destination."><figcaption><b>A reason to visit.</b>Cultural destinations</figcaption></figure>
+        <figure class="reveal"><img data-src="../assets/higgsfield/resort-hospitality.webp" alt="Concept image: planted timber arches at a coastal hotel."><figcaption><b>Somewhere unforgettable.</b>Hospitality</figcaption></figure>
+      </div>
+      <div class="talks reveal">
+        <p>In discussion with</p>
+        <img data-src="../3/assets/prospects/eden-project.svg" alt="Eden Project">
+        <img data-src="../3/assets/prospects/the-newt.svg" alt="The Newt in Somerset">
+        <img data-src="../3/assets/prospects/25hours.svg" alt="25hours Hotels">
+      </div>
+      <p class="statement">Active conversations, not signed commissions. The three pictures are generated concept images, not work for these organisations and not drawings of the room above.</p>
+
+      <div class="steps reveal">
+        <h3>One Bower. Three steps. <span>Agree your budget first.</span></h3>
+        <ol>
+          <li><span>01 Commission</span><b>£65,000</b><i>Deducted from total build cost.</i></li>
+          <li><span>02 Build</span><b>Fixed build price</b></li>
+          <li><span>03 Grow</span><b>Annual care</b></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 11. who -->
+    <section id="us" class="paper us">
+      <header class="scene-head reveal">
+        <h2>Architecture. Ecology. <em>Software. Manufacturing.</em></h2>
+      </header>
+      <div class="people">
+        <figure class="reveal"><img data-src="../assets/clay.jpg" alt="Clay Seifert"><figcaption><b>Clay Seifert</b>Architecture. Computation. Living systems.<i>UT Austin / B.Arch</i></figcaption></figure>
+        <figure class="reveal"><img data-src="../assets/daniel.jpg" alt="Daniel Guerra"><figcaption><b>Daniel Guerra</b>Software. Fabrication. Project delivery.<i>Forsite Studio / project experience</i></figcaption></figure>
+      </div>
+    </section>
+
+    <!-- 12. the close -->
+    <section id="close" class="dark close">
+      <p class="kicker reveal">MIT DesignX × LUMA</p>
+      <h2 class="reveal">A room is <em>the beginning.</em></h2>
+      <p class="lede reveal">Make the first Bower possible.<br>Develop the means to make many.</p>
+      <p class="colophon">Architectural concept · November 2026 · <a href="https://www.bowerbuild.org" target="_blank" rel="noopener">bowerbuild.org</a></p>
+    </section>
+  </main>
+
+  <noscript><p class="no-script">The drawings on this page move with the scroll, which needs JavaScript.</p></noscript>
+  <script>
+    const script = document.createElement('script');
+    script.src = 'site.js';
+    document.body.append(script);
+  </script>
+</body>
+</html>

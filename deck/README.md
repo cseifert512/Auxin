@@ -31,15 +31,21 @@ The earlier editions' own pages came along too (they are small), so `/designx`, 
 node deck/serve.mjs
 ```
 
-Then http://localhost:5312/designx/v7. From the top of the repository, `.claude/launch.json` starts the same thing as `deck`. Nothing is built or installed. `serve.mjs` is about ninety lines and exists so that the deck sits at the same addresses as on the website, the customer film can be sought through, and an edit shows on the next reload.
+Then http://localhost:5312/designx/v8 for ours, or `/designx/v7` for the deck as copied. From the top of the repository, `.claude/launch.json` starts the same thing as `deck`. Nothing is built or installed. `serve.mjs` is about ninety lines and exists so that the deck sits at the same addresses as on the website, the customer film can be sought through, and an edit shows on the next reload.
 
 Add `?print=1` to an edition's address to see every slide as it is laid out for the PDF. `#slide-04` goes to a slide.
 
 ## Our own versions
 
-None yet. The copy is kept as it came so that it can always be compared with the website's. A version of ours is a new folder beside `v7`, with its own `index.html` saying which files it loads; that is how every edition so far was made.
+The copy is kept as it came so that it can always be compared with the website's. A version of ours is a new folder beside `v7`.
 
-Two things to know before starting one:
+| Version | What it is |
+|---|---|
+| [`designx/v8/`](designx/v8/README.md) | The first of ours: one page that is scrolled, not a set of slides. Scrolling is the only control and it moves time: the room through its years, a day on its floor, seconds at the mill. |
+
+`node deck/pieces.mjs` copies the pictures a version uses out of `../drawings-in-code/exports/deck/` into that version's folder. Run it again after a plate is remade.
+
+Two things to know before starting one from the slides:
 
 - The story is not in one place. `slides.js` holds the first edition's slides, and `2/edition.js`, `3/edition.js` and `v7/edition.js` each rewrite that list in turn. To find where a slide's words come from, search for them.
 - Slides 4, 5 and 14 hold a note where a drawing goes. The drawings made so far for 4 and 5 are in `../drawings-in-code/exports/deck/`.
