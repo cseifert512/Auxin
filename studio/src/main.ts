@@ -46,6 +46,7 @@ const RUN_NAMES: Record<string, string> = {
   'high-10y': 'Tended, ten years: every plant at the high end of its published growth',
   'capped-10y': 'As first drawn: main stems stopped at an assumed length',
   'loose-10y': 'Tended with a lighter hand: vine, akebia and honeysuckle not cut back',
+  'cover-10y': 'Planted for cover: three vigorous climbers and an accent at each pier',
   'untended-10y': 'Untended, ten years',
 };
 const run = runs.has(url.get('run') ?? '') ? url.get('run')! : runs.has('trained-10y') ? 'trained-10y' : [...runs.keys()][0];

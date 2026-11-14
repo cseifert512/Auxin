@@ -43,6 +43,7 @@ by act.
 | `high-10y` | the same with every plant at the high end of what is published for a year's growth (`--band=high`) |
 | `capped-10y` | as the drawings were first grown, on the simulator's `main`: kept to compare with |
 
+| `cover-10y` | the same building, the same number of plants and the same rules, planted for cover: three vigorous climbers and one accent at each pier (`npm run plant -- --palette=cover --out=planting-cover.json`, then `--plan=planting-cover.json`). Ten years on it holds 94% of the routes where `trained-10y` holds 83%, and from above 31% of the timber is seen in June where 62% was |
 | `loose-10y` | the same as `trained-10y` with a lighter hand: the vine, the akebias and the honeysuckles not cut back to keep them in, and growth let stand 1.2 m off the timber (`--free=vine,akebia,honeysuckle --loose=1.2`) |
 
 `npm run compare` sets them side by side. `--band=low` is the other end of what is published, and
@@ -52,8 +53,9 @@ by act.
 routine for a plant kept within bounds, and on this building that routine cuts off 6.8 km of stem in ten years,
 4.1 km of it from the one vine. `--free=` and `--loose=` loosen it before it is carried out. Tried: it takes the
 cutting down to 0.6 km and changes what is seen by only a few points of leaf, so the knife is not what keeps the
-planting thin. What does is how much each plant grows in a year (`--band`), how many of the plants are vigorous
-ones, and how many there are.
+planting thin. What does is which plants are planted: in `trained-10y` six of the twenty-four carry two thirds
+of all the growth, and `cover-10y`, with the same number of plants, has 40% more framework. After that, how much
+each plant grows in a year (`--band`), and how many plants there are.
 
 In the studio: **Play** or drag the line of time; Space plays, the arrow keys step along it (further with Shift).
 Drag to turn the drawing, scroll to come closer. **Timber / Left to silver / Ink** draws the timber in its own
