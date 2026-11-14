@@ -1,2 +1,5 @@
 # Snapshot files are frozen and hashed in their manifest: no line-ending conversion on checkout.
 releases/** -text
+
+# The deck's copied editions are kept byte for byte as they came from the website's repository.
+deck/designx/** -text

@@ -1,0 +1,43 @@
+/* Edition 03 inherits the type and colour system; this sheet shapes the argument. */
+.designx-v3 .source-note a {color:inherit;text-underline-offset:3px}
+.designx-v3 .deck-brand-lockup {display:block;object-fit:contain;filter:grayscale(1) invert(1) brightness(2)}
+.designx-v3 .viewer-brand .deck-brand-lockup {width:112px;height:auto}
+.designx-v3 .wordmark .deck-brand-lockup {width:268px;height:auto}
+.designx-v3 .cover-title {top:275px;bottom:auto}
+.designx-v3 .cover-title h1 {font-size:164px;line-height:.88}
+.designx-v3 .cover-proposition {font:400 34px/1.25 var(--sans);letter-spacing:-.025em;margin-top:33px;max-width:900px}
+.designx-v3 .cover-shade {background:linear-gradient(90deg,#0B1D18C4,transparent 84%),linear-gradient(0deg,#0B1D189C,transparent 43%)}
+.designx-v3 .engine-purpose {position:absolute;left:80px;top:293px;max-width:735px;font:400 27px/1.4 var(--sans);letter-spacing:-.025em;color:var(--quiet)}
+.designx-v3 .factory-slide h2 {font-size:104px}
+.designx-v3 .buyers-slide .buyer-triptych {top:226px;bottom:225px}
+.designx-v3 .buyers-slide .buyer-triptych figcaption {padding:105px 31px 30px}
+.designx-v3 .buyers-slide .buyer-triptych h3 {margin-top:15px}
+.designx-v3 .prospect-strip {position:absolute;left:80px;right:80px;top:704px;height:119px;display:grid;grid-template-columns:320px 1fr 1fr 1fr;gap:42px;align-items:center}
+.designx-v3 .prospect-strip>p {font:400 30px/1.1 var(--sans);letter-spacing:-.035em;color:var(--evergreen);margin:0}
+.designx-v3 .prospect-logo {display:flex;align-items:center;justify-content:center;height:119px;text-decoration:none}
+.designx-v3 .prospect-logo>img {display:block;object-fit:contain;width:100%;height:auto;max-height:110px;filter:brightness(0);opacity:.88}
+.designx-v3 .prospect-logo-eden>img {max-width:260px;filter:none;opacity:1}
+.designx-v3 .prospect-logo-newt>img {max-height:110px;max-width:110px}
+.designx-v3 .prospect-logo-25hours>img {max-width:186px}
+.designx-v3 .prospect-logo:hover {opacity:.72}
+.designx-v3 .buyers-slide .source-note {left:80px;bottom:27px;color:var(--quiet);font-size:12px}
+.designx-v3 .buyers-slide>.folio {color:var(--quiet)}
+.designx-v3 .commission-purpose {position:absolute;left:80px;top:315px;max-width:1100px;font:400 26px/1.35 var(--sans);letter-spacing:-.025em;color:var(--quiet)}
+.designx-v3 .fee-sequence {top:426px}
+.designx-v3 .fee-stage>p.fee {font-size:55px;margin-top:23px}
+.designx-v3 .fee-stage>p.fee.range {font-size:55px;margin-top:23px}
+.designx-v3 .fee-mark {height:83px;margin-top:13px}
+.designx-v3 .fee-mark svg {height:83px}
+.designx-v3 .capability-connector {top:667px}
+.designx-v3 .capability-rail {top:710px;padding-top:18px}
+.designx-v3 .capability-rail>span {font-size:31px;line-height:1.08}
+.designx-v3 .flywheel-scene .fw-coupled-title h2 {font-size:61px}
+.designx-v3 .fw-coupled-title {max-width:940px;top:60px}
+.designx-v3 .mission-bridge {position:absolute;left:80px;top:193px;font:400 20px/1.35 var(--sans);letter-spacing:-.025em;color:var(--quiet)}
+.designx-v3 .closing-shade {background:linear-gradient(90deg,#0B1D18D9,#0B1D1887 92%),linear-gradient(0deg,#0B1D18B3,transparent 40%)}
+.designx-v3 .closing-copy {top:265px}
+.designx-v3 .closing-copy h2 {font-size:143px}
+.designx-v3 .closing-ask {font-size:30px;margin-top:44px}
+.designx-v3 .closing-thesis {position:absolute;left:925px;right:95px;top:273px;margin:0;font:400 30px/1.37 var(--sans);letter-spacing:-.025em;color:var(--sage-grey)}
+.designx-v3 .closing-thesis strong {font-weight:500;color:var(--floral)}
+@media(max-width:760px) {.designx-v3 .edition-navigation {gap:8px}.designx-v3 .viewer-edition {display:none}}

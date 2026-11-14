@@ -12,6 +12,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "5311", "--directory", "drawings-in-code/sketches"],
       "port": 5311
+    },
+    {
+      "name": "deck",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["deck/serve.mjs", "5312"],
+      "port": 5312
     }
   ]
 }

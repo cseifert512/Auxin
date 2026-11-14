@@ -10,6 +10,7 @@ One repository for Bower's building model, its plant simulator and the drawings 
 | `Horti-code-ture/` | How plants behave: the species library, the growth simulator and its viewer. TypeScript. | Know anything about one particular building. |
 | `drawings-in-code/` | Joining the two: converting a snapshot, growing a planting on it, scoring it, drawing and filming it. Node, with a three.js studio. | Invent parts of the building. |
 | `releases/` | The hand-off: named, frozen snapshots of the building. Written by `bower-blender`, read in place by `drawings-in-code`. | Get edited. A snapshot is never changed or overwritten; a refined model is a new name. |
+| `deck/` | The presentation the drawings are for: a copy of the DesignX deck from the website's repository (`deck/designx/`, live edition `v7`), and our own versions of it. Plain HTML, CSS and JavaScript, nothing built. | Have its copied editions changed. A version of ours is a new folder beside `v7`. |
 
 Authority runs one way: building, snapshot, plants, drawings. What comes back is scores from a grown planting, which inform the building's parameters.
 
@@ -21,6 +22,7 @@ Read the part's own notes before changing it. They still apply in full.
 - `bower-blender/README.md`: the generator, its parameters, joints, training lines, the ground at a pier, tests.
 - `drawings-in-code/README.md`: the pipeline, the studio, films and plates. `drawings-in-code/docs/for-the-building-model.md` is the planting side's brief for the building.
 - `releases/README.md`: what a snapshot holds and how one is made.
+- `deck/README.md`: what was copied from the website's repository and what was left there, how the editions load each other, how to open it.
 - `docs/studies.md`: a proposal, not built: handing the drawings a design change as it happens, with its reasons, so they can show the building changing for the plants.
 
 ## How the parts reach each other
@@ -43,7 +45,7 @@ cd Horti-code-ture && npm install && npm run check
 cd drawings-in-code && npm run convert && npm run plant && npm run grow -- <snapshot> trained 10 7 --specimen=3
 ```
 
-`.claude/launch.json` at the top starts the drawing studio on port 5310. Each part's own `.claude/launch.json` is for a session opened in that folder.
+`.claude/launch.json` at the top starts the drawing studio on port 5310 and the deck on port 5312 (`node deck/serve.mjs`, then `/designx/v7`). Each part's own `.claude/launch.json` is for a session opened in that folder.
 
 ## Things that will catch you out
 

@@ -12,6 +12,7 @@ A Bower is a timber lattice that plants and gardeners finish. Designing one mean
 | [`Horti-code-ture/`](Horti-code-ture/README.md) | The plant simulator: a library of climbers and a model of how they occupy a structure over years, with its own viewer. TypeScript. | `Horti-code-ture/README.md` |
 | [`drawings-in-code/`](drawings-in-code/README.md) | The drawings: a snapshot of the building, a planting grown on it, and both drawn along one line of time. Node, with a three.js studio. | `drawings-in-code/README.md` |
 | [`releases/`](releases/README.md) | Named, frozen snapshots of the building. The building model writes them and the drawings read them in place. | `releases/README.md` |
+| [`deck/`](deck/README.md) | The presentation the drawings are made for: a copy of Bower's "Buildings That Grow" deck from the website's repository, and our own versions of it. Plain files, nothing built. | `deck/README.md` |
 
 ## How they fit together
 

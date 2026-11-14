@@ -1,0 +1,13 @@
+/* Three customer steps, with the commission deduction stated once. */
+.designx-v7 .v7commercial-scene {position:absolute;inset:0;background:#0B1D18;color:#EEF3EA;font-family:var(--sans)}
+.designx-v7 .v7commercial-title {position:absolute;left:80px;right:80px;top:67px;margin:0;font:400 116px/1.03 var(--display);letter-spacing:-.045em}
+.designx-v7 .v7commercial-title em {font:inherit;font-style:italic}
+.designx-v7 .v7commercial-budget {position:absolute;left:80px;top:259px;margin:0;padding-left:21px;border-left:3px solid #B7CD7B;font:400 32px/1.2 var(--sans);letter-spacing:-.025em;color:#B7CD7B}
+.designx-v7 .v7commercial-steps {position:absolute;left:80px;right:80px;top:364px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:72px}
+.designx-v7 .v7commercial-steps>section {min-width:0;border-top:1px solid #B1C1B566;padding-top:26px}
+.designx-v7 .v7commercial-step {margin:0;font:500 30px/1.2 var(--sans);letter-spacing:-.025em;color:#EEF3EA}
+.designx-v7 .v7commercial-step>span {display:inline-block;margin-right:17px;font:400 21px/1 var(--sans);letter-spacing:0;color:#B1C1B5}
+.designx-v7 .v7commercial-value {margin:57px 0 0;font:500 80px/1.03 var(--sans);letter-spacing:-.055em;color:#EEF3EA}
+.designx-v7 .v7commercial-payment {color:#B7CD7B}
+.designx-v7 .v7commercial-deduction {margin:28px 0 0;font:400 27px/1.3 var(--sans);letter-spacing:-.025em;color:#B1C1B5}
+.designx-v7 .v7commercial-scene~.folio {color:#B1C1B5}
