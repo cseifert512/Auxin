@@ -84,6 +84,7 @@ shows after it is restarted.
 
 ```bash
 npm run film -- --view=approach --timber=ink                # both proportions
+npm run film -- --view=approach --timber=wood --name=approach-timber    # the same with the timber in its colour
 npm run film -- --view=drawing --timber=wood --format=landscape --build=10 --grow=40
 ```
 
