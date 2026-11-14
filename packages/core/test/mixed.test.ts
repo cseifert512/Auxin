@@ -105,10 +105,15 @@ describe('old wood and new wood answer hard pruning differently', () => {
 // shoot with overwintering flower buds, those buds cannot flower."
 describe('the winter clematis, which flowers on last summer’s shoots', () => {
   const opened = (sim: Simulation, winterOf: number) => sim.buds.filter((b) => b.plantId === 'winter-clematis' && b.floweringYear === winterOf && b.openDay !== null);
-  /** A flower at the end of a side shoot whose foot stands within the 0.25 m of stem, measured from the ground along the stem, that a cut to 0.25 m keeps. */
+  /**
+   * A flower on a shoot whose foot stands within the 0.25 m of stem, measured from the ground along the stem, that a cut
+   * to 0.25 m keeps: at the end of a side shoot or, since 14 November 2026, along a long shoot of the year that broke
+   * from so low (the plant is laid out differently now that its main stem is led, and has one). A cut takes lineage, so
+   * either stays.
+   */
   const onTheStub = (sim: Simulation, b: (typeof sim.buds)[number]) => {
     const a = sim.axes.get(b.axisId)!;
-    if (b.pointIndex !== null || a.role !== 'side_shoot' || !a.parent) return false;
+    if (!a.parent || (a.role === 'side_shoot' ? b.pointIndex !== null : a.role !== 'whip')) return false;
     let along = 0;
     for (let at: { axisId: string; pointIndex: number } | null = a.parent; at; ) {
       const host: Axis = sim.axes.get(at.axisId)!;

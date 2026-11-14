@@ -84,26 +84,32 @@
       "basis": "Not used: the racemes open and fall together, within the two windows above."
     },
     "extension.leaderMPerSeason": {
-      "value": 2.6,
+      "value": 2.1,
       "unit": "m",
       "status": "provisional_design_assumption",
-      "basis": "Carried over from the Wisteria prototype (docs/ASSUMPTIONS_AUDIT.md section 2.4). Not measured."
+      "source": "https://plantfacts.osu.edu/tmi/Plantlist/wisteria.html",
+      "range": [
+        0.61,
+        3.05
+      ],
+      "basis": "No measurement of a season's extension of wisteria was found in any paper, flora, RHS record or in Bean; the US Forest Service's review says \"Rates and distances of spread are not known\". The range is the one published statement that gives both ends, Ohio State University's plant record for the genus: \"stems during the current season's growth are virtually unbranched, often growing from two to ten feet during the growing season\", and \"up to ten feet per year under optimum conditions\"; in metres. It is said of any stem of the season, in the heat of an American summer, so its low end is low for a leading stem and its high end is a ceiling for a British one. The value is the one figure found for a British garden, at second hand from a nursery's blog: \"around seven feet of new growth in one season\" (https://blog.thompson-morgan.com/wisteria-masterclass-best-expert-content). Until 14 November 2026 the prototype's 2.6 m stood here. Not measured: the first number to measure on a plant."
     },
     "extension.lateralMPerSeasonByOrder": {
       "value": [
-        2.4,
-        2,
-        1.6
+        1.94,
+        1.62,
+        1.29
       ],
       "unit": "m",
       "status": "provisional_design_assumption",
-      "basis": "Carried over from the Wisteria prototype (docs/ASSUMPTIONS_AUDIT.md section 2.4). Not measured."
+      "basis": "The Wisteria prototype had laterals of the first, second and third order make 2.4, 2.0 and 1.6 m a season against a leader's 2.6 m (docs/ASSUMPTIONS_AUDIT.md section 2.4). The same shares of this model's leader, 2.1 m. The shares are the prototype's and have not been measured; all three lie inside the 0.6 to 3 m that Ohio State University gives for a stem of the season."
     },
     "extension.whipMPerSeason": {
-      "value": 3.2,
+      "value": 3.05,
       "unit": "m",
       "status": "provisional_design_assumption",
-      "basis": "Carried over from the Wisteria prototype (docs/ASSUMPTIONS_AUDIT.md section 2.4). Not measured."
+      "source": "https://plantfacts.osu.edu/tmi/Plantlist/wisteria.html",
+      "basis": "Ohio State University's plant record for the genus: growth of \"up to ten feet per year under optimum conditions\", in metres. The long shoots of the year are the plant at its fastest, so they are given the top of what is published; how long each gets is organs.whipLengthM. Until 14 November 2026 the prototype's 3.2 m stood here. Not measured."
     },
     "extension.establishmentFactorByYear": {
       "value": [
@@ -111,7 +117,17 @@
         0.8
       ],
       "status": "provisional_design_assumption",
-      "basis": "Carried over from the Wisteria prototype (docs/ASSUMPTIONS_AUDIT.md section 2.4). Not measured."
+      "source": "https://plantfacts.osu.edu/tmi/Plantlist/wisteria.html",
+      "range": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.5
+        ]
+      ],
+      "basis": "What is published is how long the slow start lasts, not how slow it is: \"often slow to establish during its first one to two years of growth, but grows very rapidly thereafter\" (Ohio State University, of the genus); \"Can be slow to establish\" (Missouri Botanical Garden, of this species). The range is that span of time: two slow seasons at its low end, one at its high end, and the value lies between them. The half that a slow season is taken to make is the Wisteria prototype's and has no published counterpart. A trial in Tokyo had large pot-grown Wisteria floribunda reach the end of a 2 m trellis within four months of planting (https://www.tokyo-aff.or.jp/uploaded/attachment/6274.pdf), so a big nursery plant, watered, need not be slow at all."
     },
     "architecture.trunkStemStartYears": {
       "value": [
@@ -134,14 +150,11 @@
       "status": "provisional_design_assumption",
       "basis": "Carried over from the Wisteria prototype (docs/ASSUMPTIONS_AUDIT.md section 2.4). Not measured."
     },
-    "architecture.leaderLengthM": {
-      "value": [
-        7,
-        8.6
-      ],
+    "architecture.maxStemLengthM": {
+      "value": null,
       "unit": "m",
-      "status": "provisional_design_assumption",
-      "basis": "Carried over from the Wisteria prototype (docs/ASSUMPTIONS_AUDIT.md section 2.4). Not measured. The prototype plans 5 to 6.5 m beyond the eave, after about 2.1 m of rib leg."
+      "status": "unknown",
+      "basis": "Nothing published bounds the length of a stem of this plant, and what is published says that its support does. Bean: \"Where wall space is available, it will extend forty yards or more from each side of the stem\" (https://www.treesandshrubsonline.org/articles/wisteria/wisteria-sinensis/). The US Forest Service's review: \"individual vines have been documented at over 70 feet (21 m) long\" (https://www.fs.usda.gov/database/feis/plants/vine/wisspp/all.html). The RHS gives its height as \"Higher than 12 metres\" (https://www.rhs.org.uk/plants/19126/wisteria-sinensis/details). Until 14 November 2026 a planned length of 7 to 8.6 m stood here, carried over from the Wisteria prototype, where it was the length of that structure's route: 5 to 6.5 m beyond the eave, after about 2.1 m of rib leg. It stopped every main stem at that length on any structure, and it was taken away."
     },
     "architecture.lateralLengthMByOrder": {
       "value": [

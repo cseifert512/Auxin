@@ -11,7 +11,7 @@ The purpose is neither to automate gardeners away nor pretend perfect natural se
 | Event | Targets | Graph/state effect | Key recorded fields |
 |---|---|---|---|
 | `plant` | root station, new individual | Adds individual and root/node state | planting date, stock size/age, cultivar, root condition, soil |
-| `train_leader` | living stem, desired support route | Changes growth direction/selection; may add temporary ties | gardener ID, route ID, angle, tie type, target position |
+| `train_leader` | living stem, desired support route | Changes growth direction/selection; may add temporary ties. Sets how far the framework is taken (to the top of the support, or held below a stated height above the plant's foot) and which main stems are led up (the first, or all). A main stem being led up is taken the shortest route to the top that has room. A later visit may change the plan: stems stopped under a height go on when it is lifted | gardener ID, route ID, angle, tie type, target position; extent and height; which stems are led up |
 | `tie_in` | stem, local support | Adds explicit mechanical attachment (not self-clinging) | materials, slack/clearance, planned inspection date |
 | `untie_or_reposition` | existing tie | Removes/replaces connection; tests support continuity | old/new contact, stem diameter |
 | `spur_prune` | selected lateral shoots and buds | Removes descendants/flower buds; changes next flowering probability | cut position, retained buds, date |

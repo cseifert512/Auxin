@@ -5,7 +5,7 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { type Morphology, parseMorphology } from '../morphology.ts';
-import { type GrowthModel, parseGrowthModel } from '../sim/model.ts';
+import { type BandEnd, type GrowthModel, atBandEnd, parseGrowthModel } from '../sim/model.ts';
 import { type TaxonProfile, parseTaxon } from '../taxon.ts';
 
 export function loadTaxa(speciesDir: string): Map<string, TaxonProfile> {
@@ -47,10 +47,30 @@ export function loadMorphologies(speciesDir: string): Map<string, Morphology> {
   return out;
 }
 
-/** Taxa that can be grown: those with both a profile and a growth model. */
-export function loadGrowable(speciesDir: string): Map<string, { profile: TaxonProfile; model: GrowthModel }> {
+/**
+ * Which end of their extension ranges the growth models are to be run at, where the environment says:
+ * `HORTI_GROWTH_BAND=low` or `high`. For a caller that loads the library and cannot be given an option, such as
+ * a script in another repository. Anything else, or nothing: the models as they are written.
+ */
+export function bandFromEnvironment(): BandEnd | null {
+  const end = process.env.HORTI_GROWTH_BAND;
+  if (end === undefined || end === '') return null;
+  if (end !== 'low' && end !== 'high') throw new Error(`HORTI_GROWTH_BAND is "${end}": it is "low" or "high", or not set`);
+  return end;
+}
+
+/**
+ * Taxa that can be grown: those with both a profile and a growth model.
+ *
+ * `band`: every model taken to the low or the high end of the ranges it gives for extension (`atBandEnd`), so that
+ * a result can be given as a band. Left out, the environment is asked (`bandFromEnvironment`); null, the models as
+ * written whatever the environment says. Each parameter changed is labelled a variation, and a run's design report
+ * lists it, so a run made at one end says so itself.
+ */
+export function loadGrowable(speciesDir: string, options: { band?: BandEnd | null } = {}): Map<string, { profile: TaxonProfile; model: GrowthModel }> {
+  const band = options.band === undefined ? bandFromEnvironment() : options.band;
   const taxa = loadTaxa(speciesDir);
   const out = new Map<string, { profile: TaxonProfile; model: GrowthModel }>();
-  for (const [id, model] of loadGrowthModels(speciesDir)) out.set(id, { profile: taxa.get(id)!, model });
+  for (const [id, model] of loadGrowthModels(speciesDir)) out.set(id, { profile: taxa.get(id)!, model: band ? atBandEnd(model, band) : model });
   return out;
 }

@@ -50,7 +50,8 @@ import { type GrowthModel, type OptionalParamKey, genericLeafKeys, genericShootK
 import { Rng, placeRng } from './rng.ts';
 import { liePath, pathAt, pathLength, twinePath } from './stem-path.ts';
 import { nextWindow, unrolled, windowFrom, windowTo } from './windows.ts';
-import type { AppendageSite, Axis, AxisRole, Decision, DecisionKind, EventRecord, FloralBud, FruitSite, GardenerEvent, Intent, LeafSite, Plant, Planting, Run, Scenario, Spacing, Tip, YearSummary } from './types.ts';
+import { DEFAULT_TRAINING } from './types.ts';
+import type { AppendageSite, Axis, AxisRole, Decision, DecisionKind, EventRecord, FloralBud, FruitSite, GardenerEvent, Intent, LeafSite, Plant, Planting, Run, Scenario, Spacing, Tip, TrainingPlan, YearSummary } from './types.ts';
 import { leafSilhouetteAreaM2 } from './view.ts';
 
 /** Metres of stem between stored points. */
@@ -123,6 +124,8 @@ export class Simulation {
   private readonly leafShedByDay = new Map<number, LeafSite[]>();
   private readonly topZ: number;
   private readonly routeTotalM: number;
+  /** Route length from every node to the top of the support, for each way of holding on: see `wayToTop`. */
+  private readonly waysToTop = new Map<string, Map<string, number>>();
   private serial = 0;
   /** The timber and cables as a shoot in the air meets them; made when the first such shoot grows. */
   private around: Surroundings | null = null;
@@ -218,7 +221,7 @@ export class Simulation {
       pendingLaterals: [],
       pendingWhips: [],
       pendingRegrowth: [],
-      training: { tieToTimber: p.tieToTimber ?? false, by: p.tieToTimber ? 'planting' : null },
+      training: { tieToTimber: p.tieToTimber ?? false, by: p.tieToTimber ? 'planting' : null, extent: p.train?.extent ?? DEFAULT_TRAINING.extent, stemsLedUp: p.train?.stemsLedUp ?? DEFAULT_TRAINING.stemsLedUp },
       summerPrunedYear: null,
       seasonStarted: null,
       budding: null,
@@ -284,12 +287,47 @@ export class Simulation {
     if (!entry) return null;
     const { model } = this.taxon(plant);
     const node = this.scenario.bower.graph.nodes.get(entry)!;
-    const axis = this.newAxis(plant, 'leader', 0, null, plant.rng.arch.range(...param(model, 'architecture.leaderLengthM')), param(model, 'extension.leaderMPerSeason'));
-    // the first stem makes for the crown; the others run level and form the lowest tier
-    axis.intent = index === 0 ? 'riser' : 'tier';
+    const axis = this.newAxis(plant, 'leader', 0, null, this.stemLimit(plant, model), param(model, 'extension.leaderMPerSeason'));
+    // the first stem makes for the crown; the others run level and form the lowest tier, unless the gardener leads every one up
+    axis.intent = index === 0 || plant.training.stemsLedUp === 'all' ? 'riser' : 'tier';
     axis.tip = { state: 'at_node', nodeId: entry, came: null };
     this.appendPoint(plant, axis, node.position, UP);
     return axis;
+  }
+
+  /**
+   * The length at which a main stem of this plant stops: drawn from the length published for a stem of its taxon
+   * where there is one (`architecture.maxStemLengthM`), and otherwise none. Nothing else ends a main stem but the
+   * support running out and the gardener's plan (`heldAt`).
+   *
+   * A number is drawn from the plant's stream either way, as it was when every main stem had a planned length, so
+   * that giving a taxon a published length, or taking an assumed one away, moves nothing else the plant decides: a
+   * run differs from one made with a cap only from the day a stem passes the length it would have stopped at.
+   */
+  private stemLimit(plant: Plant, model: GrowthModel): number {
+    const published = known(model, 'architecture.maxStemLengthM');
+    const draw = plant.rng.arch.next();
+    return published ? published[0] + (published[1] - published[0]) * draw : Infinity;
+  }
+
+  /**
+   * The height in the world above which nothing of this plant's framework is led, where its training plan holds it
+   * below one; null where the plan takes it to the top of the support.
+   */
+  private heldAt(plant: Plant): number | null {
+    const extent = plant.training.extent;
+    if (extent.to !== 'height') return null;
+    return this.scenario.bower.rootStations.find((s) => s.id === plant.stationId)!.position.z + extent.heightM;
+  }
+
+  /** Why a stem that has come to the length it stops at went no further; of a main stem it is also said in the decisions. */
+  private lengthReached(plant: Plant, axis: Axis): string {
+    if (axis.role !== 'leader') return 'reached its planned length';
+    const { profile, model } = this.taxon(plant);
+    const p = model.params['architecture.maxStemLengthM'];
+    const given = p.value ? `stems of this plant are given as ${p.value[0] === p.value[1] ? p.value[0] : `${p.value[0]} to ${p.value[1]}`} m long${p.source ? ` (${p.source})` : ''}` : 'that is the length it was to make';
+    this.note('stopped', plant, axis, `a main stem of ${profile.names.label} stopped ${this.lengthOf(axis).toFixed(1)} m long: ${given}. Whether there was support ahead of it did not decide this`);
+    return 'reached the length given for a stem of its kind';
   }
 
   /**
@@ -450,12 +488,14 @@ export class Simulation {
     if (this.newHolds.has(axis.id)) this.settleHold(plant, axis);
     let left = delta;
     let guard = 0;
+    // the gardener's hold on the framework's height, where the training plan sets one
+    const hold = axis.role === 'leader' || axis.role === 'lateral' ? this.heldAt(plant) : null;
     while (left > 1e-9 && guard++ < 10_000) {
       const tip = axis.tip;
       if (tip.state === 'stopped') return;
       const room = axis.targetLengthM - this.lengthOf(axis);
       if (room <= 1e-9) {
-        axis.tip = { state: 'stopped', reason: 'reached its planned length' };
+        axis.tip = { state: 'stopped', reason: this.lengthReached(plant, axis) };
         return;
       }
       if (tip.state === 'at_node') {
@@ -467,10 +507,28 @@ export class Simulation {
         const go = Math.min(left, room, total - tip.d);
         tip.d += go;
         left -= go;
+        // A stem on a rising member is stopped under the height its plant is held below. Only on a rising one: a coil
+        // round a level member lifts the stem by the member's own thickness, which is not making height.
+        const nodes = this.scenario.bower.graph.nodes;
+        const run = axis.runs[tip.run]!;
+        const rising = hold !== null && nodes.get(run.toNode)!.position.z - nodes.get(run.fromNode)!.position.z > 0.02;
+        let held = false;
         while (tip.emitted + STEP <= tip.d + 1e-9 && tip.emitted + STEP < total - 1e-6) {
+          const q = pathAt(tip.path, tip.emitted + STEP);
+          if (rising && q.p.z > hold!) {
+            held = true;
+            break;
+          }
           tip.emitted += STEP;
-          const q = pathAt(tip.path, tip.emitted);
           this.appendPoint(plant, axis, q.p, q.away);
+        }
+        if (!held && rising && tip.d >= total - 1e-9) held = pathAt(tip.path, total).p.z > hold!;
+        if (held) {
+          axis.runs[tip.run]!.lastPoint = axis.contact.length - 1;
+          // what it had grown towards the next point and not laid is given up: it stands where its last point is
+          tip.d = tip.emitted;
+          this.holdBelow(plant, axis, hold!, tip);
+          return;
         }
         if (tip.d >= total - 1e-9) {
           const q = pathAt(tip.path, total);
@@ -486,12 +544,12 @@ export class Simulation {
       // unsupported: a rod under its own weight, which turns to the light and may take hold again (growFree)
       const go = Math.min(left, room, tip.planM - tip.grownM, STEP);
       if (go <= 1e-9) {
-        axis.tip = { state: 'stopped', reason: 'reached its planned length' };
+        axis.tip = { state: 'stopped', reason: room <= 1e-9 ? this.lengthReached(plant, axis) : 'reached its planned length' };
         return;
       }
       // less than a micrometre left of today's growth is not laid (growFree lays nothing so short): it is let go
       if (go < 1e-6) {
-        if (tip.planM - tip.grownM < 1e-6 || room < 1e-6) axis.tip = { state: 'stopped', reason: 'reached its planned length' };
+        if (tip.planM - tip.grownM < 1e-6 || room < 1e-6) axis.tip = { state: 'stopped', reason: room < 1e-6 ? this.lengthReached(plant, axis) : 'reached its planned length' };
         return;
       }
       const laid = this.growFree(plant, axis, tip, go);
@@ -503,6 +561,14 @@ export class Simulation {
 
   private lengthOf(axis: Axis): number {
     return axis.alive > 0 ? axis.lengthAt[axis.alive - 1]! : 0;
+  }
+
+  /** Stop a stem of the framework under the height its plant is held below, and say so. */
+  private holdBelow(plant: Plant, axis: Axis, holdZ: number, at: Extract<Tip, { state: 'on_route' }>): void {
+    const extent = plant.training.extent;
+    const heightM = extent.to === 'height' ? extent.heightM : holdZ;
+    axis.tip = { state: 'stopped', reason: `held below ${heightM.toFixed(1)} m by the gardener`, held: at };
+    this.note('stopped', plant, axis, `stopped at ${axis.contact[axis.contact.length - 1]!.z.toFixed(2)} m: the gardener holds this plant's framework below ${heightM.toFixed(1)} m above its foot. There was support ahead of it`);
   }
 
   private appendPoint(plant: Plant, axis: Axis, p: Vec3, away: Vec3): void {
@@ -790,8 +856,15 @@ export class Simulation {
     const refuse = (why: string) => {
       refused[why] = (refused[why] ?? 0) + 1;
     };
+    const hold = axis.role === 'leader' || axis.role === 'lateral' ? this.heldAt(plant) : null;
 
-    let best: { edge: SupportEdge; mode: 'twine' | 'along'; tied: boolean; cost: number; dy: number; n: number } | null = null;
+    // A main stem the gardener is leading up is taken the shortest way to the top that has room. Where no way leads
+    // from here to the top (a part of the structure that stands by itself), there is nowhere to lead it, and it
+    // finds its own way as any other shoot does.
+    const way = this.ledUp(plant, axis) ? this.wayToTop(plant) : null;
+    const led = way && way.has(nodeId) ? way : null;
+
+    let best: { edge: SupportEdge; mode: 'twine' | 'along'; tied: boolean; cost: number; dy: number; n: number; toGoM: number | null } | null = null;
     for (const edge of graph.edgesAt(nodeId)) {
       if (edge.id === came) continue;
       if (axis.used.has(edge.id)) {
@@ -826,12 +899,29 @@ export class Simulation {
       }
       const other = graph.nodes.get(graph.otherEnd(edge, nodeId))!.position;
       const dy = other.z - here.z;
+      // a stem already at the height its plant is held below is not started up a rising member
+      if (hold !== null && dy > 0.02 && here.z + STEP > hold) {
+        refuse('rises above the height the gardener holds it below');
+        continue;
+      }
       // shoots make height readily, run level willingly, and go downhill hardly at all
       let cost = n * param(model, 'routing.occupancyCost') + (dy < 0 ? -dy * param(model, 'routing.downhillCostPerM') : -dy * param(model, 'routing.uphillBonusPerM')) + (axis.role === 'whip' ? this.at(plant, other, HOLD_SALT.route) : plant.rng.arch).range(0, param(model, 'routing.noise'));
       if (arriving && dot(arriving, normalize(sub(other, here))) > 0.9) cost -= param(model, 'routing.straightOnBonus');
       if (axis.intent === 'tier' && Math.abs(dy) < 0.06) cost -= param(model, 'routing.tierBonus');
       if (axis.intent === 'riser' && dy > 0.02) cost -= param(model, 'routing.riserBonus');
-      if (cost < param(model, 'routing.giveUpCost') && (!best || cost < best.cost)) best = { edge, mode, tied, cost, dy, n };
+      if (led) {
+        // The route still to go decides, and the plant's own leanings only between ways of the same length. A way that
+        // dips is taken if it is the shortest: the gardener is leading the stem, it is not finding its own way.
+        const onward = led.get(graph.otherEnd(edge, nodeId));
+        if (onward === undefined) {
+          refuse('leads to no way up');
+          continue;
+        }
+        const toGoM = edge.curve.length + onward;
+        if (!best || toGoM < best.toGoM! - 1e-6 || (toGoM < best.toGoM! + 1e-6 && cost < best.cost)) best = { edge, mode, tied, cost, dy, n, toGoM };
+        continue;
+      }
+      if (cost < param(model, 'routing.giveUpCost') && (!best || cost < best.cost)) best = { edge, mode, tied, cost, dy, n, toGoM: null };
       else if (cost >= param(model, 'routing.giveUpCost')) refuse('leads too far downhill');
     }
 
@@ -870,11 +960,47 @@ export class Simulation {
     const what = edge.kind === 'cable' ? 'cable' : this.tierOf.get(edge.host.id) === 'primary' ? 'glulam' : 'timber lattice';
     const how = tied ? 'tied along it by the gardener' : mode === 'twine' ? 'twining it unaided' : 'holding it unaided';
     const slope = Math.abs(best.dy) < 0.06 ? 'level' : best.dy > 0 ? `rising ${best.dy.toFixed(2)} m` : `falling ${(-best.dy).toFixed(2)} m`;
-    this.note(tied ? 'tied' : 'route_chosen', plant, axis, `at ${nodeId} took ${edge.id} (${what}, ${slope}, ${best.n} stem${best.n === 1 ? '' : 's'} already on it), ${how}`);
+    const lead = best.toGoM === null ? '' : `; led by the gardener the shortest way up that has room, ${best.toGoM.toFixed(1)} m of route from the top`;
+    this.note(tied ? 'tied' : 'route_chosen', plant, axis, `at ${nodeId} took ${edge.id} (${what}, ${slope}, ${best.n} stem${best.n === 1 ? '' : 's'} already on it), ${how}${lead}`);
 
     if (axis.intent === 'riser' && graph.nodes.get(toNode)!.position.z > this.topZ * 0.985) axis.intent = 'tier';
-    else if (axis.intent !== 'free' && plant.rng.arch.chance(param(model, 'routing.roleDropChance'))) axis.intent = 'free';
+    // A shoot drops its preference by chance at each node: a plant finding its own way. A main stem that a gardener is
+    // leading up is kept on its way until it has arrived. (The chance is drawn all the same, so that being led moves
+    // nothing else the plant decides.)
+    else if (axis.intent !== 'free' && plant.rng.arch.chance(param(model, 'routing.roleDropChance')) && !this.ledUp(plant, axis)) axis.intent = 'free';
     return true;
+  }
+
+  /**
+   * Whether this is a main stem that a gardener is leading up: one of those the training plan sets to make height
+   * (`TrainingPlan.stemsLedUp`), on a plant whose framework is tied in as it grows. It stays set on making height
+   * until it comes to the top of the support, or to the height the plan holds the plant below.
+   */
+  private ledUp(plant: Plant, axis: Axis): boolean {
+    return plant.training.tieToTimber && axis.role === 'leader' && axis.intent === 'riser';
+  }
+
+  /**
+   * How much route lies between each node and the top of the support, by the shortest way a plant that holds on as
+   * this one does may be put on: the way a gardener leads a main stem up. The top is where a stem set on making
+   * height has arrived (the same mark as in `chooseNext`). Every member and cable counts but a declared exclusion:
+   * the gardener ties the stem to what it cannot hold by itself. A node with no way up is absent.
+   *
+   * Reach is route length on the support graph, not height (CLAUDE.md, "Height is not route length").
+   */
+  private wayToTop(plant: Plant): Map<string, number> {
+    const { profile, model } = this.taxon(plant);
+    const mechanism = profile.attachment.mechanism;
+    let way = this.waysToTop.get(mechanism);
+    if (!way) {
+      const { graph } = this.scenario.bower;
+      const limit = model.params['attachment.maxGraspDiameterMm'];
+      const tops = [...graph.nodes.values()].filter((n) => n.position.z > this.topZ * 0.985).map((n) => n.id);
+      const reached = graph.reach(tops, { allow: (edge) => assessAttachment(mechanism, edge, limit).outcome !== 'impossible' });
+      way = new Map([...reached].map(([id, r]) => [id, r.distance]));
+      this.waysToTop.set(mechanism, way);
+    }
+    return way;
   }
 
   /** A bud at a node the shoot has just passed may break in a later spring and take a member its parent did not. */
@@ -2295,7 +2421,8 @@ export class Simulation {
 
     switch (e.type) {
       case 'train_leader': {
-        plant.training = { tieToTimber: e.tieToTimber, by: e.tieToTimber ? e.id : null };
+        const plan: TrainingPlan = { extent: e.train?.extent ?? plant.training.extent, stemsLedUp: e.train?.stemsLedUp ?? plant.training.stemsLedUp };
+        plant.training = { tieToTimber: e.tieToTimber, by: e.tieToTimber ? e.id : null, ...plan };
         let resumed = 0;
         if (e.tieToTimber) {
           // shoots that had stopped for want of a hold can be led on now
@@ -2307,7 +2434,23 @@ export class Simulation {
             }
           }
         }
-        this.events.push(this.record(e, date, e.tieToTimber ? `from now on, framework growth is tied in along the timber as it extends${resumed ? `; ${resumed} stalled shoot${resumed === 1 ? '' : 's'} led on` : ''}` : 'tying-in stopped: the plant is left to find its own hold', true));
+        // stems stopped under a height that the plan no longer holds the plant below go on from where they stand
+        let released = 0;
+        if (e.train?.extent) {
+          const hold = this.heldAt(plant);
+          for (const id of plant.axisIds) {
+            const a = this.axes.get(id)!;
+            // one that has been cut since it was stopped is not where it was
+            if (a.removedDay !== null || a.tip.state !== 'stopped' || !a.tip.held || a.alive !== a.contact.length) continue;
+            if (hold !== null && a.contact[a.alive - 1]!.z + STEP >= hold) continue;
+            a.tip = a.tip.held;
+            released++;
+          }
+        }
+        const how = e.tieToTimber ? `from now on, framework growth is tied in along the timber as it extends${resumed ? `; ${resumed} stalled shoot${resumed === 1 ? '' : 's'} led on` : ''}` : 'tying-in stopped: the plant is left to find its own hold';
+        const far = e.train?.extent ? `; ${plan.extent.to === 'height' ? `its framework is held below ${plan.extent.heightM.toFixed(1)} m above its foot` : 'its framework is taken as far as the support goes'}${released ? `, and ${released} stem${released === 1 ? '' : 's'} that had been stopped lower ${released === 1 ? 'goes' : 'go'} on` : ''}` : '';
+        const form = e.train?.stemsLedUp ? `; ${plan.stemsLedUp === 'all' ? 'every main stem that starts from now on is led up' : 'of the main stems that start from now on, the first is led up and the others run level'}` : '';
+        this.events.push(this.record(e, date, `${how}${far}${form}`, true));
         return;
       }
       case 'spur_prune': {
@@ -2680,7 +2823,7 @@ export class Simulation {
     const { graph } = this.scenario.bower;
     const at = stub.alive - 1;
     const count = plant.rng.arch.int(...param(model, 'regrowth.shootsPerCut'));
-    const planned = stub.role === 'leader' ? plant.rng.arch.range(...param(model, 'architecture.leaderLengthM')) : stub.targetLengthM;
+    const planned = stub.role === 'leader' ? this.stemLimit(plant, model) : stub.targetLengthM;
     const below = this.lineageLength(stub) + this.lengthOf(stub);
     const run = [...stub.runs].reverse().find((r) => r.status !== 'detached' && r.firstPoint <= at);
     const node = at === 0 ? (stub.runs[0]?.fromNode ?? this.scenario.bower.rootStations.find((s) => s.id === plant.stationId)!.entryNodeIds[0]!) : stub.nodesPassed.find((n) => n.pointIndex === at)?.nodeId;

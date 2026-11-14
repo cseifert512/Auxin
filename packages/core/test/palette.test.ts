@@ -174,12 +174,15 @@ describe('the reference palette on the 15 m hemisphere, twelve years on', () => 
   });
 
   // PROJECT_CONTEXT.md section 2: "Will the timber remain legible as designed, or become completely obscured?"
-  it('hides none of the timber from a visitor inside, because the plants are on the outer face', () => {
+  // Until 14 November 2026 less than 2% was hidden in any month. The two wisterias and the woodbine then stopped short of
+  // the crown, at the planned length of their main stems; led to it, their leaf lies across the opening a visitor looks
+  // up into, and hides 3.4% of the timber from June to October and none of it from January to April.
+  it('hides almost none of the timber from a visitor inside, because the plants are on the outer face', () => {
     const inside = palette.viewpoints[1]!;
     expect(inside.label).toContain('inside');
     for (const m of palette.months) {
       const v = m.views.find((x) => x.viewpointId === inside.id)!;
-      expect(v.timberBehindLeaf, m.date).toBeLessThan(0.02);
+      expect(v.timberBehindLeaf, m.date).toBeLessThan(0.05);
       expect(v.timberBehindEvergreen, m.date).toBeLessThanOrEqual(v.timberBehindLeaf);
     }
     // from the approach the same plants do hide some in July, and what is hidden is not seen

@@ -90,7 +90,11 @@
       "unit": "m",
       "status": "provisional_design_assumption",
       "source": "https://www.k-agri.rd.pref.gifu.lg.jp/hukyu/15_hukyu/15-1hukyu.pdf",
-      "basis": "Gifu Prefectural Research Institute for Agricultural Technology in Hilly and Mountainous Areas, information sheet on raising Vitis coignetiae (yamabudo) from hardwood cuttings (2003), table 2: ten plants from cuttings measured in their second year after planting out (1990): the longest new shoot of each plant in its first year after planting out was 1.05 to 4.49 m, 3.24 m on average. Taken a little lower for a UK garden, which is cooler than the mountains of Gifu and where the plant is said to be slow to start (Plants for a Future). A wall-greening supplier gives 2 to 5 m a year (fassadengruen.de, read only as a search excerpt). Not measured in the UK."
+      "range": [
+        1.05,
+        4.49
+      ],
+      "basis": "Gifu Prefectural Research Institute for Agricultural Technology in Hilly and Mountainous Areas, information sheet on raising Vitis coignetiae (yamabudo) from hardwood cuttings (2003), table 2: ten plants from cuttings, planted out in 1990; the longest new shoot of each plant in its first year after planting out was 1.05 to 4.49 m, 3.24 m on average. The range is the shortest and the longest of those ten. The value is taken a little under their mean for a British garden, which is cooler than the mountains of Gifu and where a nursery gives \"Up to 2m annually\" (https://www.architecturalplants.com/?p=23171). A wall-greening supplier gives \"annual shoot growth of 2 - 5 metres\" (https://www.fassadengruen.de/en/wild-vines-and-creepers.html). Not measured in Britain."
     },
     "extension.lateralMPerSeasonByOrder": {
       "value": [
@@ -137,14 +141,11 @@
       "status": "provisional_design_assumption",
       "basis": "Branches of branches of branches, and no further: a limit of the model, not a fact about the plant."
     },
-    "architecture.leaderLengthM": {
-      "value": [
-        12,
-        15
-      ],
+    "architecture.maxStemLengthM": {
+      "value": null,
       "unit": "m",
-      "status": "provisional_design_assumption",
-      "basis": "RHS: ultimate height over 12 m, \"about 15m tall\". Used as a cap on the length of a stem; a height is not a route length, so this is a choice of that order."
+      "status": "unknown",
+      "basis": "No length of stem is published in a flora or by Bean, who has it \"reaching the tops of the highest trees\" (https://www.treesandshrubsonline.org/articles/vitis/vitis-coignetiae/). The lengths that were found (a flower database's \"Vine length: ~20m\"; 32.8 m for one trained vine, unreferenced) are not sources to rest a limit on. Until 14 November 2026 the RHS height (over 12 m, \"about 15m tall\") stood here as a cap of 12 to 15 m on the length of a stem. A height is not a length of stem, and it was taken away."
     },
     "architecture.lateralLengthMByOrder": {
       "value": [

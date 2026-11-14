@@ -22,7 +22,8 @@ import {
   vineRoutine,
   wisteriaRoutine,
 } from './scenarios.ts';
-import type { GardenerEvent, Planting, Scenario } from './types.ts';
+import { STEMS_LED_UP } from '../vocab.ts';
+import type { GardenerEvent, Planting, Scenario, TrainingPlan } from './types.ts';
 import type { Viewpoint } from './view.ts';
 
 export const plantingPlanSchema = z.strictObject({
@@ -37,6 +38,16 @@ export const plantingPlanSchema = z.strictObject({
         taxonId: z.string().min(1),
         /** A station id from the Bower description. */
         stationId: z.string().min(1),
+        /**
+         * How far and in what form this plant's framework is taken, where the plan says: a decision about this plant
+         * on this building (`TrainingPlan`). Left out: to the top of the support, the first main stem led up.
+         */
+        train: z
+          .strictObject({
+            extent: z.union([z.strictObject({ to: z.literal('top_of_support') }), z.strictObject({ to: z.literal('height'), heightM: z.number().positive() })]).optional(),
+            stemsLedUp: z.enum(STEMS_LED_UP).optional(),
+          })
+          .optional(),
       }),
     )
     .min(1),
@@ -139,7 +150,8 @@ export function plantingOn(bower: Bower, plan: PlantingPlan, options: PlantingOp
       throw new Error(`planting plan "${plan.name}": ${bower.name} has no root station "${p.stationId}". It has: ${bower.rootStations.map((s) => s.id).join(', ')}`);
     }
     const annual = taxon.profile.ukCultivation === 'annual_replant';
-    plantings.push({ plantId: p.plantId, taxonId: p.taxonId, stationId: p.stationId, date: `${plantingYear}-${annual ? '05-20' : '03-12'}`, tieToTimber: care === 'trained' });
+    const train: Partial<TrainingPlan> = { ...(p.train?.extent ? { extent: p.train.extent } : {}), ...(p.train?.stemsLedUp ? { stemsLedUp: p.train.stemsLedUp } : {}) };
+    plantings.push({ plantId: p.plantId, taxonId: p.taxonId, stationId: p.stationId, date: `${plantingYear}-${annual ? '05-20' : '03-12'}`, tieToTimber: care === 'trained', ...(p.train ? { train } : {}) });
     if (care !== 'trained') continue;
     const routine = MODELLED_ROUTINE[p.taxonId];
     if (routine) events.push(...routineEvents(routine, p.plantId, plantingYear, years, taxon.model));

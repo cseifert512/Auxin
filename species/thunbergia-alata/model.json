@@ -155,7 +155,7 @@
       "status": "provisional_design_assumption",
       "basis": "Never reached: no bud of this plant lives to break into a branch (see extension.lateralMPerSeasonByOrder)."
     },
-    "architecture.leaderLengthM": {
+    "architecture.maxStemLengthM": {
       "value": [
         1.5,
         2.5

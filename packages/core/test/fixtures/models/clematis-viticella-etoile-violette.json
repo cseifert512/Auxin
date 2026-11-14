@@ -130,7 +130,7 @@
       "status": "provisional_design_assumption",
       "basis": "A placeholder."
     },
-    "architecture.leaderLengthM": {
+    "architecture.maxStemLengthM": {
       "value": [
         2.5,
         4

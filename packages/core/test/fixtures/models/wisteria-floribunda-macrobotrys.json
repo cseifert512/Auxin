@@ -133,7 +133,7 @@
       "status": "provisional_design_assumption",
       "basis": "Copied from the Wisteria sinensis model for want of anything better. Not a measurement or a description of this plant."
     },
-    "architecture.leaderLengthM": {
+    "architecture.maxStemLengthM": {
       "value": [
         7,
         8.6

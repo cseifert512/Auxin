@@ -17,6 +17,7 @@ import type { Simulation } from './engine.ts';
 import { type LightReport, formatLight, lightReport } from './light-report.ts';
 import { modelProvenance } from './model.ts';
 import { toRenderData } from './render-data.ts';
+import type { Plant } from './types.ts';
 import { type ViewCoverage, type Viewpoint, viewCoverage } from './view.ts';
 
 export interface PlantAccount {
@@ -168,6 +169,25 @@ export interface DesignReport {
   statement: string;
 }
 
+/**
+ * Why a plant's framework stands below the top of the structure at the end of a run, in the order the reasons bind:
+ * the gardener's plan; a length given for its stems; the support; and otherwise time, since a main stem with support
+ * ahead of it and nothing to stop it is still on its way. A reader is not to take one for another: a plant that is
+ * held, one that has come to the length of its stems and one that is slow call for different decisions.
+ */
+function whyBelowTheTop(sim: Simulation, plant: Plant): string {
+  const extent = plant.training.extent;
+  if (extent.to === 'height') return `the gardener's plan holds its framework below ${extent.heightM.toFixed(1)} m, and it could be taken higher`;
+  const mains = plant.axisIds.map((id) => sim.axes.get(id)!).filter((a) => a.role === 'leader' && a.removedDay === null);
+  const growing = mains.filter((a) => a.tip.state !== 'stopped');
+  if (growing.length) return 'its main stems were still extending when the run ended, with support ahead of them: time, not a length, is what it lacked. How soon it arrives hangs on how fast it grows, which is a range';
+  const length = sim.scenario.taxa.get(plant.taxonId)!.model.params['architecture.maxStemLengthM'];
+  if (length.value && mains.some((a) => a.tip.state === 'stopped' && a.tip.reason.includes('length given for a stem'))) {
+    return `its main stems came to the length given for a stem of this plant, ${length.value[0] === length.value[1] ? length.value[0] : `${length.value[0]} to ${length.value[1]}`} m: length of stem, not height, is what ran out`;
+  }
+  return 'its main stems found no way on: route, not height, is what ran out';
+}
+
 const zoneOf = (z: number): HeightZone => (z < 2 ? HEIGHT_ZONES[0] : z < 3 ? HEIGHT_ZONES[1] : HEIGHT_ZONES[2]);
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -259,7 +279,7 @@ export function designReport(sim: Simulation, options: ReportOptions = {}): Desi
     if (watch) alerts.push({ kind: 'thickening_watch', plantId: plant.id, count: watch, text: `${watch} stretch${watch === 1 ? '' : 'es'} where a stem of ${watchMm} mm or more is wound round a timber member (thickest ${Math.round(thickest)} mm): it will go on thickening there, so keep these in view` });
     const stalled = sim.decisions.filter((d) => d.plantId === plant.id && d.kind === 'no_route' && d.text.includes('nobody ties it in'));
     if (stalled.length) alerts.push({ kind: 'no_hold', plantId: plant.id, count: stalled.length, text: `${stalled.length} shoot${stalled.length === 1 ? '' : 's'} stopped for want of a hold, and nobody tied the shoot in. First: ${stalled[0]!.text}` });
-    if (acc.frameworkM > 0 && acc.highestM < crown * 0.97) alerts.push({ kind: 'crown_not_reached', plantId: plant.id, count: 1, text: `reached ${acc.highestM.toFixed(1)} m on a structure whose routes go to ${crown.toFixed(1)} m: route length, not height, is what ran out` });
+    if (acc.frameworkM > 0 && acc.highestM < crown * 0.97) alerts.push({ kind: 'crown_not_reached', plantId: plant.id, count: 1, text: `reached ${acc.highestM.toFixed(1)} m on a structure whose routes go to ${crown.toFixed(1)} m: ${whyBelowTheTop(sim, plant)}` });
     for (const d of sim.decisions) if (d.plantId === plant.id && (d.kind === 'not_modelled' || d.kind === 'part_not_modelled' || d.kind === 'assumed' || d.kind === 'generic_shoot')) alerts.push({ kind: d.kind, plantId: plant.id, count: 1, text: d.text });
     if (profile.ukCultivation === 'annual_replant' && !sim.events.some((e) => e.plantId === plant.id && (e.type === 'plant' || e.type === 'annual_replant') && e.modelled && cal.dateOf(e.day).year === year)) {
       alerts.push({ kind: 'not_replanted', plantId: plant.id, count: 1, text: `an annual, and nobody planted it in ${year}: nothing grew at ${plant.stationId} that year` });

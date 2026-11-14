@@ -296,6 +296,24 @@ export const GARDENER_EVENT = [
 ] as const;
 export type GardenerEventType = (typeof GARDENER_EVENT)[number];
 
+/**
+ * How far a gardener takes a plant's framework: part of a training plan (`TrainingPlan` in sim/types.ts), and a
+ * decision about one plant on one building, never a fact about its kind. HORTICULTURAL_INTERVENTIONS.md section 2,
+ * `train_leader` ("desired support route", "target position").
+ *   top_of_support  led on for as long as there is support ahead of it
+ *   height          nothing of the framework led higher than a stated height above the plant's foot
+ */
+export const TRAINING_EXTENT = ['top_of_support', 'height'] as const;
+export type TrainingExtentKind = (typeof TRAINING_EXTENT)[number];
+
+/**
+ * Which of a plant's main stems a gardener sets to make height: part of a training plan.
+ *   first  the first alone; the others run level and form the lowest tier (the Wisteria prototype's form)
+ *   all    every one
+ */
+export const STEMS_LED_UP = ['first', 'all'] as const;
+export type StemsLedUp = (typeof STEMS_LED_UP)[number];
+
 // ---------------------------------------------------------------------------
 // Qualitative relationships between taxa: KEY.md section 3
 // ---------------------------------------------------------------------------

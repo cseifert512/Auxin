@@ -90,7 +90,12 @@
       "value": 1.5,
       "unit": "m",
       "status": "provisional_design_assumption",
-      "basis": "Bean calls this cultivar \"exceptionally vigorous\"; the US plant patent of the most similar cultivar, ‘Scentsation’ (PP16,240), gives a growth rate of 1 to 2 m a year; the RHS gives 4 to 8 m in 5 to 10 years. The middle of the patent’s figure. Not measured on this cultivar."
+      "source": "https://patents.google.com/patent/USPP16240",
+      "range": [
+        1,
+        2
+      ],
+      "basis": "US Plant Patent PP16,240, of the most similar cultivar, 'Scentsation': vigour \"Moderate, 1 to 2 m per year\", on one-year-old plants in containers in California. The range is that and the value its middle. Bean calls 'Graham Thomas' \"exceptionally vigorous\"; the RHS gives it 4 to 8 m in 5 to 10 years. Not measured on this cultivar, nor in Britain."
     },
     "extension.lateralMPerSeasonByOrder": {
       "value": [
@@ -114,7 +119,7 @@
         0.8
       ],
       "status": "provisional_design_assumption",
-      "basis": "Copied from the Wisteria sinensis model for want of anything better. Not a measurement or a description of this plant."
+      "basis": "Nothing published says how slow its first seasons are. The RHS has the shoots cut back by two thirds at planting and the plant watered through its first spring and summer (https://www.rhs.org.uk/plants/honeysuckle/climbing/growing-guide). The two factors are those of the Wisteria sinensis model as it stood, kept as a choice. No range is given, because nothing published bounds them."
     },
     "architecture.trunkStemStartYears": {
       "value": [
@@ -138,14 +143,11 @@
       "status": "provisional_design_assumption",
       "basis": "A stem from the base, its branches, and two further orders of branch. The species is described as much-branched (BSBI account). The number is a choice."
     },
-    "architecture.leaderLengthM": {
-      "value": [
-        4,
-        8
-      ],
+    "architecture.maxStemLengthM": {
+      "value": null,
       "unit": "m",
-      "status": "provisional_design_assumption",
-      "basis": "The RHS ultimate-height band of this cultivar (4 to 8 m) used as a cap on the length of a stem. A height band is not a route length, so this is a stand-in."
+      "status": "unknown",
+      "basis": "Nothing published bounds the length of a stem of this plant. Bean gives the species \"stems often over 20 ft long\" (https://www.treesandshrubsonline.org/articles/lonicera/lonicera-periclymenum/): they pass 6 m, which is not a length they stop at. Until 14 November 2026 the RHS height band of the cultivar, 4 to 8 m, stood here as a cap on the length of a stem. A height is not a length of stem, and it was taken away."
     },
     "architecture.lateralLengthMByOrder": {
       "value": [

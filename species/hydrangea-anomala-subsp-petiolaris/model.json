@@ -89,7 +89,11 @@
       "unit": "m",
       "status": "published_plant_profile",
       "source": "https://www.lve-baumschule.com/hydrangea-petiolaris/6353928",
-      "basis": "A nursery catalogue figure, not a measurement: annual growth 20 to 50 cm, occasionally 80 cm. A specialist climber nursery gives up to about 1 m a year once established (clematis.com.pl). The strongest stem is given the occasional figure. Consistent with the RHS size class of over 12 m in 10 to 20 years."
+      "range": [
+        0.2,
+        1
+      ],
+      "basis": "A nursery catalogue figure, not a measurement: \"20-50 (80) cm a year\". The strongest stem is given the occasional figure. The range: that catalogue's 20 cm at the low end; at the high end the \"up to 1 m in a year\" that a specialist climber nursery gives once the plant is well established (https://clematis.com.pl/en/vines-in-garden/articles/396-climbing-hydrangea). The RHS size class of over 12 m in 10 to 20 years needs 0.6 to 1.2 m a year throughout, which only the top of this range meets. Nothing measured was found."
     },
     "extension.lateralMPerSeasonByOrder": {
       "value": [
@@ -140,14 +144,15 @@
       "status": "provisional_design_assumption",
       "basis": "Stems are heavily branched (clematis.com.pl); main stems climb and side branches run level (University of Connecticut). Three orders of clinging framework, below the free side shoots. The number is a choice."
     },
-    "architecture.leaderLengthM": {
+    "architecture.maxStemLengthM": {
       "value": [
-        12,
-        15
+        9.1,
+        24.4
       ],
       "unit": "m",
-      "status": "provisional_design_assumption",
-      "basis": "RHS: higher than 12 m. Trees and Shrubs Online: 15 m or more. Used as a cap on stem length; a height is not a route length, so this is an assumption."
+      "status": "published_plant_profile",
+      "source": "https://mortonarb.org/plant-and-protect/trees-and-plants/climbing-hydrangea/",
+      "basis": "Morton Arboretum: \"A true clinging vine that can grow 30 to 80 feet long\", in metres: a length. Missouri Botanical Garden has the subspecies mature \"to 60' long\". Statements in plant records, not measurements. The RHS (higher than 12 m) and Trees and Shrubs Online (\"to 15 m or more\") give heights, which until 14 November 2026 stood here as a cap of 12 to 15 m on the length of a stem."
     },
     "architecture.lateralLengthMByOrder": {
       "value": [

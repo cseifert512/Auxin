@@ -35,5 +35,6 @@ export * from './sim/planting.ts';
 export * from './sim/view.ts';
 export * from './sim/report.ts';
 export * from './sim/sensitivity.ts';
+export * from './sim/growth-sensitivity.ts';
 export * from './render/presence.ts';
 export { Rng, placeRng } from './sim/rng.ts';

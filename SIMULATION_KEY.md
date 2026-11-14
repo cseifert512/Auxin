@@ -116,6 +116,12 @@ M_{vegetation}=M_{woody}+M_{leaves}+M_{flowers/fruits}+M_{retained\ water}
 F_{wind}\approx \tfrac12\rho_{air}C_DA_{projected}v^2
 \]
 
+**What ends a main stem (added 14 November 2026).** Extension goes on from season to season, and a main stem stops for one of three reasons, each of which the run records. There is no support ahead that it can be put on (`no_route`). The gardener's training plan holds the plant below a height (`TrainingPlan` in `sim/types.ts`: to the top of the support, or held below a height; which main stems are led up). Or it has come to the length published for a stem of its taxon (`architecture.maxStemLengthM`), which a growth model gives only where a length of stem is published, or where the plant's published size is plainly the size of its stems, and then with its source. No other number of a plant ends a main stem. A height a plant is said to reach is not the length of the stem that reaches it; and the planned length that every model carried until this date was, for the wisterias, the route of the prototype's structure. How far a plant is taken is therefore a decision about the building, made in the scenario or the planting plan, and how soon it gets there is the extension a season, `G*` above, with the slow first seasons.
+
+A main stem that a gardener is leading up (the plant's framework is tied in as it grows, and the stem is one of those the plan sets to make height) is taken by the shortest route to the top that has room, worked out on the support graph, and keeps to it until it arrives. A plant nobody gardens finds its own way by the routing costs, as before. Laterals, long shoots and side shoots keep their planned lengths.
+
+`G*` for a leading stem is given as a value and, wherever a source allows, a range (`range` on `extension.leaderMPerSeason` and on `extension.establishmentFactorByYear`). A scenario can be run at either end (`atBandEnd` in `sim/model.ts`; `npm run sensitivity -- band`), and a result that hangs on it is to be reported as a band of years, not as a date. What was changed, what it rests on and what it did to earlier runs: `docs/GROWTH_WITHOUT_STEM_CAPS.md`.
+
 These are **bookkeeping and sensitivity equations**, not evidence of actual loads or allowable limits. Species architecture, porosity, leaf season, rain/snow, branch dynamics and load transfer to supports require engineering research and validation. Never use this model for member sizing or public safety certification.
 
 ## 5. Minimum per-species parameter dictionary

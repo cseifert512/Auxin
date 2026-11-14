@@ -28,6 +28,7 @@ This is **not** a verified biological prediction model, a planting specification
 | `Wisteria/` | The original three.js prototype of *W. sinensis* on a glulam vault. Self-contained (`npm install` inside it). |
 | `examples/` | A small arbour and the 15 m hemisphere as Bower descriptions, each with a planting plan: the two files a design is run from. |
 | `docs/ASSUMPTIONS_AUDIT.md` | What was tested on 11 November 2026, what held, what did not, and what was changed. |
+| `docs/GROWTH_WITHOUT_STEM_CAPS.md` | 14 November 2026: the cap on stem length taken out of the plant models, how far a plant is taken made a training decision, extension given as sourced ranges; what that did to earlier runs. |
 
 ## Reading order
 
@@ -55,6 +56,8 @@ npm run simulate -- dome trained 12   # three wisterias on the 15 m hemisphere
 npm run simulate -- trial untended 7  # one plant of each way of climbing, nobody gardening
 npm run simulate -- palette trained 12  # the KEY.md reference palette, one plant at each of the dome's twelve ribs
 npm run sensitivity -- palette trained 12  # the same run with leaf area and side shoots multiplied: which readings hold
+npm run sensitivity -- growth dome trained 10  # one growth number at a time, ranked by how far it moves height, route held, tie-ins and timber seen
+npm run sensitivity -- band dome trained 10    # the low end, as modelled and the high end of what is published for a year's extension: results as a band
 npm run viewer:dev   # the viewer on http://localhost:5193: both reference Bowers or a design read from files, the design overlay, plants through time
 npm run viewer:build # static build in packages/viewer/dist
 npm run portrait -- lonicera-henryi   # one plant of a taxon on a small standard frame: stills of the whole plant in four seasons and close on each organ, and a contact sheet, in out/portraits/
