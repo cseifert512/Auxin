@@ -6,6 +6,12 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["Horti-code-ture/node_modules/vite/bin/vite.js", "--config", "drawings-in-code/studio/vite.config.js"],
       "port": 5310
+    },
+    {
+      "name": "sketches",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5311", "--directory", "drawings-in-code/sketches"],
+      "port": 5311
     }
   ]
 }

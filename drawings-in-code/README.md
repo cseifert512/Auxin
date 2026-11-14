@@ -126,6 +126,11 @@ shows is the floor and the shade on it) and `round`.
 - `pipeline/compare.mjs` sets the runs of a scene side by side: timber held, how, and what a visitor sees.
 - `pipeline/film.mjs` makes the films.
 - `studio/` is the drawing.
+- `sketches/` is for trying things, and nothing in it is a drawing for the deck. `sketches/design-space/` moves
+  one control of the building through a few values and draws the timber going from one to the next, with what
+  can be measured off the centre lines counting beside it. Timber only: nothing is grown. Its states are made by
+  `python scripts/sweep_states.py` in `bower-blender` (about two minutes, no Blender) and are not in git. Open
+  `index.html` afterwards; it needs no server.
 
 ## What this is not
 

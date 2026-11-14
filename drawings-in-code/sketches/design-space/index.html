@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design space: a sketch</title>
+<!--
+  A sketch for trying things. One control of the building is moved through a few values and the
+  timber is drawn moving between them, with what can be measured off the centre lines counting
+  beside it. Timber only: nothing is grown here.
+
+  The states come from bower-blender:   cd bower-blender && python scripts/sweep_states.py
+  That writes states.js beside this file. Then open this file; it needs no server.
+-->
+<style>
+  :root { --paper: #EEF3EA; --ink: #102820; --red: #D23B2E; --rule: rgba(16, 40, 32, .18); --soft: rgba(16, 40, 32, .62); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--paper); color: var(--ink); font: 14px/1.45 "Segoe UI", system-ui, sans-serif; }
+  #wrap { display: grid; grid-template-columns: minmax(0, 1fr) 340px; grid-template-rows: minmax(0, 1fr) auto; height: 100%; }
+  #stage { position: relative; min-height: 260px; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+  #views { position: absolute; top: 14px; left: 16px; display: flex; gap: 6px; flex-wrap: wrap; }
+  button { font: inherit; color: var(--ink); background: none; border: 1px solid var(--rule); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
+  button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  #bar { grid-column: 1; padding: 10px 16px 16px; border-top: 1px solid var(--rule); }
+  #sweeps { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  #scrub { display: flex; gap: 12px; align-items: center; }
+  #scrub input { flex: 1; min-width: 0; accent-color: var(--red); }
+  #value { font: 13px ui-monospace, Consolas, monospace; min-width: 13ch; text-align: right; }
+  aside { grid-row: 1 / span 2; grid-column: 2; border-left: 1px solid var(--rule); padding: 22px 22px 18px; overflow: auto; }
+  h1 { font: 400 26px/1.15 Georgia, "Times New Roman", serif; margin: 0 0 6px; }
+  .k { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--soft); margin: 16px 0 2px; }
+  aside p { margin: 0; }
+  .src, .note { font-size: 12px; color: var(--soft); margin-top: 6px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+  td { padding: 5px 0; border-top: 1px solid var(--rule); vertical-align: baseline; }
+  td.n { font: 13px ui-monospace, Consolas, monospace; text-align: right; white-space: nowrap; padding-left: 10px; }
+  td.d { color: var(--soft); min-width: 7ch; }
+  .moving { color: var(--red); }
+  #missing { padding: 40px; max-width: 60ch; }
+  @media (max-width: 760px) {
+    #wrap { grid-template-columns: minmax(0, 1fr); grid-template-rows: 56vh auto auto; height: auto; }
+    aside { grid-row: auto; grid-column: 1; border-left: 0; border-top: 1px solid var(--rule); }
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="stage">
+    <canvas id="c"></canvas>
+    <div id="views"></div>
+  </div>
+  <div id="bar">
+    <div id="sweeps"></div>
+    <div id="scrub">
+      <button id="play" aria-pressed="false">Play</button>
+      <input id="s" type="range" min="0" max="1" step="0.001" value="0" aria-label="Along the change">
+      <span id="value"></span>
+    </div>
+  </div>
+  <aside>
+    <h1 id="title"></h1>
+    <p class="note">One control of <span id="base"></span>, moved. Timber only: nothing is grown here.</p>
+    <p class="k">What moves</p><p id="param"></p>
+    <p class="k">The plant needs</p><p id="need"></p>
+    <p class="k">Where the building disagrees</p><p id="dis"></p>
+    <p class="k">What it costs</p><p id="cost"></p>
+    <p class="src" id="src"></p>
+    <p class="k">Read off the centre lines</p>
+    <table id="meas"></table>
+    <p class="note">Rough measures; hold the pointer on one for how it is taken. Between the written states the timber and the numbers are blended in a straight line. <span class="moving">Red</span> is whatever is moving, arriving or leaving. The faint lines are where it started.</p>
+  </aside>
+</div>
+<script src="states.js"></script>
+<script>
+(() => {
+  const D = window.DESIGN_SPACE;
+  if (!D || !D.sweeps.length) {
+    document.getElementById("wrap").outerHTML = '<p id="missing">No states to draw. From <code>bower-blender</code>, run <code>python scripts/sweep_states.py</code>, then open this file again.</p>';
+    return;
+  }
+  const N = D.points, FLOOR = 0.08;
+  const INK = [16, 40, 32], RED = [210, 59, 46];
+  const UNIT = { m: " m", m2: " m²", m3: " m³", deg: "°" };
+  const $ = (id) => document.getElementById(id);
+
+  // Each state as a map from member to its points, and how far each member moves to the next state.
+  for (const sw of D.sweeps) {
+    sw.at = sw.states.map((st) => {
+      const map = new Map();
+      st.has.forEach((mi, j) => {
+        const a = new Float32Array(N * 3);
+        for (let k = 0; k < N * 3; k++) a[k] = st.mm[j * N * 3 + k] / 1000;
+        map.set(mi, a);
+      });
+      return map;
+    });
+    sw.move = [];
+    sw.top = 0;
+    for (let k = 0; k < sw.at.length - 1; k++) {
+      const mv = new Float32Array(sw.members.length);
+      for (const [mi, a] of sw.at[k]) {
+        const b = sw.at[k + 1].get(mi);
+        if (b) mv[mi] = reach(a, b);
+        sw.top = Math.max(sw.top, mv[mi]);
+      }
+      sw.move.push(mv);
+    }
+    sw.top = sw.top || 1;
+  }
+
+  function reach(a, b) {
+    let d = 0;
+    for (let i = 0; i < N * 3; i += 3) d = Math.max(d, Math.hypot(a[i] - b[i], a[i + 1] - b[i + 1], a[i + 2] - b[i + 2]));
+    return d;
+  }
+
+  const VIEWS = [["room", "Room"], ["plan", "Plan"], ["side", "Side"], ["pier", "One pier"]];
+  let sweep = D.sweeps[0], s = 0, view = "room", playing = false, began = 0;
+  let yaw = -0.5, pitch = 0.6, zoom = 1;
+  const canvas = $("c"), ctx = canvas.getContext("2d");
+  let W = 0, H = 0, cam = null;
+
+  function camera() {
+    const c = { yaw: 0, pitch: Math.PI / 2, at: [0, 0, 0], scale: 1 };
+    if (view === "room") Object.assign(c, { yaw, pitch, at: [0, 0, 2.5], scale: Math.min(W / 15, H / 11.5) * zoom });
+    if (view === "plan") c.scale = Math.min(W, H) / 14;
+    if (view === "side") Object.assign(c, { pitch: 0, at: [0, 0, 3.1], scale: Math.min(W / 14.5, H / 8) });
+    if (view === "pier") Object.assign(c, { at: [sweep.pier[0] * 0.92, sweep.pier[1] * 0.92, 0], scale: Math.min(W, H) / 3.8 });  // a little way into the room, where the legs go
+    c.cy = Math.cos(c.yaw); c.sy = Math.sin(c.yaw); c.cp = Math.cos(c.pitch); c.sp = Math.sin(c.pitch);
+    return c;
+  }
+
+  function px(x, y, z) {
+    x -= cam.at[0]; y -= cam.at[1]; z -= cam.at[2];
+    const X = x * cam.cy - y * cam.sy, Y = x * cam.sy + y * cam.cy;
+    return [W / 2 + X * cam.scale, H / 2 - (Y * cam.sp + z * cam.cp) * cam.scale];
+  }
+
+  function stroke(points, member, rgb, alpha, width) {
+    ctx.beginPath();
+    for (let i = 0; i < N; i++) {
+      const p = px(points[i * 3], points[i * 3 + 1], points[i * 3 + 2]);
+      if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]);
+    }
+    if (member.closed) ctx.closePath();
+    ctx.strokeStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`;
+    ctx.lineWidth = width;
+    ctx.stroke();
+  }
+
+  function feet(points, member, rgb, alpha) {
+    if (member.closed) return;
+    for (const i of [0, (N - 1) * 3]) {
+      if (points[i + 2] > FLOOR) continue;
+      const p = px(points[i], points[i + 1], 0);
+      ctx.beginPath();
+      ctx.arc(p[0], p[1], Math.max(2.5, member.width_m * cam.scale / 2), 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`;
+      ctx.fill();
+    }
+  }
+
+  function draw() {
+    const last = sweep.at.length - 1, k = Math.min(last - 1, Math.floor(s)), t = s - k;
+    const A = sweep.at[k], B = sweep.at[k + 1], start = sweep.at[0];
+    cam = camera();
+    const dpr = window.devicePixelRatio || 1;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    ctx.lineCap = ctx.lineJoin = "round";
+    const flat = view === "plan" || view === "pier", thin = view === "pier" ? 0.22 : 1;
+    const still = [], moving = [];
+    const blend = new Float32Array(N * 3);
+    for (let mi = 0; mi < sweep.members.length; mi++) {
+      const a = A.get(mi), b = B.get(mi), member = sweep.members[mi];
+      if (!a && !b) continue;
+      let points = a || b, alpha = 1, rate = 1;
+      if (a && b) {
+        points = new Float32Array(N * 3);
+        for (let i = 0; i < N * 3; i++) points[i] = a[i] + (b[i] - a[i]) * t;
+        rate = sweep.move[k][mi] / sweep.top;
+      } else alpha = a ? 1 - t : t;
+      const width = Math.max(1, member.width_m * cam.scale * (flat ? 0.9 : 0.55));
+      const from = start.get(mi);
+      if (from && s > 0.02 && reach(from, points) > 0.02) stroke(from, member, INK, 0.13 * thin + 0.05, width);
+      (rate > 0.06 ? moving : still).push([points, member, alpha, rate, width]);
+    }
+    for (const [points, member, alpha, , width] of still) {
+      stroke(points, member, INK, alpha * thin, width);
+      if (flat) feet(points, member, INK, alpha);
+    }
+    for (const [points, member, alpha, rate, width] of moving) {
+      stroke(points, member, RED, alpha * (0.4 + 0.6 * Math.min(1, rate)) * (view === "pier" ? 0.35 : 1), width);
+      if (flat) feet(points, member, RED, alpha);
+    }
+    if (view === "pier") {  // a one-metre bar, the only dimension on the sheet
+      const x = 24, y = H - 28;
+      ctx.strokeStyle = ctx.fillStyle = "rgba(16,40,32,.8)";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + cam.scale, y); ctx.moveTo(x, y - 4); ctx.lineTo(x, y + 4); ctx.moveTo(x + cam.scale, y - 4); ctx.lineTo(x + cam.scale, y + 4); ctx.stroke();
+      ctx.font = "12px ui-monospace, Consolas, monospace";
+      ctx.fillText("1 m", x + cam.scale + 8, y + 4);
+    }
+    card(k, t);
+  }
+
+  const number = (v, digits) => (v == null ? "n/a" : v.toFixed(digits));
+  function card(k, t) {
+    const v = sweep.values[k] + (sweep.values[k + 1] - sweep.values[k]) * t;
+    const digits = sweep.unit === "deg" ? 1 : 2, unit = UNIT[sweep.unit] || "";
+    $("value").textContent = number(v, digits) + unit;
+    $("param").innerHTML = `${sweep.parameter}<br><b>${number(v, digits)}${unit}</b> <span class="src">from ${sweep.values[0]} to ${sweep.values[sweep.values.length - 1]}</span>`;
+    const rows = D.measures.map((m) => {
+      const a = sweep.measures[k][m.key], b = sweep.measures[k + 1][m.key], zero = sweep.measures[0][m.key];
+      const now = a == null || b == null ? null : a + (b - a) * t;
+      const change = now == null || zero == null ? null : now - zero;
+      const shown = change == null || Math.abs(change) < 0.5 / 10 ** m.digits ? "" : (change > 0 ? "+" : "−") + Math.abs(change).toFixed(m.digits);
+      return `<tr title="${m.note}"><td>${m.label}</td><td class="n">${number(now, m.digits)}${UNIT[m.unit] || ""}</td><td class="n d">${shown}</td></tr>`;
+    });
+    const near = sweep.at[Math.round(k + t)].size;
+    rows.push(`<tr title="Members in the nearest written state. The fine tier of the lattice is chosen afresh at each state, so members come and go."><td>Members</td><td class="n">${near}</td><td class="n d">${near === sweep.at[0].size ? "" : (near > sweep.at[0].size ? "+" : "−") + Math.abs(near - sweep.at[0].size)}</td></tr>`);
+    $("meas").innerHTML = rows.join("");
+  }
+
+  function choose(sw) {
+    sweep = sw;
+    if (!sw.pier) {  // the middle of the feet of the pier that stands on the +x side, at the start
+      let x = 0, y = 0, n = 0;
+      for (const [mi, a] of sw.at[0]) {
+        if (sw.members[mi].closed) continue;
+        for (const i of [0, (N - 1) * 3]) if (a[i + 2] < FLOOR && a[i] > 0 && Math.abs(Math.atan2(a[i + 1], a[i])) < 0.3) { x += a[i]; y += a[i + 1]; n++; }
+      }
+      sw.pier = n ? [x / n, y / n] : [0, 0];
+    }
+    $("s").max = sw.at.length - 1;
+    $("title").textContent = sw.title;
+    $("need").textContent = sw.need;
+    $("dis").textContent = sw.disagrees;
+    $("cost").textContent = sw.costs;
+    $("src").textContent = sw.source ? "From " + sw.source : "";
+    for (const b of $("sweeps").children) b.setAttribute("aria-pressed", b.dataset.id === sw.id);
+    set(0);
+  }
+
+  function set(value) {
+    s = Math.max(0, Math.min(sweep.at.length - 1, value));
+    $("s").value = s;
+    draw();
+  }
+
+  function tick(now) {
+    if (!playing) return;
+    const period = 9000, u = ((now - began) % period) / period;  // out, rest, back, rest
+    const tri = u < 0.42 ? u / 0.42 : u < 0.5 ? 1 : u < 0.92 ? 1 - (u - 0.5) / 0.42 : 0;
+    set(tri * tri * (3 - 2 * tri) * (sweep.at.length - 1));
+    requestAnimationFrame(tick);
+  }
+
+  function play(on) {
+    playing = on;
+    $("play").setAttribute("aria-pressed", on);
+    $("play").textContent = on ? "Pause" : "Play";
+    if (on) { began = performance.now(); requestAnimationFrame(tick); }
+  }
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1, box = canvas.getBoundingClientRect();
+    W = box.width; H = box.height;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    draw();
+  }
+
+  for (const sw of D.sweeps) {
+    const b = document.createElement("button");
+    b.textContent = sw.title; b.dataset.id = sw.id;
+    b.onclick = () => choose(sw);
+    $("sweeps").append(b);
+  }
+  for (const [key, label] of VIEWS) {
+    const b = document.createElement("button");
+    b.textContent = label; b.setAttribute("aria-pressed", key === view);
+    b.onclick = () => { view = key; for (const o of $("views").children) o.setAttribute("aria-pressed", o === b); draw(); };
+    $("views").append(b);
+  }
+  $("base").textContent = D.base;
+  $("s").oninput = (e) => { play(false); set(+e.target.value); };
+  $("play").onclick = () => play(!playing);
+  let held = null;
+  canvas.onpointerdown = (e) => { held = [e.clientX, e.clientY]; canvas.setPointerCapture(e.pointerId); };
+  canvas.onpointerup = () => { held = null; };
+  canvas.onpointermove = (e) => {
+    if (!held || view !== "room") return;
+    yaw += (e.clientX - held[0]) * 0.008;
+    pitch = Math.max(0.05, Math.min(1.5, pitch + (e.clientY - held[1]) * 0.006));
+    held = [e.clientX, e.clientY];
+    draw();
+  };
+  canvas.onwheel = (e) => { if (view !== "room") return; e.preventDefault(); zoom = Math.max(0.5, Math.min(6, zoom * (e.deltaY < 0 ? 1.1 : 0.91))); draw(); };
+  new ResizeObserver(resize).observe(canvas);
+  window.__sketch = { set, play, view: (v) => { view = v; draw(); }, choose: (id) => choose(D.sweeps.find((x) => x.id === id)) };
+  choose(sweep);
+  resize();
+})();
+</script>
+</body>
+</html>

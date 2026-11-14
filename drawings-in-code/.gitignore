@@ -15,5 +15,8 @@ exports/**/*.mp4
 
 *.log
 
+# made by `python scripts/sweep_states.py` in bower-blender, in about two minutes
+sketches/*/states.js
+
 # scratch pictures while plates are made
 exports/deck/.work/
