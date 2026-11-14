@@ -1,5 +1,5 @@
 // A frozen snapshot of the building -> the file the plant simulator reads.
-//   node pipeline/convert.mjs [snapshot]
+//   node pipeline/convert.mjs [snapshot] [--no-lines] [--boughs=hoop[01]$] [--spacing=0.9]
 // Reads  releases/<snapshot>/centrelines.json and design.json
 // Writes scenes/<snapshot>/bower.json
 //
@@ -9,14 +9,20 @@
 //
 // Plants go in where the timber meets the ground, and nowhere else: the
 // structure is what they grow on. On this building that is the six piers, each
-// a sheaf of members gathered to the ground like a trunk, so the beds are a
-// ring round each pier. The simulator will not take a bed more than 1.5 m from
-// something to climb, and nothing is added for plants to climb.
+// a sheaf of members gathered to the ground like a trunk. The simulator will
+// not take a bed more than 1.5 m from something to climb.
+//
+// Unless --no-lines is given, the building is also strung with training lines:
+// thin cable on its outside, laid out from its own joints (lines.mjs), with
+// the beds at the feet of those lines. Without them the beds are a ring round
+// each pier and the plants have the timber alone.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { trainingLines } from './lines.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const options = Object.fromEntries(process.argv.slice(2).filter((a) => a.startsWith('--')).map((a) => a.slice(2).split('=')));
 const snapshot = process.argv.slice(2).find((a) => !a.startsWith('--')) ?? 'six-bay-v1';
 const from = resolve(root, 'releases', snapshot);
 const to = resolve(root, 'scenes', snapshot);
@@ -46,7 +52,7 @@ const members = centrelines.members.map((m) => ({
 // every place a member comes to the ground
 const feet = centrelines.members.flatMap((m) => [m.points_m[0], m.points_m[m.points_m.length - 1]].filter((p) => p[2] < 0.06).map((p) => ({ member: m.id, at: p })));
 
-const stations = [];
+let stations = [];
 for (const room of design.rooms) {
   const [cx, cy] = room.crown.centre_m;
   for (const pier of room.piers) {
@@ -70,6 +76,10 @@ for (const room of design.rooms) {
   }
 }
 
+// the training lines, and the beds at their feet in place of the rings
+const lines = 'no-lines' in options ? null : trainingLines(from, design, { ...(options.boughs ? { boughs: options.boughs } : {}), ...(options.spacing ? { spacingM: Number(options.spacing) } : {}) });
+if (lines) stations = lines.beds.map((b) => ({ ...b, note: `at the foot of a training line beside pier ${b.id.split('.').slice(1, 3).join('.')}` }));
+
 // a full-frame lens of this focal length sees this far across, top to bottom
 const fovOf = (lensMm) => round((2 * Math.atan(12 / lensMm) * 180) / Math.PI, 1);
 const VIEW_LABELS = { interior: 'Standing inside, looking up to the crown', exterior: 'Approaching from the south', overhead: 'From above, to the south-east' };
@@ -85,7 +95,10 @@ const bower = {
   id: snapshot,
   name: `the ${design.rooms.map((r) => `${r.bays.length}-bay`).join(' and ')} room, snapshot ${snapshot}`,
   frame: 'x east, y north, z up, metres',
+  // a line stands a little proud of the timber it is fixed to: near enough to count as touching it
+  ...(lines ? { joinToleranceM: 0.04 } : {}),
   members,
+  ...(lines ? { cables: lines.cables } : {}),
   stations,
   viewpoints,
 };
@@ -93,4 +106,5 @@ const bower = {
 mkdirSync(to, { recursive: true });
 writeFileSync(resolve(to, 'bower.json'), `${JSON.stringify(bower)}\n`);
 console.log(`${snapshot}: ${members.length} members, ${feet.length} of their ends on the ground at ${design.rooms.reduce((n, r) => n + r.piers.length, 0)} piers, ${stations.length} beds, ${viewpoints.length} viewpoints`);
+if (lines) console.log(`  training lines: ${lines.summary.boughs} boughs (${lines.summary.boughM} m) and ${lines.summary.branches} branches (${lines.summary.branchM} m) of ${lines.cables[0]?.diameterMm} mm cable, fixed at ${lines.summary.fixingsUsed} of ${lines.summary.fixings} lap joints`);
 console.log(`written: ${resolve(to, 'bower.json')}`);

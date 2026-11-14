@@ -96,6 +96,7 @@
     "P6.honeysuckle: the flowering side shoots and long shoots of Lonicera periclymenum 'Graham Thomas' set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for organs.alternateDivergenceDeg. The angles they leave at and the days they break on are not findings about this plant",
     "P6.late-clematis: the shoots of Clematis 'Princess Diana' that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant"
   ],
-  "reseated": "109354 supported stem points: 10.5% stood more than 10 mm inside the real timber and 72.5% were moved by more than 5 mm (the furthest 109 mm); 20.9% could not be placed on a member and follow their neighbours",
-  "thinned": "1281720 stem points recorded, 515421 kept: unsupported shoots thinned to one point every 25 mm"
+  "reseated": "90069 supported stem points: 7.0% stood more than 10 mm inside the real timber and 35.6% were moved by more than 5 mm (the furthest 107 mm); 60.8% could not be placed on a member and follow their neighbours",
+  "thinned": "823767 stem points recorded, 425791 kept: unsupported shoots thinned to one point every 25 mm",
+  "cleared": "8.3% of stem points stood more than 5 mm inside the timber; 21747 stretches of stem were taken out of it (the furthest moved 254 mm), leaving 0.2%"
 }

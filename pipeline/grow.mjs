@@ -10,6 +10,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { clear } from './clear.mjs';
 import { reseat } from './reseat.mjs';
 import { thin } from './thin.mjs';
 
@@ -70,6 +71,9 @@ const seated = reseat(growth, read(resolve(root, 'releases', snapshot, 'centreli
 console.log(`\nre-seated on the real timber faces: ${seated.summary}`);
 const thinned = thin(growth);
 console.log(`thinned for drawing at the scale of a room: ${thinned.summary}`);
+// The simulator takes no account of the members that cross the one a stem is on. Nothing grows through wood.
+const cleared = clear(growth, read(resolve(root, 'releases', snapshot, 'centrelines.json')));
+console.log(`kept out of the timber: ${cleared.summary}`);
 
 const out = resolve(scene, 'runs', options.name ?? `${care}-${years}y`);
 mkdirSync(out, { recursive: true });
@@ -86,7 +90,7 @@ writeFileSync(resolve(out, 'report.json'), JSON.stringify(report, null, 2));
 writeFileSync(resolve(out, 'report.txt'), `${text}\n`);
 writeFileSync(
   resolve(out, 'run.json'),
-  `${JSON.stringify({ snapshot, bower: options.bower ?? 'bower.json', plan: options.plan ?? 'planting.json', specimenM, care, years, seed, simulator: { repository: 'horti-code-ture', commit }, toCheck: design.warnings, notModelledOrAssumed: notes, reseated: seated.summary, thinned: thinned.summary }, null, 2)}\n`,
+  `${JSON.stringify({ snapshot, bower: options.bower ?? 'bower.json', plan: options.plan ?? 'planting.json', specimenM, care, years, seed, simulator: { repository: 'horti-code-ture', commit }, toCheck: design.warnings, notModelledOrAssumed: notes, reseated: seated.summary, thinned: thinned.summary, cleared: cleared.summary }, null, 2)}\n`,
 );
 console.log(`\n${text}`);
 console.log(`\nwritten: ${out}`);

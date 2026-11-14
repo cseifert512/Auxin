@@ -81,7 +81,8 @@ const bower = (await (await fetch(bowerUrl)).json()) as { stations: { id: string
 const bedsUsed = new Set(growth.plants.map((p) => p.stationId));
 paper.scene.add(drawBeds(bower.stations.filter((s) => bedsUsed.has(s.id))));
 // and any cables this version of the building has, strung once the timber stands
-const steel = drawCables(bower.cables ?? []);
+// as thin as they are, or marked in green to be looked at (?lines=marked)
+const steel = drawCables(bower.cables ?? [], url.get('lines') === 'marked');
 const steelM = (bower.cables ?? []).reduce((sum, c) => sum + c.points.slice(1).reduce((d, p, i) => d + Math.hypot(p[0]! - c.points[i]![0]!, p[1]! - c.points[i]![1]!, p[2]! - c.points[i]![2]!), 0), 0);
 paper.scene.add(steel);
 await loadLooks([...new Set(growth.plants.map((p) => p.taxonId))]);
@@ -231,7 +232,7 @@ chooser.addEventListener('change', () => {
 });
 
 // ---- what goes with the picture ----------------------------------------------------------------------------------
-$('subtitle').textContent = `${design.rooms[0]!.bays.length}-bay room · ${plan.members.length} timber members · trial planting of ${growth.plants.length} climbers, tended${steelM > 0 ? ` · ${Math.round(steelM)} m of cable added to try` : ''}`;
+$('subtitle').textContent = `${design.rooms[0]!.bays.length}-bay room · ${plan.members.length} timber members · trial planting of ${growth.plants.length} climbers, tended${steelM > 0 ? ` · ${Math.round(steelM)} m of training line` : ''}`;
 setLook(look);
 $('loading').hidden = true;
 document.querySelector<HTMLElement>('.time')!.hidden = false;

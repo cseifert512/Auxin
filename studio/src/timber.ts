@@ -42,6 +42,8 @@ const CREASE_DEG = 28;
 /** Freshly planed softwood glulam, and the same wood weathered. */
 const FRESH = 0xcf9f66;
 const SILVERED = 0xb3aa9a;
+/** The training lines when they are marked for looking at: the factory drawings' green for what is Bower's own. */
+const MARKED = 0x2a6a50;
 /** The line that edges coloured timber: the ink, warmed. */
 const WOOD_LINE = 0x33261b;
 /** Years for a face turned full to the sky to go about two thirds of the way to silver. */
@@ -176,7 +178,7 @@ export async function loadTimber(url: string): Promise<Timber> {
 }
 
 /** Slender steel for plants to hold: each cable a thin line, in the grey of the factory drawings' labels. */
-export function drawCables(cables: readonly { points: readonly number[][] }[]): THREE.Object3D {
+export function drawCables(cables: readonly { points: readonly number[][] }[], marked = false): THREE.Object3D {
   const positions: number[] = [];
   for (const c of cables) {
     for (let i = 0; i + 1 < c.points.length; i++) {
@@ -185,7 +187,7 @@ export function drawCables(cables: readonly { points: readonly number[][] }[]): 
       positions.push(a[0]!, a[2]!, -a[1]!, b[0]!, b[2]!, -b[1]!);
     }
   }
-  const object = new LineSegments2(new LineSegmentsGeometry().setPositions(positions.length ? positions : [0, 0, 0, 0, 0, 0]), new LineMaterial({ color: MUTED, linewidth: 0.7, toneMapped: false }));
+  const object = new LineSegments2(new LineSegmentsGeometry().setPositions(positions.length ? positions : [0, 0, 0, 0, 0, 0]), new LineMaterial(marked ? { color: MARKED, linewidth: 1.7, toneMapped: false } : { color: MUTED, linewidth: 0.55, toneMapped: false }));
   object.frustumCulled = false;
   object.visible = positions.length > 0;
   object.name = 'cables';

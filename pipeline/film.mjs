@@ -152,7 +152,7 @@ for (const key of formats) {
 
   const page = await openPage();
   await page.send('Emulation.setDeviceMetricsOverride', { width: format.width, height: format.height, deviceScaleFactor: SCALE, mobile: false });
-  const query = new URLSearchParams({ film: '', view, timber, build: '0', ...(options.run ? { run: options.run } : {}) });
+  const query = new URLSearchParams({ film: '', view, timber, build: '0', ...(options.run ? { run: options.run } : {}), ...(options.lines ? { lines: options.lines } : {}) });
   await page.send('Page.navigate', { url: `http://localhost:${PORT}/?${query}` });
   // reading ten years of growth takes a while
   let ready = false;
@@ -165,6 +165,19 @@ for (const key of formats) {
   const line = await page.js('window.studio.line()');
   const gpu = await page.js(`(() => { const gl = window.studio.paper.renderer.getContext(); const e = gl.getExtension('WEBGL_debug_renderer_info'); return e ? gl.getParameter(e.UNMASKED_RENDERER_WEBGL) : 'unknown'; })()`);
   console.log(`${file}: ${format.width * SCALE} x ${format.height * SCALE}, ${total} frames at ${fps} a second, drawn by ${gpu}`);
+
+  // one picture and no film: --still=day:3399 (a day of growth) or --still=build:0.5 (a share of the assembly)
+  if (options.still) {
+    const [what, value] = options.still.split(':');
+    const at = what === 'build' ? line.start + Number(value) * (line.planted - line.start) : Number(value);
+    await page.js(`window.studio.film(${at}, 0)`);
+    await page.js(`window.studio.film(${at}, 0)`);
+    const shot = await page.send('Page.captureScreenshot', { format: 'jpeg', quality: 95 });
+    writeFileSync(resolve(out, `${file}.jpg`), Buffer.from(shot.data, 'base64'));
+    console.log(`  written: ${resolve(out, `${file}.jpg`)}`);
+    page.close();
+    continue;
+  }
 
   const began = performance.now();
   for (let i = 0; i < total; i++) {

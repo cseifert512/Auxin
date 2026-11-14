@@ -48,14 +48,24 @@ frame is worked out in full, so a film is smooth although the studio, live, may 
 approach is walked on, to stand before the bay in front. A film ends on the last midsummer of the run
 (`--to-the-end` for the whole of it). The films themselves are not committed; the stills are.
 
+`--still=day:3399` (a day of growth) or `--still=build:0.5` (a share of the assembly) takes one picture and makes
+no film. The training lines are drawn as thin as they are, which is nearly not at all; `--lines=marked`, or
+`?lines=marked` in the studio, draws them in green to be looked at.
+
 ## What is where
 
 - `pipeline/convert.mjs` writes the simulator's input from a snapshot, and adds what the building model does not
-  hold yet: where plants go into the ground, and where a visitor stands. Plants go in where the timber meets the
-  ground and nowhere else, so the beds are a ring round each pier. Nothing is added for plants to climb.
+  hold yet: the training lines, where plants go into the ground, and where a visitor stands. Plants go in where
+  the timber meets the ground and nowhere else: at the piers. `--no-lines` leaves the timber bare.
+- `pipeline/lines.mjs` lays out the training lines: thin cable on the outside of the structure, fixed only at the
+  lap joints the building already has. They lead plants up the way the loads come down. A *bough* follows the
+  hoop inside each arch, from the ground at one pier, over the bay, to the ground at the next; *branches* leave
+  it and run from joint to joint straight up the slope to the crown, across the open cells of the lattice.
+  Nothing is strung across an opening. It is a rule, not a drawing: it reads any snapshot's joints, so it goes
+  on working as the building changes. `--boughs=` and `--spacing=` say which members carry boughs and how far
+  apart the branches leave them. Where a cable is fixed and how it is tensioned are not worked out.
 - `pipeline/plant.mjs` writes the planting from a rule: every bed takes a plant, and which plants a pier takes
-  depends on the side of the room it stands on. Which member of a pier a plant then climbs is the simulator's
-  choice: it cannot be told, and it reads the members of a pier as one joint where they meet at the ground.
+  depends on the side of the room it stands on.
 - `pipeline/assemble.mjs` reads the joint schedule for what has to be in place before what (a member lapped
   under another, a member housed into another) and puts the members in an order that keeps to it. It is the order
   the joints allow, not a method statement: lifting, propping and scaffold are not worked out.
@@ -66,6 +76,10 @@ approach is walked on, to stand before the bay in front. A film ends on the last
 - `pipeline/reseat.mjs` moves each supported stem on to the timber faces that are really there. The simulator's
   input cannot say which way a section is turned; the snapshot can.
 - `pipeline/thin.mjs` drops the points of free-hanging shoots that a drawing of a whole room cannot show.
+- `pipeline/clear.mjs` keeps every stem outside the timber. The simulator winds a stem round the member it
+  climbs and takes no account of the members crossing that one, so a tenth of the stem as recorded stands inside
+  wood. Each such stretch is taken out by one face of the member it is in, and rests on that face from then on.
+  `pipeline/solids.mjs` is the timber as solids, which this and the lines both ask.
 - `pipeline/compare.mjs` sets the runs of a scene side by side: timber held, how, and what a visitor sees.
 - `pipeline/film.mjs` makes the films.
 - `studio/` is the drawing.
