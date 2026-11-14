@@ -104,7 +104,7 @@ input:focus-visible {
 }
 #play {
   border: 1px solid var(--ink);
-  min-width: 62px;
+  min-width: 78px;
 }
 .when strong {
   display: block;
@@ -179,7 +179,7 @@ input:focus-visible {
   margin: 0;
 }
 .reading div {
-  min-width: 62px;
+  min-width: 78px;
 }
 .reading dt {
   font-size: 10.5px;
@@ -190,7 +190,7 @@ input:focus-visible {
   font-size: 15px;
   font-weight: 600;
 }
-#flowers {
+#value2 {
   color: var(--bower);
 }
 

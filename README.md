@@ -17,18 +17,25 @@ Needs Node 24 and `npm install` done once in `Horti-code-ture`. Nothing is insta
 
 ```bash
 npm run convert                              # releases/six-bay-v1 -> scenes/six-bay-v1/bower.json
+npm run assemble                             # the order the joints allow -> scenes/six-bay-v1/assembly.json
 npm run grow -- six-bay-v1 trained 10        # ten tended years -> scenes/six-bay-v1/runs/trained-10y/
 npm run studio                               # the drawing, on http://localhost:5310
 ```
 
-In the studio: **Play** or drag the line of time; Space plays, the arrow keys step a month (a year with Shift).
-Drag to turn the drawing, scroll to come closer. `?day=3363&view=inside` opens on a day and a view;
-`?bare` hides the controls for a still.
+The line of time has three parts: the design (every centre line drawn), the assembly (each member brought on to
+its line, in red while it moves), and ten years of growth from the day of planting.
+
+In the studio: **Play** or drag the line of time; Space plays, the arrow keys step along it (further with Shift).
+Drag to turn the drawing, scroll to come closer. `?day=3363&view=inside` opens on a day of growth and a view,
+`?build=0.5` half-way through the assembly; `?bare` hides the controls for a still.
 
 ## What is where
 
 - `pipeline/convert.mjs` writes the simulator's input from a snapshot, and adds what the building model does not
   hold yet: two planting beds at the foot of each pier, and where a visitor stands.
+- `pipeline/assemble.mjs` reads the joint schedule for what has to be in place before what (a member lapped
+  under another, a member housed into another) and puts the members in an order that keeps to it. It is the order
+  the joints allow, not a method statement: lifting, propping and scaffold are not worked out.
 - `pipeline/grow.mjs` runs the simulator and keeps the record of every stem, leaf and flower with its days, the
   design report, and `run.json` (which simulator commit, what it warned of, what it assumed).
 - `pipeline/reseat.mjs` moves each supported stem on to the timber faces that are really there. The simulator's
