@@ -21,6 +21,8 @@ sketches/*/states.js
 sketches/*/grown-*.js
 # made by `node sketches/design-space/joints.mjs` from the runs of one planting
 sketches/*/reached-joints.js
+# made by bower-blender/scripts/joint_detail.py in a windowless Blender
+sketches/*/joint-detail.js
 
 # scratch pictures while plates are made
 exports/deck/.work/

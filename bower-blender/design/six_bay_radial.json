@@ -408,8 +408,15 @@
       "max_piece_length_m": 12.0,
       "cut_meshes": "milled",
       "solver": "EXACT",
+      "plant_detail": {
+        "note": "How a lap is cut where a grown planting says a clinging plant gets to it (reached_by_plants). splayed: the lap bears on a short land at the middle of each wall, cut close, and either side of it the wall turns away from the crossing member, so that the gap a stem would travel into is an open pocket. Sizes are provisional design assumptions. mouth_m is about four times the thickest stem the three runs put at any of these joints after ten years (10 mm); a clinging plant's stem goes on thickening after that, and how far is not in the plant library. none: the joint is only noted.",
+        "type": "splayed",
+        "land_m": 0.03,
+        "mouth_m": 0.04,
+        "clearance_m": 0.0005
+      },
       "reached_by_plants": {
-        "note": "Joints that a plant clinging to the timber reaches unaided in a grown planting. Copied in by scripts/take_findings.py, not authored by hand. Each needs a plant-tight detail, which is not designed: nothing is cut differently for it yet.",
+        "note": "Joints that a plant clinging to the timber reaches unaided in a grown planting. Copied in by scripts/take_findings.py, not authored by hand. How a joint named here is cut is set in plant_detail.",
         "source": {
           "file": "drawings-in-code/scenes/six-bay-radial-v1/joints-reached.json",
           "snapshot": "six-bay-radial-v1",

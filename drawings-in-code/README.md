@@ -167,6 +167,11 @@ shows is the floor and the shade on it) and `round`.
   node sketches/design-space/joints.mjs six-bay-radial-v1 trained-10y-new-growth trained-10y-new-growth-seed8 trained-10y-new-growth-seed9
   ```
 
+  `joints.mjs` also writes `scenes/<snapshot>/joints-reached.json`, which is kept in git: it is what goes back
+  to the building (`bower-blender`, README, "Joints the plants reach"). The joint drawn close to in the
+  vignette is the two members as Blender mills them, before and after the building's answer, from
+  `bower-blender/scripts/joint_detail.py`, which writes `joint-detail.js` beside the page.
+
 ## What this is not
 
 The growth is a scenario on stated assumptions, not a forecast: the statement under the drawing travels with every

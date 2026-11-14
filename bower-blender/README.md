@@ -184,16 +184,42 @@ python scripts/take_findings.py        # six-bay-radial-v1 into design/six_bay_r
 ```
 
 It lands in `timber.joints.reached_by_plants`. The design is the source, so a
-snapshot made from it says what it was told. Each joint named is then noted in
-the schedule's `review` column ("a clinging plant reaches this joint in 3 of 3
+snapshot made from it says what it was told. Each joint named is noted in the
+schedule's `review` column ("a clinging plant reaches this joint in 3 of 3
 grown runs, first in year 5"), and the summary counts them as
 `reached_by_plants`. A design that has changed so that a named joint is gone is
 refused: the planting is to be grown again on it.
 
-Nothing is cut differently for these joints yet. They need a detail that keeps
-a stem out, and that detail is not designed; a lap is milled with the same
-`lap_clearance_m` as every other. The note is the hand-off, not the answer.
-`design/six_bay_radial.json` carries the 22 joints found on `six-bay-radial-v1`.
+What is done about them is `timber.joints.plant_detail`. With `type` set to
+`splayed`, a lap among them is cut differently, and here is why. A plant that
+clings travels along a face of a member, and at these joints three quarters of
+its stem lies on the members' sides. Where another member crosses, the gap
+between that member's side and the wall of the notch it sits in is a straight
+continuation of the face the stem is on: a slot as wide as the clearance (3 mm)
+and as deep as the lap (110 mm). A stem that goes in is held on both sides and
+thickens there.
+
+So the wall is not left parallel. It keeps a short land at the middle of the
+member's width (`land_m`, 30 mm), cut close (`clearance_m`, 0.5 mm), which is
+all the two parts bear on. Either side of the land the wall turns away from the
+crossing member, by `mouth_m` (40 mm) where it meets the member's side. What
+was a slot is an open pocket: a stem lies in it in the light, has room to
+thicken, and can be seen and cut; at the land there is nothing it can get into.
+A short land is also what lets the lap be cut close at all: 613 laps keep
+their 3 mm for going together, and 18 give it up.
+
+Each lap gains eight openings, four in each member (`_splays` in
+`bower/joints.py`). `design/six_bay_radial.json` carries the 22 joints found on
+`six-bay-radial-v1`: 18 are laps and are cut this way; 4 are housings into an
+arch and still want a detail of their own. `scripts/joint_detail.py`, run in a
+windowless Blender, mills the two members of one joint both ways and writes
+what is left of each for the drawings; both come out as closed meshes.
+
+The sizes are provisional design assumptions. The mouth is about four times the
+thickest stem the three runs put at any of these joints after ten years
+(10 mm); a stem goes on thickening after that, and how far is not in the plant
+library. Nobody has checked what the openings do to the strength of a lap. The
+whole room has not been rebuilt with them, and no snapshot holds them.
 
 ## Training lines
 

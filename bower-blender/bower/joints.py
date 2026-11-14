@@ -51,7 +51,7 @@ import math
 from collections import defaultdict
 from dataclasses import dataclass
 
-from .centreline import dot, norm, sub, unit
+from .centreline import cross, dot, norm, sub, unit
 from .member import Member, Notch, block, box, fit_notches
 from .timber import LATTICE
 
@@ -181,6 +181,11 @@ def find_joints(members: list[Member], timber: dict) -> tuple[list[Joint], dict,
     order = list(cfg.get("lap_order", LAP_ORDER))
     housing_depth = cfg.get("housing_depth_m", 0.05)
     longest = cfg.get("max_piece_length_m", 12.0)
+    # Joints a grown planting has shown a clinging plant gets to, and how a lap among them is cut (see _splays).
+    told = (cfg.get("reached_by_plants") or {}).get("joints") or {}
+    detail = cfg.get("plant_detail") or {}
+    splay = detail if detail.get("type") == "splayed" and mode == "milled" else None
+    splayed = set()
     by_id = {m.id: m for m in members}
     joints, cutters = [], defaultdict(list)
     wanted = defaultdict(list)  # member ID -> [(Notch, index into joints)], for "notches"
@@ -237,12 +242,15 @@ def find_joints(members: list[Member], timber: dict) -> tuple[list[Joint], dict,
         middle = tuple((a.point[k] + b.point[k]) / 2.0 + shift * square[k] for k in range(3))
         angle = angle_between(a.tangent, b.tangent)
         cuts = []
+        lap_id = f"lap:{first.id}:{second.id}"
+        opened = splay if splay and lap_id in told else None
+        gap = opened.get("clearance_m", 0.0005) if opened else clearance  # a splayed lap bears on short lands, cut close
         for member, here, other, there, face, sign, mine, theirs in sides(lap):
-            half_gap = other.width / 2.0 + clearance
+            half_gap = other.width / 2.0 + gap
             across = dot(here.tangent, there.width_axis)
             sine, way = max(abs(across), 0.2 if mode == "notches" else 0.06), (1.0 if across > 0 else -1.0)
             # the floor is a plane parallel to the one the two parts meet on, half the clearance back from it
-            level = tuple(middle[k] - sign * clearance / 2.0 * square[k] for k in range(3))
+            level = tuple(middle[k] - sign * gap / 2.0 * square[k] for k in range(3))
             depth = member.depth / 2.0 - sign * dot(sub(level, here.point), here.depth_axis)
             cuts.append(Cut(member.id, "lap", round(here.s, 3), round(max(2.0 * half_gap / sine, mine[1] - mine[0]), 3), face, round(depth, 3), round(90.0 - angle, 1)))
             if not 0.25 * member.depth <= depth <= 0.75 * member.depth and not review:
@@ -262,7 +270,12 @@ def find_joints(members: list[Member], timber: dict) -> tuple[list[Joint], dict,
                 far = (-CUTTER_REACH_M, 0.0) if sign < 0 else (0.0, CUTTER_REACH_M)
                 lo, hi = min(there.s - run, theirs[0] - 0.05), max(there.s + run, theirs[1] + 0.05)  # the whole stretch the two overlap
                 cutters[member.id].append(block(other.path, lo, hi, half_gap, far, step=(-sign, (level, square)), stations=meshed[other.id]))
-        joints.append(Joint(f"lap:{first.id}:{second.id}", "cross_lap", (first.id, second.id), point(middle), round(angle, 1), tuple(cuts), review))
+                if opened:
+                    opening = _splays(member, here, there, middle, square, sign, half_gap, level, depth, opened)
+                    cutters[member.id].extend(opening)
+                    if opening:
+                        splayed.add(lap_id)
+        joints.append(Joint(lap_id, "cross_lap", (first.id, second.id), point(middle), round(angle, 1), tuple(cuts), review))
 
     notches = {}
     if mode == "notches":
@@ -392,30 +405,80 @@ def find_joints(members: list[Member], timber: dict) -> tuple[list[Joint], dict,
                     cutters[b.id].append(box(axis, (toward_b, along, (0.0, 0.0, 1.0)), ((-0.9, clearance / 2.0), (-0.9, 0.9), (0.0, tall))))
             elif ".top." in node and {lap_layer(a), lap_layer(b)} == {"cw", "ccw"}:
                 joints.append(Joint(f"pair:{a.id}:{b.id}", "paired_heads", (a.id, b.id), point(a.path.station_at(a.path.length).point), round(angle_between(a.path.station_at(a.path.length).tangent, b.path.station_at(b.path.length).tangent), 1), ()))
-    return _with_plants(joints, cfg.get("reached_by_plants")), notches, dict(cutters)
+    return _with_plants(joints, told, splayed, detail), notches, dict(cutters)
+
+
+def _splays(member: Member, here, there, middle, square, sign: int, half_gap: float, level, depth: float, detail: dict) -> list:
+    """Cutters that open the two walls of a lap in `member` toward its sides, for a joint a clinging plant reaches.
+
+    A plant that clings travels along a face of a member. Where another member crosses, the gap
+    between that member's side and the wall of the notch it sits in is a straight continuation of
+    the face the stem is on: a slot as wide as the clearance and as deep as the lap. A stem that
+    goes in is held on both sides and thickens there.
+
+    So the wall is not left parallel. It keeps a short land at the middle of the member's width,
+    cut close, which is all the two parts bear on. Either side of the land it turns away from the
+    crossing member, by `mouth_m` where it meets the member's side. What was a slot is an open
+    pocket: a stem lies in it in the light, has room to thicken and can be seen and cut, and at
+    the land there is nothing it can get into.
+
+    Each of the four openings is a box hinged on the wall at the end of the land, standing on the
+    floor of the lap. Sizes are provisional. This is set out and cut; it is not proved.
+    """
+    land, mouth = detail.get("land_m", 0.03), detail.get("mouth_m", 0.04)
+    along, out = there.tangent, there.width_axis
+    crossing = dot(along, here.width_axis)  # how fast a point moving along the wall crosses this member
+    if abs(crossing) < 0.06:
+        return []
+    up = tuple(sign * c for c in square)  # from the floor of the lap toward the face it is cut from
+    made = []
+    for side in (-1.0, 1.0):
+        on_wall = tuple(middle[k] + side * half_gap * out[k] for k in range(3))
+        offset = dot(sub(on_wall, here.point), here.width_axis)
+        ends = sorted((e * member.width / 2.0 - offset) / crossing for e in (-1.0, 1.0))  # where the wall meets the member's sides
+        centre, flare = (ends[0] + ends[1]) / 2.0, (ends[1] - ends[0] - land) / 2.0
+        if flare < 0.01:  # the wall is hardly longer than the land: nothing to open
+            continue
+        angle = min(math.atan2(mouth, flare), math.radians(45.0))
+        outward = tuple(side * c for c in out)  # out of the notch, into the timber beside it
+        for way in (-1.0, 1.0):
+            hinge = tuple(on_wall[k] + (centre + way * land / 2.0) * along[k] for k in range(3))
+            hinge = tuple(hinge[k] + dot(sub(level, hinge), square) * square[k] for k in range(3))  # down on the floor
+            run = tuple(way * math.cos(angle) * along[k] + math.sin(angle) * outward[k] for k in range(3))
+            face = tuple(math.cos(angle) * outward[k] - way * math.sin(angle) * along[k] for k in range(3))
+            thick = min(mouth, 2.0 * half_gap - 0.004)  # back into the notch, never as far as its other wall
+            axes, extents = [run, face, up], [(0.0, flare / math.cos(angle) + 0.05), (-thick, 0.0), (0.0, depth + 0.05)]
+            if dot(cross(run, face), up) < 0.0:  # keep the three axes right-handed, so the box faces outward
+                axes[1], extents[1] = tuple(-c for c in face), (0.0, thick)
+            made.append(box(hinge, tuple(axes), tuple(extents)))
+    return made
 
 
 REACHED = "a clinging plant reaches this joint"
 
 
-def _with_plants(joints: list[Joint], reached: dict | None) -> list[Joint]:
-    """The joints, with those a grown planting has found noted for a detail of their own.
+def _with_plants(joints: list[Joint], told: dict, splayed: set, detail: dict) -> list[Joint]:
+    """The joints, with those a grown planting has found noted, and what was done about each.
 
     timber["joints"]["reached_by_plants"]["joints"] is keyed by joint ID and comes from growing a
     planting on the building: which joints a plant that clings to the timber gets to unaided, in how
-    many of the runs, and how soon (scripts/take_findings.py copies it in). Such a joint needs a
-    detail that keeps a stem out of it. That detail is not designed, so nothing is cut differently
-    here: the joint is noted in `review`, with the rest that need a detail of their own.
+    many of the runs, and how soon (scripts/take_findings.py copies it in). A lap among them is cut
+    splayed where timber["joints"]["plant_detail"] says so (see _splays). Any other kind of joint
+    still needs a detail of its own. Either way the joint says so in `review`.
     """
-    found = (reached or {}).get("joints") or {}
-    if not found:
+    if not told:
         return joints
     out = []
     for joint in joints:
-        f = found.get(joint.id)
+        f = told.get(joint.id)
         if f:
             when = f", first in year {f['first_year']}" if f.get("first_year") else ""
-            note = f"{REACHED} in {f['runs']} of {f['of']} grown runs{when}: it needs a plant-tight detail, which is not designed"
+            done = (
+                f"cut as a splayed lap: it bears on a {detail.get('land_m', 0.03) * 1000:.0f} mm land and its walls open {detail.get('mouth_m', 0.04) * 1000:.0f} mm at each mouth"
+                if joint.id in splayed
+                else "it needs a plant-tight detail, which is not designed"
+            )
+            note = f"{REACHED} in {f['runs']} of {f['of']} grown runs{when}: {done}"
             joint = Joint(joint.id, joint.kind, joint.members, joint.at_m, joint.angle_deg, joint.cuts, (joint.review + "; " if joint.review else "") + note)
         out.append(joint)
     return out
@@ -448,6 +511,7 @@ def joint_summary(joints: list[Joint]) -> dict:
         "third_depth_laps": sum(1 for j in joints if third(j)),
         "to_review": sum(1 for j in joints if j.review),
         "reached_by_plants": sum(1 for j in joints if REACHED in j.review),
+        "splayed_laps": sum(1 for j in joints if "cut as a splayed lap" in j.review),
         "laps_left_uncut": sum(1 for j in joints if "not cut in the model" in j.review),
         "laps_whose_walls_must_follow_a_turn": sum(1 for j in joints if "must follow the turn" in j.review and "not cut in the model" not in j.review),
     }

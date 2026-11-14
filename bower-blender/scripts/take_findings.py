@@ -14,8 +14,8 @@ folder each time: a snapshot made from the design then says what it was told. Ev
 must be one this design still has; a design that has changed since the planting was grown is
 refused, and the planting is to be grown again on it. No Blender.
 
-Nothing is cut differently for it yet. bower/joints.py notes each of these joints in the schedule
-as needing a plant-tight detail, which is not designed.
+What is then done about them is the design's own say, in timber.joints.plant_detail: bower/joints.py
+cuts a lap among them splayed, and notes any other kind of joint as still wanting a detail.
 """
 
 import json
@@ -39,7 +39,7 @@ def main(name: str = "six-bay-radial-v1", design_file: str = "design/six_bay_rad
     if gone:
         raise SystemExit(f"{len(gone)} of the joints found are not in {design_file} as it is now (the first: {gone[0]}): grow the planting again on this design")
     design["timber"]["joints"]["reached_by_plants"] = {
-        "note": "Joints that a plant clinging to the timber reaches unaided in a grown planting. Copied in by scripts/take_findings.py, not authored by hand. Each needs a plant-tight detail, which is not designed: nothing is cut differently for it yet.",
+        "note": "Joints that a plant clinging to the timber reaches unaided in a grown planting. Copied in by scripts/take_findings.py, not authored by hand. How a joint named here is cut is set in plant_detail.",
         "source": {
             "file": f"drawings-in-code/scenes/{name}/joints-reached.json",
             "snapshot": found["snapshot"],

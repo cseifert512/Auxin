@@ -109,24 +109,48 @@ def test_the_lattice_meets_every_half_arch_the_same_way():
         assert max(abs(a - b) for a, b in zip(sorted(distances), first)) < 0.005, arch
 
 
-def test_joints_a_planting_reached_are_noted_and_cut_as_before():
-    """timber.joints.reached_by_plants names joints by their IDs. Each is noted in the schedule, and nothing that is cut changes."""
+def _timber_without(*keys):
+    return {**DESIGN["timber"], "joints": {k: v for k, v in DESIGN["timber"]["joints"].items() if k not in keys}}
+
+
+def test_a_lap_a_planting_reached_is_cut_splayed_and_no_other_joint_changes():
+    """timber.joints.reached_by_plants names joints by their IDs, and plant_detail says how a lap among them is cut.
+
+    A named lap is opened at each of its eight mouths and says so. A named joint of another kind is
+    noted as still wanting a detail. Every joint the planting did not name is cut as it was.
+    """
     told = DESIGN["timber"]["joints"]["reached_by_plants"]["joints"]
-    plain = {k: v for k, v in DESIGN["timber"].items()}
-    plain["joints"] = {k: v for k, v in DESIGN["timber"]["joints"].items() if k != "reached_by_plants"}
-    noted = set()
+    assert DESIGN["timber"]["joints"]["plant_detail"]["type"] == "splayed"
+    seen = set()
     for group in build_design_timber(DESIGN):
-        with_plants, _, cutters = find_joints(group["members"], DESIGN["timber"])
-        without, _, cutters_plain = find_joints(group["members"], plain)
-        assert [(j.id, j.cuts) for j in with_plants] == [(j.id, j.cuts) for j in without]
-        assert {k: len(v) for k, v in cutters.items()} == {k: len(v) for k, v in cutters_plain.items()}
-        for a, b in zip(with_plants, without):
-            if a.id in told:
-                assert "a clinging plant reaches this joint" in a.review and "not designed" in a.review, a.id
-                noted.add(a.id)
+        now, _, cutters = find_joints(group["members"], DESIGN["timber"])
+        was, _, cutters_was = find_joints(group["members"], _timber_without("reached_by_plants", "plant_detail"))
+        assert [j.id for j in now] == [j.id for j in was]
+        opened = defaultdict(int)  # member -> openings cut into it
+        for a, b in zip(now, was):
+            if a.id not in told:
+                assert (a.cuts, a.review) == (b.cuts, b.review), a.id
+                continue
+            seen.add(a.id)
+            assert "a clinging plant reaches this joint" in a.review, a.id
+            if a.kind == "cross_lap":
+                assert "cut as a splayed lap" in a.review, a.id
+                for member in a.members:
+                    opened[member] += 4  # two walls, each opened toward both sides of the member
             else:
-                assert a.review == b.review, a.id
-    assert noted == set(told)  # every joint the planting named is still a joint of this design
+                assert "not designed" in a.review and a.cuts == b.cuts, a.id
+        for member in {m.id for m in group["members"]}:
+            assert len(cutters.get(member, [])) - len(cutters_was.get(member, [])) == opened[member], member
+    assert seen == set(told)  # every joint the planting named is still a joint of this design
+
+
+def test_without_a_detail_a_reached_joint_is_noted_and_cut_as_before():
+    for group in build_design_timber(DESIGN):
+        noted, _, cutters = find_joints(group["members"], _timber_without("plant_detail"))
+        was, _, cutters_was = find_joints(group["members"], _timber_without("reached_by_plants", "plant_detail"))
+        assert [(j.id, j.cuts) for j in noted] == [(j.id, j.cuts) for j in was]
+        assert {k: len(v) for k, v in cutters.items()} == {k: len(v) for k, v in cutters_was.items()}
+        assert sum("which is not designed" in j.review for j in noted) == len(DESIGN["timber"]["joints"]["reached_by_plants"]["joints"])
 
 
 if __name__ == "__main__":

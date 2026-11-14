@@ -15,9 +15,10 @@
   docs/STYLE.md): named steps, one red for what is at issue, at most two leaders at once, a pause
   button, nothing to hover over. The whole room and one joint are drawn together in one projection.
 
-  A sketch, not a drawing for the deck. The room's timber is centre lines; the joint drawn close to
-  is two plain bars at the members' real sizes, without the lap that is milled into them; the
-  plants are stems only. It reads states.js (bower-blender/scripts/sweep_states.py),
+  A sketch, not a drawing for the deck. The room's timber is centre lines and the plants are stems
+  only. The joint drawn close to is the two members as Blender mills them, as every lap is cut and
+  as the design now cuts this one (joint-detail.js, from bower-blender/scripts/joint_detail.py);
+  without that file it is two plain bars. It reads states.js (bower-blender/scripts/sweep_states.py),
   grown-pier-opens.js (grown.mjs: its first run is the room as drawn) and reached-joints.js
   (joints.mjs). Every number on it comes from those.
   Hooks, as on the deck's pieces: __setT(seconds), __play(), __duration, __ready.
@@ -53,7 +54,7 @@
   <div id="bar"><div id="fill"></div></div>
   <ol id="steps"></ol>
   <footer>
-    <p>Still to prove: the different cut is not designed, and the simulator does not test one. It reports where a clinging stem arrives and nothing about what the stem then does to a joint. Which plants cling, and how fast, rest on each plant's growth model. <span id="sample"></span></p>
+    <p>Still to prove: the splayed lap is set out and cut in the model, not proved. Its sizes are provisional, nobody has checked what it does to the strength of the lap, and how thick a clinging stem gets after ten years is not in the plant library. The simulator reports where a clinging stem arrives and nothing about what it then does to a joint, so it cannot test the new cut. <span id="sample"></span></p>
     <p id="setup"></p>
     <p id="statement"></p>
   </footer>
@@ -61,6 +62,7 @@
 <script src="states.js"></script>
 <script src="grown-pier-opens.js"></script>
 <script src="reached-joints.js"></script>
+<script src="joint-detail.js"></script>
 <script>
 (() => {
   const D = window.DESIGN_SPACE, G = window.GROWN && window.GROWN["pier-opens"] && window.GROWN["pier-opens"].start, R = window.REACHED;
@@ -81,6 +83,8 @@
   const reached = run.reached.filter((x) => x.day != null).sort((a, b) => a.day - b.day);
   const countAt = (day) => milled(reached.filter((x) => x.day <= day).map((x) => x.node));
   const IN_RUN = milled(run.reached.map((x) => x.node)), ALWAYS = R.milledAlways, SOMETIMES = R.milledEver - R.milledAlways;
+  const everMilled = new Map(Object.values(R.places).flatMap((p) => p.milled.map((j) => [j.id, j.kind])));
+  const LAPS = [...everMilled.values()].filter((kind) => kind === "cross_lap").length, OTHERS = everMilled.size - LAPS;
   const clingers = new Set(run.reached.flatMap((x) => x.plants));
   const names = [...new Set([...clingers].map((id) => run.labels[id]))];
   const yearsOf = (day) => day / 365.25;
@@ -90,7 +94,7 @@
   const STEPS = [
     ["We want", "Timber the plants hold for themselves. Some of the planting clings straight to the wood."],
     ["We ask", `Where does that take them? In ten years, to ${IN_RUN} of the room's ${R.joints} joints.`],
-    ["We reconsider", "A stem that gets into a joint thickens there. So these joints are cut differently, and the list goes to the mill."],
+    ["We reconsider", `The gap beside a crossing member is straight on from the face a stem travels. So ${LAPS} laps are cut to open where the stem lies.`],
     ["We ask again", `Grown again, chance falls differently: ${ALWAYS} joints are reached every time, ${SOMETIMES} only sometimes. After planting, the room itself is the next run.`],
   ];
   const stepOf = (t) => Math.max(0, BND.findIndex((b, i) => t >= b && t < BND[i + 1]));
@@ -139,7 +143,7 @@
     const m = wide ? { x: 0, y: 0, w: W * 0.6, h: H } : { x: 0, y: 0, w: W, h: H * 0.58 };
     const n = wide ? { x: W * 0.64, y: H * 0.08, w: W * 0.36, h: H * 0.84 } : { x: W * 0.2, y: H * 0.62, w: W * 0.6, h: H * 0.36 };
     main = { rect: m, at: [0, 0, 2.9], scale: Math.min(m.w / 15.6, m.h / 12.6) };
-    inset = { rect: n, at: JOINT, scale: Math.min(n.w / 1.15, n.h / 1.4) };
+    inset = { rect: n, at: JOINT, scale: Math.min(n.w / (MILLED ? 0.62 : 1.15), n.h / (MILLED ? 0.76 : 1.4)) };
     U = Math.max(0.8, Math.min(1.25, W / 1000));
   }
   function clip(v, draw) {
@@ -202,6 +206,47 @@
     for (const end of [rings[0], rings[rings.length - 1]]) FACES.push({ q: end, along: false, far: end.reduce((n, p) => n + depth(p), 0) / 4 });
   }
   FACES.sort((a, b) => b.far - a.far);
+  // The same two members as Blender mills them: faces furthest from the eye first, and only the edges where the
+  // surface turns, so that a flat face cut into triangles is drawn as one face.
+  const JD = window.JOINT_DETAIL && window.JOINT_DETAIL.joint === close.joint.id ? window.JOINT_DETAIL : null;
+  const EYE = [SY * CP, CY * CP, -SP];   // the way the eye looks
+  const LIGHT = unit([EYE[0] * 0.5 - CY * 0.6, EYE[1] * 0.5 + SY * 0.6, -0.75]);   // from over the left shoulder
+  function solid(variant) {
+    const faces = [];
+    for (const piece of Object.values(variant.pieces)) {
+      const V = piece.verts_m, edges = new Map(), mine = [];
+      for (const idx of piece.faces) {
+        const q = idx.map((i) => V[i]);
+        let n = [0, 0, 0];
+        q.forEach((a, i) => { const b = q[(i + 1) % q.length]; n[0] += (a[1] - b[1]) * (a[2] + b[2]); n[1] += (a[2] - b[2]) * (a[0] + b[0]); n[2] += (a[0] - b[0]) * (a[1] + b[1]); });
+        const face = { q, idx, n: unit(n), far: q.reduce((m, x) => m + depth(x), 0) / q.length };
+        idx.forEach((a, i) => { const b = idx[(i + 1) % idx.length], key = a < b ? a + ":" + b : b + ":" + a; if (!edges.has(key)) edges.set(key, []); edges.get(key).push(face); });
+        mine.push(face);
+      }
+      for (const face of mine) {
+        face.turn = face.idx.map((a, i) => { const b = face.idx[(i + 1) % face.idx.length], both = edges.get(a < b ? a + ":" + b : b + ":" + a); return both.length === 2 && both[0].n[0] * both[1].n[0] + both[0].n[1] * both[1].n[1] + both[0].n[2] * both[1].n[2] < 0.94; });
+        if (face.n[0] * EYE[0] + face.n[1] * EYE[1] + face.n[2] * EYE[2] < 0) faces.push(face);   // only faces turned to the eye
+      }
+    }
+    return faces.sort((a, b) => b.far - a.far);
+  }
+  const MILLED = JD ? { was: solid(JD.variants.as_drawn), now: solid(JD.variants.now) } : null;
+  function drawMilled(v, faces, alpha, red) {
+    if (alpha <= 0.01) return;
+    ctx.globalAlpha = alpha; ctx.lineJoin = ctx.lineCap = "round"; ctx.lineWidth = 1.15;
+    for (const face of faces) {
+      const sc = face.q.map((x) => P(v, x[0], x[1], x[2]));
+      ctx.beginPath(); sc.forEach((x, i) => (i ? ctx.lineTo(x[0], x[1]) : ctx.moveTo(x[0], x[1]))); ctx.closePath();
+      ctx.fillStyle = PAPER; ctx.fill();
+      ctx.fillStyle = `rgba(${INK},${0.05 + 0.13 * Math.max(0, -(face.n[0] * LIGHT[0] + face.n[1] * LIGHT[1] + face.n[2] * LIGHT[2]))})`; ctx.fill();   // a little tone, by how far the face turns from the light
+      if (red > 0.01) { ctx.fillStyle = `rgba(${RED},${0.09 * red})`; ctx.fill(); }
+      ctx.strokeStyle = red > 0.5 ? `rgb(${RED})` : `rgb(${INK})`;
+      ctx.beginPath();
+      face.turn.forEach((on, i) => { if (on) { const a = sc[i], b = sc[(i + 1) % sc.length]; ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); } });
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
   function joint(v, issue) {
     ctx.lineJoin = "round";
     for (const face of FACES) {
@@ -262,6 +307,8 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     const found = now.day >= close.day && t >= 8.6 ? 1 - seg(t, 32.3, 33) : 0;
+    const recut = MILLED ? ease(seg(t, 19.4, 21)) * (1 - seg(t, 32.3, 33)) : 0;   // from the lap as every lap is cut to this one as it is now cut
+    const cutting = Math.sin(Math.PI * seg(t, 19.4, 21.6));                        // red only while it changes
 
     clip(main, () => {   // the whole room
       timber(main, 0.5, 1);
@@ -283,8 +330,9 @@
     ctx.fillStyle = PAPER; ctx.fillRect(inset.rect.x, inset.rect.y, inset.rect.w, inset.rect.h);
     clip(inset, () => {   // one joint, close to
       timber(inset, 0.12, 0.1);
-      joint(inset, found);
-      stems(inset, CLOSE_STEMS, now, 0.75);
+      if (MILLED) { drawMilled(inset, MILLED.was, 1 - recut, found * (1 - recut)); drawMilled(inset, MILLED.now, recut, cutting); }
+      else joint(inset, found);
+      stems(inset, CLOSE_STEMS, { ...now, plants: now.plants * (1 - 0.72 * win(t, 17.2, 24, 0.5)) }, 0.75);   // the stems step back while the cut is looked at
     });
     ctx.strokeStyle = "rgba(16,40,32,.3)"; ctx.lineWidth = 0.8;
     ctx.strokeRect(inset.rect.x, inset.rect.y, inset.rect.w, inset.rect.h);
@@ -294,10 +342,13 @@
 
     // annotation: never more than two leaders at a time
     const who = close.plants.map((id) => run.labels[id]).join(" and ");
-    leader(inset, JOINT, 34, 70, `reached in year ${Math.ceil(yearsOf(close.day))}\nby ${who}`, win(t, T_REACH, Math.max(T_REACH + 4, 19.6)), true);
-    const cut = close.joint.aDepthMm && close.joint.bDepthMm ? `\n${close.joint.aDepthMm} mm out of one, ${close.joint.bDepthMm} mm out of the other` : "";
-    leader(inset, JOINT, -30, -78, `as milled: a ${close.joint.kind.replace("_", " ")}${cut}`, win(t, 19.9, 23.7), false);
-    leader(main, nearestAlways.at, -64, 58, `${IN_RUN} joints marked for a different cut\n(the cut is not designed yet)`, win(t, 18.2, 23.7), true);
+    leader(inset, JOINT, 34, 96, `reached in year ${Math.ceil(yearsOf(close.day))}\nby ${who}`, win(t, T_REACH, Math.max(T_REACH + 4, 17.2)), true);
+    if (JD) {
+      const was = JD.variants.as_drawn, cutNow = JD.variants.now, mm = (x) => Math.round(x * 1000);
+      leader(inset, JOINT, 34, 96, `a slot ${mm(was.clearance_m)} mm wide and ${mm(was.cuts[0].depth_m)} mm deep,\nstraight on from the face`, win(t, 17.4, 20.2), true);
+      if (cutNow.detail) leader(inset, JOINT, 34, 96, `opened ${mm(cutNow.detail.mouth_m)} mm at each mouth;\nit bears on a ${mm(cutNow.detail.land_m)} mm land`, win(t, 20.6, 23.8), false);
+    }
+    leader(main, nearestAlways.at, -64, 58, `${LAPS} laps cut this way` + (OTHERS ? `;\n${OTHERS} housings still want a detail` : ""), win(t, 20.2, 23.8), false);
     leader(main, nearestAlways.at, -64, 58, `${ALWAYS} joints reached in all ${R.runs.length} runs`, win(t, 25.2, 32.2), true);
     leader(main, highestSometimes.at, -44, -62, `${SOMETIMES} more in only some of them`, win(t, 26.6, 32.2), false);
   }
