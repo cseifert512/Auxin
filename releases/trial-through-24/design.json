@@ -1,0 +1,413 @@
+{
+  "schema": "bower.design/1",
+  "note": "Authored control topology for Bower V1. Dimensions are provisional design values, not engineered sizes.",
+  "units": "m",
+  "axes": {
+    "up": "+Z",
+    "north": "+Y"
+  },
+  "sampling": {
+    "across": 10,
+    "up": 16,
+    "curve_resolution_u": 16
+  },
+  "rooms": [
+    {
+      "id": "R1",
+      "floor_z_m": 0.0,
+      "crown": {
+        "centre_m": [
+          0.05,
+          0.1
+        ],
+        "height_m": 6.3,
+        "radius_m": 1.0
+      },
+      "shape": {
+        "pier_height_m": 1.6,
+        "pier_radius_m": 0.1,
+        "arch_shoulder": 0.4,
+        "arch_point_deg": 30.0,
+        "arch_reach": 0.62,
+        "fan_radius_m": 3.0,
+        "pier_funnel_m": 2.8,
+        "ridge_soften": 1.5,
+        "lantern_radius_m": 2.9,
+        "lantern_base_height_m": 4.8
+      },
+      "piers": [
+        {
+          "id": "R1.P1",
+          "position_m": [
+            -3.85,
+            -4.93
+          ]
+        },
+        {
+          "id": "R1.P2",
+          "position_m": [
+            3.01,
+            -5.22
+          ]
+        },
+        {
+          "id": "R1.P3",
+          "position_m": [
+            6.34,
+            -0.66
+          ]
+        },
+        {
+          "id": "R1.P4",
+          "position_m": [
+            3.23,
+            4.79
+          ]
+        },
+        {
+          "id": "R1.P5",
+          "position_m": [
+            -2.5,
+            5.6
+          ]
+        },
+        {
+          "id": "R1.P6",
+          "position_m": [
+            -6.49,
+            0.22
+          ]
+        }
+      ],
+      "bays": [
+        {
+          "id": "R1.B1",
+          "from": "R1.P1",
+          "to": "R1.P2",
+          "type": "open",
+          "apex_height_m": 4.8,
+          "apex_shift": 0.0,
+          "apex_out_m": 0.0
+        },
+        {
+          "id": "R1.B2",
+          "from": "R1.P2",
+          "to": "R1.P3",
+          "type": "open",
+          "apex_height_m": 4.5,
+          "apex_shift": 0.0,
+          "apex_out_m": 0.0
+        },
+        {
+          "id": "R1.B3",
+          "from": "R1.P3",
+          "to": "R1.P4",
+          "type": "open",
+          "apex_height_m": 4.6,
+          "apex_shift": 0.0,
+          "apex_out_m": 0.0
+        },
+        {
+          "id": "R1.B4",
+          "from": "R1.P4",
+          "to": "R1.P5",
+          "type": "open",
+          "apex_height_m": 4.5,
+          "apex_shift": 0.0,
+          "apex_out_m": 0.0
+        },
+        {
+          "id": "R1.B5",
+          "from": "R1.P5",
+          "to": "R1.P6",
+          "type": "open",
+          "apex_height_m": 4.7,
+          "apex_shift": 0.0,
+          "apex_out_m": 0.0
+        },
+        {
+          "id": "R1.B6",
+          "from": "R1.P6",
+          "to": "R1.P1",
+          "type": "open",
+          "apex_height_m": 4.5,
+          "apex_shift": 0.0,
+          "apex_out_m": 0.0
+        }
+      ],
+      "next_pier": 7,
+      "next_bay": 7
+    }
+  ],
+  "context": {
+    "ground_radius_m": 40.0,
+    "scale_figure": {
+      "position_m": [
+        1.6,
+        -6.6
+      ],
+      "height_m": 1.75
+    }
+  },
+  "views": [
+    {
+      "id": "plan",
+      "projection": "ortho",
+      "location_m": [
+        0.0,
+        0.0,
+        30.0
+      ],
+      "target_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "ortho_scale_m": 23.0
+    },
+    {
+      "id": "elevation",
+      "projection": "ortho",
+      "location_m": [
+        0.0,
+        -30.0,
+        3.2
+      ],
+      "target_m": [
+        0.0,
+        0.0,
+        3.2
+      ],
+      "ortho_scale_m": 18.0
+    },
+    {
+      "id": "interior",
+      "projection": "persp",
+      "location_m": [
+        0.6,
+        -4.0,
+        1.65
+      ],
+      "target_m": [
+        0.0,
+        1.0,
+        4.4
+      ],
+      "lens_mm": 16.0
+    },
+    {
+      "id": "exterior",
+      "projection": "persp",
+      "location_m": [
+        1.2,
+        -21.0,
+        1.7
+      ],
+      "target_m": [
+        0.2,
+        0.0,
+        3.0
+      ],
+      "lens_mm": 40.0
+    },
+    {
+      "id": "overhead",
+      "projection": "persp",
+      "location_m": [
+        11.0,
+        -14.5,
+        13.0
+      ],
+      "target_m": [
+        0.0,
+        0.0,
+        2.5
+      ],
+      "lens_mm": 35.0
+    },
+    {
+      "id": "detail_pier",
+      "projection": "persp",
+      "location_m": [
+        -7.6,
+        -10.2,
+        2.9
+      ],
+      "target_m": [
+        -3.7,
+        -4.6,
+        3.0
+      ],
+      "lens_mm": 32.0
+    },
+    {
+      "id": "detail_arch",
+      "projection": "persp",
+      "location_m": [
+        -11.5,
+        -7.0,
+        7.4
+      ],
+      "target_m": [
+        -4.4,
+        -2.0,
+        4.0
+      ],
+      "lens_mm": 45.0
+    },
+    {
+      "id": "detail_crown",
+      "projection": "persp",
+      "location_m": [
+        4.6,
+        -5.4,
+        8.6
+      ],
+      "target_m": [
+        0.05,
+        0.1,
+        5.7
+      ],
+      "lens_mm": 50.0
+    },
+    {
+      "id": "detail_notches",
+      "projection": "persp",
+      "location_m": [
+        -7.9,
+        -5.0,
+        6.6
+      ],
+      "target_m": [
+        -4.7,
+        -2.4,
+        4.35
+      ],
+      "lens_mm": 60.0
+    }
+  ],
+  "timber": {
+    "note": "Primary members. Sections and the review radius are provisional concept values pending engineering and a fabricator's limits.",
+    "sections_m": {
+      "arch": [
+        0.26,
+        0.4
+      ],
+      "inner": [
+        0.14,
+        0.32
+      ],
+      "crown": [
+        0.26,
+        0.1
+      ],
+      "hoop": [
+        0.09,
+        0.22
+      ],
+      "ring": [
+        0.1,
+        0.22
+      ],
+      "rib": [
+        0.08,
+        0.22
+      ],
+      "fill": [
+        0.07,
+        0.22
+      ],
+      "fine": [
+        0.06,
+        0.22
+      ]
+    },
+    "arches": {
+      "note": "type: edge | paired | none. hoops_m belongs to edge; reveal_m and crest_m belong to paired.",
+      "type": "edge",
+      "hoops_m": [
+        0.5,
+        1.0
+      ],
+      "hoop_nudge_m": 0.12,
+      "hoop_sample_spacing_m": 0.45,
+      "reveal_m": 0.38,
+      "crest_m": 0.25
+    },
+    "lattice": {
+      "note": "type: spiral | none. A tier starts at the top ring, part-way up the lantern, or at a ring on the canopy.",
+      "type": "spiral",
+      "ribs_per_family": 12,
+      "lean_deg": 40.0,
+      "lean_top_deg": 12.0,
+      "lean_rim_deg": null,
+      "pair_gap_m": 0.01,
+      "land_square_m": 1.6,
+      "sample_spacing_m": 0.45,
+      "gather_m": 1.1,
+      "tiers": [
+        {
+          "family": "rib",
+          "phases": [
+            0.0
+          ],
+          "from": "top",
+          "gather_m": 2.8
+        },
+        {
+          "family": "fill",
+          "phases": [
+            0.5
+          ],
+          "from": {
+            "lantern": 0.22
+          },
+          "gathers": false
+        },
+        {
+          "family": "fine",
+          "phases": [
+            0.25,
+            0.75
+          ],
+          "from": {
+            "radius_m": 4.2
+          },
+          "gathers": false
+        }
+      ],
+      "ring_rows": []
+    },
+    "crown": {
+      "seat_m": 0.03
+    },
+    "joints": {
+      "note": "lap_order: a member earlier in the list goes in first and is notched on its outer face. Depths and clearances are provisional.",
+      "lap_order": [
+        "ring",
+        "hoop",
+        "cw",
+        "ccw"
+      ],
+      "lap_clearance_m": 0.003,
+      "housing_depth_m": 0.05,
+      "max_piece_length_m": 12.0,
+      "cut_meshes": "milled",
+      "solver": "EXACT"
+    },
+    "piers": {
+      "legs": true,
+      "gap_m": 0.03,
+      "ring_radius_m": 0.34
+    },
+    "bend_radius_review_m": 3.0,
+    "sampling": {
+      "curve_resolution_u": 12,
+      "mesh_station_spacing_m": 0.08,
+      "export_station_spacing_m": 0.1
+    }
+  },
+  "display": {
+    "envelope": false
+  }
+}
