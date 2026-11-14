@@ -1,7 +1,8 @@
 # drawings-in-code
 
-Bower's building and its plants, drawn together through time. The timber is an ink drawing in the projection and
-line of the factory drawings; the plants are in colour; one line of time runs from the day of planting.
+Bower's building and its plants, drawn together through time. One line of time runs from the design, through the
+building going together, into ten years of growth. The timber is drawn as the factory drawings are, in their
+projection and line, or in its own colour; the plants are in colour.
 
 This repository joins three others and changes none of them:
 
@@ -13,47 +14,64 @@ This repository joins three others and changes none of them:
 
 ## Run it
 
-Needs Node 24 and `npm install` done once in `Horti-code-ture`. Nothing is installed here.
+Needs Node 24 and `npm install` done once in `Horti-code-ture`. `npm install` here is needed only for films: it
+brings ffmpeg.
 
 ```bash
-npm run convert                              # releases/six-bay-v1 -> scenes/six-bay-v1/bower.json
-npm run assemble                             # the order the joints allow -> scenes/six-bay-v1/assembly.json
-npm run grow -- six-bay-v1 trained 10        # ten tended years -> scenes/six-bay-v1/runs/trained-10y/
-npm run grow -- six-bay-v1 trained 10 7 --specimen=2 --name=specimens-10y                            # planted standing 2 m
-npm run grow -- six-bay-v1 trained 10 7 --specimen=2 --plan=planting-24.json --name=specimens-24-10y   # and twice as many
-npm run compare                              # the runs side by side: timber held, and what a visitor sees
-npm run studio                               # the drawing, on http://localhost:5310
+npm run convert                         # releases/six-bay-v1 -> scenes/six-bay-v1/bower.json
+npm run plant                           # the planting, from its rule -> scenes/six-bay-v1/planting.json
+npm run assemble                        # the order the joints allow -> scenes/six-bay-v1/assembly.json
+npm run grow -- six-bay-v1 trained 10 7 --specimen=3    # ten tended years -> scenes/six-bay-v1/runs/trained-10y/
+npm run compare                         # the runs of a scene side by side
+npm run studio                          # the drawing, on http://localhost:5310
+npm run film                            # exports/approach-ink/: the line of time as a film, wide and upright
 ```
 
-The line of time has three parts: the design (every centre line drawn), the assembly (each member brought on to
-its line, in red while it moves), and ten years of growth from the day of planting.
-
 In the studio: **Play** or drag the line of time; Space plays, the arrow keys step along it (further with Shift).
-Drag to turn the drawing, scroll to come closer. `?day=3363&view=inside` opens on a day of growth and a view,
-`?build=0.5` half-way through the assembly; `?bare` hides the controls for a still. The chooser at the top
-right swaps between the plantings that have been grown on this machine (`?run=specimens-10y`), and **Timber / Ink**
-between timber in its own colour, greying with the years, and the plain ink drawing (`?timber=ink`).
+Drag to turn the drawing, scroll to come closer. **Timber / Left to silver / Ink** draws the timber in its own
+colour, held by a finish that is kept up; the same left bare to weather; or as plain ink on paper.
+`?day=3363&view=inside` opens on a day of growth and a view, `?build=0.5` half-way through the assembly,
+`?timber=ink` in ink, and `?bare` hides the controls for a still. A planting grown while the studio is running
+shows after it is restarted.
+
+## Films
+
+```bash
+npm run film -- --view=approach --timber=ink                # both proportions
+npm run film -- --view=drawing --timber=wood --format=landscape --build=10 --grow=40
+```
+
+A film is the studio's own drawing, taken frame by frame in a headless Chrome or Edge and put together with
+ffmpeg: the same page, with the buttons hidden. It writes `exports/<name>/<name>-16x9.mp4` (1920 x 1080, for a
+presentation) and `<name>-9x16.mp4` (1080 x 1920, for a phone), with a still of the last frame beside each. Every
+frame is worked out in full, so a film is smooth although the studio, live, may not be. On the upright sheet the
+approach is walked on, to stand before the bay in front. A film ends on the last midsummer of the run
+(`--to-the-end` for the whole of it). The films themselves are not committed; the stills are.
 
 ## What is where
 
 - `pipeline/convert.mjs` writes the simulator's input from a snapshot, and adds what the building model does not
-  hold yet: four planting beds at the foot of each pier, and where a visitor stands. A bed has to be within 1.5 m
-  of something to climb, so on this building beds can only be at the piers.
+  hold yet: where plants go into the ground, and where a visitor stands. Plants go in where the timber meets the
+  ground and nowhere else, so the beds are a ring round each pier. Nothing is added for plants to climb.
+- `pipeline/plant.mjs` writes the planting from a rule: every bed takes a plant, and which plants a pier takes
+  depends on the side of the room it stands on. Which member of a pier a plant then climbs is the simulator's
+  choice: it cannot be told, and it reads the members of a pier as one joint where they meet at the ground.
 - `pipeline/assemble.mjs` reads the joint schedule for what has to be in place before what (a member lapped
   under another, a member housed into another) and puts the members in an order that keeps to it. It is the order
   the joints allow, not a method statement: lifting, propping and scaffold are not worked out.
 - `pipeline/grow.mjs` runs the simulator and keeps the record of every stem, leaf and flower with its days, the
-  design report, and `run.json` (which simulator commit, what it warned of, what it assumed).
+  design report, and `run.json` (which simulator commit, what it warned of, what it assumed). The simulator
+  plants each climber as a young cane, 0.15 to 1.2 m by kind; `--specimen=3` has it go in standing 3 m with all
+  its main stems started, and changes nothing else about how it grows.
 - `pipeline/reseat.mjs` moves each supported stem on to the timber faces that are really there. The simulator's
   input cannot say which way a section is turned; the snapshot can.
 - `pipeline/thin.mjs` drops the points of free-hanging shoots that a drawing of a whole room cannot show.
-- `scenes/<snapshot>/planting.json` is the planting: which plant goes in at which bed. `planting-24.json` is the
-  same with a second plant beside each. The simulator plants every climber as a 0.6 m cane; `--specimen=2` has
-  it go in standing 2 m, and changes nothing else about how it grows.
-- `pipeline/compare.mjs` sets the runs of a scene side by side.
+- `pipeline/compare.mjs` sets the runs of a scene side by side: timber held, how, and what a visitor sees.
+- `pipeline/film.mjs` makes the films.
 - `studio/` is the drawing.
 
 ## What this is not
 
 The growth is a scenario on stated assumptions, not a forecast: the statement under the drawing travels with every
-picture made from it. The planting is a trial arrangement, not a planting design. The timber is concept geometry.
+picture made from it. The planting is a trial arrangement, not a planting design. The timber is concept geometry,
+and its colour and ageing are pictures, not models.

@@ -13,7 +13,8 @@ const three = `${horti}/node_modules/three`;
 
 export default {
   root: here,
-  cacheDir: resolve(here, '.vite'),
+  // a film is made from a second server, which keeps its own cache
+  cacheDir: resolve(here, process.env.STUDIO_CACHE ?? '.vite'),
   resolve: {
     alias: [
       { find: /^three\/addons\/(.*)$/, replacement: `${three}/examples/jsm/$1` },

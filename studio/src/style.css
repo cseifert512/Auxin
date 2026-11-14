@@ -243,3 +243,55 @@ body.bare .time {
     font-size: 9.5px;
   }
 }
+
+/* where the sheet is too narrow for the title and the switches side by side, the switches go under the title */
+@media (max-width: 1180px) {
+  .tools {
+    top: 68px;
+    left: 28px;
+    right: 28px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* a film: the same sheet with nothing to press */
+body.film .tools,
+body.film #play {
+  display: none;
+}
+body.film .time {
+  grid-template-columns: 172px 1fr auto;
+}
+body.film #sheet {
+  cursor: default;
+}
+@media (max-width: 760px) {
+  .time {
+    bottom: 64px;
+  }
+  body.film .time {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* the title keeps to the sheet, and on a film the statement is never cut short */
+.title {
+  right: 28px;
+}
+body.film .statement {
+  white-space: normal;
+}
+body.film .time {
+  bottom: 52px;
+}
+@media (max-width: 1180px) {
+  body:not(.film) .title p {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  body.film .time {
+    bottom: 64px;
+  }
+}

@@ -14,10 +14,9 @@ import { makeBarkTextures, makeLeafTexture, makeOwnLeafTexture } from '@horti/vi
 import design from '../../releases/six-bay-v1/design.json';
 import timberUrl from '../../releases/six-bay-v1/bower.glb?url';
 import plan from '../../scenes/six-bay-v1/assembly.json';
-import bowerUrl from '../../scenes/six-bay-v1/bower.json?url';
 import { type AssemblyPlan, type AssemblyState, DESIGN_SHARE, makeAssembly } from './assembly.ts';
 import { type Standpoint, type ViewId, makePaper } from './paper.ts';
-import { type TimberLook, drawBeds, loadTimber } from './timber.ts';
+import { type TimberLook, drawBeds, drawCables, loadTimber } from './timber.ts';
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
 const url = new URL(location.href).searchParams;
@@ -33,10 +32,16 @@ for (const [file, href] of Object.entries(faces)) {
 // Every run of the simulator that has been grown on this machine (scenes/<snapshot>/runs/<name>/growth.json).
 const grown = import.meta.glob('../../scenes/six-bay-v1/runs/*/growth.json', { query: '?url', import: 'default', eager: true }) as Record<string, string>;
 const runs = new Map(Object.entries(grown).map(([file, href]) => [file.split('/').at(-2)!, href]));
-const RUN_NAMES: Record<string, string> = { 'trained-10y': '12 young plants', 'specimens-10y': '12 specimens, 2 m', 'specimens-24-10y': '24 specimens, 2 m' };
-const run = runs.has(url.get('run') ?? '') ? url.get('run')! : (['specimens-24-10y', 'specimens-10y', 'trained-10y'].find((r) => runs.has(r)) ?? [...runs.keys()][0]);
+const RUN_NAMES: Record<string, string> = { 'trained-10y': 'Tended, ten years', 'untended-10y': 'Untended, ten years' };
+const run = runs.has(url.get('run') ?? '') ? url.get('run')! : runs.has('trained-10y') ? 'trained-10y' : [...runs.keys()][0];
 if (!run) throw new Error('no planting has been grown yet: npm run grow');
 const growthUrl = runs.get(run)!;
+// each run was grown on one version of the building: the snapshot as it is, or with cables added to try
+const setups = import.meta.glob('../../scenes/six-bay-v1/runs/*/run.json', { import: 'default', eager: true }) as Record<string, { bower?: string }>;
+const builtAs = Object.entries(setups).find(([file]) => file.split('/').at(-2) === run)?.[1].bower ?? 'bower.json';
+const buildings = import.meta.glob('../../scenes/six-bay-v1/bower*.json', { query: '?url', import: 'default', eager: true }) as Record<string, string>;
+const bowerUrl = Object.entries(buildings).find(([file]) => file.endsWith(`/${builtAs}`))?.[1];
+if (!bowerUrl) throw new Error(`${run} was grown on ${builtAs}, which is not in the scene: npm run convert`);
 
 // ---- the sheet ---------------------------------------------------------------------------------------------------
 const view = (id: string): Standpoint => {
@@ -44,7 +49,20 @@ const view = (id: string): Standpoint => {
   if (!v || v.lens_mm === undefined) throw new Error(`the design has no "${id}" view to stand at`);
   return { eye: v.location_m, target: v.target_m, lensMm: v.lens_mm };
 };
-const paper = makePaper($<HTMLCanvasElement>('sheet'), { approach: view('exterior'), inside: view('interior') });
+// On an upright sheet the approach is walked on: to stand square before the bay nearest the approach, far enough
+// off to see it from pier to pier, looking a little up.
+const approachTall = (() => {
+  const room = design.rooms[0]!;
+  const from = view('exterior').eye;
+  const pier = (id: string) => room.piers.find((p) => p.id === id)!.position_m;
+  const bays = room.bays.map((b) => ({ a: pier(b.from), b: pier(b.to) })).map(({ a, b }) => ({ mid: [(a[0]! + b[0]!) / 2, (a[1]! + b[1]!) / 2], width: Math.hypot(b[0]! - a[0]!, b[1]! - a[1]!) }));
+  const bay = bays.reduce((near, x) => (Math.hypot(x.mid[0]! - from[0]!, x.mid[1]! - from[1]!) < Math.hypot(near.mid[0]! - from[0]!, near.mid[1]! - from[1]!) ? x : near));
+  const acrossDeg = 44;
+  const out = [bay.mid[0]! - room.crown.centre_m[0]!, bay.mid[1]! - room.crown.centre_m[1]!];
+  const far = (bay.width / 2 + 0.35) / Math.tan((acrossDeg * Math.PI) / 360) / Math.hypot(out[0]!, out[1]!);
+  return { eye: [bay.mid[0]! + out[0]! * far, bay.mid[1]! + out[1]! * far, from[2]!], target: [bay.mid[0]!, bay.mid[1]!, 2.0], acrossDeg };
+})();
+const paper = makePaper($<HTMLCanvasElement>('sheet'), { approach: view('exterior'), inside: view('interior'), approachTall });
 // mid-afternoon in early summer, from the south-west: towards the sun, as (east, up, south)
 paper.setSun(new THREE.Vector3(-0.609, 0.669, 0.426));
 paper.resize();
@@ -59,9 +77,13 @@ paper.scene.add(assembly.group);
 // ---- the plants --------------------------------------------------------------------------------------------------
 const growth = (await (await fetch(growthUrl)).json()) as RenderData;
 // a ring on the ground where each plant of this planting goes in
-const bower = (await (await fetch(bowerUrl)).json()) as { stations: { id: string; position: number[] }[] };
+const bower = (await (await fetch(bowerUrl)).json()) as { stations: { id: string; position: number[] }[]; cables?: { id: string; points: number[][] }[] };
 const bedsUsed = new Set(growth.plants.map((p) => p.stationId));
 paper.scene.add(drawBeds(bower.stations.filter((s) => bedsUsed.has(s.id))));
+// and any cables this version of the building has, strung once the timber stands
+const steel = drawCables(bower.cables ?? []);
+const steelM = (bower.cables ?? []).reduce((sum, c) => sum + c.points.slice(1).reduce((d, p, i) => d + Math.hypot(p[0]! - c.points[i]![0]!, p[1]! - c.points[i]![1]!, p[2]! - c.points[i]![2]!), 0), 0);
+paper.scene.add(steel);
 await loadLooks([...new Set(growth.plants.map((p) => p.taxonId))]);
 const plants = new PlantView(growth, makePlantMaterials({ bark: (grain) => makeBarkTextures(grain), leafTex: makeLeafTexture(), ownLeafTex: makeOwnLeafTexture }));
 paper.scene.add(plants.group);
@@ -76,11 +98,17 @@ const lastDay = plants.timeline.lastDay;
 const BUILD_SPAN = Math.round(0.17 * (lastDay - planted));
 const lineStart = planted - BUILD_SPAN;
 /** How long each part plays for, in seconds, and the pause between them as the plants go in. */
-const BUILD_SECONDS = 26;
-const GROW_SECONDS = 80;
+const BUILD_SECONDS = 20;
+const GROW_SECONDS = 56;
 const PLANTING_PAUSE_MS = 1100;
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const SEASONS = ['winter', 'winter', 'spring', 'spring', 'spring', 'summer', 'summer', 'summer', 'autumn', 'autumn', 'autumn', 'winter'];
+/** What has to be said under the picture about the timber's colour, by how it is drawn. */
+const TIMBER_NOTES: Record<TimberLook, string> = {
+  wood: '; its colour is illustrative, and takes for granted a pigmented finish that is kept up',
+  bare: '; its colour and weathering are illustrative, for timber left unfinished',
+  ink: '',
+};
 const FAMILIES: Record<string, string> = { arch: 'arches', hoop: 'hoops', ring: 'rings', rib: 'ribs', fill: 'second ribs', fine: 'third ribs', crown: 'the crown' };
 
 const atBuild = (share: number) => lineStart + clamp01(share) * BUILD_SPAN;
@@ -111,7 +139,8 @@ const tick = (at: number, text: string) => {
   el.years.append(mark);
 };
 tick(lineStart, 'assembly');
-tick(planted, 'planted');
+// planting is the first mark of the years: the plants go in in the spring of the first
+tick(planted, String(new Date(start).getUTCFullYear()));
 for (let year = new Date(start).getUTCFullYear() + 1; ; year++) {
   const day = (Date.UTC(year, 0, 1) - start) / DAY_MS;
   if (day >= lastDay) break;
@@ -133,18 +162,19 @@ function setAt(at: number): void {
 function describe(): void {
   if (growing()) {
     const when = new Date(start + Math.floor(state.at) * DAY_MS);
-    el.date.textContent = `${when.getUTCDate()} ${MONTHS[when.getUTCMonth()]} ${when.getUTCFullYear()}`;
+    // the month, not the day: at this speed a day is gone in a fortieth of a second
+    el.date.textContent = `${MONTHS[when.getUTCMonth()]} ${when.getUTCFullYear()}`;
     el.age.textContent = `year ${Math.floor((state.at - planted) / 365.25) + 1} · ${SEASONS[when.getUTCMonth()]}`;
     el.key1.textContent = 'in leaf';
     el.key2.textContent = 'in flower';
-    el.statement.textContent = `${growth.statement} The timber is concept geometry${look === 'wood' ? '; its colour and weathering are illustrative' : ''}.`;
+    el.statement.textContent = `${growth.statement} The timber is concept geometry${TIMBER_NOTES[look]}.`;
     return;
   }
   el.key1.textContent = 'members';
   el.key2.textContent = 'joints made';
   el.value1.textContent = `${built.placed} / ${built.of}`;
   el.value2.textContent = `${built.jointsMade} / ${built.joints}`;
-  el.statement.textContent = `${assembly.note} The timber is concept geometry${look === 'wood' ? '; its colour is illustrative' : ''}.`;
+  el.statement.textContent = `${assembly.note} The timber is concept geometry${look === 'ink' ? '' : '; its colour is illustrative'}.`;
   el.date.textContent = built.phase === 'design' ? 'The design' : 'Assembly';
   el.age.textContent = built.phase === 'design' ? `${built.of} centre lines` : (FAMILIES[built.family] ?? built.family);
 }
@@ -177,7 +207,7 @@ for (const b of viewButtons) b.addEventListener('click', () => setView(b.dataset
 if (['drawing', 'approach', 'inside'].includes(url.get('view') ?? '')) setView(url.get('view') as ViewId);
 
 // ---- timber, and which planting ----------------------------------------------------------------------------------
-let look: TimberLook = url.get('timber') === 'ink' ? 'ink' : 'wood';
+let look: TimberLook = url.get('timber') === 'ink' ? 'ink' : url.get('timber') === 'bare' ? 'bare' : 'wood';
 const lookButtons = [...document.querySelectorAll<HTMLButtonElement>('button[data-timber]')];
 function setLook(next: TimberLook): void {
   look = next;
@@ -201,11 +231,14 @@ chooser.addEventListener('change', () => {
 });
 
 // ---- what goes with the picture ----------------------------------------------------------------------------------
-$('subtitle').textContent = `${design.rooms[0]!.bays.length}-bay room · ${plan.members.length} timber members · trial planting of ${growth.plants.length} climbers, tended`;
+$('subtitle').textContent = `${design.rooms[0]!.bays.length}-bay room · ${plan.members.length} timber members · trial planting of ${growth.plants.length} climbers, tended${steelM > 0 ? ` · ${Math.round(steelM)} m of cable added to try` : ''}`;
 setLook(look);
 $('loading').hidden = true;
 document.querySelector<HTMLElement>('.time')!.hidden = false;
 if (url.has('bare')) document.body.classList.add('bare');
+// a film is the same sheet with nothing to press: the script that makes it asks for each frame in turn
+const filming = url.has('film');
+if (filming) document.body.classList.add('film');
 setPlaying(state.playing);
 setAt(state.at);
 describe();
@@ -249,6 +282,7 @@ function draw(now: number): void {
       paper.shadeChanged();
     }
     plants.group.visible = growing();
+    steel.visible = growing() && steelM > 0;
     timber.setAge((state.at - planted) / 365.25);
     describe();
     state.drawnAt = state.at;
@@ -288,8 +322,9 @@ function draw(now: number): void {
     }
   }
   paper.render();
-  requestAnimationFrame(draw);
+  if (!filming) requestAnimationFrame(draw);
 }
+let filmClock = performance.now();
 requestAnimationFrame(draw);
 
 // for stills and checks: put the picture at a moment and a view
@@ -313,5 +348,24 @@ Object.assign(window, {
     },
     look: setLook,
     state: () => ({ at: state.at, built, run, look }),
+    /** The line of time, for a script that will draw along it. */
+    line: () => {
+      // the last midsummer of the run: a film ends there, in full leaf, and not in the December the run stops in
+      let summer = lastDay;
+      for (let year = new Date(start + lastDay * DAY_MS).getUTCFullYear(); summer >= lastDay && year > 0; year--) summer = (Date.UTC(year, 5, 20) - start) / DAY_MS;
+      return { start: lineStart, planted, last: lastDay, lastSummer: Math.max(planted, summer) };
+    },
+    /**
+     * One frame of a film: the picture at `at` on the line of time, `seconds` after the frame before it, worked out
+     * in full and drawn before this returns.
+     */
+    async film(at: number, seconds: number) {
+      setPlaying(false);
+      setAt(at);
+      organsAt = Number.NEGATIVE_INFINITY;
+      filmClock += seconds * 1000;
+      draw(filmClock);
+      await new Promise((shown) => requestAnimationFrame(() => requestAnimationFrame(shown)));
+    },
   },
 });

@@ -27,6 +27,8 @@ export interface Standpoint {
 const TURN = 0.575;
 const DIP = Math.atan(0.5);
 const STRETCH = 1 / Math.cos(DIP);
+/** The proportion of the sheet the standpoints' lenses are given for: a presentation slide. */
+const WIDE_SHEET = 16 / 9;
 /** The field of view the plant models' levels of detail were tuned at. */
 const DETAIL_FOV = THREE.MathUtils.degToRad(40);
 
@@ -50,7 +52,7 @@ function makeSky(): Sky {
   return sky;
 }
 
-export function makePaper(canvas: HTMLCanvasElement, standpoints: { approach: Standpoint; inside: Standpoint }) {
+export function makePaper(canvas: HTMLCanvasElement, standpoints: { approach: Standpoint; inside: Standpoint; approachTall: { eye: readonly number[]; target: readonly number[]; acrossDeg: number } }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: true });
   renderer.setClearColor(PAPER, 1);
   renderer.shadowMap.enabled = true;
@@ -139,6 +141,7 @@ export function makePaper(canvas: HTMLCanvasElement, standpoints: { approach: St
   /** Half the width and height the subject takes up in the drawing, in metres across the sheet. */
   const need = { halfW: 10, halfH: 6 };
   const size = { width: 1, height: 1 };
+  let wasTall = false;
 
   function fitDrawing(): void {
     const aspect = size.width / size.height;
@@ -209,6 +212,22 @@ export function makePaper(canvas: HTMLCanvasElement, standpoints: { approach: St
     renderer.setPixelRatio(pixelRatio);
     renderer.setSize(width, height, false);
     approach.aspect = inside.aspect = width / height;
+    // The standpoints were set up for a wide sheet. On an upright one each keeps what it sees from side to side,
+    // and sees further up and down instead, so the whole building is still in the picture.
+    for (const [camera, standpoint] of [[approach, standpoints.approach], [inside, standpoints.inside]] as const) {
+      const half = Math.tan(THREE.MathUtils.degToRad(lensFov(standpoint.lensMm)) / 2) * Math.max(1, WIDE_SHEET / camera.aspect);
+      camera.fov = Math.min(100, THREE.MathUtils.radToDeg(2 * Math.atan(half)));
+    }
+    // On a sheet taller than it is wide, a phone's, a building this broad seen whole is a small thing in the
+    // middle. The approach is walked on instead, to stand before the bay in front (standpoints.approachTall).
+    const tall = width < height;
+    if (tall !== wasTall) {
+      wasTall = tall;
+      approach.position.copy(toThree(tall ? standpoints.approachTall.eye : standpoints.approach.eye));
+      controls.approach.target.copy(toThree(tall ? standpoints.approachTall.target : standpoints.approach.target));
+      controls.approach.update();
+    }
+    if (tall) approach.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(standpoints.approachTall.acrossDeg) / 2) / approach.aspect));
     approach.updateProjectionMatrix();
     inside.updateProjectionMatrix();
     fitDrawing();

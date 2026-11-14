@@ -2,12 +2,12 @@
 //
 //   ink     every member filled with paper, so that it hides what is behind it, and every edge of it (its four
 //           long arrises, its ends and each milled joint) drawn in ink: the factory drawings' way
-//   wood    the same edges over timber in its own colour, lit by the sun the plants are lit by, taking their
-//           shade, and greying with the years
+//   wood    the same edges over timber in its own colour, lit by the sun the plants are lit by and taking their
+//           shade; its colour held by a finish that is kept up, deepening with the years
+//   bare    the same, left unfinished to go silver
 //
-// The greying is a picture of how unfinished softwood is said to weather, not a model of it: faces turned up to
-// the rain and sun go silver within a year or two, upright faces follow, and undersides keep their colour longest.
-// The species and finish of the real timber are not decided.
+// Both are pictures of how softwood is said to age, not models of it, and the first takes for granted a pigmented
+// finish that someone goes on renewing. The species and finish of the real timber are not decided.
 import * as THREE from 'three';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { LineSegments2 } from 'three/addons/lines/LineSegments2.js';
@@ -15,7 +15,7 @@ import { LineSegmentsGeometry } from 'three/addons/lines/LineSegmentsGeometry.js
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { INK, MUTED, PAPER } from './paper.ts';
 
-export type TimberLook = 'wood' | 'ink';
+export type TimberLook = 'wood' | 'bare' | 'ink';
 
 export interface Member {
   id: string;
@@ -54,13 +54,28 @@ function shadeOf(id: string): number {
   return ((h >>> 0) % 1000) / 999;
 }
 
-function makeWood(years: { value: number }): THREE.MeshStandardMaterial {
+/**
+ * How the colour goes with the years, two ways.
+ *   kept   under a pigmented finish that is kept up, the colour holds: it deepens over the first few years, and
+ *          only the faces most open to the weather grey a little, slowly
+ *   bare   left unfinished, faces turned up go silver within a year or two, upright faces follow, undersides last
+ */
+const AGEING = {
+  kept: { greyMost: 0.32, greyYears: 6, deepens: 0.7 },
+  bare: { greyMost: 1, greyYears: WEATHERING_YEARS, deepens: 0.15 },
+};
+
+function makeWood(years: { value: number }) {
+  const ageing = { greyMost: { value: 0 }, greyYears: { value: 1 }, deepens: { value: 0 } };
   const wood = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.84, metalness: 0, polygonOffset: true, polygonOffsetFactor: 1.5, polygonOffsetUnits: 2 });
   wood.onBeforeCompile = (shader) => {
     shader.uniforms['uYears'] = years;
     shader.uniforms['uSilvered'] = { value: new THREE.Color(SILVERED) };
+    shader.uniforms['uGreyMost'] = ageing.greyMost;
+    shader.uniforms['uGreyYears'] = ageing.greyYears;
+    shader.uniforms['uDeepens'] = ageing.deepens;
     shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>', '#include <common>\nuniform float uYears;\nuniform vec3 uSilvered;')
+      .replace('#include <common>', '#include <common>\nuniform float uYears, uGreyMost, uGreyYears, uDeepens;\nuniform vec3 uSilvered;')
       .replace(
         '#include <color_fragment>',
         /* glsl */ `#include <color_fragment>
@@ -68,14 +83,24 @@ function makeWood(years: { value: number }): THREE.MeshStandardMaterial {
           // which way the face is turned, in the world: up to the weather, upright, or down and sheltered
           vec3 faceW = normalize( ( vec4( normalize( vNormal ), 0.0 ) * viewMatrix ).xyz );
           float open = 0.12 + 0.88 * smoothstep( -0.6, 0.9, faceW.y );
-          float weathered = 1.0 - exp( - uYears * open / ${WEATHERING_YEARS.toFixed(2)} );
+          // new timber is pale: light deepens it towards amber over its first years
+          vec3 deep = diffuseColor.rgb * vec3( 0.86, 0.74, 0.6 );
+          diffuseColor.rgb = mix( diffuseColor.rgb, deep, uDeepens * ( 1.0 - exp( - uYears / 2.5 ) ) );
+          float weathered = uGreyMost * ( 1.0 - exp( - uYears * open / uGreyYears ) );
           // each piece keeps a little of its own shade as it greys
           vec3 grey = uSilvered * ( 0.9 + 0.2 * dot( diffuseColor.rgb, vec3( 0.6, 0.9, 0.5 ) ) );
           diffuseColor.rgb = mix( diffuseColor.rgb, grey, weathered );
         }`,
       );
   };
-  return wood;
+  return {
+    wood,
+    age(as: keyof typeof AGEING): void {
+      ageing.greyMost.value = AGEING[as].greyMost;
+      ageing.greyYears.value = AGEING[as].greyYears;
+      ageing.deepens.value = AGEING[as].deepens;
+    },
+  };
 }
 
 export async function loadTimber(url: string): Promise<Timber> {
@@ -83,7 +108,7 @@ export async function loadTimber(url: string): Promise<Timber> {
   gltf.scene.updateMatrixWorld(true);
   const paper = new THREE.MeshBasicMaterial({ color: PAPER, toneMapped: false, polygonOffset: true, polygonOffsetFactor: 1.5, polygonOffsetUnits: 2 });
   const years = { value: 0 };
-  const wood = makeWood(years);
+  const { wood, age } = makeWood(years);
 
   const members = new Map<string, Member>();
   const all: number[] = [];
@@ -126,12 +151,14 @@ export async function loadTimber(url: string): Promise<Timber> {
   group.add(gltf.scene, lines);
 
   function setLook(look: TimberLook): void {
+    const coloured = look !== 'ink';
     for (const m of members.values()) {
-      m.mesh.material = look === 'wood' ? wood : paper;
-      m.mesh.receiveShadow = look === 'wood';
+      m.mesh.material = coloured ? wood : paper;
+      m.mesh.receiveShadow = coloured;
     }
-    ink.color.setHex(look === 'wood' ? WOOD_LINE : INK);
-    ink.linewidth = look === 'wood' ? 0.85 : 1;
+    if (coloured) age(look === 'bare' ? 'bare' : 'kept');
+    ink.color.setHex(coloured ? WOOD_LINE : INK);
+    ink.linewidth = coloured ? 0.85 : 1;
   }
   setLook('wood');
 
@@ -146,6 +173,23 @@ export async function loadTimber(url: string): Promise<Timber> {
       years.value = Math.max(0, y);
     },
   };
+}
+
+/** Slender steel for plants to hold: each cable a thin line, in the grey of the factory drawings' labels. */
+export function drawCables(cables: readonly { points: readonly number[][] }[]): THREE.Object3D {
+  const positions: number[] = [];
+  for (const c of cables) {
+    for (let i = 0; i + 1 < c.points.length; i++) {
+      const a = c.points[i]!;
+      const b = c.points[i + 1]!;
+      positions.push(a[0]!, a[2]!, -a[1]!, b[0]!, b[2]!, -b[1]!);
+    }
+  }
+  const object = new LineSegments2(new LineSegmentsGeometry().setPositions(positions.length ? positions : [0, 0, 0, 0, 0, 0]), new LineMaterial({ color: MUTED, linewidth: 0.7, toneMapped: false }));
+  object.frustumCulled = false;
+  object.visible = positions.length > 0;
+  object.name = 'cables';
+  return object;
 }
 
 /** Where plants go into the ground: a ring of thin line at each bed. */

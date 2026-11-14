@@ -17,7 +17,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const horti = resolve(process.env.HORTI_DIR ?? resolve(root, '../Horti-code-ture'));
 const core = (file) => import(pathToFileURL(resolve(horti, 'packages/core/src', file)).href);
 
-// options: --plan=<file in the scene folder>  --specimen=<metres each plant stands when it goes in>  --name=<run folder>
+// options: --bower=<file in the scene folder>  --plan=<file in the scene folder>  --specimen=<metres each plant stands when it goes in>  --name=<run folder>
 const options = Object.fromEntries(process.argv.slice(2).filter((a) => a.startsWith('--')).map((a) => a.slice(2).split('=')));
 const [snapshot = 'six-bay-v1', careArg = 'trained', yearsArg = '10', seedArg = '7'] = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 const care = careArg === 'untended' ? 'untended' : 'trained';
@@ -34,20 +34,26 @@ const { toRenderData } = await core('sim/render-data.ts');
 const { parsePlantingPlan, plantingOn } = await core('sim/planting.ts');
 const { designReport, formatDesignReport } = await core('sim/report.ts');
 
-const bowerFile = resolve(scene, 'bower.json');
+const bowerFile = resolve(scene, options.bower ?? 'bower.json');
 const plantingFile = resolve(scene, options.plan ?? 'planting.json');
 let t0 = performance.now();
 const design = readBower(read(bowerFile), bowerFile);
 console.log(`read ${snapshot} in ${(performance.now() - t0).toFixed(0)} ms: ${Object.entries(design.bower.facts).filter(([k]) => k !== 'source').map(([k, v]) => `${k} ${v}`).join(', ')}`);
 for (const w of design.warnings) console.log(`  to check: ${w}`);
 
-// The simulator plants every climber as a 0.6 m nursery cane. A specimen is the same plant with a longer stem on
-// the day it goes in; how fast it then grows, and the two slow years after planting, are left as the model has them.
+// The simulator plants each climber as a young nursery cane, 0.15 to 1.2 m long by taxon. A specimen is the same
+// plant with a longer stem on the day it goes in; how fast it then grows, and the slow years after planting, are
+// left as the model has them.
 const specimenM = options.specimen ? Number(options.specimen) : null;
 const stock = loadGrowable(resolve(horti, 'species'));
-const taxa = specimenM
-  ? new Map([...stock].map(([id, t]) => [id, { ...t, model: withParam(t.model, 'architecture.nurseryCaneM', specimenM, `planted as a nursery specimen standing ${specimenM} m, not a young plant`) }]))
-  : stock;
+// A specimen also has all its main stems under way: the model starts some of a young plant's in later seasons.
+const specimen = (model) => {
+  const why = `planted as a nursery specimen standing ${specimenM} m, not a young plant`;
+  const tall = withParam(model, 'architecture.nurseryCaneM', specimenM, why);
+  const starts = model.params['architecture.trunkStemStartYears']?.value;
+  return Array.isArray(starts) ? withParam(tall, 'architecture.trunkStemStartYears', starts.map(() => 0), `${why}: every main stem already growing`) : tall;
+};
+const taxa = specimenM ? new Map([...stock].map(([id, t]) => [id, { ...t, model: specimen(t.model) }])) : stock;
 const scenario = plantingOn(design.bower, parsePlantingPlan(read(plantingFile), plantingFile), { taxa, care, years, seed, viewpoints: design.viewpoints });
 t0 = performance.now();
 const sim = new Simulation(scenario).runUntil(`${2027 + years - 1}-12-31`);
@@ -80,7 +86,7 @@ writeFileSync(resolve(out, 'report.json'), JSON.stringify(report, null, 2));
 writeFileSync(resolve(out, 'report.txt'), `${text}\n`);
 writeFileSync(
   resolve(out, 'run.json'),
-  `${JSON.stringify({ snapshot, plan: options.plan ?? 'planting.json', specimenM, care, years, seed, simulator: { repository: 'horti-code-ture', commit }, toCheck: design.warnings, notModelledOrAssumed: notes, reseated: seated.summary, thinned: thinned.summary }, null, 2)}\n`,
+  `${JSON.stringify({ snapshot, bower: options.bower ?? 'bower.json', plan: options.plan ?? 'planting.json', specimenM, care, years, seed, simulator: { repository: 'horti-code-ture', commit }, toCheck: design.warnings, notModelledOrAssumed: notes, reseated: seated.summary, thinned: thinned.summary }, null, 2)}\n`,
 );
 console.log(`\n${text}`);
 console.log(`\nwritten: ${out}`);
