@@ -10,13 +10,16 @@
 .designx-v8 .v8-sheet .v8-piece {inset:auto;left:80px;width:1440px}
 .designx-v8 .v8-vignette .v8-piece {top:40px;height:796px}
 .designx-v8 .v8-again .v8-piece {top:92px;height:690px}
+/* the room through time has the whole slide but the line under it */
+.designx-v8 .v8-room .v8-piece {left:0;top:0;width:1600px;height:850px}
+.designx-v8 .v8-room .v8-poster {inset:auto;left:0;top:0;width:1600px;height:850px}
 
 /* laid out for paper: the piece's still in place of the piece; slide 5 shows its plate where 07 lists the three answers */
-.designx-v8.print-mode .v8-piece[data-v8-piece="player"] {display:none}
+.designx-v8.print-mode .v8-piece[data-v8-piece="player"],.designx-v8.print-mode .v8-piece[data-v8-piece="live"] {display:none}
 .designx-v8.print-mode .v8-poster {display:block}
 .designx-v8.print-mode .v7-anatomy .v7-intent-summary {display:none}
 @media print {
-  .designx-v8 .v8-piece[data-v8-piece="player"] {display:none}
+  .designx-v8 .v8-piece[data-v8-piece="player"],.designx-v8 .v8-piece[data-v8-piece="live"] {display:none}
   .designx-v8 .v8-poster {display:block}
   .designx-v8 .v7-anatomy .v7-intent-summary {display:none}
 }

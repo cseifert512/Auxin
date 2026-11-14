@@ -21,13 +21,25 @@
   const concept = 'Concept geometry; trial planting.';
   const source = 'Growth studies of one six-bay room, November 2026: pictures made beforehand from a planting grown in simulation. Most of the simulator’s plant numbers are labelled assumptions; nothing here is a structural, fabrication or horticultural check.';
 
-  // ---- slide 4, Plants make space: the piece made for that space, with a mode for each of the slide's tabs -------
+  // ---- the room through time: the only thing on its slide, from one view, straight after the cover ---------------
+  // It is the one piece that is drawn live (drawings-in-code, npm run live): turned by hand, played and scrubbed.
+  const cover = at('cover');
+  slides.splice(cover + 1, 0, {
+    ...slides[at('v7-growth-slide')],
+    title: 'A room through time',
+    theme: 'v8-room-slide',
+    html: `<section class="v7-scene v8-sheet v8-room">${piece('a-room-through-time', 'live', 'A room through time: one room on the approach, from its design to an established planting', '&paper=EEF3EA&ink=102820&view=approach&play')}<img class="v8-poster" data-src="pieces/a-room-through-time/poster.webp" alt="The room on the approach, established, in summer."><p class="v7-status">${scenario} ${concept}</p></section>`,
+    notes: 'One Bower, from one place, along one line of time: the design, assembly member by member, planting, establishment season by season, and a year of seasons. It is drawn as it is shown, so it can be turned by hand, played and scrubbed. The planting is divided by pier and tended; the plants go in as grown specimens. This is a growth scenario on stated assumptions, not a forecast. Do not assign a fixed year or guaranteed coverage. The engineered timber frame carries the structural loads; planting colonises it.',
+    source,
+  });
+
+  // ---- Plants make space: the piece made for that space, with a mode for each of the slide's tabs -------
   const modes = ['space', 'light', 'time'];
   const growth = at('v7-growth-slide');
   slides[growth] = edit(slides[growth], (content) => {
     const space = content.querySelector('.v7-drawing-space');
     space.classList.add('v8-placed');
-    space.insertAdjacentHTML('afterbegin', `${piece('04-plants-make-space', 'player', 'One room: through time, unrolled, and the light on its floor', '&mode=time')}<img class="v8-poster" data-src="pieces/04-plants-make-space/poster-time.png" alt="The room from above, on the approach and from inside, established and in leaf.">`);
+    space.insertAdjacentHTML('afterbegin', `${piece('04-plants-make-space-timber', 'player', 'One room: unrolled, the light on its floor, and through time', '&mode=space')}<img class="v8-poster" data-src="pieces/04-plants-make-space-timber/poster-space.png" alt="The room unrolled, established and in leaf.">`);
     content.querySelector('.v7-status').textContent = `Architectural intentions. ${scenario} ${concept}`;
   });
 
@@ -36,7 +48,7 @@
   slides[anatomy] = edit(slides[anatomy], (content) => {
     const space = content.querySelector('.v7-anatomy-drawing');
     space.classList.add('v8-placed');
-    space.insertAdjacentHTML('afterbegin', '<img class="v8-plate" src="pieces/05-shaded-room.webp" alt="The shade wanted on the floor of the room, the ways up from the soil at each pier, and one pier with its training lines." loading="lazy">');
+    space.insertAdjacentHTML('afterbegin', '<img class="v8-plate" src="pieces/05-shaded-room-timber.webp" alt="The shade wanted on the floor of the room, the ways up from the soil at each pier, and one pier with its training lines." loading="lazy">');
   });
 
   // ---- drawings with no place in 07: a slide each ----------------------------------------------------------------
@@ -85,14 +97,17 @@
       player: (frame) => { if (frame.dataset.v8Mode) say(frame, 'bower:mode', frame.dataset.v8Mode); say(frame, 'bower:play', true); },
       vignette: (frame) => { inside(frame)?.__setT?.(0); inside(frame)?.__play?.(); },
       again: (frame) => { say(frame, 'bower:step', 0); say(frame, 'bower:play', true); },
+      live: () => {},
     };
     const rest = {
       player: (frame) => say(frame, 'bower:play', false),
       vignette: (frame) => inside(frame)?.__setT?.(0),
       again: (frame) => say(frame, 'bower:play', false),
+      live: (frame) => { frame.removeAttribute('src'); delete frame.dataset.v8Asked; come.delete(frame); },
     };
     const still = {
       player: () => {},
+      live: () => {},
       again: () => {}, // asked for with ?print, which shows its last step
       vignette: (frame) => {
         // its last moment, once its pictures have come
@@ -109,7 +124,7 @@
     const shown = new Set();
     const come = new Set();
     const ask = (frame) => {
-      if (frame.dataset.v8Asked || (printing && kind(frame) === 'player')) return;
+      if (frame.dataset.v8Asked || (printing && (kind(frame) === 'player' || kind(frame) === 'live'))) return;
       frame.dataset.v8Asked = 'yes';
       frame.src = frame.dataset.src + (printing ? '&print' : '');
     };
@@ -126,7 +141,7 @@
             if (event.defaultPrevented || !pass.has(event.key)) return;
             document.dispatchEvent(new KeyboardEvent('keydown', { key: event.key, code: event.code, bubbles: true, cancelable: true }));
           });
-          w.addEventListener('wheel', (event) => {
+          if (kind(frame) !== 'live') w.addEventListener('wheel', (event) => {
             root.dispatchEvent(new WheelEvent('wheel', { deltaX: event.deltaX, deltaY: event.deltaY, deltaMode: event.deltaMode, bubbles: true, cancelable: true }));
           }, { passive: true });
         }
@@ -139,11 +154,11 @@
         const here = printing || event.detail.element.contains(frame);
         if (here === shown.has(frame) && frame.dataset.v8Asked) continue;
         if (here) { shown.add(frame); ask(frame); } else shown.delete(frame);
-        if (come.has(frame) && !printing) (here ? begin : rest)[kind(frame)](frame);
+        if (!printing && (come.has(frame) || kind(frame) === 'live')) (here ? begin : rest)[kind(frame)](frame);
       }
     });
 
-    // slide 4: each tab is a mode of the piece. It opens on Time, as the piece was made to: the first sight of the building.
+    // Plants make space: each tab is a mode of the piece. It opens on Space, as 07 does; Time has the slide before it.
     const growthScene = root.querySelector('[data-v7-scene="growth"]');
     const player = growthScene.querySelector('iframe[data-v8-piece="player"]');
     const poster = growthScene.querySelector('.v8-poster');
@@ -153,9 +168,9 @@
       const mode = modes[Number(button.dataset.v7Growth)];
       player.dataset.v8Mode = mode;
       if (come.has(player)) say(player, 'bower:mode', mode);
-      if (printing) poster.src = poster.dataset.src.replace('poster-time', `poster-${mode}`);
+      if (printing) poster.src = poster.dataset.src.replace('poster-space', `poster-${mode}`);
     });
-    growthScene.querySelector('button[data-v7-growth="2"]').click();
+    if (printing) for (const still of root.querySelectorAll('.v8-poster')) still.src = still.dataset.src;
 
     // slide 5: the plate is the drawing for Shaded room; the other two tabs keep 07's note until theirs are made
     const anatomyScene = root.querySelector('[data-v7-scene="anatomy"]');
