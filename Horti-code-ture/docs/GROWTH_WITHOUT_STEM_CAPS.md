@@ -1,6 +1,6 @@
 # Growth without stem caps — 14 November 2026
 
-Work done on the branch `claude/growth-without-stem-caps-e1458d`, from `main` at `39b42c5`. Not merged, not pushed.
+Work done on the branch `claude/growth-without-stem-caps-e1458d`, from `main` at `39b42c5`. Merged into `main` by fast-forward and pushed that evening, 14 November 2026, on the owner's word, as `cc7c09e`. Where this note says "this branch" it means the work now on `main`; "before" and "the existing run" mean `main` as it stood at `39b42c5`.
 
 **Why.** On 14 November three geometry trials of the six-bay room showed that which plants reach the building's crown was being decided by a number in the plant models, not by the building: every main stem stopped at a planned length (`architecture.leaderLengthM`), and for *Wisteria sinensis* that length, 7 to 8.6 m, was the route of the original prototype's vault. The owner's decision the same day: the simulator is not gospel, and a plant known to grow further is not to be capped by an assumed length.
 
@@ -154,7 +154,7 @@ Not opened, and so not relied on: Flora of China on efloras.org (it refused acce
 
 ## 5. The six-bay room, before and after
 
-**How the runs were pointed at this branch.** `pipeline/grow.mjs` in `drawings-in-code` already reads the simulator's folder from the environment variable `HORTI_DIR`, and falls back to the checkout beside it. The runs were made from `C:\BOWER\drawings-in-code` with `HORTI_DIR` set to this worktree, so neither `main` nor any file of that repository was touched. (The core's one dependency, `zod`, resolves upward from the worktree to the main checkout's `node_modules`.) The end of the range was chosen with `HORTI_GROWTH_BAND`. Each run's `run.json` records this branch's commit, `439ff8f`, and the two made at an end list every parameter that was varied in their `report.json` and `report.txt`.
+**How the runs were pointed at this branch.** `pipeline/grow.mjs` in `drawings-in-code` already reads the simulator's folder from the environment variable `HORTI_DIR`, and falls back to the checkout beside it. The runs were made from `C:\BOWER\drawings-in-code` with `HORTI_DIR` set to this worktree, so neither `main` nor any file of that repository was touched. (The core's one dependency, `zod`, resolves upward from the worktree to the main checkout's `node_modules`.) The end of the range was chosen with `HORTI_GROWTH_BAND`. Each run's `run.json` records this branch's commit, `439ff8f`, and the two made at an end list every parameter that was varied in their `report.json` and `report.txt`. Since the merge a run needs no `HORTI_DIR` to use this code; `HORTI_GROWTH_BAND` still chooses an end.
 
 ```bash
 HORTI_DIR=<this worktree> node pipeline/grow.mjs trial-control-6 trained 10 7 --specimen=3 --bower=bower-bare.json --name=nocap-10y
@@ -208,7 +208,7 @@ How to read it:
 
 ## 6. What this does to outputs already made
 
-**Nothing already made is changed by this branch.** It is not merged, and `drawings-in-code` reads `main`: the films and plates of the deck were grown at `39b42c5` and stay as they are. What follows is how they differ from the same building grown with this branch, and what would move if it were merged.
+**Nothing already made was changed by the merge.** The films and plates of the deck were grown at `39b42c5`, and their run folders and pictures stay as they are. What changed when this was merged, on the evening of 14 November, is what `drawings-in-code` grows from then on, since it reads `main` in place: a run made again under an old name will not reproduce the old one. What follows is how the existing pictures differ from the same building grown now.
 
 The whole planting, ten years on:
 
@@ -237,7 +237,7 @@ What holds up: the akebias and the vine at the crown by year ten; the clematis, 
 
 Differences that have nothing to do with the cap, and are there from the first year: a trained plant's main stem is now led by the shortest route, so a few plants start up a different member (the first rose stands 2.9 m at the end of year one where it stood 3.2 m); the wisterias grow at 2.1 m a season where they grew at 2.6 m, so they are at the same height at year five as before although nothing stops them; ivy starts slower.
 
-**If this branch is merged**, every run made afterwards through `drawings-in-code` moves as above, since it reads `main` in place. The existing run folders keep their numbers, with `39b42c5` in their `run.json`, and anything compared with them has to be grown again to compare like with like. In this repository the reference scenarios move too: on the 15 m hemisphere the three wisterias reach the crown in year 7 where they never did (year 5 at the high end, not within twelve years at the low), and hold 87% of the routes after twelve years where they held about half; on the reference palette the two wisterias and the woodbine come to the crown, 98% of the route is held where 93% was, and 63% of the timber is seen from the approach in July where 69% was. The viewer draws what the core gives it and needed no change.
+**Since the merge**, every run made through `drawings-in-code` moves as above, since it reads `main` in place. To grow a building as the deck's pictures were grown, point `HORTI_DIR` at a checkout of `39b42c5`. The existing run folders keep their numbers, with `39b42c5` in their `run.json`, and anything compared with them has to be grown again to compare like with like. In this repository the reference scenarios move too: on the 15 m hemisphere the three wisterias reach the crown in year 7 where they never did (year 5 at the high end, not within twelve years at the low), and hold 87% of the routes after twelve years where they held about half; on the reference palette the two wisterias and the woodbine come to the crown, 98% of the route is held where 93% was, and 63% of the timber is seen from the approach in July where 69% was. The viewer draws what the core gives it and needed no change.
 
 ## 7. Not done, and to check
 
