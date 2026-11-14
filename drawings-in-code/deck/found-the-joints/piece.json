@@ -1,0 +1,19 @@
+{
+  "for": "The presentation: a finding from growing a planting on the room, and the change to the building it led to. Not placed in the deck yet.",
+  "shows": "The room and one patch of its roof, looked at squarely from outside. The planting grows for ten tended years; the joints the clinging plants reach are marked as they are reached; the lap is shown cut through, with a stem going into the gap beside the crossing member and thickening; then the same patch of roof as it is now cut, bare and with the ivy on it; and last which joints are reached in every run and which only in some.",
+  "statement": "A growth scenario on stated assumptions, not a forecast. Concept geometry; trial planting.",
+  "paper": "EEF3EA",
+  "ink": "102820",
+  "timber": "ink",
+  "scale": 2,
+  "views": {
+    "room": { "size": [760, 620], "view": "drawing", "zoom": 1.12 },
+    "close": { "size": [470, 620], "view": "drawing", "lookAt": [-2.659, 4.158, 3.776], "zoom": 26, "from": [-0.426, 0.641, 0.639] }
+  },
+  "sets": [
+    { "id": "grown", "snapshot": "six-bay-radial-v1", "run": "trained-10y-new-growth", "views": ["room", "close"], "moments": { "days": [0, 3579], "count": 28 } },
+    { "id": "bare-was", "snapshot": "six-bay-radial-v1", "run": "trained-10y-new-growth", "views": ["close"], "moments": ["build:1"] },
+    { "id": "bare-now", "snapshot": "six-bay-radial-v2", "run": "trained-10y", "views": ["close"], "moments": ["build:1"] },
+    { "id": "grown-now", "snapshot": "six-bay-radial-v2", "run": "trained-10y", "views": ["room", "close"], "moments": ["day:3579"] }
+  ]
+}

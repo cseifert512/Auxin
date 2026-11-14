@@ -374,6 +374,13 @@ export function makePaper(
     setView,
     turnTo,
     focus,
+    /** Where a place in the building falls in the drawing as it is now set up: 0 to 1 across the picture and down it. */
+    project(at: readonly number[]): [number, number] {
+      drawing.updateMatrixWorld();
+      drawing.updateProjectionMatrix();
+      const v = toThree(at).project(drawing);
+      return [(v.x + 1) / 2, (1 - v.y) / 2];
+    },
     planOnly,
     /** Come closer in a view that is looked through a lens or down from above: 1 is the whole of it. */
     zoom(id: ViewId, by: number): void {
