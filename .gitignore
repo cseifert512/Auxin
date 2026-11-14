@@ -1,0 +1,9 @@
+node_modules/
+dist/
+studio/.vite/
+
+# made by `npm run grow` in about twenty seconds; run.json beside it says from what
+scenes/*/runs/*/growth.json
+scenes/*/runs/last-run.log
+
+.claude/settings.local.json

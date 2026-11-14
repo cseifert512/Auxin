@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "name": "Trial planting: twelve climbers, placed by the side each prefers",
+  "plants": [
+    {"plantId": "wisteria", "taxonId": "wisteria-sinensis", "stationId": "bed.R1.P1.B1"},
+    {"plantId": "winter-clematis", "taxonId": "clematis-cirrhosa-freckles", "stationId": "bed.R1.P1.B6"},
+    {"plantId": "rose", "taxonId": "rosa-the-generous-gardener", "stationId": "bed.R1.P2.B1"},
+    {"plantId": "honeysuckle", "taxonId": "lonicera-periclymenum-graham-thomas", "stationId": "bed.R1.P2.B2"},
+    {"plantId": "summer-clematis", "taxonId": "clematis-viticella-etoile-violette", "stationId": "bed.R1.P3.B2"},
+    {"plantId": "akebia", "taxonId": "akebia-quinata", "stationId": "bed.R1.P3.B3"},
+    {"plantId": "hydrangea", "taxonId": "hydrangea-anomala-subsp-petiolaris", "stationId": "bed.R1.P4.B3"},
+    {"plantId": "evergreen-honeysuckle", "taxonId": "lonicera-henryi", "stationId": "bed.R1.P4.B4"},
+    {"plantId": "ivy", "taxonId": "hedera-helix", "stationId": "bed.R1.P5.B4"},
+    {"plantId": "late-clematis", "taxonId": "clematis-princess-diana", "stationId": "bed.R1.P5.B5"},
+    {"plantId": "spring-clematis", "taxonId": "clematis-armandi", "stationId": "bed.R1.P6.B5"},
+    {"plantId": "japanese-wisteria", "taxonId": "wisteria-floribunda-macrobotrys", "stationId": "bed.R1.P6.B6"}
+  ]
+}

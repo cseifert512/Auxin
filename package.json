@@ -1,0 +1,16 @@
+{
+  "name": "drawings-in-code",
+  "version": "0.1.0",
+  "description": "Bower's building and its plants, drawn together through time",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "convert": "node pipeline/convert.mjs",
+    "grow": "node pipeline/grow.mjs",
+    "studio": "node ../Horti-code-ture/node_modules/vite/bin/vite.js --config studio/vite.config.js",
+    "studio:build": "node ../Horti-code-ture/node_modules/vite/bin/vite.js build --config studio/vite.config.js"
+  }
+}

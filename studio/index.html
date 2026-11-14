@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bower: a room through time</title>
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <canvas id="sheet"></canvas>
+
+    <header class="title">
+      <h1>A room through time</h1>
+      <p id="subtitle">Six-bay room</p>
+    </header>
+
+    <nav class="views" role="group" aria-label="View">
+      <button type="button" data-view="drawing" aria-pressed="true">Drawing</button>
+      <button type="button" data-view="approach" aria-pressed="false">Approach</button>
+      <button type="button" data-view="inside" aria-pressed="false">Inside</button>
+    </nav>
+
+    <p id="loading" class="loading">Reading ten years of growth…</p>
+
+    <footer class="time" hidden>
+      <button type="button" id="play" aria-label="Play">Play</button>
+      <div class="when">
+        <strong id="date">—</strong>
+        <span id="age">—</span>
+      </div>
+      <div class="track">
+        <input id="scrub" type="range" min="0" max="1" step="1" value="0" aria-label="Day" />
+        <div id="years" class="years" aria-hidden="true"></div>
+      </div>
+      <dl class="reading">
+        <div><dt>in leaf</dt><dd id="leaves">0</dd></div>
+        <div><dt>in flower</dt><dd id="flowers">0</dd></div>
+      </dl>
+    </footer>
+    <p id="statement" class="statement"></p>
+
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
