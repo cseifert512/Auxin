@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The clinging plants found the joints</title>
+<!--
+  A finding from growing a planting on the room that is addressed to single joints: which of the
+  joints the mill cuts are reached by a plant that clings to the timber, and when. It is told in
+  the deck's own words (We want, We ask, We reconsider, We ask again). Asking again here is growing
+  the same planting again with a different seed: some joints are reached every time, some only
+  sometimes.
+
+  It plays by itself as a loop, in the manner of the factory drawings (bower-factory,
+  docs/STYLE.md): named steps, one red for what is at issue, at most two leaders at once, a pause
+  button, nothing to hover over. The whole room and one joint are drawn together in one projection.
+
+  A sketch, not a drawing for the deck. The room's timber is centre lines; the joint drawn close to
+  is two plain bars at the members' real sizes, without the lap that is milled into them; the
+  plants are stems only. It reads states.js (bower-blender/scripts/sweep_states.py),
+  grown-pier-opens.js (grown.mjs: its first run is the room as drawn) and reached-joints.js
+  (joints.mjs). Every number on it comes from those.
+  Hooks, as on the deck's pieces: __setT(seconds), __play(), __duration, __ready.
+-->
+<style>
+  :root { --paper: #EEF3EA; --ink: #102820; --red: #B4492F; --rule: rgba(16, 40, 32, .2); --soft: rgba(16, 40, 32, .62); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--paper); color: var(--ink); font: 14px/1.45 "Segoe UI", system-ui, sans-serif; }
+  #page { display: flex; flex-direction: column; max-width: 1300px; margin: 0 auto; min-height: 100vh; padding: 0 22px; }
+  header { display: flex; align-items: baseline; gap: 16px; padding-top: 20px; }
+  h1 { font: 400 30px/1.1 Georgia, "Times New Roman", serif; margin: 0; flex: 1; }
+  #pp { font: inherit; font-size: 12px; color: var(--soft); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  #cap { font-size: 16px; min-height: 2.9em; margin: 8px 0 0; max-width: 62ch; }
+  #stage { position: relative; flex: 1; min-height: 380px; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #bar { height: 16px; position: relative; cursor: pointer; touch-action: none; }
+  #bar::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 1px; background: var(--rule); }
+  #fill { position: absolute; left: 0; top: 6px; height: 3px; width: 0; background: var(--ink); }
+  #steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); list-style: none; margin: 0; padding: 2px 0 0; gap: 8px; }
+  #steps button { font: inherit; background: none; border: 0; padding: 4px 0; text-align: left; width: 100%; color: var(--soft); cursor: pointer; }
+  #steps .on button { color: var(--ink); }
+  footer { font-size: 12px; color: var(--soft); max-width: 96ch; padding: 14px 0 20px; }
+  footer p { margin: 0 0 4px; }
+  #missing { padding: 40px; max-width: 62ch; }
+  @media (max-width: 900px) { #stage { flex: none; height: clamp(380px, 60vw, 640px); } }
+</style>
+</head>
+<body>
+<div id="page">
+  <header><h1>The clinging plants found the joints</h1><button id="pp" aria-pressed="false">Pause</button></header>
+  <p id="cap"></p>
+  <div id="stage"><canvas id="c"></canvas></div>
+  <div id="bar"><div id="fill"></div></div>
+  <ol id="steps"></ol>
+  <footer>
+    <p>Still to prove: the different cut is not designed, and the simulator does not test one. It reports where a clinging stem arrives and nothing about what the stem then does to a joint. Which plants cling, and how fast, rest on each plant's growth model. <span id="sample"></span></p>
+    <p id="setup"></p>
+    <p id="statement"></p>
+  </footer>
+</div>
+<script src="states.js"></script>
+<script src="grown-pier-opens.js"></script>
+<script src="reached-joints.js"></script>
+<script>
+(() => {
+  const D = window.DESIGN_SPACE, G = window.GROWN && window.GROWN["pier-opens"] && window.GROWN["pier-opens"].start, R = window.REACHED;
+  if (!D || !G || !R || !R.close) {
+    document.getElementById("page").outerHTML = '<p id="missing">This needs <code>states.js</code>, <code>grown-pier-opens.js</code> and <code>reached-joints.js</code> beside it. How each is made is in <code>drawings-in-code/README.md</code>, under sketches.</p>';
+    return;
+  }
+  const $ = (id) => document.getElementById(id);
+  const N = D.points, INK = "16,40,32", RED = "180,73,47", PAPER = "#EEF3EA";
+  const seg = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+  const ease = (u) => u * u * (3 - 2 * u);
+  const win = (t, a, b, f = 0.35) => Math.min(seg(t, a, a + f), 1 - seg(t, b - f, b));
+  const m3 = (p) => [p[0] / 1000, p[1] / 1000, p[2] / 1000];
+
+  // ---- what was found --------------------------------------------------------------------------
+  const run = R.runs[0], LASTDAY = run.lastDay, close = R.close;
+  const milled = (nodes) => new Set(nodes.flatMap((node) => R.places[node].milled.map((j) => j.id))).size;
+  const reached = run.reached.filter((x) => x.day != null).sort((a, b) => a.day - b.day);
+  const countAt = (day) => milled(reached.filter((x) => x.day <= day).map((x) => x.node));
+  const IN_RUN = milled(run.reached.map((x) => x.node)), ALWAYS = R.milledAlways, SOMETIMES = R.milledEver - R.milledAlways;
+  const clingers = new Set(run.reached.flatMap((x) => x.plants));
+  const names = [...new Set([...clingers].map((id) => run.labels[id]))];
+  const yearsOf = (day) => day / 365.25;
+
+  // ---- the loop -------------------------------------------------------------------------------
+  const DUR = 33, BND = [0, 8, 17, 24, 33], STATIC_T = 30;
+  const STEPS = [
+    ["We want", "Timber the plants hold for themselves. Some of the planting clings straight to the wood."],
+    ["We ask", `Where does that take them? In ten years, to ${IN_RUN} of the room's ${R.joints} joints.`],
+    ["We reconsider", "A stem that gets into a joint thickens there. So these joints are cut differently, and the list goes to the mill."],
+    ["We ask again", `Grown again, chance falls differently: ${ALWAYS} joints are reached every time, ${SOMETIMES} only sometimes. After planting, the room itself is the next run.`],
+  ];
+  const stepOf = (t) => Math.max(0, BND.findIndex((b, i) => t >= b && t < BND[i + 1]));
+  const dayAt = (t) => (t < 8.15 ? ease(seg(t, 0.6, 7)) : ease(seg(t, 8.6, 15.5))) * LASTDAY;
+  function at(t) {
+    return {
+      day: dayAt(t),
+      plants: Math.min(seg(t, 0, 0.5), 1 - seg(t, 32.3, 33), t < 8.15 ? 1 - seg(t, 7.6, 8) : seg(t, 8.3, 8.7)),
+      others: 1 - 0.78 * (seg(t, 8, 8.6) - seg(t, 32.3, 33)),   // the plants that do not cling step back once the question is asked
+      marks: t >= 8.6 ? 1 - seg(t, 32.3, 33) : 0,
+      again: seg(t, 24.3, 25.2) - seg(t, 32.3, 33),
+    };
+  }
+  let T_REACH = 15.5;   // the moment in "We ask" when the joint drawn close to is reached
+  for (let t = 8.6; t <= 15.5; t += 0.05) if (dayAt(t) >= close.day) { T_REACH = t; break; }
+
+  // ---- the room, its planting and the joint drawn close to ----------------------------------------
+  const sw = D.sweeps[0], M = sw.members;
+  const TIMBER = [];
+  sw.states[0].has.forEach((mi, j) => {
+    const a = new Float32Array(N * 3);
+    for (let k = 0; k < N * 3; k++) a[k] = sw.states[0].mm[j * N * 3 + k] / 1000;
+    TIMBER.push({ member: M[mi], points: a });
+  });
+  const clings = G.plants.map((p) => clingers.has(p.id));
+  for (const st of G.stems) { st.xyz = Float32Array.from(st.mm, (v) => v / 1000); st.key = st.plant * 2 + st.frame; }
+  G.stems.sort((x, y) => x.key - y.key);
+  for (const st of close.stems) st.xyz = Float32Array.from(st.mm, (v) => v / 1000);
+  const CLOSE_STEMS = close.stems.filter((st) => clings[st.plant]).sort((x, y) => x.plant - y.plant);   // by the joint, only the plants that cling
+  const JOINT = m3(close.at);
+  const PLACES = Object.entries(R.places).filter(([, p]) => p.milled.length).map(([node, p]) => ({ node, at: m3(p.at), day: (run.reached.find((x) => x.node === node) || {}).day, always: R.always.includes(node), inRun: run.reached.some((x) => x.node === node) }));
+
+  const canvas = $("c"), ctx = canvas.getContext("2d");
+  // One projection for both views, turned so that the joints the plants reach are at the front of the room.
+  const FRONT = PLACES.reduce((n, p) => [n[0] + p.at[0], n[1] + p.at[1]], [0, 0]);
+  const YAW = -1.32 - Math.atan2(FRONT[1], FRONT[0]), PITCH = 0.575;
+  const CY = Math.cos(YAW), SY = Math.sin(YAW), CP = Math.cos(PITCH), SP = Math.sin(PITCH);
+  let W = 0, H = 0, U = 1, main = null, inset = null;
+  function P(v, x, y, z) {
+    x -= v.at[0]; y -= v.at[1]; z -= v.at[2];
+    return [v.rect.x + v.rect.w / 2 + (x * CY - y * SY) * v.scale, v.rect.y + v.rect.h / 2 - ((x * SY + y * CY) * SP + z * CP) * v.scale];
+  }
+  const depth = (p) => (p[0] * SY + p[1] * CY) * CP - p[2] * SP;   // larger is further from the eye
+  function layout() {
+    const wide = W >= 540;
+    const m = wide ? { x: 0, y: 0, w: W * 0.6, h: H } : { x: 0, y: 0, w: W, h: H * 0.58 };
+    const n = wide ? { x: W * 0.64, y: H * 0.08, w: W * 0.36, h: H * 0.84 } : { x: W * 0.2, y: H * 0.62, w: W * 0.6, h: H * 0.36 };
+    main = { rect: m, at: [0, 0, 2.9], scale: Math.min(m.w / 15.6, m.h / 12.6) };
+    inset = { rect: n, at: JOINT, scale: Math.min(n.w / 1.15, n.h / 1.4) };
+    U = Math.max(0.8, Math.min(1.25, W / 1000));
+  }
+  function clip(v, draw) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(v.rect.x, v.rect.y, v.rect.w, v.rect.h); ctx.clip();
+    draw();
+    ctx.restore();
+  }
+  function timber(v, weight, alpha) {
+    ctx.lineCap = ctx.lineJoin = "round";
+    ctx.strokeStyle = `rgba(${INK},${alpha})`;
+    for (const { member, points } of TIMBER) {
+      ctx.lineWidth = Math.max(0.8, member.width_m * v.scale * weight);
+      ctx.beginPath();
+      for (let i = 0; i < N; i++) {
+        const p = P(v, points[i * 3], points[i * 3 + 1], points[i * 3 + 2]);
+        if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]);
+      }
+      if (member.closed) ctx.closePath();
+      ctx.stroke();
+    }
+  }
+  function stems(v, list, now, width, colour) {
+    let key = null;
+    for (const st of list) {
+      const k = st.key ?? st.plant;
+      if (k !== key) {
+        if (key !== null) ctx.stroke();
+        key = k;
+        ctx.beginPath();
+        ctx.globalAlpha = now.plants * 0.9 * (clings[st.plant] ? 1 : now.others);
+        ctx.strokeStyle = colour || `hsl(${78 + (st.plant * 37) % 84} 52% 33%)`;
+        ctx.lineWidth = (st.frame === 0 ? 0.8 : 1.7) * width;
+      }
+      let open = false;
+      for (let i = 0; i < st.born.length; i++) {
+        if (st.born[i] > now.day || (st.gone[i] >= 0 && st.gone[i] <= now.day)) { open = false; continue; }
+        const p = P(v, st.xyz[i * 3], st.xyz[i * 3 + 1], st.xyz[i * 3 + 2]);
+        if (open) ctx.lineTo(p[0], p[1]); else { ctx.moveTo(p[0], p[1]); open = true; }
+      }
+    }
+    if (key !== null) ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  // The two members of the joint as plain bars at their real sizes, nearest faces drawn last so they hide the rest.
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const unit = (a) => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+  const FACES = [];
+  for (const piece of [close.a, close.b]) {
+    const pts = piece.frames.map((f) => m3(f.p));
+    const rings = piece.frames.map((f, i) => {
+      const tan = unit(sub(pts[Math.min(i + 1, pts.length - 1)], pts[Math.max(i - 1, 0)])), d = unit(f.d), w = unit(cross(tan, d));
+      const hw = piece.widthM / 2, hd = piece.depthM / 2, p = pts[i];
+      return [[1, 1], [-1, 1], [-1, -1], [1, -1]].map(([a, b]) => [p[0] + w[0] * hw * a + d[0] * hd * b, p[1] + w[1] * hw * a + d[1] * hd * b, p[2] + w[2] * hw * a + d[2] * hd * b]);
+    });
+    for (let i = 0; i < rings.length - 1; i++) for (let c = 0; c < 4; c++) {
+      const q = [rings[i][c], rings[i + 1][c], rings[i + 1][(c + 1) % 4], rings[i][(c + 1) % 4]];
+      FACES.push({ q, along: true, far: q.reduce((n, p) => n + depth(p), 0) / 4 });
+    }
+    for (const end of [rings[0], rings[rings.length - 1]]) FACES.push({ q: end, along: false, far: end.reduce((n, p) => n + depth(p), 0) / 4 });
+  }
+  FACES.sort((a, b) => b.far - a.far);
+  function joint(v, issue) {
+    ctx.lineJoin = "round";
+    for (const face of FACES) {
+      const s = face.q.map((p) => P(v, p[0], p[1], p[2]));
+      ctx.beginPath(); s.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath();
+      ctx.fillStyle = PAPER; ctx.fill();
+      if (issue > 0.01) { ctx.fillStyle = `rgba(${RED},${0.1 * issue})`; ctx.fill(); }
+      ctx.strokeStyle = issue > 0.5 ? `rgb(${RED})` : `rgb(${INK})`; ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      if (face.along) { ctx.moveTo(s[0][0], s[0][1]); ctx.lineTo(s[1][0], s[1][1]); ctx.moveTo(s[3][0], s[3][1]); ctx.lineTo(s[2][0], s[2][1]); }
+      else { s.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath(); }
+      ctx.stroke();
+    }
+  }
+  function mark(v, at, alpha, filled, size) {
+    if (alpha <= 0.01) return;
+    const p = P(v, at[0], at[1], at[2]);
+    ctx.globalAlpha = alpha;
+    ctx.beginPath(); ctx.arc(p[0], p[1], size, 0, Math.PI * 2);
+    if (filled) { ctx.fillStyle = `rgb(${RED})`; ctx.fill(); } else { ctx.fillStyle = PAPER; ctx.fill(); ctx.strokeStyle = `rgb(${RED})`; ctx.lineWidth = 1.3; ctx.stroke(); }
+    ctx.globalAlpha = 1;
+  }
+
+  // ---- annotation: paper boxes and leaders, as the factory drawings have them --------------------------
+  function box(x, y, text, alpha, red, anchor) {
+    const lines = text.split("\n"), size = 12.5 * U, pad = 3;
+    ctx.font = `${size}px "Segoe UI", system-ui, sans-serif`;
+    const w = Math.max(...lines.map((l) => ctx.measureText(l).width)), h = lines.length * size * 1.3;
+    const x0 = Math.max(4, Math.min(W - w - 4 - 2 * pad, anchor === "end" ? x - w - 2 * pad : x));
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = PAPER; ctx.fillRect(x0, y - h / 2 - pad, w + 2 * pad, h + 2 * pad);
+    ctx.fillStyle = red ? `rgb(${RED})` : `rgb(${INK})`; ctx.textBaseline = "middle";
+    lines.forEach((l, i) => ctx.fillText(l, x0 + pad, y - h / 2 + size * 0.65 + i * size * 1.3));
+    ctx.globalAlpha = 1;
+  }
+  function leader(v, world, dx, dy, text, alpha, red) {
+    if (alpha <= 0.01) return;
+    const p = P(v, world[0], world[1], world[2]), x = p[0] + dx * U, y = p[1] + dy * U;
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = red ? `rgb(${RED})` : `rgb(${INK})`; ctx.fillStyle = ctx.strokeStyle; ctx.lineWidth = 0.9;
+    ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(x, y); ctx.stroke();
+    ctx.beginPath(); ctx.arc(p[0], p[1], 2.2, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+    box(x, y, text, alpha, red, dx < 0 ? "end" : "start");
+  }
+  function small(x, y, text) {
+    ctx.font = `${10.5 * U}px "Segoe UI", system-ui, sans-serif`;
+    ctx.fillStyle = "rgba(16,40,32,.62)"; ctx.textBaseline = "alphabetic";
+    ctx.fillText(text.toUpperCase().split("").join(" "), x, y);
+  }
+  // Where the leaders in the room start: an always-reached joint nearest the eye, and a sometimes one highest up.
+  const nearestAlways = PLACES.filter((p) => p.always).sort((a, b) => depth(a.at) - depth(b.at))[0] || PLACES[0];
+  const highestSometimes = PLACES.filter((p) => !p.always).sort((a, b) => b.at[2] - a.at[2])[0] || PLACES[0];
+
+  function frame(t) {
+    const now = at(t), step = stepOf(t);
+    const dpr = window.devicePixelRatio || 1;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    const found = now.day >= close.day && t >= 8.6 ? 1 - seg(t, 32.3, 33) : 0;
+
+    clip(main, () => {   // the whole room
+      timber(main, 0.5, 1);
+      stems(main, G.stems, now, 1);
+      for (const p of PLACES) {
+        const shown = p.inRun && p.day != null && now.day >= p.day ? now.marks : 0;
+        if (now.again > 0.01) mark(main, p.at, Math.max(p.always ? shown : shown * (1 - now.again), now.again), p.always, p.always ? 3.4 : 3.2);
+        else mark(main, p.at, shown, true, 3.2);
+      }
+    });
+    const c0 = P(main, JOINT[0], JOINT[1], JOINT[2]), f = main.scale / inset.scale;   // where the close view is taken from
+    const loc = { x: c0[0] - Math.max(7, inset.rect.w * f / 2), y: c0[1] - Math.max(8, inset.rect.h * f / 2), w: Math.max(14, inset.rect.w * f), h: Math.max(16, inset.rect.h * f) };
+    ctx.strokeStyle = "rgba(16,40,32,.38)"; ctx.lineWidth = 0.8;
+    ctx.strokeRect(loc.x, loc.y, loc.w, loc.h);
+    ctx.beginPath();
+    if (inset.rect.x > loc.x + loc.w) { ctx.moveTo(loc.x + loc.w, loc.y); ctx.lineTo(inset.rect.x, inset.rect.y); ctx.moveTo(loc.x + loc.w, loc.y + loc.h); ctx.lineTo(inset.rect.x, inset.rect.y + inset.rect.h); }
+    else { ctx.moveTo(loc.x, loc.y + loc.h); ctx.lineTo(inset.rect.x, inset.rect.y); ctx.moveTo(loc.x + loc.w, loc.y + loc.h); ctx.lineTo(inset.rect.x + inset.rect.w, inset.rect.y); }
+    ctx.stroke();
+    ctx.fillStyle = PAPER; ctx.fillRect(inset.rect.x, inset.rect.y, inset.rect.w, inset.rect.h);
+    clip(inset, () => {   // one joint, close to
+      timber(inset, 0.12, 0.1);
+      joint(inset, found);
+      stems(inset, CLOSE_STEMS, now, 0.75);
+    });
+    ctx.strokeStyle = "rgba(16,40,32,.3)"; ctx.lineWidth = 0.8;
+    ctx.strokeRect(inset.rect.x, inset.rect.y, inset.rect.w, inset.rect.h);
+    small(inset.rect.x, inset.rect.y - 7, "One joint");
+    small(main.rect.x, main.rect.y + 16 * U, `${yearsOf(now.day).toFixed(1)} years after planting`);
+    if (now.marks > 0.01) small(main.rect.x, main.rect.y + 32 * U, `${countAt(now.day)} of ${R.joints} joints reached`);
+
+    // annotation: never more than two leaders at a time
+    const who = close.plants.map((id) => run.labels[id]).join(" and ");
+    leader(inset, JOINT, 34, 70, `reached in year ${Math.ceil(yearsOf(close.day))}\nby ${who}`, win(t, T_REACH, Math.max(T_REACH + 4, 19.6)), true);
+    const cut = close.joint.aDepthMm && close.joint.bDepthMm ? `\n${close.joint.aDepthMm} mm out of one, ${close.joint.bDepthMm} mm out of the other` : "";
+    leader(inset, JOINT, -30, -78, `as milled: a ${close.joint.kind.replace("_", " ")}${cut}`, win(t, 19.9, 23.7), false);
+    leader(main, nearestAlways.at, -64, 58, `${IN_RUN} joints marked for a different cut\n(the cut is not designed yet)`, win(t, 18.2, 23.7), true);
+    leader(main, nearestAlways.at, -64, 58, `${ALWAYS} joints reached in all ${R.runs.length} runs`, win(t, 25.2, 32.2), true);
+    leader(main, highestSometimes.at, -44, -62, `${SOMETIMES} more in only some of them`, win(t, 26.6, 32.2), false);
+  }
+
+  // ---- page: steps, caption, playing ----------------------------------------------------------------
+  let shown = -1, paused = false, tp = 0, t0 = performance.now();
+  function ui(t) {
+    const k = stepOf(t);
+    if (k !== shown) {
+      shown = k;
+      $("cap").textContent = STEPS[k][1];
+      [...$("steps").children].forEach((li, i) => li.classList.toggle("on", i === k));
+    }
+    $("fill").style.width = (100 * t / DUR) + "%";
+  }
+  function loop(ms) {
+    if (!paused) tp = ((ms - t0) / 1000) % DUR;
+    frame(tp); ui(tp);
+    requestAnimationFrame(loop);
+  }
+  function seek(t, play) {
+    tp = Math.max(0, Math.min(DUR - 0.01, t));
+    paused = !play; t0 = performance.now() - tp * 1000;
+    $("pp").textContent = paused ? "Play" : "Pause"; $("pp").setAttribute("aria-pressed", paused);
+    frame(tp); ui(tp);
+  }
+  STEPS.forEach(([name], i) => {
+    const li = document.createElement("li"), b = document.createElement("button");
+    b.textContent = name;
+    b.onclick = () => seek(BND[i] + 0.01, true);
+    li.append(b); $("steps").append(li);
+  });
+  $("pp").onclick = () => seek(tp, paused);
+  const bar = $("bar"), scrub = (e) => { const r = bar.getBoundingClientRect(); seek(DUR * (e.clientX - r.left) / r.width, false); };
+  bar.onpointerdown = (e) => { bar.setPointerCapture(e.pointerId); scrub(e); bar.onpointermove = scrub; };
+  bar.onpointerup = () => { bar.onpointermove = null; };
+  $("sample").textContent = `${R.runs.length} runs is a small sample.`;
+  $("setup").textContent = `From ${R.runs.length} runs of the plant simulator (${run.simulator}), ${run.years} years each: the same room and planting, ${run.care}, planted standing ${run.specimenM} m, seeds ${R.runs.map((r) => r.seed).join(", ")}; seed ${run.seed} is the one drawn. The plants that cling: ${names.join(", ")}. A joint is counted where a place the simulator names has a row of the snapshot's joint schedule; ${run.reached.filter((x) => !R.places[x.node].milled.length).length} of the ${run.reached.length} places it names in the run drawn are in the piers, where legs stand side by side and nothing is milled, and are left out. Timber as centre lines, the joint as plain bars without its lap, stems only.`;
+  $("statement").textContent = run.statement;
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1, r = canvas.getBoundingClientRect();
+    W = r.width; H = r.height;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    layout(); frame(tp);
+  }
+  new ResizeObserver(resize).observe(canvas);
+  resize();
+  ui(0);
+  window.__duration = DUR;
+  window.__setT = (t) => seek(t, false);
+  window.__play = () => seek(tp, true);
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { seek(STATIC_T, false); $("pp").hidden = true; }
+  else requestAnimationFrame(loop);
+  window.__ready = true;
+})();
+</script>
+</body>
+</html>

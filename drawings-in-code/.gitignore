@@ -19,6 +19,8 @@ exports/**/*.mp4
 sketches/*/states.js
 # made by `node sketches/design-space/grown.mjs` from two grown runs
 sketches/*/grown-*.js
+# made by `node sketches/design-space/joints.mjs` from the runs of one planting
+sketches/*/reached-joints.js
 
 # scratch pictures while plates are made
 exports/deck/.work/

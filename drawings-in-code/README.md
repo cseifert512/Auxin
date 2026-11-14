@@ -155,6 +155,18 @@ shows is the floor and the shade on it) and `round`.
   read as a parametric model. The page with the sliders is the workbench. Both are sketches: centre lines and
   stems.
 
+  `sketches/design-space/found-the-joints.html` is a second finding in the same form, and one addressed to
+  single joints: which of the joints the mill cuts are reached by a plant that clings to the timber, and when.
+  Asking again there is growing the same planting with other seeds: some joints are reached every time, some
+  only sometimes. Its list is made by `joints.mjs`, which matches the places the simulator names (`j188`) to
+  rows of the snapshot's `joints.csv`:
+
+  ```bash
+  npm run grow -- six-bay-radial-v1 trained 10 8 --specimen=3 --name=trained-10y-new-growth-seed8
+  npm run grow -- six-bay-radial-v1 trained 10 9 --specimen=3 --name=trained-10y-new-growth-seed9
+  node sketches/design-space/joints.mjs six-bay-radial-v1 trained-10y-new-growth trained-10y-new-growth-seed8 trained-10y-new-growth-seed9
+  ```
+
 ## What this is not
 
 The growth is a scenario on stated assumptions, not a forecast: the statement under the drawing travels with every
