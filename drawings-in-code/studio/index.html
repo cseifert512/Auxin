@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
+    <!-- A still of the room, made beforehand (npm run live). It is what is seen until the drawing is ready, and all
+         that is seen if this machine cannot draw it. -->
+    <img id="poster" class="poster" src="./poster.webp" alt="" onerror="this.remove()" />
     <canvas id="sheet"></canvas>
 
     <header class="title">
@@ -48,6 +51,10 @@
     </footer>
     <p id="statement" class="statement"></p>
 
+    <script>
+      // if the drawing cannot be made here (no graphics card to speak of, an old browser), the still stays and nothing is said
+      for (const kind of ['error', 'unhandledrejection']) addEventListener(kind, () => document.getElementById('loading').hidden || document.body.classList.add('still'));
+    </script>
     <script type="module" src="./src/main.ts"></script>
   </body>
 </html>

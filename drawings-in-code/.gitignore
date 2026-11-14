@@ -4,6 +4,7 @@ studio/.vite*/
 
 # made by `npm run grow` in about twenty seconds; run.json beside it says from what
 scenes/*/runs/*/growth.json
+scenes/*/light/
 scenes/*/runs/*.log
 scenes/*/*.log
 
@@ -28,3 +29,6 @@ sketches/*/joint-detail.js
 exports/deck/.work/
 # the full pictures `node pipeline/again.mjs` measures from; the page reads smaller ones
 exports/deck/.again/
+
+# the still the live drawing opens on: made by npm run live
+studio/public/

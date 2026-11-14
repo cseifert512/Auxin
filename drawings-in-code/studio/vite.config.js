@@ -14,7 +14,11 @@ const three = `${horti}/node_modules/three`;
 // which building is drawn: the snapshot named in snapshot.json (or BOWER_SNAPSHOT), read from ../releases
 const snapshot = process.env.BOWER_SNAPSHOT ?? JSON.parse(readFileSync(resolve(root, 'snapshot.json'), 'utf8')).snapshot;
 
-export default {
+// `--mode deck` builds the drawing that goes to the presentation: the light plantings only, with every address
+// relative, into exports/deck/a-room-through-time. It is plain files: any web server shows it, and nothing is
+// installed or worked out beforehand where it is shown.
+export default ({ mode }) => ({
+  base: './',
   root: here,
   // a film is made from a second server, which keeps its own cache
   cacheDir: resolve(here, process.env.STUDIO_CACHE ?? '.vite'),
@@ -25,10 +29,11 @@ export default {
       { find: /^@snapshot\/(.*)$/, replacement: `${slashed(resolve(root, '..'))}/releases/${snapshot}/$1` },
       { find: /^@scene\/(.*)$/, replacement: `${slashed(root)}/scenes/${snapshot}/$1` },
       { find: /^@horti\/viewer\/(.*)$/, replacement: `${horti}/packages/viewer/src/$1` },
+      { find: /^@data$/, replacement: `${slashed(here)}/src/${mode === 'deck' ? 'data.deck.ts' : 'data.ts'}` },
       { find: /^@horti\/core$/, replacement: `${horti}/packages/core/src/index.ts` },
     ],
   },
   // the repository (snapshots, plant simulator) and the website's fonts, which are beside the repository
   server: { port: 5310, strictPort: true, fs: { allow: [resolve(root, '..'), resolve(root, '../../Bower_Web')] } },
-  build: { target: 'es2023', outDir: resolve(root, 'dist'), emptyOutDir: true, chunkSizeWarningLimit: 4000 },
-};
+  build: { target: 'es2023', outDir: resolve(root, mode === 'deck' ? 'exports/deck/a-room-through-time' : 'dist'), emptyOutDir: true, chunkSizeWarningLimit: 4000 },
+});

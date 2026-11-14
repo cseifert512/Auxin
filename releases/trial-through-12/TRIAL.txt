@@ -1,0 +1,1 @@
+A trial input written by the bower-blender session on 2026-11-14 to compare plantings on two versions of the six-bay room. Only centrelines.json and design.json: not a full snapshot (no bower.glb). Safe to delete, with scenes/trial-through-12.
