@@ -18,7 +18,11 @@
   A sketch, not a drawing for the deck. The room's timber is centre lines and the plants are stems
   only. The joint drawn close to is the two members as Blender mills them, as every lap is cut and
   as the design now cuts this one (joint-detail.js, from bower-blender/scripts/joint_detail.py);
-  without that file it is two plain bars. It reads states.js (bower-blender/scripts/sweep_states.py),
+  without that file it is two plain bars. In "We reconsider" the same joint is also shown cut through and
+  seen from above, drawn to scale from the numbers the generator used: a stem comes down the side
+  of the crossing member into the gap and thickens there, and then the cut opens. That a stem in
+  a narrow gap wedges it is the reason for the cut, and it is general knowledge of clinging
+  plants, not something the simulator shows or the plant library sources. It reads states.js (bower-blender/scripts/sweep_states.py),
   grown-pier-opens.js (grown.mjs: its first run is the room as drawn) and reached-joints.js
   (joints.mjs). Every number on it comes from those.
   Hooks, as on the deck's pieces: __setT(seconds), __play(), __duration, __ready.
@@ -54,7 +58,7 @@
   <div id="bar"><div id="fill"></div></div>
   <ol id="steps"></ol>
   <footer>
-    <p>Still to prove: the splayed lap is set out and cut in the model, not proved. Its sizes are provisional, nobody has checked what it does to the strength of the lap, and how thick a clinging stem gets after ten years is not in the plant library. The simulator reports where a clinging stem arrives and nothing about what it then does to a joint, so it cannot test the new cut. <span id="sample"></span></p>
+    <p>Still to prove: that a stem in a gap wedges it is taken from what clinging plants are known to do to fences and cladding; the simulator does not show it and the plant library does not source it. The splayed lap is set out and cut in the model, not proved. Its sizes are provisional, nobody has checked what it does to the strength of the lap, and how thick a clinging stem gets after ten years is not in the plant library. The simulator reports where a clinging stem arrives and nothing about what it then does to a joint, so it cannot test the new cut. <span id="sample"></span></p>
     <p id="setup"></p>
     <p id="statement"></p>
   </footer>
@@ -90,22 +94,24 @@
   const yearsOf = (day) => day / 365.25;
 
   // ---- the loop -------------------------------------------------------------------------------
-  const DUR = 33, BND = [0, 8, 17, 24, 33], STATIC_T = 30;
+  const DUR = 40, BND = [0, 8, 17, 31, 40], STATIC_T = 37;
   const STEPS = [
     ["We want", "Timber the plants hold for themselves. Some of the planting clings straight to the wood."],
     ["We ask", `Where does that take them? In ten years, to ${IN_RUN} of the room's ${R.joints} joints.`],
-    ["We reconsider", `The gap beside a crossing member is straight on from the face a stem travels. So ${LAPS} laps are cut to open where the stem lies.`],
+    ["We reconsider", "A stem follows the face it clings to, straight into the gap beside the crossing member. And it goes on thickening."],
     ["We ask again", `Grown again, chance falls differently: ${ALWAYS} joints are reached every time, ${SOMETIMES} only sometimes. After planting, the room itself is the next run.`],
   ];
+  // "We reconsider" says two things, one after the other: what the stem does, then what is done about it.
+  const captionAt = (t) => (t >= 24.2 && t < 31 ? `So ${LAPS} laps are cut open where the stem lies, and shut where the two members touch.` : STEPS[stepOf(t)][1]);
   const stepOf = (t) => Math.max(0, BND.findIndex((b, i) => t >= b && t < BND[i + 1]));
   const dayAt = (t) => (t < 8.15 ? ease(seg(t, 0.6, 7)) : ease(seg(t, 8.6, 15.5))) * LASTDAY;
   function at(t) {
     return {
       day: dayAt(t),
-      plants: Math.min(seg(t, 0, 0.5), 1 - seg(t, 32.3, 33), t < 8.15 ? 1 - seg(t, 7.6, 8) : seg(t, 8.3, 8.7)),
-      others: 1 - 0.78 * (seg(t, 8, 8.6) - seg(t, 32.3, 33)),   // the plants that do not cling step back once the question is asked
-      marks: t >= 8.6 ? 1 - seg(t, 32.3, 33) : 0,
-      again: seg(t, 24.3, 25.2) - seg(t, 32.3, 33),
+      plants: Math.min(seg(t, 0, 0.5), 1 - seg(t, 39.3, 40), t < 8.15 ? 1 - seg(t, 7.6, 8) : seg(t, 8.3, 8.7)),
+      others: 1 - 0.78 * (seg(t, 8, 8.6) - seg(t, 39.3, 40)),   // the plants that do not cling step back once the question is asked
+      marks: t >= 8.6 ? 1 - seg(t, 39.3, 40) : 0,
+      again: seg(t, 31.3, 32.2) - seg(t, 39.3, 40),
     };
   }
   let T_REACH = 15.5;   // the moment in "We ask" when the joint drawn close to is reached
@@ -301,14 +307,127 @@
   const nearestAlways = PLACES.filter((p) => p.always).sort((a, b) => depth(a.at) - depth(b.at))[0] || PLACES[0];
   const highestSometimes = PLACES.filter((p) => !p.always).sort((a, b) => b.at[2] - a.at[2])[0] || PLACES[0];
 
+
+  // ---- the same joint cut through and seen from above: what a stem does in the gap, and the cut that answers it ----
+  // Drawn to scale from the numbers the building's own generator used (joint-detail.js): the two widths, the angle
+  // the members cross at, the clearance, and the land and mouth of the splayed lap. u is measured across the
+  // crossing member and s along it, so that member stands upright on the page and a stem comes down its side.
+  const SEC = (() => {
+    if (!JD || !JD.variants.now.detail) return null;
+    const was = JD.variants.as_drawn, cut = JD.variants.now;
+    const notched = was.cuts.find((c) => c.face === "outer").member;   // cut from its outer face: the one seen cut through
+    const wide = (id) => (close.a.id === id ? close.a.widthM : close.b.widthM);
+    return { wA: wide(notched), wB: wide(was.cuts.find((c) => c.member !== notched).member), phi: close.angleDeg * Math.PI / 180, c0: was.clearance_m, c1: cut.clearance_m, land: cut.detail.land_m, mouth: cut.detail.mouth_m, depth: was.cuts[0].depth_m };
+  })();
+  const STEM_YOUNG_M = 0.0012, STEM_OLD_M = 0.009;   // drawn thicknesses of a stem; the second is about the thickest the runs put at these joints after ten years
+  function note(x, y, dx, dy, text, alpha, red) {
+    if (alpha <= 0.01) return;
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = red ? `rgb(${RED})` : `rgb(${INK})`; ctx.fillStyle = ctx.strokeStyle; ctx.lineWidth = 0.9;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + dx * U, y + dy * U); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, y, 2.2, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+    box(x + dx * U, y + dy * U, text, alpha, red, "start");
+  }
+  function section(t, alpha) {
+    if (!SEC || alpha <= 0.01) return;
+    const r = inset.rect, S = Math.min(r.w / 0.17, r.h / 0.22), cx = r.x + r.w * 0.6, cy = r.y + r.h * 0.56;
+    const X = (u, v) => [cx - S * u, cy - S * v];
+    const { wA, wB, phi, c0, c1, land, mouth, depth } = SEC, sin = Math.sin(phi), cos = Math.cos(phi), mm = (x) => Math.round(x * 1000);
+    const m = ease(seg(t, 24.4, 26.2)), moving = Math.sin(Math.PI * seg(t, 24.4, 26.2));
+    const c = c0 + (c1 - c0) * m, h = wB / 2 + c;
+    const sT = (wA / 2 - h * cos) / sin, sB = (-wA / 2 - h * cos) / sin, sM = (sT + sB) / 2;   // the wall of the notch runs from sB to sT
+    const flare = (sT - sB - land) / 2, open = mouth * m, hinge = sM + land / 2;
+    const angle = flare > 0.01 ? Math.min(Math.atan2(open, flare), Math.PI / 4) : 0;
+    const far = 0.4, along = [sin, -cos];   // along the notched member, away from the crossing
+    const path = (pts) => { pts.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]))); ctx.closePath(); };
+    const shoulder = (k) => [[h, sT], [h + far * along[0], sT + far * along[1]], [h + far * along[0], sB + far * along[1]], [h, sB]].map(([u, v]) => X(k * u, k * v));
+    // the openings, as the generator cuts them: a box hinged on the wall at each end of the land
+    const openings = (k) => (angle > 0.002 ? [1, -1].map((way) => {
+      const H = [h, sM + way * land / 2], run = [Math.sin(angle), way * Math.cos(angle)], face = [Math.cos(angle), -way * Math.sin(angle)];
+      const reach = flare / Math.cos(angle) + 0.05, thick = Math.min(open, 2 * h - 0.004);
+      return [[0, 0], [reach, 0], [reach, -thick], [0, -thick]].map(([a, b]) => X(k * (H[0] + a * run[0] + b * face[0]), k * (H[1] + a * run[1] + b * face[1])));
+    }) : []);
+
+    ctx.save();
+    ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = PAPER; ctx.fillRect(r.x, r.y, r.w, r.h);
+    const b0 = X(wB / 2, 0)[0], b1 = X(-wB / 2, 0)[0];   // the crossing member, upright
+    ctx.fillStyle = `rgba(${INK},.06)`; ctx.fillRect(b0, r.y, b1 - b0, r.h);
+    ctx.strokeStyle = `rgb(${INK})`; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(b0, r.y); ctx.lineTo(b0, r.y + r.h); ctx.moveTo(b1, r.y); ctx.lineTo(b1, r.y + r.h); ctx.stroke();
+    for (const k of [1, -1]) {   // the notched member, either side of the crossing, less its openings
+      const outline = shoulder(k), cut = openings(k);
+      ctx.save();
+      ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); for (const q of cut) path(q); ctx.clip("evenodd");
+      ctx.beginPath(); path(outline);
+      ctx.fillStyle = `rgba(${INK},.17)`; ctx.fill();
+      ctx.strokeStyle = `rgb(${INK})`; ctx.lineWidth = 1.2; ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      ctx.beginPath(); path(outline); ctx.clip();
+      ctx.strokeStyle = moving > 0.05 ? `rgb(${RED})` : `rgb(${INK})`; ctx.lineWidth = 2.4;   // half of it falls outside the timber and is not drawn
+      for (const q of cut) { ctx.beginPath(); path(q); ctx.stroke(); }
+      ctx.restore();
+    }
+
+    // the stem: down the side of the crossing member, as thick as it has grown or as the place allows
+    const first = t < 24.4;   // before the cut changes, and after
+    const top = (r.h * 0.56) / S + 0.01;
+    const grown = first ? ease(seg(t, 18.2, 20.6)) : ease(seg(t, 26.2, 27.4));
+    const front = top + ((first ? sB + 0.25 * (sT - sB) : hinge) - top) * grown;
+    const thick = STEM_YOUNG_M + (STEM_OLD_M - STEM_YOUNG_M) * (first ? ease(seg(t, 20.8, 23.4)) : ease(seg(t, 27, 28.4)));
+    const room = (v) => (first ? (v > sT ? Infinity : c0) : c1 + Math.max(0, v - hinge) * Math.tan(angle));
+    const seen = first ? seg(t, 18.2, 18.5) * (1 - seg(t, 23.8, 24.4)) : seg(t, 26.2, 26.6);
+    const wedge = first ? seg(t, 21.2, 22.2) * (1 - seg(t, 23.8, 24.4)) : 0;
+    if (seen > 0.01 && front < top) {
+      const edge = [];
+      for (let v = top; v > front; v -= 0.003) edge.push([v, Math.min(thick, room(v))]);
+      edge.push([front, Math.min(thick, room(front))]);
+      const shape = () => { ctx.beginPath(); edge.forEach(([v, w], i) => { const q = X(wB / 2 + w, v); if (i) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }); for (let i = edge.length - 1; i >= 0; i--) { const q = X(wB / 2, edge[i][0]); ctx.lineTo(q[0], q[1]); } ctx.closePath(); };
+      ctx.globalAlpha = alpha * seen;
+      shape(); ctx.fillStyle = "#3F7D3A"; ctx.fill();
+      if (wedge > 0.01) {   // the stretch inside the gap, which cannot thicken without pushing
+        ctx.save();
+        const y0 = X(0, sT)[1];
+        ctx.beginPath(); ctx.rect(r.x, y0, r.w, r.y + r.h - y0); ctx.clip();
+        ctx.globalAlpha = alpha * seen * wedge;
+        shape(); ctx.fillStyle = `rgb(${RED})`; ctx.fill();
+        const va = sT - 0.4 * (sT - sB), from = [X(wB / 2 + c0 + 0.002, va), X(wB / 2 - 0.002, va)], to = [X(wB / 2 + c0 + 0.02, va), X(wB / 2 - 0.02, va)];
+        ctx.strokeStyle = `rgb(${RED})`; ctx.lineWidth = 1.6; ctx.lineCap = "round";
+        from.forEach((a, i) => { const b = to[i], d = Math.sign(b[0] - a[0]); ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.moveTo(b[0] - d * 5, b[1] - 4); ctx.lineTo(b[0], b[1]); ctx.lineTo(b[0] - d * 5, b[1] + 4); ctx.stroke(); });
+        ctx.restore();
+      }
+    }
+    ctx.restore();
+    ctx.globalAlpha = alpha;
+    small(X(wB / 2, 0)[0] + 8, r.y + r.h - 10, "crossing");
+    small(r.x + r.w - 62 * U, r.y + 18 * U, "notched");
+    ctx.globalAlpha = 1;
+
+    // annotation: never more than two leaders at a time
+    const gap = X(wB / 2 + c0 / 2, sT - 0.3 * (sT - sB));
+    const put = (at, dx, dy, text, a, red) => {   // a note, kept inside the close view
+      const x = Math.max(r.x + 8, Math.min(r.x + r.w - 178 * U, at[0] + dx * U)), y = Math.max(r.y + 22, Math.min(r.y + r.h - 24, at[1] + dy * U));
+      note(at[0], at[1], (x - at[0]) / U, (y - at[1]) / U, text, a, red);
+    };
+    put(gap, -96, 84, `the gap: ${mm(c0)} mm wide, ${mm(depth)} mm deep,\nstraight on from the face`, alpha * win(t, 18.6, 21.2), true);
+    put(gap, -96, 84, "it thickens with timber on\nboth sides of it: a wedge", alpha * win(t, 21.4, 24.1), true);
+    const pocket = X(wB / 2 + mouth * 0.3, hinge + flare * 0.75), bears = X(-wB / 2, -sM);
+    put(pocket, -70, -74, `open ${mm(mouth)} mm where the stem lies`, alpha * win(t, 26.2, 28.6), false);
+    put(bears, -40, 86, `shut on a ${mm(land)} mm land`, alpha * win(t, 26.6, 28.6), false);
+  }
+
   function frame(t) {
     const now = at(t), step = stepOf(t);
     const dpr = window.devicePixelRatio || 1;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
-    const found = now.day >= close.day && t >= 8.6 ? 1 - seg(t, 32.3, 33) : 0;
-    const recut = MILLED ? ease(seg(t, 19.4, 21)) * (1 - seg(t, 32.3, 33)) : 0;   // from the lap as every lap is cut to this one as it is now cut
-    const cutting = Math.sin(Math.PI * seg(t, 19.4, 21.6));                        // red only while it changes
+    const found = now.day >= close.day && t >= 8.6 ? 1 - seg(t, 39.3, 40) : 0;
+    const recut = MILLED ? ease(seg(t, 24.4, 26.2)) * (1 - seg(t, 39.3, 40)) : 0;   // from the lap as every lap is cut to this one as it is now cut
+    const cutting = Math.sin(Math.PI * seg(t, 24.4, 26.2));
+    const cutThrough = SEC ? seg(t, 17.2, 18) - seg(t, 28.6, 29.4) : 0;            // the close view turns into a cut through the joint, and back                        // red only while it changes
 
     clip(main, () => {   // the whole room
       timber(main, 0.5, 1);
@@ -332,34 +451,30 @@
       timber(inset, 0.12, 0.1);
       if (MILLED) { drawMilled(inset, MILLED.was, 1 - recut, found * (1 - recut)); drawMilled(inset, MILLED.now, recut, cutting); }
       else joint(inset, found);
-      stems(inset, CLOSE_STEMS, { ...now, plants: now.plants * (1 - 0.72 * win(t, 17.2, 24, 0.5)) }, 0.75);   // the stems step back while the cut is looked at
+      stems(inset, CLOSE_STEMS, { ...now, plants: now.plants * (1 - 0.72 * win(t, 17.2, 31, 0.5)) }, 0.75);   // the stems step back while the cut is looked at
     });
+    section(t, cutThrough);
     ctx.strokeStyle = "rgba(16,40,32,.3)"; ctx.lineWidth = 0.8;
     ctx.strokeRect(inset.rect.x, inset.rect.y, inset.rect.w, inset.rect.h);
-    small(inset.rect.x, inset.rect.y - 7, "One joint");
+    small(inset.rect.x, inset.rect.y - 7, cutThrough > 0.5 ? "The same joint, cut through, from above" : "One joint");
     small(main.rect.x, main.rect.y + 16 * U, `${yearsOf(now.day).toFixed(1)} years after planting`);
     if (now.marks > 0.01) small(main.rect.x, main.rect.y + 32 * U, `${countAt(now.day)} of ${R.joints} joints reached`);
 
     // annotation: never more than two leaders at a time
     const who = close.plants.map((id) => run.labels[id]).join(" and ");
     leader(inset, JOINT, 34, 96, `reached in year ${Math.ceil(yearsOf(close.day))}\nby ${who}`, win(t, T_REACH, Math.max(T_REACH + 4, 17.2)), true);
-    if (JD) {
-      const was = JD.variants.as_drawn, cutNow = JD.variants.now, mm = (x) => Math.round(x * 1000);
-      leader(inset, JOINT, 34, 96, `a slot ${mm(was.clearance_m)} mm wide and ${mm(was.cuts[0].depth_m)} mm deep,\nstraight on from the face`, win(t, 17.4, 20.2), true);
-      if (cutNow.detail) leader(inset, JOINT, 34, 96, `opened ${mm(cutNow.detail.mouth_m)} mm at each mouth;\nit bears on a ${mm(cutNow.detail.land_m)} mm land`, win(t, 20.6, 23.8), false);
-    }
-    leader(main, nearestAlways.at, -64, 58, `${LAPS} laps cut this way` + (OTHERS ? `;\n${OTHERS} housings still want a detail` : ""), win(t, 20.2, 23.8), false);
-    leader(main, nearestAlways.at, -64, 58, `${ALWAYS} joints reached in all ${R.runs.length} runs`, win(t, 25.2, 32.2), true);
-    leader(main, highestSometimes.at, -44, -62, `${SOMETIMES} more in only some of them`, win(t, 26.6, 32.2), false);
+    leader(main, nearestAlways.at, -64, 58, `${LAPS} laps cut this way` + (OTHERS ? `;\n${OTHERS} housings still want a detail` : ""), win(t, 27, 30.8), false);
+    leader(main, nearestAlways.at, -64, 58, `${ALWAYS} joints reached in all ${R.runs.length} runs`, win(t, 32.2, 39.2), true);
+    leader(main, highestSometimes.at, -44, -62, `${SOMETIMES} more in only some of them`, win(t, 33.6, 39.2), false);
   }
 
   // ---- page: steps, caption, playing ----------------------------------------------------------------
-  let shown = -1, paused = false, tp = 0, t0 = performance.now();
+  let shown = -1, said = "", paused = false, tp = 0, t0 = performance.now();
   function ui(t) {
-    const k = stepOf(t);
+    const k = stepOf(t), caption = captionAt(t);
+    if (caption !== said) { said = caption; $("cap").textContent = caption; }
     if (k !== shown) {
       shown = k;
-      $("cap").textContent = STEPS[k][1];
       [...$("steps").children].forEach((li, i) => li.classList.toggle("on", i === k));
     }
     $("fill").style.width = (100 * t / DUR) + "%";
