@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The plants were shading each other</title>
+<!--
+  One finding from growing a planting on the room, and the change to the building that it led to.
+  It is told in the deck's own words for this (We want, We ask, We reconsider), and then the same
+  planting is grown again on the changed room.
+
+  The subject is what the plants did, not a parameter of the building: there is nothing here to
+  set. It plays by itself as a loop, in the manner of the factory drawings (bower-factory,
+  docs/STYLE.md): named steps, one red for what is moving or at issue, at most two leaders and one
+  dimension at once, a pause button, nothing to hover over. The whole room and one pier are drawn
+  together in one projection.
+
+  A sketch, not a drawing for the deck: the timber is centre lines and the plants are stems only.
+  It reads states.js (bower-blender/scripts/sweep_states.py) and grown-pier-opens.js (grown.mjs,
+  beside this file). Every number on it comes from those two.
+  Hooks, as on the deck's pieces: __setT(seconds), __play(), __duration, __ready.
+-->
+<style>
+  :root { --paper: #EEF3EA; --ink: #102820; --red: #B4492F; --rule: rgba(16, 40, 32, .2); --soft: rgba(16, 40, 32, .62); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--paper); color: var(--ink); font: 14px/1.45 "Segoe UI", system-ui, sans-serif; }
+  #page { display: flex; flex-direction: column; max-width: 1300px; margin: 0 auto; min-height: 100vh; padding: 0 22px; }
+  header { display: flex; align-items: baseline; gap: 16px; padding-top: 20px; }
+  h1 { font: 400 30px/1.1 Georgia, "Times New Roman", serif; margin: 0; flex: 1; }
+  #pp { font: inherit; font-size: 12px; color: var(--soft); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  #cap { font-size: 16px; min-height: 2.9em; margin: 8px 0 0; max-width: 60ch; }
+  #stage { position: relative; flex: 1; min-height: 380px; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #bar { height: 16px; position: relative; cursor: pointer; touch-action: none; }
+  #bar::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 1px; background: var(--rule); }
+  #fill { position: absolute; left: 0; top: 6px; height: 3px; width: 0; background: var(--ink); }
+  #steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); list-style: none; margin: 0; padding: 2px 0 0; gap: 8px; }
+  #steps button { font: inherit; background: none; border: 0; padding: 4px 0; text-align: left; width: 100%; color: var(--soft); cursor: pointer; }
+  #steps .on button { color: var(--ink); }
+  footer { font-size: 12px; color: var(--soft); max-width: 96ch; padding: 14px 0 20px; }
+  footer p { margin: 0 0 4px; }
+  #missing { padding: 40px; max-width: 62ch; }
+  @media (max-width: 900px) { #stage { flex: none; height: clamp(380px, 60vw, 640px); } }
+</style>
+</head>
+<body>
+<div id="page">
+  <header><h1>The plants were shading each other</h1><button id="pp" aria-pressed="false">Pause</button></header>
+  <p id="cap"></p>
+  <div id="stage"><canvas id="c"></canvas></div>
+  <div id="bar"><div id="fill"></div></div>
+  <ol id="steps"></ol>
+  <footer>
+    <p>Still to prove: the light model behind this is mostly provisional assumptions, none of them measured. One run of each room, with one seed. Soil, footings and what an open pier does to the structure are not in it.</p>
+    <p id="setup"></p>
+    <p id="statement"></p>
+  </footer>
+</div>
+<script src="states.js"></script>
+<script src="grown-pier-opens.js"></script>
+<script>
+(() => {
+  const D = window.DESIGN_SPACE, G = window.GROWN && window.GROWN["pier-opens"];
+  const sw = D && D.sweeps.find((x) => x.id === "pier-opens");
+  if (!sw || !G) {
+    document.getElementById("page").outerHTML = '<p id="missing">This needs <code>states.js</code> and <code>grown-pier-opens.js</code> beside it. How each is made is in <code>drawings-in-code/README.md</code>, under sketches.</p>';
+    return;
+  }
+  const $ = (id) => document.getElementById(id);
+  const N = D.points, LAST = sw.states.length - 1, FLOOR = 0.08;
+  const INK = "16,40,32", RED = "180,73,47";
+  const A = G.start.report, B = G.end.report;
+
+  // ---- the loop -------------------------------------------------------------------------------
+  const YEARS = 3, DAYS = Math.round(YEARS * 365.25);
+  const DUR = 31, BND = [0, 7, 13, 21, 31], STATIC_T = 28, WORD = ["No", "One", "Two", "Three", "Four", "Five"][YEARS] || String(YEARS);
+  const STEPS = [
+    ["We want", "A room in leaf within a few years. The planting goes in at the piers."],
+    ["We ask", `${WORD} years on, the plants at each pier stand in one another's shade.`],
+    ["We reconsider", "So the piers open. Every way through the room gives up some width."],
+    ["We ask again", `The same planting, the same ${WORD.toLowerCase()} years: more of it in the sun, and more of it grown.`],
+  ];
+  const seg = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+  const ease = (u) => u * u * (3 - 2 * u);
+  const win = (t, a, b, f = 0.35) => Math.min(seg(t, a, a + f), 1 - seg(t, b - f, b));
+  const stepOf = (t) => Math.max(0, BND.findIndex((b, i) => t >= b && t < BND[i + 1]));
+
+  // Where everything is at a moment of the loop: how far the pier is open, which planting, what day.
+  function at(t) {
+    const first = t < 13.5;
+    return {
+      s: (ease(seg(t, 13.6, 16.6)) - ease(seg(t, 30, 31))) * LAST,
+      moving: Math.sin(Math.PI * seg(t, 13.6, 16.6)),
+      end: first ? G.start : G.end,
+      day: (first ? ease(seg(t, 0.6, 6.4)) : ease(seg(t, 21.3, 27))) * DAYS,
+      plants: first ? Math.min(seg(t, 0, 0.5), 1 - seg(t, 12.8, 13.5)) : Math.min(seg(t, 21, 21.5), 1 - seg(t, 29.4, 30)),
+    };
+  }
+
+  // ---- the timber and the plants, ready to draw ---------------------------------------------------
+  const M = sw.members;
+  const AT = sw.states.map((st) => {
+    const list = [];
+    st.has.forEach((mi, j) => {
+      const a = new Float32Array(N * 3);
+      for (let k = 0; k < N * 3; k++) a[k] = st.mm[j * N * 3 + k] / 1000;
+      list[mi] = a;
+    });
+    return list;
+  });
+  const NOW = M.map(() => new Float32Array(N * 3));
+  const reach = (a, b) => { let d = 0; for (let i = 0; i < N * 3; i += 3) d = Math.max(d, Math.hypot(a[i] - b[i], a[i + 1] - b[i + 1], a[i + 2] - b[i + 2])); return d; };
+  const MOVES = M.map((m, mi) => reach(AT[0][mi], AT[LAST][mi]));
+  const TOP = Math.max(...MOVES) || 1;
+  for (const end of [G.start, G.end]) {
+    for (const st of end.stems) { st.xyz = Float32Array.from(st.mm, (v) => v / 1000); st.key = st.plant * 2 + st.frame; }
+    end.stems.sort((x, y) => x.key - y.key);
+  }
+  function blend(s) {
+    const k = Math.min(LAST - 1, Math.floor(s)), u = s - k;
+    for (let mi = 0; mi < M.length; mi++) {
+      const a = AT[k][mi], b = AT[k + 1][mi], out = NOW[mi];
+      for (let i = 0; i < N * 3; i++) out[i] = a[i] + (b[i] - a[i]) * u;
+    }
+    return { k, u };
+  }
+  const measure = (key, k, u) => sw.measures[k][key] + (sw.measures[k + 1][key] - sw.measures[k][key]) * u;
+  function feetAt(points, bearing) {   // the feet standing on the floor near a bearing about the room's centre
+    const out = [];
+    for (let mi = 0; mi < M.length; mi++) {
+      if (M[mi].closed) continue;
+      for (const i of [0, (N - 1) * 3]) {
+        const p = points[mi];
+        if (p[i + 2] > FLOOR) continue;
+        const d = Math.atan2(p[i + 1], p[i]) - bearing;
+        if (Math.abs(Math.atan2(Math.sin(d), Math.cos(d))) < 0.4) out.push({ x: p[i], y: p[i + 1], w: M[mi].width_m, arch: M[mi].family === "arch" });
+      }
+    }
+    return out;
+  }
+  const nearest = (list, other, skip) => {
+    let best = null;
+    for (const a of list) for (const b of other) {
+      if (a === b || (skip && skip(a, b))) continue;
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (!best || d < best.d) best = { a, b, d };
+    }
+    return best;
+  };
+  const middle = (list) => [list.reduce((n, p) => n + p.x, 0) / list.length, list.reduce((n, p) => n + p.y, 0) / list.length];
+  const PIER = middle(feetAt(AT[0], 0));                       // the pier drawn close to
+  const CENTRES = [0, 1, 2, 3, 4, 5].map((i) => middle(feetAt(AT[0], i * Math.PI / 3)));
+
+  // ---- drawing ----------------------------------------------------------------------------------
+  const canvas = $("c"), ctx = canvas.getContext("2d");
+  const YAW = -1.32, PITCH = 0.575;   // one projection for both views: the pier drawn close to is at the front
+  const CY = Math.cos(YAW), SY = Math.sin(YAW), CP = Math.cos(PITCH), SP = Math.sin(PITCH);
+  let W = 0, H = 0, U = 1, main = null, inset = null;
+  function P(v, x, y, z) {
+    x -= v.at[0]; y -= v.at[1]; z -= v.at[2];
+    return [v.rect.x + v.rect.w / 2 + (x * CY - y * SY) * v.scale, v.rect.y + v.rect.h / 2 - ((x * SY + y * CY) * SP + z * CP) * v.scale];
+  }
+  function layout() {
+    const wide = W >= 540;
+    const m = wide ? { x: 0, y: 0, w: W * 0.6, h: H } : { x: 0, y: 0, w: W, h: H * 0.58 };
+    const n = wide ? { x: W * 0.64, y: H * 0.08, w: W * 0.36, h: H * 0.84 } : { x: W * 0.2, y: H * 0.62, w: W * 0.6, h: H * 0.36 };
+    main = { rect: m, at: [0, 0, 2.9], scale: Math.min(m.w / 15.6, m.h / 12.6) };
+    inset = { rect: n, at: [PIER[0] * 0.93, PIER[1] * 0.93, 1.45], scale: Math.min(n.w / 3.5, n.h / 4.3) };
+    U = Math.max(0.8, Math.min(1.25, W / 1000));
+  }
+  function clip(v, draw) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(v.rect.x, v.rect.y, v.rect.w, v.rect.h); ctx.clip();
+    draw();
+    ctx.restore();
+  }
+  function line(v, points, closed) {
+    ctx.beginPath();
+    for (let i = 0; i < N; i++) {
+      const p = P(v, points[i * 3], points[i * 3 + 1], points[i * 3 + 2]);
+      if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]);
+    }
+    if (closed) ctx.closePath();
+    ctx.stroke();
+  }
+  function timber(v, now, weight) {
+    ctx.lineCap = ctx.lineJoin = "round";
+    for (let mi = 0; mi < M.length; mi++) {
+      const rate = MOVES[mi] / TOP;
+      ctx.lineWidth = Math.max(0.8, M[mi].width_m * v.scale * weight);
+      if (now.s > 0.02 && rate > 0.06) {   // where it stood as drawn, faintly
+        ctx.strokeStyle = `rgba(${INK},.13)`;
+        line(v, AT[0][mi], M[mi].closed);
+      }
+      ctx.strokeStyle = `rgba(${INK},1)`;
+      line(v, NOW[mi], M[mi].closed);
+      if (now.moving > 0.02 && rate > 0.06) {  // red only while it moves
+        ctx.strokeStyle = `rgba(${RED},${now.moving * (0.45 + 0.55 * rate)})`;
+        line(v, NOW[mi], M[mi].closed);
+      }
+    }
+  }
+  function plants(v, now, width) {
+    if (now.plants <= 0.01) return;
+    ctx.globalAlpha = now.plants * 0.88;
+    let key = -1;
+    for (const st of now.end.stems) {
+      if (st.key !== key) {
+        if (key >= 0) ctx.stroke();
+        key = st.key;
+        ctx.beginPath();
+        ctx.strokeStyle = `hsl(${78 + (st.plant * 37) % 84} 52% 33%)`;
+        ctx.lineWidth = (st.frame ? 1.7 : 0.8) * width;
+      }
+      let open = false;
+      for (let i = 0; i < st.born.length; i++) {
+        if (st.born[i] > now.day || (st.gone[i] >= 0 && st.gone[i] <= now.day)) { open = false; continue; }
+        const p = P(v, st.xyz[i * 3], st.xyz[i * 3 + 1], st.xyz[i * 3 + 2]);
+        if (open) ctx.lineTo(p[0], p[1]); else { ctx.moveTo(p[0], p[1]); open = true; }
+      }
+    }
+    if (key >= 0) ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  function ring(v, centre, radius, alpha) {   // where the building is at issue
+    if (alpha <= 0.01) return;
+    const p = P(v, centre[0] * 0.95, centre[1] * 0.95, 0);
+    ctx.beginPath(); ctx.ellipse(p[0], p[1], radius * v.scale, radius * v.scale * SP, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(${RED},${alpha})`; ctx.lineWidth = 1.5; ctx.stroke();
+  }
+
+  // ---- annotation: paper boxes, leaders and one dimension, as the factory drawings have them ----------
+  function box(x, y, text, alpha, red, anchor) {
+    const lines = text.split("\n"), size = 12.5 * U, pad = 3;
+    ctx.font = `${size}px "Segoe UI", system-ui, sans-serif`;
+    const w = Math.max(...lines.map((l) => ctx.measureText(l).width)), h = lines.length * size * 1.3;
+    const x0 = Math.max(4, Math.min(W - w - 4 - 2 * pad, anchor === "middle" ? x - w / 2 - pad : anchor === "end" ? x - w - 2 * pad : x));
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#EEF3EA"; ctx.fillRect(x0, y - h / 2 - pad, w + 2 * pad, h + 2 * pad);
+    ctx.fillStyle = red ? `rgb(${RED})` : `rgb(${INK})`; ctx.textBaseline = "middle";
+    lines.forEach((l, i) => ctx.fillText(l, x0 + pad, y - h / 2 + size * 0.65 + i * size * 1.3));
+    ctx.globalAlpha = 1;
+  }
+  function leader(v, world, dx, dy, text, alpha, red) {
+    if (alpha <= 0.01) return;
+    const p = P(v, world[0], world[1], world[2]), x = p[0] + dx * U, y = p[1] + dy * U;
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = red ? `rgb(${RED})` : `rgb(${INK})`; ctx.fillStyle = ctx.strokeStyle; ctx.lineWidth = 0.9;
+    ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(x, y); ctx.stroke();
+    ctx.beginPath(); ctx.arc(p[0], p[1], 2.2, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+    box(x, y, text, alpha, red, dx < 0 ? "end" : "start");
+  }
+  function dimension(v, a, b, text, alpha, red, lift) {
+    if (alpha <= 0.01) return;
+    const p = P(v, a.x, a.y, 0), q = P(v, b.x, b.y, 0), len = Math.hypot(q[0] - p[0], q[1] - p[1]) || 1;
+    const nx = -(q[1] - p[1]) / len, ny = (q[0] - p[0]) / len, tick = 5;
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = red ? `rgb(${RED})` : `rgb(${INK})`; ctx.lineWidth = red ? 1.6 : 1.1;
+    ctx.beginPath();
+    ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]);
+    ctx.moveTo(p[0] - nx * tick, p[1] - ny * tick); ctx.lineTo(p[0] + nx * tick, p[1] + ny * tick);
+    ctx.moveTo(q[0] - nx * tick, q[1] - ny * tick); ctx.lineTo(q[0] + nx * tick, q[1] + ny * tick);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    box((p[0] + q[0]) / 2, (p[1] + q[1]) / 2 + lift * U, text, alpha, red, "middle");
+  }
+  function small(x, y, text) {
+    ctx.font = `${10.5 * U}px "Segoe UI", system-ui, sans-serif`;
+    ctx.fillStyle = "rgba(16,40,32,.62)"; ctx.textBaseline = "alphabetic";
+    ctx.fillText(text.toUpperCase().split("").join(" "), x, y);
+  }
+
+  function frame(t) {
+    const now = at(t), { k, u } = blend(now.s);
+    const dpr = window.devicePixelRatio || 1;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    const feet = feetAt(NOW, 0), pair = nearest(feet, feet, (a, b) => a.arch && b.arch), front = nearest(feet, feetAt(NOW, -Math.PI / 3));
+    const issue = win(t, 7.2, 12.8);
+
+    clip(main, () => {   // the whole room
+      timber(main, now, 0.5);
+      plants(main, now, 1);
+      for (const c of CENTRES) ring(main, c, 0.85, issue);
+    });
+    const c0 = P(main, inset.at[0], inset.at[1], inset.at[2]), f = main.scale / inset.scale;   // where the close view is taken from
+    const loc = { x: c0[0] - inset.rect.w * f / 2, y: c0[1] - inset.rect.h * f / 2, w: inset.rect.w * f, h: inset.rect.h * f };
+    ctx.strokeStyle = "rgba(16,40,32,.3)"; ctx.lineWidth = 0.8;
+    ctx.strokeRect(loc.x, loc.y, loc.w, loc.h);
+    ctx.beginPath();
+    if (inset.rect.x > loc.x + loc.w) { ctx.moveTo(loc.x + loc.w, loc.y); ctx.lineTo(inset.rect.x, inset.rect.y); ctx.moveTo(loc.x + loc.w, loc.y + loc.h); ctx.lineTo(inset.rect.x, inset.rect.y + inset.rect.h); }
+    else { ctx.moveTo(loc.x, loc.y + loc.h); ctx.lineTo(inset.rect.x, inset.rect.y); ctx.moveTo(loc.x + loc.w, loc.y + loc.h); ctx.lineTo(inset.rect.x + inset.rect.w, inset.rect.y); }
+    ctx.stroke();
+    ctx.fillStyle = "#EEF3EA"; ctx.fillRect(inset.rect.x, inset.rect.y, inset.rect.w, inset.rect.h);
+    clip(inset, () => {   // one pier, close to
+      timber(inset, now, 0.8);
+      plants(inset, now, 1.5);
+      ring(inset, PIER, 0.85, issue);
+    });
+    ctx.strokeStyle = "rgba(16,40,32,.3)"; ctx.lineWidth = 0.8;
+    ctx.strokeRect(inset.rect.x, inset.rect.y, inset.rect.w, inset.rect.h);
+    small(main.rect.x, main.rect.y + 16 * U, now.plants > 0.3 ? `${(now.day / 365.25).toFixed(1)} years after planting` : now.s > 0.5 * LAST ? "The room, reconsidered" : "The room, as drawn");
+
+    // annotation: never more than two leaders and one dimension at a time
+    const sun = [PIER[0], PIER[1], 0.5], c = middle(feet);
+    leader(main, sun, -64, 52, `${A.sunHours.toFixed(1)} h of direct sun a plant\nat midsummer; ${A.fullSun} of ${A.plants} in full sun`, win(t, 7.6, 12.7), true);
+    if (pair) dimension(inset, pair.a, pair.b, `${measure("feet_apart_m", k, u).toFixed(2)} m between feet`, win(t, 8.4, 16.9), false, 26);
+    if (front) dimension(main, front.a, front.b, `${measure("way_through_m", k, u).toFixed(2)} m through, was ${sw.measures[0].way_through_m.toFixed(2)} m`, win(t, 17.1, 20.8), true, 22);
+    leader(main, sun, -64, 52, `${B.sunHours.toFixed(1)} h of direct sun a plant,\nwas ${A.sunHours.toFixed(1)}; ${B.fullSun} of ${B.plants} in full sun`, win(t, 22.2, 29.3), false);
+    const a3 = A.byYear.find((y) => y.year === YEARS), b3 = B.byYear.find((y) => y.year === YEARS);
+    if (a3 && b3) leader(inset, [c[0], c[1], 2.3], -34, -52, `${b3.frameworkM.toFixed(0)} m of framework\nat year ${YEARS}, was ${a3.frameworkM.toFixed(0)} m`, win(t, 25.5, 29.3), false);
+  }
+
+  // ---- page: steps, caption, playing ----------------------------------------------------------------
+  let shown = -1, paused = false, tp = 0, t0 = performance.now();
+  function ui(t) {
+    const k = stepOf(t);
+    if (k !== shown) {
+      shown = k;
+      $("cap").textContent = STEPS[k][1];
+      [...$("steps").children].forEach((li, i) => li.classList.toggle("on", i === k));
+    }
+    $("fill").style.width = (100 * t / DUR) + "%";
+  }
+  function loop(ms) {
+    if (!paused) tp = ((ms - t0) / 1000) % DUR;
+    frame(tp); ui(tp);
+    requestAnimationFrame(loop);
+  }
+  function seek(t, play) {
+    tp = Math.max(0, Math.min(DUR - 0.01, t));
+    paused = !play; t0 = performance.now() - tp * 1000;
+    $("pp").textContent = paused ? "Play" : "Pause"; $("pp").setAttribute("aria-pressed", paused);
+    frame(tp); ui(tp);
+  }
+  STEPS.forEach(([name], i) => {
+    const li = document.createElement("li"), b = document.createElement("button");
+    b.textContent = name;
+    b.onclick = () => seek(BND[i] + 0.01, true);
+    li.append(b); $("steps").append(li);
+  });
+  $("pp").onclick = () => seek(tp, paused);
+  const bar = $("bar"), scrub = (e) => { const r = bar.getBoundingClientRect(); seek(DUR * (e.clientX - r.left) / r.width, false); };
+  bar.onpointerdown = (e) => { bar.setPointerCapture(e.pointerId); scrub(e); bar.onpointermove = scrub; };
+  bar.onpointerup = () => { bar.onpointermove = null; };
+  $("setup").textContent = `From two runs of the plant simulator (${G.end.setup.simulator}), ${G.end.setup.years} years each: the same planting, seed ${G.end.setup.seed}, ${G.end.setup.care}, planted standing ${G.end.setup.specimenM} m. The ring the lattice's legs stand on at each pier went from ${sw.values[0]} m to ${sw.values[LAST]} m; ${B.tieIns - A.tieIns} more tie-ins over ten years. Timber as centre lines; stems only.`;
+  $("statement").textContent = G.start.statement;
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1, r = canvas.getBoundingClientRect();
+    W = r.width; H = r.height;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    layout(); frame(tp);
+  }
+  new ResizeObserver(resize).observe(canvas);
+  resize();
+  ui(0);   // the caption and step are there before the first frame, which a hidden tab never gets
+  window.__duration = DUR;
+  window.__setT = (t) => seek(t, false);
+  window.__play = () => seek(tp, true);
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { seek(STATIC_T, false); $("pp").hidden = true; }
+  else requestAnimationFrame(loop);
+  window.__ready = true;
+})();
+</script>
+</body>
+</html>
