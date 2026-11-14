@@ -93,7 +93,9 @@ shows is the floor and the shade on it) and `round`.
 
 - `pipeline/convert.mjs` writes the simulator's input from a snapshot, and adds what the building model does not
   hold yet: the training lines, where plants go into the ground, and where a visitor stands. Plants go in where
-  the timber meets the ground and nowhere else: at the piers. `--no-lines` leaves the timber bare.
+  the timber meets the ground and nowhere else: at the piers. `--no-lines` leaves the timber bare. Which
+  members carry a line follows the building model's own rule (`bower-blender`, `bower/lines.py`): the lattice's
+  members that stand on the floor, and not the arches, so no line or planting is hung on a doorway.
 - `pipeline/lines.mjs` lays out the training lines. A line belongs to a member: thin cable held about 3 inches
   off its outer face on standoffs, going where the member goes, up the leg, through the curve of the pier and out
   over the roof. By default every member that reaches the ground carries one, with a bed at its foot

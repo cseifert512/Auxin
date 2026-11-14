@@ -13,8 +13,17 @@
 //   ground+ribs   those, and every rib of the first tier
 //   all           every member
 //   or a pattern  matched against member IDs
+// and, for the first three, only members of `families`: the lattice's, not the arches. An arch frames a doorway,
+// and a line on its back hangs planting in the opening. This is the building model's own rule (bower-blender,
+// bower/lines.py: carry grounded, families rib, fill, fine, hoop), which these lines are kept in step with until
+// a snapshot carries the generator's own.
 //
-// A plant goes in at the foot of a line. Each pier takes up to `bedsPerPier`, spread round it.
+// A plant goes in at the foot of a line. Each pier takes up to `bedsPerPier`, and the lines that go furthest in
+// over the room are planted first: the roof is what the planting is for, and the lines that only go over a bay,
+// just behind its arch, are left to be reached from the others where they cross. At a pier the feet of the lines
+// stand a hand apart in the pocket behind the arch legs, which is not where anything can be planted: the building
+// model's answer (a root zone outside the pier and a feeder up the arch leg) is a draft at one pier, and until a
+// snapshot carries it the plants here start at the line feet.
 //
 // Nothing here is engineered: the standoff, its fixing and the cable's tension are for the building model and an
 // engineer. This says where the lines would run. It belongs in the building's own generator once it is settled.
@@ -23,14 +32,15 @@ import { resolve } from 'node:path';
 import { add, against, dot, gridOf, len, mul, segmentsOf, sub, unit } from './solids.mjs';
 
 export const LINE_DEFAULTS = {
-  diameterMm: 3,
+  diameterMm: 4,
   /** Clear gap between the member's outer face and the cable: about 3 inches. */
   gapM: 0.075,
   carry: 'ground',
+  families: ['rib', 'fill', 'fine', 'hoop'],
   /** The cable is recorded at about this spacing along the member; a standoff every other point or so. */
   stationM: 0.3,
   standoffEveryM: 0.6,
-  bedsPerPier: 6,
+  bedsPerPier: 4,
 };
 
 /**
@@ -47,13 +57,14 @@ export function trainingLines(snapshotDir, design, options = {}) {
   const grounded = (p) => p[2] < 0.06;
   const reachesGround = (m) => grounded(m.points_m[0]) || grounded(m.points_m[m.points_m.length - 1]);
 
+  const ofFamilies = (m) => o.families.includes(m.family);
   const carries =
     o.carry === 'all'
-      ? () => true
+      ? ofFamilies
       : o.carry === 'ground'
-        ? reachesGround
+        ? (m) => ofFamilies(m) && reachesGround(m)
         : o.carry === 'ground+ribs'
-          ? (m) => reachesGround(m) || m.family === 'rib'
+          ? (m) => ofFamilies(m) && (reachesGround(m) || m.family === 'rib')
           : (m) => new RegExp(o.carry).test(m.id);
 
   const feet = centrelines.members.flatMap((m) => [m.points_m[0], m.points_m[m.points_m.length - 1]].filter(grounded));
@@ -93,20 +104,22 @@ export function trainingLines(snapshotDir, design, options = {}) {
     for (const end of [0, n - 1]) {
       if (!grounded(m.points_m[end])) continue;
       const foot = end === 0 ? line[0] : line[line.length - 1];
-      pierOf(foot).pier.feet.push({ member: m.id, family: m.family, at: foot, lengthM: m.length_m });
+      // how near the middle of the room the member comes: the smaller, the further in over the roof it goes
+      const inM = Math.min(...m.points_m.map((p) => Math.hypot(p[0] - cx, p[1] - cy)));
+      pierOf(foot).pier.feet.push({ member: m.id, family: m.family, at: foot, lengthM: m.length_m, inM });
     }
     cables.push({ id: `line.${m.id}`, member: m.id, family: m.family, points: line });
   }
 
-  // ---- beds: at the feet of lines, up to so many a pier, spread round it and the longest ways up first ------------------
+  // ---- beds: at the feet of lines, up to so many a pier, the ways furthest in over the room first -------------------------
   const beds = [];
   for (const pier of piers) {
     const angle = (f) => (Math.atan2(f.at[1] - pier.mid[1], f.at[0] - pier.mid[0]) - Math.atan2(pier.mid[1] - cy, pier.mid[0] - cx) + 4 * Math.PI) % (2 * Math.PI);
     const chosen = [];
-    for (const foot of [...pier.feet].sort((a, b) => b.lengthM - a.lengthM)) {
+    for (const foot of [...pier.feet].sort((a, b) => a.inM - b.inM || b.lengthM - a.lengthM)) {
       if (chosen.length >= o.bedsPerPier) break;
       // not two beds on top of one another
-      if (chosen.some((c) => Math.hypot(c.at[0] - foot.at[0], c.at[1] - foot.at[1]) < 0.13)) continue;
+      if (chosen.some((c) => Math.hypot(c.at[0] - foot.at[0], c.at[1] - foot.at[1]) < 0.09)) continue;
       chosen.push(foot);
     }
     chosen

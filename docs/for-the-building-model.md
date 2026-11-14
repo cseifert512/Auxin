@@ -120,3 +120,26 @@ npm run compare -- <name>
 `compare` prints the routes held, how (unaided or tied), the gardener's tie-ins, and what is seen from each
 viewpoint in January and June. `pipeline/lines.mjs` is a first rule for laying out lines from the joints. Its
 layout was rejected, but how it reads the joints and tests a line against the timber may be worth reading.
+
+## Added later the same day: the lines need to come across in the snapshot
+
+The generator now sets out training lines itself (`bower/lines.py`), with root zones and feeders at a pier
+(`bower/ground.py`). None of that reaches the drawings: a snapshot carries no lines, so `drawings-in-code` still
+sets out its own (`pipeline/lines.mjs`). The two rules have been brought into step by hand (lattice members that
+stand on the floor, 75 mm off the outer face, 4 mm cable, no line on an arch), but they are two rules, and the
+feeders, the root zones and the cut-backs exist only in the generator.
+
+What would close the gap: one more file in the snapshot, `lines.json`, in the snapshot's axes and metres:
+
+- `lines`: for each cable, its `id`, `kind` (`training` or `feeder`), the `member` it belongs to, and `points_m`,
+  the cable as strung (standoff head to standoff head);
+- `root_zones`: for each, its `id`, `pier`, and `position_m` on the ground, and which line or feeder a plant put
+  there starts on;
+- the settings they were made with.
+
+`pipeline/convert.mjs` would then take cables and planting places from that file and set out none of its own.
+
+One finding to pass on, which the generator's README already half says: at a pier of `six-bay-radial-v1` the feet of
+the six lattice lines stand 0.10 m apart in the pocket behind the arch legs. Planting there (as the drawings do,
+for want of root zones) puts four plants in a space no one could dig. The root zone outside the pier with a feeder
+up the arch leg is the right answer, and the drawings will show it as soon as a snapshot carries it.

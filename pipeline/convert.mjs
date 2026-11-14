@@ -1,5 +1,5 @@
 // A frozen snapshot of the building -> the file the plant simulator reads.
-//   node pipeline/convert.mjs [snapshot] [--no-lines] [--carry=ground|ground+ribs|all|<pattern>] [--out=bower-x.json]
+//   node pipeline/convert.mjs [snapshot] [--no-lines] [--carry=ground|ground+ribs|all|<pattern>] [--families=rib,fill,fine,hoop] [--out=bower-x.json]
 // Reads  releases/<snapshot>/centrelines.json and design.json
 // Writes scenes/<snapshot>/bower.json
 //
@@ -77,7 +77,7 @@ for (const room of design.rooms) {
 }
 
 // the training lines, and the beds at their feet in place of the rings
-const lines = 'no-lines' in options ? null : trainingLines(from, design, options.carry ? { carry: options.carry } : {});
+const lines = 'no-lines' in options ? null : trainingLines(from, design, { ...(options.carry ? { carry: options.carry } : {}), ...(options.families ? { families: options.families.split(',') } : {}) });
 if (lines) stations = lines.beds.map((b) => ({ id: b.id, position: b.position, note: `at the foot of the line on ${b.climbs}` }));
 
 // a full-frame lens of this focal length sees this far across, top to bottom

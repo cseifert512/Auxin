@@ -66,7 +66,7 @@
     "P6.vine: the shoots of Vitis coignetiae that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant",
     "P6.vine: the leaves of Vitis coignetiae turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
   ],
-  "reseated": "102114 supported stem points: 7.3% stood more than 10 mm inside the real timber and 33.1% were moved by more than 5 mm (the furthest 110 mm); 63.8% could not be placed on a member and follow their neighbours",
-  "thinned": "1301463 stem points recorded, 542758 kept: unsupported shoots thinned to one point every 25 mm",
-  "cleared": "12.2% of stem points stood more than 5 mm inside the timber; 30081 stretches of stem were taken out of it (the furthest moved 277 mm), leaving 0.1%"
+  "reseated": "76460 supported stem points: 6.8% stood more than 10 mm inside the real timber and 34.4% were moved by more than 5 mm (the furthest 109 mm); 62.0% could not be placed on a member and follow their neighbours",
+  "thinned": "892424 stem points recorded, 343170 kept: unsupported shoots thinned to one point every 25 mm",
+  "cleared": "10.0% of stem points stood more than 5 mm inside the timber; 16377 stretches of stem were taken out of it (the furthest moved 247 mm), leaving 0.1%"
 }
