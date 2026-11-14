@@ -56,17 +56,18 @@ def main(name: str, commit: str | None = None, design_path=DESIGN, rebuild: bool
 
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "design.json").write_bytes(Path(design_path).read_bytes())
-    (folder / "centrelines.json").write_text(json.dumps(snapshot.centrelines(design), separators=(",", ":")) + "\n", encoding="utf-8")
+    # every text file is written with the same line endings on any platform, since the manifest hashes them
+    (folder / "centrelines.json").write_text(json.dumps(snapshot.centrelines(design), separators=(",", ":")) + "\n", encoding="utf-8", newline="\n")
     member_rows, joints = snapshot.schedules(design)
     for filename, rows in (("members.csv", member_rows), ("joints.csv", joints)):
         with open(folder / filename, "w", newline="", encoding="utf-8") as handle:
-            writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+            writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
             writer.writeheader()
             writer.writerows(rows)
     written = write_snapshot(scene, folder)
     tools = {"blender": bpy.app.version_string, **written}
     record = snapshot.manifest(name, design, folder, datetime.date.today().isoformat(), commit, checks, tools)
-    (folder / "manifest.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+    (folder / "manifest.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8", newline="\n")
     return {"folder": str(folder), "files": {k: v["bytes"] for k, v in record["files"].items()}, "model": record["model"], "checks_at_export": checks}
 
 
