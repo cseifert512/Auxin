@@ -1,0 +1,41 @@
+{
+  "for": "Not placed in the deck yet. A trial of the joints finding in the studio's own drawing, to see what it has to work with: the room, and one joint close to.",
+  "shows": "Left: the room after ten tended years. Middle: the lap between R1.fine.cw.03 and R1.fill.ccw.06 early in the fifth year, when the ivy reaches it. Right: the same joint after ten years.",
+  "statement": "A growth scenario on stated assumptions, not a forecast. Concept geometry; trial planting.",
+  "slot": [
+    1117,
+    326
+  ],
+  "scale": 2,
+  "paper": "EEF3EA",
+  "ink": "102820",
+  "timber": "ink",
+  "gutter": 14,
+  "run": "trained-10y-new-growth",
+  "row": [
+    {
+      "view": "drawing",
+      "at": "day:3579"
+    },
+    {
+      "view": "drawing",
+      "at": "day:1560",
+      "lookAt": [
+        -2.659,
+        4.158,
+        3.776
+      ],
+      "zoom": 9
+    },
+    {
+      "view": "drawing",
+      "at": "day:3579",
+      "lookAt": [
+        -2.659,
+        4.158,
+        3.776
+      ],
+      "zoom": 9
+    }
+  ]
+}
