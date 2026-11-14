@@ -172,6 +172,29 @@ says why (two members running alongside each other, or four meeting at one
 place). Depths and clearances are provisional concept values. This sets joints
 out and cuts them; it does not prove them structurally.
 
+### Joints the plants reach
+
+A grown planting says which joints a plant that clings to the timber gets to
+unaided, by the joints' own IDs, in how many of the runs and how soon. The
+drawings write that list (`../drawings-in-code/scenes/<snapshot>/joints-reached.json`)
+and one command copies it into the design, with where it came from:
+
+```bash
+python scripts/take_findings.py        # six-bay-radial-v1 into design/six_bay_radial.json
+```
+
+It lands in `timber.joints.reached_by_plants`. The design is the source, so a
+snapshot made from it says what it was told. Each joint named is then noted in
+the schedule's `review` column ("a clinging plant reaches this joint in 3 of 3
+grown runs, first in year 5"), and the summary counts them as
+`reached_by_plants`. A design that has changed so that a named joint is gone is
+refused: the planting is to be grown again on it.
+
+Nothing is cut differently for these joints yet. They need a detail that keeps
+a stem out, and that detail is not designed; a lap is milled with the same
+`lap_clearance_m` as every other. The note is the hand-off, not the answer.
+`design/six_bay_radial.json` carries the 22 joints found on `six-bay-radial-v1`.
+
 ## Training lines
 
 `bower/lines.py` strings thin steel cables on the timber for plants to climb. A

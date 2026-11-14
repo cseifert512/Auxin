@@ -1,0 +1,345 @@
+{
+  "what": "Joints of the snapshot's joint schedule that a plant clinging to the timber reaches unaided, in runs of one planting that differ only in seed. Where a clinging stem arrives is all that is reported: nothing here says what it then does to a joint.",
+  "snapshot": "six-bay-radial-v1",
+  "made_by": "drawings-in-code/sketches/design-space/joints.mjs",
+  "runs": [
+    {
+      "run": "trained-10y-new-growth",
+      "seed": 7,
+      "simulator": "28039f7",
+      "care": "trained",
+      "years": 10,
+      "specimen_m": 3
+    },
+    {
+      "run": "trained-10y-new-growth-seed8",
+      "seed": 8,
+      "simulator": "28039f7",
+      "care": "trained",
+      "years": 10,
+      "specimen_m": 3
+    },
+    {
+      "run": "trained-10y-new-growth-seed9",
+      "seed": 9,
+      "simulator": "28039f7",
+      "care": "trained",
+      "years": 10,
+      "specimen_m": 3
+    }
+  ],
+  "joints_in_schedule": 631,
+  "joints": [
+    {
+      "id": "lap:R1.B5.hoop1:R1.fine.cw.03",
+      "kind": "cross_lap",
+      "members": [
+        "R1.B5.hoop1",
+        "R1.fine.cw.03"
+      ],
+      "runs": 3,
+      "of": 3,
+      "first_year": 5,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.fine.cw.03:R1.fill.ccw.06",
+      "kind": "cross_lap",
+      "members": [
+        "R1.fine.cw.03",
+        "R1.fill.ccw.06"
+      ],
+      "runs": 3,
+      "of": 3,
+      "first_year": 5,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.fill.cw.01:R1.fine.ccw.12",
+      "kind": "cross_lap",
+      "members": [
+        "R1.fill.cw.01",
+        "R1.fine.ccw.12"
+      ],
+      "runs": 3,
+      "of": 3,
+      "first_year": 6,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.fill.cw.11:R1.fine.ccw.08",
+      "kind": "cross_lap",
+      "members": [
+        "R1.fill.cw.11",
+        "R1.fine.ccw.08"
+      ],
+      "runs": 3,
+      "of": 3,
+      "first_year": 6,
+      "plants": [
+        "Hedera helix",
+        "Hydrangea anomala subsp. petiolaris"
+      ]
+    },
+    {
+      "id": "lap:R1.fine.cw.03:R1.fine.ccw.12",
+      "kind": "cross_lap",
+      "members": [
+        "R1.fine.cw.03",
+        "R1.fine.ccw.12"
+      ],
+      "runs": 3,
+      "of": 3,
+      "first_year": 6,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.B4.hoop1:R1.fine.cw.23",
+      "kind": "cross_lap",
+      "members": [
+        "R1.B4.hoop1",
+        "R1.fine.cw.23"
+      ],
+      "runs": 3,
+      "of": 3,
+      "first_year": 7,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.fine.cw.23:R1.fine.ccw.08",
+      "kind": "cross_lap",
+      "members": [
+        "R1.fine.cw.23",
+        "R1.fine.ccw.08"
+      ],
+      "runs": 3,
+      "of": 3,
+      "first_year": 7,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.rib.cw.00:R1.rib.ccw.04",
+      "kind": "cross_lap",
+      "members": [
+        "R1.rib.cw.00",
+        "R1.rib.ccw.04"
+      ],
+      "runs": 3,
+      "of": 3,
+      "first_year": 8,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.rib.cw.02:R1.rib.ccw.06",
+      "kind": "cross_lap",
+      "members": [
+        "R1.rib.cw.02",
+        "R1.rib.ccw.06"
+      ],
+      "runs": 3,
+      "of": 3,
+      "first_year": 8,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.ring.fine:R1.rib.ccw.04",
+      "kind": "cross_lap",
+      "members": [
+        "R1.ring.fine",
+        "R1.rib.ccw.04"
+      ],
+      "runs": 3,
+      "of": 3,
+      "first_year": 8,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.ring.fine:R1.rib.ccw.06",
+      "kind": "cross_lap",
+      "members": [
+        "R1.ring.fine",
+        "R1.rib.ccw.06"
+      ],
+      "runs": 3,
+      "of": 3,
+      "first_year": 8,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.ring.fine:R1.rib.cw.00",
+      "kind": "cross_lap",
+      "members": [
+        "R1.ring.fine",
+        "R1.rib.cw.00"
+      ],
+      "runs": 3,
+      "of": 3,
+      "first_year": 8,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.ring.fine:R1.rib.cw.02",
+      "kind": "cross_lap",
+      "members": [
+        "R1.ring.fine",
+        "R1.rib.cw.02"
+      ],
+      "runs": 3,
+      "of": 3,
+      "first_year": 8,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "housing:R1.fine.cw.03:R1.B5.arch.L",
+      "kind": "housing",
+      "members": [
+        "R1.fine.cw.03",
+        "R1.B5.arch.L"
+      ],
+      "runs": 2,
+      "of": 3,
+      "first_year": 7,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "housing:R1.fine.cw.23:R1.B4.arch.L",
+      "kind": "housing",
+      "members": [
+        "R1.fine.cw.23",
+        "R1.B4.arch.L"
+      ],
+      "runs": 1,
+      "of": 3,
+      "first_year": 6,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.B3.hoop1:R1.fine.ccw.08",
+      "kind": "cross_lap",
+      "members": [
+        "R1.B3.hoop1",
+        "R1.fine.ccw.08"
+      ],
+      "runs": 1,
+      "of": 3,
+      "first_year": 8,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.fine.cw.23:R1.fill.ccw.04",
+      "kind": "cross_lap",
+      "members": [
+        "R1.fine.cw.23",
+        "R1.fill.ccw.04"
+      ],
+      "runs": 1,
+      "of": 3,
+      "first_year": 9,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.B3.hoop0:R1.fine.ccw.07",
+      "kind": "cross_lap",
+      "members": [
+        "R1.B3.hoop0",
+        "R1.fine.ccw.07"
+      ],
+      "runs": 1,
+      "of": 3,
+      "first_year": 10,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.B4.hoop1:R1.fine.cw.00",
+      "kind": "cross_lap",
+      "members": [
+        "R1.B4.hoop1",
+        "R1.fine.cw.00"
+      ],
+      "runs": 1,
+      "of": 3,
+      "first_year": 10,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "lap:R1.B5.hoop1:R1.fine.cw.04",
+      "kind": "cross_lap",
+      "members": [
+        "R1.B5.hoop1",
+        "R1.fine.cw.04"
+      ],
+      "runs": 1,
+      "of": 3,
+      "first_year": 10,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "housing:R1.fine.ccw.07:R1.B3.arch.R",
+      "kind": "housing",
+      "members": [
+        "R1.fine.ccw.07",
+        "R1.B3.arch.R"
+      ],
+      "runs": 1,
+      "of": 3,
+      "first_year": null,
+      "plants": [
+        "Hedera helix"
+      ]
+    },
+    {
+      "id": "housing:R1.rib.ccw.04:R1.B3.arch.R",
+      "kind": "housing",
+      "members": [
+        "R1.rib.ccw.04",
+        "R1.B3.arch.R"
+      ],
+      "runs": 1,
+      "of": 3,
+      "first_year": null,
+      "plants": [
+        "Hedera helix"
+      ]
+    }
+  ],
+  "places_with_no_joint": 11,
+  "statement": "A scenario, not a forecast. Growth rates, dates and flowering chances are provisional assumptions that have not been measured on plants."
+}

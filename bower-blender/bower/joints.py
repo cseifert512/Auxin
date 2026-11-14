@@ -38,8 +38,9 @@ notches stepped into the section sweep, laps only. It cannot cut a lap that is
 too oblique, too near an end, or opposite another notch, and says so.
 
 `review` is set where a joint still needs a detail of its own: two members
-running alongside each other, four members meeting at one place, or a lap whose
-two centrelines pass at different heights.
+running alongside each other, four members meeting at one place, a lap whose
+two centrelines pass at different heights, or a joint that a grown planting has
+shown a clinging plant gets to (timber["joints"]["reached_by_plants"]).
 
 Pure Python (no bpy). Depths and clearances are provisional concept values: this
 sets joints out, it does not prove them.
@@ -391,7 +392,33 @@ def find_joints(members: list[Member], timber: dict) -> tuple[list[Joint], dict,
                     cutters[b.id].append(box(axis, (toward_b, along, (0.0, 0.0, 1.0)), ((-0.9, clearance / 2.0), (-0.9, 0.9), (0.0, tall))))
             elif ".top." in node and {lap_layer(a), lap_layer(b)} == {"cw", "ccw"}:
                 joints.append(Joint(f"pair:{a.id}:{b.id}", "paired_heads", (a.id, b.id), point(a.path.station_at(a.path.length).point), round(angle_between(a.path.station_at(a.path.length).tangent, b.path.station_at(b.path.length).tangent), 1), ()))
-    return joints, notches, dict(cutters)
+    return _with_plants(joints, cfg.get("reached_by_plants")), notches, dict(cutters)
+
+
+REACHED = "a clinging plant reaches this joint"
+
+
+def _with_plants(joints: list[Joint], reached: dict | None) -> list[Joint]:
+    """The joints, with those a grown planting has found noted for a detail of their own.
+
+    timber["joints"]["reached_by_plants"]["joints"] is keyed by joint ID and comes from growing a
+    planting on the building: which joints a plant that clings to the timber gets to unaided, in how
+    many of the runs, and how soon (scripts/take_findings.py copies it in). Such a joint needs a
+    detail that keeps a stem out of it. That detail is not designed, so nothing is cut differently
+    here: the joint is noted in `review`, with the rest that need a detail of their own.
+    """
+    found = (reached or {}).get("joints") or {}
+    if not found:
+        return joints
+    out = []
+    for joint in joints:
+        f = found.get(joint.id)
+        if f:
+            when = f", first in year {f['first_year']}" if f.get("first_year") else ""
+            note = f"{REACHED} in {f['runs']} of {f['of']} grown runs{when}: it needs a plant-tight detail, which is not designed"
+            joint = Joint(joint.id, joint.kind, joint.members, joint.at_m, joint.angle_deg, joint.cuts, (joint.review + "; " if joint.review else "") + note)
+        out.append(joint)
+    return out
 
 
 def joint_rows(joints: list[Joint]) -> list[dict]:
@@ -420,6 +447,7 @@ def joint_summary(joints: list[Joint]) -> dict:
         "by_kind": dict(sorted(kinds.items())),
         "third_depth_laps": sum(1 for j in joints if third(j)),
         "to_review": sum(1 for j in joints if j.review),
+        "reached_by_plants": sum(1 for j in joints if REACHED in j.review),
         "laps_left_uncut": sum(1 for j in joints if "not cut in the model" in j.review),
         "laps_whose_walls_must_follow_a_turn": sum(1 for j in joints if "must follow the turn" in j.review and "not cut in the model" not in j.review),
     }

@@ -109,6 +109,26 @@ def test_the_lattice_meets_every_half_arch_the_same_way():
         assert max(abs(a - b) for a, b in zip(sorted(distances), first)) < 0.005, arch
 
 
+def test_joints_a_planting_reached_are_noted_and_cut_as_before():
+    """timber.joints.reached_by_plants names joints by their IDs. Each is noted in the schedule, and nothing that is cut changes."""
+    told = DESIGN["timber"]["joints"]["reached_by_plants"]["joints"]
+    plain = {k: v for k, v in DESIGN["timber"].items()}
+    plain["joints"] = {k: v for k, v in DESIGN["timber"]["joints"].items() if k != "reached_by_plants"}
+    noted = set()
+    for group in build_design_timber(DESIGN):
+        with_plants, _, cutters = find_joints(group["members"], DESIGN["timber"])
+        without, _, cutters_plain = find_joints(group["members"], plain)
+        assert [(j.id, j.cuts) for j in with_plants] == [(j.id, j.cuts) for j in without]
+        assert {k: len(v) for k, v in cutters.items()} == {k: len(v) for k, v in cutters_plain.items()}
+        for a, b in zip(with_plants, without):
+            if a.id in told:
+                assert "a clinging plant reaches this joint" in a.review and "not designed" in a.review, a.id
+                noted.add(a.id)
+            else:
+                assert a.review == b.review, a.id
+    assert noted == set(told)  # every joint the planting named is still a joint of this design
+
+
 if __name__ == "__main__":
     tests = [fn for name, fn in sorted(globals().items()) if name.startswith("test_")]
     for fn in tests:

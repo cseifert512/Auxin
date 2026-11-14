@@ -59,7 +59,7 @@ for (const [index, run] of runs.entries()) {
     out.places[node] ??= { at: mm(placeOf(node)), members: membersAt(node), milled: milledAt(node).map((row) => ({ id: row.id, kind: row.kind, a: row.member_a, b: row.member_b, aDepthMm: Math.round(+row.a_depth_m * 1000) || null, bDepthMm: Math.round(+row.b_depth_m * 1000) || null })) };
   }
   const entry = { run, seed: setup.seed, simulator: setup.simulator?.commit?.slice(0, 7) ?? null, care: setup.care, years: setup.years, specimenM: setup.specimenM, reached: [...reached].map(([node, plants]) => ({ node, plants })) };
-  if (index === 0) {   // the run that is drawn: when each place was reached, from the stems themselves
+  {   // when each place was reached, from the stems themselves
     const growth = read(resolve(dir, 'growth.json'));
     const byPlant = new Map();
     for (const stem of growth.stems) byPlant.set(stem.plantId, [...(byPlant.get(stem.plantId) ?? []), stem]);
@@ -75,7 +75,7 @@ for (const [index, run] of runs.entries()) {
     }
     entry.lastDay = growth.lastDay; entry.statement = growth.statement;
     entry.labels = Object.fromEntries(growth.plants.map((p) => [p.id, p.label]));
-    drawn = { growth, entry };
+    if (index === 0) drawn = { growth, entry };   // the first run is the one drawn
   }
   out.runs.push(entry);
   console.log(`${run} (seed ${entry.seed}): ${entry.reached.length} places reached by ${report.jointsReached.map((p) => p.plantId).join(', ')}`);
@@ -114,6 +114,40 @@ if (pick) {
   console.log(`drawn close to: ${joint.id} at ${pick.node}, reached on day ${pick.day} by ${pick.plants.join(', ')}; ${stems.length} stretches of stem near it`);
 }
 console.log(`${Object.keys(out.places).length} places in all: ${every.length} reached in every run, ${out.sometimes.length} in some. Milled joints at them: ${out.milledAlways} always, ${out.milledEver} ever, of ${schedule.length}.`);
+
+// What goes back to the building: the joints of its own schedule, by their own names, with how sure and how soon.
+// This file is kept in git. bower-blender/scripts/take_findings.py copies it into a design.
+const yearOf = (day) => Math.ceil(day / 365.25);
+const found = new Map();
+for (const r of out.runs) {
+  const mine = new Map();   // joint -> the earliest day this run reaches it, and by which plants
+  for (const item of r.reached) for (const j of out.places[item.node].milled) {
+    const had = mine.get(j.id) ?? { day: Infinity, plants: new Set() };
+    if (item.day != null) had.day = Math.min(had.day, item.day);
+    for (const plant of item.plants) had.plants.add(r.labels[plant]);
+    mine.set(j.id, had);
+  }
+  for (const [id, { day, plants }] of mine) {
+    const all = found.get(id) ?? { runs: 0, day: Infinity, plants: new Set() };
+    found.set(id, { runs: all.runs + 1, day: Math.min(all.day, day), plants: new Set([...all.plants, ...plants]) });
+  }
+}
+const byId = new Map(schedule.map((row) => [row.id, row]));
+const handback = {
+  what: 'Joints of the snapshot\'s joint schedule that a plant clinging to the timber reaches unaided, in runs of one planting that differ only in seed. Where a clinging stem arrives is all that is reported: nothing here says what it then does to a joint.',
+  snapshot,
+  made_by: 'drawings-in-code/sketches/design-space/joints.mjs',
+  runs: out.runs.map((r) => ({ run: r.run, seed: r.seed, simulator: r.simulator, care: r.care, years: r.years, specimen_m: r.specimenM })),
+  joints_in_schedule: schedule.length,
+  joints: [...found].map(([id, f]) => ({ id, kind: byId.get(id).kind, members: [byId.get(id).member_a, byId.get(id).member_b], runs: f.runs, of: out.runs.length, first_year: Number.isFinite(f.day) ? yearOf(f.day) : null, plants: [...f.plants].sort() }))
+    .sort((a, b) => b.runs - a.runs || (a.first_year ?? 99) - (b.first_year ?? 99) || a.id.localeCompare(b.id)),
+  places_with_no_joint: Object.values(out.places).filter((p) => !p.milled.length).length,
+  statement: drawn.entry.statement,
+};
+const back = resolve(root, 'scenes', snapshot, 'joints-reached.json');
+writeFileSync(back, JSON.stringify(handback, null, 2) + '\n');
+console.log(`wrote ${back}: ${handback.joints.length} joints, ${handback.joints.filter((j) => j.runs === j.of).length} of them in every run`);
+
 const file = resolve(here, 'reached-joints.js');
 writeFileSync(file, `window.REACHED = ${JSON.stringify(out)};\n`);
 console.log(`wrote ${file} (${Math.round(Buffer.byteLength(JSON.stringify(out)) / 1024)} KB)`);
