@@ -3,12 +3,14 @@
   "bower": "bower.json",
   "plan": "planting.json",
   "specimenM": 3,
+  "band": null,
   "care": "trained",
   "years": 10,
   "seed": 7,
   "simulator": {
     "repository": "horti-code-ture",
-    "commit": "39b42c5c8e020f6fae14f6ded4eb3fdaede662a8"
+    "branch": "claude/growth-without-stem-caps-e1458d",
+    "commit": "cc7c09ec950f78d4522611e2230b72d5533b4ce5"
   },
   "toCheck": [],
   "notModelledOrAssumed": [
@@ -66,7 +68,7 @@
     "P6.vine: the shoots of Vitis coignetiae that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant",
     "P6.vine: the leaves of Vitis coignetiae turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
   ],
-  "reseated": "76460 supported stem points: 6.8% stood more than 10 mm inside the real timber and 34.4% were moved by more than 5 mm (the furthest 109 mm); 62.0% could not be placed on a member and follow their neighbours",
-  "thinned": "892424 stem points recorded, 343170 kept: unsupported shoots thinned to one point every 25 mm",
-  "cleared": "10.0% of stem points stood more than 5 mm inside the timber; 16377 stretches of stem were taken out of it (the furthest moved 247 mm), leaving 0.1%"
+  "reseated": "86444 supported stem points: 7.5% stood more than 10 mm inside the real timber and 36.8% were moved by more than 5 mm (the furthest 109 mm); 59.8% could not be placed on a member and follow their neighbours",
+  "thinned": "1001002 stem points recorded, 432835 kept: unsupported shoots thinned to one point every 25 mm",
+  "cleared": "9.7% of stem points stood more than 5 mm inside the timber; 20324 stretches of stem were taken out of it (the furthest moved 232 mm), leaving 0.1%"
 }

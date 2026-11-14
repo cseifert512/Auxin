@@ -31,6 +31,21 @@ npm run studio                          # the drawing, on http://localhost:5310
 npm run film                            # exports/approach-ink/: the line of time as a film, wide and upright
 ```
 
+**Which simulator grows the plants.** `snapshot.json` may name a `simulator` folder. It does now: the simulator's
+branch `claude/growth-without-stem-caps`, where a main stem no longer stops at a length the model assumed (for the
+wisterias, the route of an earlier prototype's vault) and how far a plant is taken is the gardener's plan. That
+branch is not merged into the simulator's `main`; when it is, take the setting out. Each run's `run.json` says
+which branch and commit grew it.
+
+| Run of `six-bay-radial-v1` | What it is |
+|---|---|
+| `trained-10y` | the planting as modelled, with no assumed stem lengths: what every drawing is made from |
+| `high-10y` | the same with every plant at the high end of what is published for a year's growth (`--band=high`) |
+| `capped-10y` | as the drawings were first grown, on the simulator's `main`: kept to compare with |
+
+`npm run compare` sets them side by side. `--band=low` is the other end of what is published, and
+`--stems=2` lets twice as many stems share a member (it adds little on this building).
+
 In the studio: **Play** or drag the line of time; Space plays, the arrow keys step along it (further with Shift).
 Drag to turn the drawing, scroll to come closer. **Timber / Left to silver / Ink** draws the timber in its own
 colour, held by a finish that is kept up; the same left bare to weather; or as plain ink on paper. Coloured

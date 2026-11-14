@@ -19,7 +19,9 @@ import { resolve } from 'node:path';
 import { root, startStudio } from './headless.mjs';
 
 const snapshot = JSON.parse(readFileSync(resolve(root, 'snapshot.json'), 'utf8')).snapshot;
-const runs = readdirSync(resolve(root, 'scenes', snapshot, 'runs')).filter((r) => existsSync(resolve(root, 'scenes', snapshot, 'runs', r, 'growth.json')));
+// a run kept only to compare with (capped-..., as the drawings were first grown) does not go to the presentation
+const runs = readdirSync(resolve(root, 'scenes', snapshot, 'runs')).filter((r) => !r.startsWith('capped') && existsSync(resolve(root, 'scenes', snapshot, 'runs', r, 'growth.json')));
+rmSync(resolve(root, 'scenes', snapshot, 'light'), { recursive: true, force: true });
 if (!runs.length) throw new Error(`no planting has been grown on ${snapshot}: npm run grow`);
 const node = (args, env = {}) => execFileSync(process.execPath, args, { cwd: root, stdio: 'inherit', env: { ...process.env, ...env } });
 

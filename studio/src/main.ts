@@ -41,7 +41,12 @@ const LIVE = lights.size > 0 && !(wholes.size > 0 && (url.has('whole') || url.ha
 const runs = LIVE ? lights : wholes;
 /** How finely the plants are drawn, 0 to 1 (PlantView.update): live, the finest models go to the few leaves nearest the eye. */
 const DETAIL = url.has('detail') ? Number(url.get('detail')) : LIVE ? 0.6 : 1;
-const RUN_NAMES: Record<string, string> = { 'trained-10y': 'Tended, ten years', 'untended-10y': 'Untended, ten years' };
+const RUN_NAMES: Record<string, string> = {
+  'trained-10y': 'Tended, ten years',
+  'high-10y': 'Tended, ten years: every plant at the high end of its published growth',
+  'capped-10y': 'As first drawn: main stems stopped at an assumed length',
+  'untended-10y': 'Untended, ten years',
+};
 const run = runs.has(url.get('run') ?? '') ? url.get('run')! : runs.has('trained-10y') ? 'trained-10y' : [...runs.keys()][0];
 if (!run) throw new Error('no planting has been grown yet: npm run grow');
 const growthUrl = runs.get(run)!;

@@ -1,3 +1,5 @@
 {
-  "snapshot": "six-bay-radial-v1"
+  "snapshot": "six-bay-radial-v1",
+  "simulator": "../Horti-code-ture/.claude/worktrees/growth-without-stem-caps-e1458d",
+  "simulatorNote": "The plants are grown with this checkout of the simulator: its branch claude/growth-without-stem-caps, where a main stem no longer stops at an assumed length. It is not merged into the simulator's main. Once it is, take out `simulator` and this note, and the checkout beside this repository is used again."
 }
