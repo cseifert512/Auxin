@@ -274,6 +274,36 @@ try {
     await page.waitForFunction(time=>document.querySelector('[data-v8-time-experiment]').v8Controller.getState().time>time+.1,stopped.time);
     await experiment().getByRole('button',{name:'Pause drawing',exact:true}).click();
   });
+  await test('Time inhabitants cross the room, skirt its piers and share the inspectable clock', async () => {
+    const slide=await activate('v8-time-experiment-slide');await experimentReady();
+    const motion=await page.evaluate(()=>{
+      const {occupationAt,birdAt}=window.DESIGNX_V8_TIME_EXPERIMENT;
+      const samples=Array.from({length:381},(_,i)=>({time:13+i/10,people:occupationAt(13+i/10)}));
+      return {samples,before:birdAt(20),arriving:birdAt(23),perched:birdAt(26),leaving:birdAt(29),between:birdAt(35)};
+    });
+    const piers=Array.from({length:6},(_,i)=>[6.2*Math.cos(i*Math.PI/3),6.2*Math.sin(i*Math.PI/3)]);
+    for(const sample of motion.samples) for(const person of sample.people) {
+      for(const pier of piers) assert.ok(Math.hypot(person.point[0]-pier[0],person.point[1]-pier[1])>1.2,'Walkers must clear the timber piers');
+    }
+    const through=motion.samples.slice(0,180).flatMap(s=>s.people.filter(p=>p.id==='through'));
+    assert.ok(through.some(p=>p.point[0]>6)&&through.some(p=>Math.hypot(p.point[0],p.point[1])<.3)&&through.some(p=>p.point[0]<-6),'A person should arrive, cross the room and leave');
+    for(const id of ['through','around']) {
+      const a=motion.samples.find(s=>s.time===21).people.find(p=>p.id===id),b=motion.samples.find(s=>s.time===22).people.find(p=>p.id===id);
+      const moved=Math.hypot(...a.point.map((v,i)=>v-b.point[i]));
+      assert.ok(moved>1&&moved<1.3,'Walk cycles must accompany visible travel at an everyday pace');
+      assert.ok(Math.abs(a.cycle-b.cycle)>.05,'Feet must advance with travelled distance');
+    }
+    assert.equal(motion.before,null);assert.equal(motion.between,null);
+    assert.equal(motion.arriving.flying,true);assert.equal(motion.perched.flying,false);assert.equal(motion.leaving.flying,true);
+    assert.deepEqual(motion.perched.point,[3.228,-4.444,3.32]);
+    assert.equal(await experiment().locator('.v8-time-footer').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','The timeline must not obscure the drawing with a panel');
+    await experimentSeek(26/51);
+    const canvas=experiment().locator('canvas'),image=await canvas.evaluate(el=>el.toDataURL());await frames();
+    assert.equal(await canvas.evaluate(el=>el.toDataURL()),image,'Paused people and wildlife must remain still');
+    await experimentSeek(29/51);await experimentSeek(26/51);
+    assert.equal(await canvas.evaluate(el=>el.toDataURL()),image,'Scrubbing back must reproduce the same authored moment');
+    await screenshot('slide-03-time-inhabitants-and-bird',slide);
+  });
   await test('Time camera alternatives preserve the selected year and original drawing', async () => {
     const slide = await activate('v8-time-experiment-slide'); await experimentReady();
     const moment = await experimentSeek(.64);
