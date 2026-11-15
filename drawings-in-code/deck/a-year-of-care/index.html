@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A year of care</title>
+<!--
+  For the slide "Care is part of the architecture". One picture, one idea: the climbers on a pier grow through a
+  year, and on the days the gardener comes, something is cut.
+
+  One fixed view: pier R1.P1 straight on, from outside the room, looking at its centre; an orthographic elevation
+  from just below the soil to 5.4 m. Only the year moves. On each visit time holds, what is cut that day shows in
+  red, one sentence says the job, and it is gone. The large number is the metres of stem cut at this pier so far
+  this year; it changes only on visits. The rail is the twelve months and the visits.
+
+  Everything drawn comes from data.js, which `node pipeline/vignette.mjs a-year-of-care` writes (data.mjs says how):
+  one run of the plant simulator, cut down to this pier and 2032, and the building model's timber at this pier. What
+  is on a plant on a day is decided here by the simulator's own rules (presence.ts, as grown.py ports them).
+  Drag the handle, or sideways on the picture, to move through the year; ten seconds after you let go it carries on.
+  ?embed (no title, no keys) ?still. Hooks: __setT(seconds) (draws at once), __play(), __duration, __ready.
+-->
+<style>
+  @font-face { font-family: 'Safiro'; src: url('../../4/assets/fonts/safiro-regular-webfont.woff2') format('woff2'), url('../../../../deck/designx/4/assets/fonts/safiro-regular-webfont.woff2') format('woff2'); font-weight: 400; }
+  @font-face { font-family: 'Argesta Display'; font-style: italic; src: url('../../4/assets/fonts/argestadisplay-regularitalic-webfont.woff2') format('woff2'), url('../../../../deck/designx/4/assets/fonts/argestadisplay-regularitalic-webfont.woff2') format('woff2'); }
+  :root { --paper: #EEF3EA; --ink: #102820; --muted: #536d59; --sans: 'Safiro', 'Segoe UI', system-ui, sans-serif; --display: 'Argesta Display', Georgia, serif; --k: 1; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #0b1a14; color: var(--ink); font: 16px/1.4 var(--sans); }
+  .embed, .embed body { background: var(--paper); }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  #stage { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; transform: translate(-50%, -50%) scale(var(--k)); overflow: hidden; background: var(--paper); }
+  canvas { position: absolute; inset: 0; width: 1600px; height: 900px; display: block; cursor: ew-resize; touch-action: none; }
+  h1 { position: absolute; left: 52px; top: 40px; margin: 0; font: italic 400 40px/1.08 var(--display); letter-spacing: -.03em; pointer-events: none; text-shadow: 0 1px 14px var(--paper); }
+  .embed h1 { display: none; }
+  #inspect { position: absolute; right: 52px; top: 40px; text-align: right; }
+  #realbtn { font: 400 17px/1.3 var(--sans); color: var(--muted); padding: 6px 0; text-shadow: 0 1px 6px var(--paper); }
+  #realbtn::after { content: ' +'; }
+  #realbtn[aria-expanded="true"]::after { content: ' \2212'; }
+  #real { position: absolute; right: 0; top: 38px; width: 540px; text-align: left; background: #eef3eafa; border: 1px solid #b1c1b5; padding: 22px 26px; box-shadow: 0 8px 25px #10282015; color: #284639; font: 400 15px/1.45 var(--sans); z-index: 2; }
+  #real p { margin: 0 0 9px; }
+  #real p:last-child { margin: 0; }
+  button:focus-visible { outline: 2px solid #789951; outline-offset: 5px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="c" aria-label="One pier of the Bower seen straight on through a year: its climbers leaf, flower and grow, and on each day the gardener comes, what is cut shows in red"></canvas>
+  <h1>A year of care</h1>
+  <div id="inspect">
+    <button id="realbtn" type="button" aria-expanded="false">What is real</button>
+    <div id="real" hidden></div>
+  </div>
+</div>
+<script src="data.js"></script>
+<script>
+(() => {
+  'use strict';
+  const D = window.VIGNETTE_DATA;
+  const $ = (id) => document.getElementById(id);
+  const query = new URLSearchParams(location.search), EMBED = query.has('embed');
+  if (EMBED) document.documentElement.classList.add('embed');
+  const STILL = query.has('still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const W = 1600, H = 900, TAU = Math.PI * 2;
+  const INK = '16,40,32', RED = '180,73,47', PAPER = '#EEF3EA';
+  const SANS = "'Safiro', 'Segoe UI', system-ui, sans-serif", DISPLAY = "'Argesta Display', Georgia, serif";
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  // <pure> ---- small pure functions ----
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const seg = (t, a, b) => clamp((t - a) / (b - a));
+  const ease = (u) => { u = clamp(u); return u * u * (3 - 2 * u); };
+  const hex = (h) => [1, 3, 5].map((k) => parseInt(h.slice(k, k + 2), 16));
+  const mix = (a, b, k) => a.map((v, i) => Math.round(lerp(v, b[i], k)));
+  /** presence.ts leafState, as grown.py ports it: [in leaf, how far open, how far turned]. Days are days of the year. */
+  function leafState(L, s, day) {
+    const [, , , , , , , , first, lastRaw, ever, born, gone, jit] = L, last = lastRaw || null, j = jit / 1000, year = s.year;
+    if (day < born || (gone >= 0 && day >= gone)) return null;
+    const before = s.leafFallBefore;
+    if (before && !ever && first < year && (last === null || last >= year - 1)) {
+      if (day <= before[0] + j * (before[1] - before[0])) { const turn = s.autumnColourBefore || [before[0], before[0]]; return [1, clamp((day - turn[0] - j * 10) / Math.max(1, turn[1] - turn[0]))]; }
+    }
+    if (year < first || (last !== null && year > last)) return null;
+    const [f0, f1] = s.leafFlush, from = Math.max(f0, born), over = born > f0 ? 21 : Math.max(1, f1 - f0);
+    if (ever) { if (year === first) return day < from ? null : [clamp((day - from) / over), 0]; return [1, 0]; }
+    if (day < from) return null;
+    const [l0, l1] = s.leafFall;
+    if (day > l0 + j * (l1 - l0)) {
+      const after = s.leafFlushAfter;
+      if (after && day >= after[0] && (last === null || last > year)) return [clamp((day - after[0]) / Math.max(1, after[1] - after[0])), 0];
+      return null;
+    }
+    const [t0, t1] = s.autumnColour;
+    return [clamp((day - from) / over), clamp((day - t0 - j * 10) / Math.max(1, t1 - t0))];
+  }
+  // </pure>
+
+  // ---- the elevation: millimetres to the stage ----
+  const S = 140, GY = 866, UX = 480;   // px per metre; the soil line; where the pier stands across: the plants stand the height of the slide, left of the middle, and the words keep to the right
+  const G = D.ground / 1000, TOP = (GY + 0) / S + G;   // the height at the top edge of the stage
+  const sx = (u) => UX + (u / 1000) * S, sy = (z) => GY - (z / 1000 - G) * S;
+  const PL = D.plants, SEA = D.seasons, YD = D.yearDays, LAST = D.lastDay, TIP = D.thickening.tipRadiusMm, POW = D.thickening.exponent;
+  const MIN_W = 0.014 * S;   // no stem drawn thinner than 14 mm across, so the young ones read
+
+  // colours per plant: leaves in 3 tones x 6 stages of autumn, flowers in 3 tones (grown.py LOOKS)
+  const LEAFC = PL.map((p) => [0, 1, 2].map((t) => [0, 1, 2, 3, 4, 5].map((a) => { const g = mix(hex(p.look.green[0]), hex(p.look.green[1]), t / 2), au = mix(hex(p.look.autumn[0]), hex(p.look.autumn[1]), t / 2); return `rgb(${mix(g, au, a / 5)})`; })));
+  const FLOWC = PL.map((p) => [0, 1, 2].map((t) => `rgb(${mix(hex(p.look.flower[0]), hex(p.look.flower[1]), t / 2)})`));
+  const LEAFW = PL.map((p) => ({ pinnate: 0.42, simple: 0.4, three: 0.5 }[p.look.leaf] ?? 0.4));
+
+  // ---- depth: everything in a few layers, far first, fixed once since the view never moves ----
+  const NL = 6;
+  let dmin = Infinity, dmax = -Infinity;
+  for (const s of D.stems) for (let i = 0; i < s.born.length; i++) { dmin = Math.min(dmin, s.pts[3 * i + 2]); dmax = Math.max(dmax, s.pts[3 * i + 2]); }
+  const layerOf = (d) => NL - 1 - clamp(Math.floor((d - dmin) / (dmax - dmin + 1) * NL), 0, NL - 1);   // 0 farthest
+  const LAYERS = Array.from({ length: NL }, () => ({ segs: [], leaves: [], flowers: [] }));
+  D.stems.forEach((s, k) => { if (s.from) LAYERS[layerOf(s.pts[2])].segs.push([k, -1]); for (let i = 1; i < s.born.length; i++) LAYERS[layerOf((s.pts[3 * i - 1] + s.pts[3 * i + 2]) / 2)].segs.push([k, i]); });
+  D.leaves.forEach((l) => LAYERS[layerOf(l[3])].leaves.push(l));
+  D.flowers.forEach((f) => LAYERS[layerOf(f[3])].flowers.push(f));
+
+  // ---- the year when nobody touches it: about 50 s for the days, and a hold at each visit ----
+  const V = D.visits, RATE = YD / 50, RAMP = 0.8, HOLD_CUT = 3, HOLD_LOOK = 1.5, END_HOLD = 1.4;
+  const TL = [];   // { kind: 'move', t0, t1, d0, d1 } | { kind: 'hold', t0, t1, v }
+  {
+    let t = 0, d = 0;
+    TL.push({ kind: 'hold', t0: 0, t1: END_HOLD, v: -1, day: 0 }); t = END_HOLD;
+    const moveTo = (d1) => { const T = (d1 - d) / RATE + RAMP; TL.push({ kind: 'move', t0: t, t1: t + T, d0: d, d1 }); t += T; };
+    V.forEach((v, k) => {
+      moveTo(v.day - 1);
+      const T = v.cuts ? HOLD_CUT : HOLD_LOOK;
+      TL.push({ kind: 'hold', t0: t, t1: t + T, v: k, day: v.day - 1 }); t += T; d = v.day;
+    });
+    moveTo(YD - 1);
+    TL.push({ kind: 'hold', t0: t, t1: t + END_HOLD, v: -1, day: YD - 1 }); t += END_HOLD;
+  }
+  const DUR = TL.at(-1).t1;
+  /** Where a move is at time tau: a trapezoid of speed, easing into and out of each hold. */
+  function moveAt(m, t) {
+    const T = m.t1 - m.t0, tau = clamp(t - m.t0, 0, T), Dd = m.d1 - m.d0;
+    if (T < 2 * RAMP + 0.01) return m.d0 + Dd * ease(tau / T);
+    const v = Dd / (T - RAMP);
+    if (tau < RAMP) return m.d0 + v * tau * tau / (2 * RAMP);
+    if (tau > T - RAMP) return m.d1 - v * (T - tau) ** 2 / (2 * RAMP);
+    return m.d0 + v * (RAMP / 2 + tau - RAMP);
+  }
+  /** The state at time t: the day, the visit held (if any), how red the cut is, how far its metres are counted. */
+  function stateAt(t) {
+    const m = TL.find((x) => t < x.t1) ?? TL.at(-1);
+    if (m.kind === 'move') return { day: moveAt(m, t), v: -1, red: 0, count: 1 };
+    if (m.v < 0) return { day: m.day, v: -1, red: 0, count: 1 };
+    const u = t - m.t0, T = m.t1 - m.t0, cuts = V[m.v].cuts;
+    return { day: m.day, v: m.v, red: cuts ? ease(seg(u, 0, 0.45)) * (1 - ease(seg(u, T - 0.6, T))) : 0, count: ease(seg(u, 0.25, 1.2)), gone: cuts && u > T - 0.6 };
+  }
+
+  // ---- drawing ----
+  const canvas = $('c'), ctx = canvas.getContext('2d');
+  let K = 1;
+  const RAIL = { x0: 900, x1: 1500, y: 818, top: 748 }, WORDS = 814;   // the rail and the sentence stand to the right of the plants
+  const dayX = (d) => RAIL.x0 + (RAIL.x1 - RAIL.x0) * d / YD;
+  function line(pts) { ctx.beginPath(); pts.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]))); ctx.stroke(); }
+  const radiusPx = (s, i, day) => { const age = clamp((day - s.born[i]) / Math.max(1, LAST - s.born[i])); return (TIP + Math.max(0, s.rad[i] / 10 - TIP) * age ** POW) / 1000 * S; };
+  const alive = (s, i, day) => s.born[i] <= day && (s.gone[i] < 0 || day < s.gone[i]);
+
+  /** The picture on a day (a whole day of the year); `cut`: the visit whose removals are shown red at alpha `red`. */
+  function frame(st) {
+    const day = Math.floor(st.day), cv = st.v >= 0 ? V[st.v] : null, cutDay = cv ? cv.day : -9, cutP = cv ? cv.p : -1;
+    ctx.setTransform(K, 0, 0, K, 0, 0);
+    ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H);
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+
+    // the timber and cables at this pier: pale, behind, and into the soil only as far as the feet go (75 mm)
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, GY + 0.075 * S); ctx.clip();
+    for (const c of D.cables) { ctx.strokeStyle = `rgba(${INK},.22)`; ctx.lineWidth = 1; line(Array.from({ length: c.length / 3 }, (_, i) => [sx(c[3 * i]), sy(c[3 * i + 1])])); }
+    const byDepth = [...D.members].sort((a, b) => b.pts[2] + b.pts.at(-1) - a.pts[2] - a.pts.at(-1));
+    ctx.lineCap = 'butt';
+    for (const m of byDepth) {
+      const pts = Array.from({ length: m.pts.length / 3 }, (_, i) => [sx(m.pts[3 * i]), sy(m.pts[3 * i + 1])]), w = Math.max(2, m.w / 1000 * S);
+      ctx.strokeStyle = `rgba(${INK},.16)`; ctx.lineWidth = w + 1.6; line(pts);
+      ctx.strokeStyle = 'rgb(232,228,214)'; ctx.lineWidth = w; line(pts);
+    }
+    ctx.restore(); ctx.lineCap = 'round';
+
+    // the ground: one quiet line
+    ctx.strokeStyle = `rgba(${INK},.45)`; ctx.lineWidth = 1; line([[0, GY], [W, GY]]);
+
+    // the climbers, far layers first
+    const red = { segs: [], leaves: [] };
+    for (const Lr of LAYERS) {
+      ctx.strokeStyle = 'rgb(88,70,52)';
+      for (const [k, i] of Lr.segs) {
+        const s = D.stems[k];
+        if (i < 0) {   // from the parent to the stem's first point
+          if (!alive(s, 0, day)) continue;
+          if (s.p === cutP && s.gone[0] === cutDay) { red.segs.push([k, i]); continue; }
+          ctx.lineWidth = Math.max(MIN_W, 2 * radiusPx(s, 0, day));
+          line([[sx(s.from[0]), sy(s.from[1])], [sx(s.pts[0]), sy(s.pts[1])]]);
+          continue;
+        }
+        if (!alive(s, i, day) || !alive(s, i - 1, day)) continue;
+        if (s.p === cutP && s.gone[i] === cutDay) { red.segs.push([k, i]); continue; }
+        ctx.lineWidth = Math.max(MIN_W, 2 * radiusPx(s, i, day));
+        line([[sx(s.pts[3 * i - 3]), sy(s.pts[3 * i - 2])], [sx(s.pts[3 * i]), sy(s.pts[3 * i + 1])]]);
+      }
+      // leaves: a plain mark along the stalk, as long as the leaf is open, coloured as far as it has turned
+      for (const l of Lr.leaves) {
+        const st0 = leafState(l, SEA[l[0]], day);
+        if (!st0 || st0[0] <= 0.02) continue;
+        if (l[0] === cutP && l[12] === cutDay) { red.leaves.push(l); continue; }
+        const j = l[13] / 1000;
+        ctx.strokeStyle = LEAFC[l[0]][Math.min(2, Math.floor(j * 3))][Math.round(st0[1] * 5)];
+        leafMark(l, st0[0]);
+      }
+      for (const f of Lr.flowers) {
+        if (day < f[5] || (f[6] >= 0 && day >= f[6])) continue;
+        flowerMark(f, FLOWC[f[0]][Math.min(2, Math.floor(f[7] / 1000 * 3))]);
+      }
+    }
+    // what is cut today, in the one red, over everything
+    if (st.red > 0.01) {
+      ctx.globalAlpha = st.red; ctx.strokeStyle = `rgb(${RED})`; ctx.fillStyle = `rgb(${RED})`;
+      for (const [k, i] of red.segs) {
+        const s = D.stems[k], a = i < 0 ? s.from : s.pts.slice(3 * i - 3, 3 * i), b = i < 0 ? s.pts.slice(0, 3) : s.pts.slice(3 * i, 3 * i + 3);
+        ctx.lineWidth = Math.max(MIN_W * 1.6, 2 * radiusPx(s, Math.max(0, i), day)); line([[sx(a[0]), sy(a[1])], [sx(b[0]), sy(b[1])]]);
+      }
+      for (const l of red.leaves) leafMark(l, leafState(l, SEA[l[0]], day)[0]);
+      for (const f of cv.fruits) { ctx.beginPath(); ctx.arc(sx(f[0]), sy(f[1]), Math.max(3.2, f[3] / 2000 * S), 0, TAU); ctx.fill(); }
+      ctx.globalAlpha = 1;
+    }
+
+    // paper under the words
+    const fade = ctx.createLinearGradient(0, H - 300, 0, H);   // only to the right of the plants, coming in softly from the left
+    fade.addColorStop(0, 'rgba(238,243,234,0)'); fade.addColorStop(0.35, 'rgba(238,243,234,.92)'); fade.addColorStop(1, 'rgba(238,243,234,.97)');
+    ctx.fillStyle = fade;
+    for (let k = 0; k < 12; k++) { ctx.globalAlpha = ease((k + 1) / 12); ctx.fillRect(WORDS - 110 + k * 8, H - 300, k === 11 ? W : 8, 300); }
+    ctx.globalAlpha = 1;
+
+    hero(st);
+    sentence(st);
+    rail(st);
+  }
+  function leafMark(l, open) {
+    const len = l[7] / 1000 * (0.25 + 0.75 * open) * S * (l[6] / 100), x = sx(l[1]), y = sy(l[2]);
+    ctx.lineWidth = Math.max(1.6, l[7] / 1000 * LEAFW[l[0]] * S * (0.4 + 0.6 * open));
+    const L2 = Math.max(1.5, len);
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + l[4] / 100 * L2, y - l[5] / 100 * L2); ctx.stroke();
+  }
+  function flowerMark(f, colour) {
+    const p = PL[f[0]], x = sx(f[1]), y = sy(f[2]), len = f[4] / 1000 * S;
+    if (p.look.bloom === 'raceme') { ctx.strokeStyle = colour; ctx.lineWidth = Math.max(2.5, len * 0.2); line([[x, y], [x, y + len]]); return; }
+    ctx.fillStyle = colour; ctx.beginPath(); ctx.arc(x, y, Math.max(2.2, len / 2), 0, TAU); ctx.fill();
+    ctx.strokeStyle = 'rgba(16,40,32,.25)'; ctx.lineWidth = 0.6; ctx.stroke();
+  }
+
+  /** Metres of stem cut at this pier so far this year. */
+  function cutSoFar(st) {
+    let m = 0;
+    V.forEach((v, k) => { if (k === st.v) m += v.metres * st.count; else if (v.day <= st.day && k !== st.v && !(st.v >= 0 && k > st.v)) m += v.metres; });
+    return m;
+  }
+  function hero(st) {
+    ctx.shadowColor = PAPER; ctx.shadowBlur = 22;
+    for (let k = 0; k < 2; k++) {
+      text(`${cutSoFar(st).toFixed(1)} m`, W - 56, EMBED ? 150 : 176, 104, `rgb(${INK})`, DISPLAY, 'right', false, 'italic');
+      text('of stem cut this year', W - 58, EMBED ? 186 : 212, 20, `rgb(${INK})`, SANS, 'right');
+    }
+    ctx.shadowBlur = 0;
+  }
+  function sentence(st) {
+    let s;
+    if (st.v >= 0) s = V[st.v].say;
+    else { const d = Math.floor(st.day); s = (D.slots.filter((x) => x.from <= d).at(-1) ?? D.slots[0]).say; }
+    // on two lines where it is long, the last line where a single one would stand
+    ctx.font = `400 26px ${SANS}`;
+    const lines = [''];
+    for (const word of s.split(' ')) { const tryIt = lines.at(-1) ? `${lines.at(-1)} ${word}` : word; if (ctx.measureText(tryIt).width > W - 60 - WORDS && lines.at(-1)) lines.push(word); else lines[lines.length - 1] = tryIt; }
+    lines.forEach((l, i) => text(l, WORDS, RAIL.top - 44 - (lines.length - 1 - i) * 36, 26, `rgb(${INK})`, SANS, 'left'));
+  }
+  function rail(st) {
+    const { x0, x1, y } = RAIL;
+    ctx.strokeStyle = `rgb(${INK})`; ctx.lineWidth = 1; line([[x0, y], [x1, y]]);
+    text(String(D.year), x0 - 46, y + 6, 17, `rgba(${INK},.85)`, SANS, 'right');
+    const starts = Array.from({ length: 13 }, (_, m) => (m === 12 ? YD : Math.round((Date.UTC(D.year, m, 1) - Date.UTC(D.year, 0, 1)) / 86400000)));
+    for (let m = 0; m < 12; m++) {
+      ctx.strokeStyle = `rgba(${INK},.6)`; line([[dayX(starts[m]), y - 4], [dayX(starts[m]), y + 4]]);
+      text(MON[m], dayX((starts[m] + starts[m + 1]) / 2), y + 30, 17, `rgba(${INK},.85)`, SANS, 'center');
+    }
+    line([[x1, y - 4], [x1, y + 4]]);
+    V.forEach((v, k) => {   // a small mark at each visit, red while it is held
+      const x = dayX(v.day + 0.5);
+      ctx.strokeStyle = k === st.v ? `rgb(${RED})` : `rgba(${INK},.75)`; ctx.lineWidth = k === st.v ? 2.4 : 1.4;
+      line([[x, y - 18], [x, y - 8]]);
+    });
+    const hx = dayX(clamp(st.day + 0.5, 0, YD));
+    ctx.strokeStyle = `rgba(${INK},.35)`; ctx.lineWidth = 1; line([[hx, RAIL.top - 4], [hx, y]]);
+    ctx.fillStyle = `rgb(${INK})`; ctx.fillRect(hx - 4.5, y - 11, 9, 22);
+  }
+  function text(s, x, y, size, color, face = SANS, align = 'left', boxed = false, style = '') {
+    ctx.font = `${style} 400 ${size}px ${face}`; ctx.textAlign = align; ctx.textBaseline = 'alphabetic';
+    if (boxed) { const w = ctx.measureText(s).width, x0 = align === 'center' ? x - w / 2 : align === 'right' ? x - w : x; ctx.fillStyle = PAPER; ctx.fillRect(x0 - 4, y - size * 0.82, w + 8, size * 1.08); }
+    ctx.fillStyle = color; ctx.fillText(s, x, y);
+  }
+
+  // ---- playing: the slow year, and the hand that takes over ----
+  const STILL_VISIT = Math.max(0, V.findIndex((v) => v.date.endsWith('-08-01')));
+  const holdOf = (k) => TL.find((x) => x.kind === 'hold' && x.v === k);
+  let paused = false, hand = null, tp = 0, clock = 0, last = performance.now();
+  const RESUME = 10;
+  /** Under a hand there are no holds: the day under it, and a visit within three days shows its red and its sentence. */
+  function handState(day) {
+    day = clamp(day, 0, YD - 1);
+    let best = -1;
+    V.forEach((v, k) => { if (Math.abs(day - v.day) <= 3 && (best < 0 || Math.abs(day - v.day) < Math.abs(day - V[best].day))) best = k; });
+    if (best < 0) return { day, v: -1, red: 0, count: 1 };
+    return { day: V[best].day - 1, v: best, red: V[best].cuts ? 1 : 0, count: 1 };
+  }
+  function current() {
+    if (STILL) { const h = holdOf(STILL_VISIT); return stateAt((h.t0 + h.t1) / 2); }
+    if (hand) return handState(hand.day);
+    return stateAt(tp);
+  }
+  function draw() { frame(current()); }
+  function loop(ms) {
+    const dt = Math.min(0.1, (ms - last) / 1000); last = ms;
+    if (!paused) {
+      clock += dt;
+      if (hand && !hand.down && clock - hand.up > RESUME) {   // nobody's hand for ten seconds: carry on from where it stands
+        const s = handState(hand.day); hand = null;
+        if (s.v >= 0) tp = holdOf(s.v).t1;
+        else { const m = TL.find((x) => x.kind === 'move' && s.day >= x.d0 && s.day <= x.d1); tp = m ? m.t0 + (m.t1 - m.t0) * (s.day - m.d0) / Math.max(1, m.d1 - m.d0) : 0; }
+      } else if (!hand) tp = (tp + dt) % DUR;
+    }
+    draw();
+    requestAnimationFrame(loop);
+  }
+  function take(day, down) {
+    if (!hand) hand = { day: stateAt(tp).day, down: true, up: clock };
+    hand.day = clamp(day, 0, YD - 1); hand.down = down; if (!down) hand.up = clock;
+    paused = false; draw();
+  }
+  const toStage = (e) => { const r = canvas.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * W, (e.clientY - r.top) / r.height * H]; };
+  const railDay = (x) => (x - RAIL.x0) / (RAIL.x1 - RAIL.x0) * YD;
+  let drag = null;
+  canvas.addEventListener('pointerdown', (e) => {
+    if (STILL) return;
+    canvas.setPointerCapture(e.pointerId);
+    const [x, y] = toStage(e), onRail = y > RAIL.top - 20 && x > RAIL.x0 - 30;
+    drag = { x, onRail };
+    take(onRail ? railDay(x) : hand ? hand.day : stateAt(tp).day, true);
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const [x] = toStage(e);
+    take(drag.onRail ? railDay(x) : hand.day + (x - drag.x) * YD / (RAIL.x1 - RAIL.x0), true);
+    drag.x = x;
+  });
+  const release = () => { if (!drag) return; drag = null; take(hand.day, false); };
+  canvas.addEventListener('pointerup', release); canvas.addEventListener('pointercancel', release);
+  if (!EMBED) addEventListener('keydown', (e) => {   // arrows: from visit to visit
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    e.preventDefault();
+    const d = hand ? hand.day : stateAt(tp).day, next = e.key === 'ArrowRight' ? V.find((v) => v.day > d + 3.5) : [...V].reverse().find((v) => v.day < d - 3.5);
+    take(next ? next.day : e.key === 'ArrowRight' ? YD - 1 : 0, false);
+  });
+
+  $('realbtn').onclick = () => { const open = $('real').hidden; $('real').hidden = !open; $('realbtn').setAttribute('aria-expanded', String(open)); };
+  [
+    `Every stem, leaf, flower and cut is one run of the plant simulator, one seed, on pier ${D.pier} through ${D.year}, its sixth year. The species numbers are provisional assumptions, not measured on plants.`,
+    'The gardener is the simulator’s rule-based gardener, not a record of anyone’s work. Each sentence on a visit is shortened from its own record of that day; the red is what the run removes that day. Spent flowers are not drawn once over, so a deadheading shows only the young fruit taken with them.',
+    `In March and April the rose and the star jasmine shed side shoots that have lived out their time: the simulator’s doing, not a cut, so not counted.`,
+    'The number counts the run’s removed stem, point to point. It reads 6.2 m for the rose’s January cut where the gardener’s record says 7.2 m.',
+    'Leaves and flowers are plain marks in each species’ colour, when and where the run puts them, not portraits. Stems are as thick as the run makes them, but none thinner than 14 mm, so the young ones read.',
+    'The timber and cables are the building model’s, at this pier. A scenario, not a forecast.',
+  ].forEach((s) => $('real').append(Object.assign(document.createElement('p'), { textContent: s })));
+
+  function fit() {
+    const k = Math.min(innerWidth / W, innerHeight / H), dpr = window.devicePixelRatio || 1;
+    document.documentElement.style.setProperty('--k', k);
+    K = Math.min(3, k * dpr); canvas.width = Math.round(W * K); canvas.height = Math.round(H * K);
+    draw();
+  }
+  addEventListener('resize', fit);
+  window.__duration = DUR;
+  window.__setT = (t) => { hand = null; tp = clamp(t, 0, DUR - 0.001); paused = true; draw(); };   // draws at once
+  window.__play = () => { hand = null; paused = false; draw(); };
+  window.__timeline = TL;
+  fit();
+  if (!STILL) requestAnimationFrame(loop);
+  document.fonts?.ready.then(() => draw());
+  window.__ready = true;
+})();
+</script>
+</body>
+</html>
