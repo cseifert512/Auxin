@@ -1,5 +1,5 @@
 {
- "note": "The words of the drawing 'The place'. Numbers are not typed here: each figure names a key in ground/meadow.growth.json (per moment) or ground/meadow.json quantities, and package_place.py reads it from there.",
+ "note": "The words of the drawing 'The place'. A station marked section is a flat cut: it does not drift. Labels are bubbles that name a part and do not open anything; they show only on frames whose places include theirs. Numbers are not typed here: each figure names a key in ground/meadow.growth.json (per moment) or ground/meadow.json quantities, and package_place.py reads it from there.",
  "start": "whole",
  "moments": ["planted", "year-1", "year-3", "year-6", "year-10"],
  "crop_top": 0.04,
@@ -43,7 +43,7 @@
     { "label": "Arrive", "at": ["path.bend"], "to": "arrival", "figure": "leaves", "suffix": " leaves" },
     { "label": "Look out", "at": ["room.middle"], "to": "lookout", "figure": "flowers", "suffix": " flowers open" },
     { "label": "One pier, cut open", "at": ["pier.R1.P3.foot"], "to": "plant", "figure": "thickest_stem_mm", "suffix": " thickest stem" },
-    { "label": "The ground", "at": ["hollow", "meadow.path"], "to": "section", "figure": "root_reach_m", "suffix": " root reach" }
+    { "label": "The ground", "at": ["ground.low", "hollow", "meadow.path"], "to": "section", "figure": "root_reach_m", "suffix": " root reach" }
    ]
   },
   {
@@ -65,6 +65,14 @@
   },
   {
    "id": "plant", "view": "plant", "title": "One pier, cut open",
+   "section": true,
+   "labels": [
+    { "label": "cable for the trunk", "at": "cut.cable", "figure": "thickest_stem_mm", "suffix": " thickest stem" },
+    { "label": "roots, sketched", "at": "cut.roots", "figure": "root_reach_m", "suffix": " reach, sketched by a stated rule" },
+    { "label": "timber into the soil", "at": "cut.foot", "figure": "timber_in_the_ground_m", "suffix": "" },
+    { "label": "sole under the bed", "at": "cut.sole" },
+    { "label": "screw pile", "at": "cut.pile" }
+   ],
    "caption": { "default": "The uphill pier, roots to first joints" },
    "figures": ["thickest_stem_mm", "stem_m", "timber_in_the_ground_m"],
    "targets": [
@@ -73,6 +81,7 @@
   },
   {
    "id": "section", "view": "section", "title": "The ground",
+   "section": true,
    "caption": { "default": "A cut through two piers and their beds" },
    "figures": ["loosened_soil_m2", "fall_across_the_room_m", "piles"],
    "targets": [

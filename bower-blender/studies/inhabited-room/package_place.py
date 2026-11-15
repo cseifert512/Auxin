@@ -75,6 +75,22 @@ def place_shares(view: str, places: dict, share: float) -> dict:
     return out
 
 
+def edges(image: Image.Image) -> dict:
+    """The mean colour of each edge strip, so a picture shown whole can be continued to the stage's edges."""
+    w, h = image.size
+    strips = {"top": (0, 0, w, 3), "bottom": (0, h - 3, w, h), "left": (0, 0, 3, h), "right": (w - 3, 0, w, h)}
+    out = {}
+    for side, box in strips.items():
+        r, g, b = image.crop(box).resize((1, 1), Image.BOX).getpixel((0, 0))[:3]
+        out[side] = f"#{r:02x}{g:02x}{b:02x}"
+    return out
+
+
+def shares(places: dict) -> dict:
+    """frames.json's per-frame places for one view, rounded; a name absent is out of frame."""
+    return {n: [round(p[0], 4), round(p[1], 4)] for n, p in (places or {}).items() if p is not None}
+
+
 def save(image: Image.Image, to: Path) -> Path:
     """WebP at quality 80 where Pillow can write it, JPEG otherwise."""
     if image.width > MAX_W:
@@ -96,7 +112,8 @@ def timelapse(frames: Path, places: dict, moment_days: dict) -> dict:
     if not (folder / "frames.json").exists():
         return {}
     try:
-        listed = load(folder / "frames.json")["frames"]
+        record = load(folder / "frames.json")
+        listed = record["frames"]
     except (json.JSONDecodeError, KeyError, OSError):
         print("views/timelapse/frames.json could not be read (being rewritten?): stills only this time")
         return {}
@@ -114,13 +131,21 @@ def timelapse(frames: Path, places: dict, moment_days: dict) -> dict:
                 continue   # still being written
             written = save(picture, frames / "tl" / view / f"{f['index']:03d}.webp")
             if view not in views:
-                with Image.open(written) as im:
-                    views[view] = {"size": list(im.size), "frames": [], "places": place_shares(view, places, 0)}
+                # frames.json's `expected` (or `planned`) counts dates; a view photographed on only some of them
+                # gets its share of those so far
+                planned = record.get("expected", record.get("planned"))
+                listing = sum(view in x.get("views", []) for x in listed)
+                expected = planned.get(view) if isinstance(planned, dict) else round(planned * listing / len(listed)) if isinstance(planned, int) else None
+                views[view] = {"size": list(picture.size), "frames": [], "places": place_shares(view, places, 0), "edges": edges(picture)}
+                if expected:
+                    views[view]["expected"] = expected
             entry = views[view]
             frame = {"day": f["day"], "date": f["date"], "month": month(f["date"]), "file": written.relative_to(OUT).as_posix(),
                      "fig": {k: number(f[k], u) for k, u in FRAME_FIGURES.items() if f.get(k) is not None}}
             if f["day"] in moment_days:
                 frame["moment"] = moment_days[f["day"]]
+            if isinstance(f.get("places"), dict) and view in f["places"]:
+                frame["places"] = shares(f["places"][view])   # the camera moves: where each place falls on this frame
             entry["frames"].append(frame)
     return views
 
@@ -140,10 +165,11 @@ def pictures(frames: Path, days: dict) -> dict:
             image = Image.open(source).convert("RGB")
             w, h = image.size
             top = round(h * crop)   # the moment is stamped in the top-left strip; the page shows it itself
-            written = save(image.crop((0, top, w, h)), frames / f"{view}-{moment}.jpg")
+            image = image.crop((0, top, w, h))
+            written = save(image, frames / f"{view}-{moment}.jpg")
             if view not in stills:
                 with Image.open(written) as im:
-                    stills[view] = {"size": list(im.size), "frames": [], "places": place_shares(view, places, top / h)}
+                    stills[view] = {"size": list(im.size), "frames": [], "places": place_shares(view, places, top / h), "edges": edges(image)}
             entry = stills[view]
             d = days[moment]
             entry["frames"].append({"day": d["day"], "date": d["date"], "month": month(d["date"]), "moment": moment, "file": f"frames/{written.name}"})
@@ -280,7 +306,8 @@ def main() -> None:
     for name in ("index.html", "pier-study.html", "place.css", "place.js", "pier-study.js", "README.md"):
         shutil.copyfile(HERE / "place" / name, OUT / name)
     total = sum(f.stat().st_size for f in OUT.rglob("*") if f.is_file())
-    tl = {v: len(x["frames"]) for v, x in views.items() if x["frames"] and "/tl/" in x["frames"][0]["file"]}
+    tl = {v: f"{len(x['frames'])} of {x.get('expected') or '?'}" + (" with places" if any("places" in f for f in x["frames"]) else "")
+          for v, x in views.items() if x["frames"] and "/tl/" in x["frames"][0]["file"]}
     print(f"{OUT}: {total / 1e6:.1f} MB; time-lapse frames by view: {tl or 'none yet'}")
     for m in manifest["pier"]["missing"]:
         print("missing for the pier study:", m)

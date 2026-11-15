@@ -133,7 +133,8 @@ def add(colls, site, ground, tools) -> None:
 
     # --- the plant's view: the same cut at the uphill pier ---
     p = Sheet(colls["S96_PLANT_NOTES"], cams["plant"]["cut_y_m"], tag, status, 0.105)
-    left, right, bottom, top = extent(cams["plant"])
+    _, _, bottom, top = extent(cams["plant"])
+    left, right = hx - 3.55, hx + 1.65  # the labels keep to the pier, however wide the picture is
     soil = ground["soil_at_pier_m"][high]
     near = min((pl for pl in ground["plants"] if pl["pier"] == high), key=lambda pl: abs(pl["root_m"][1] - cut))
     rx = near["root_m"][0]

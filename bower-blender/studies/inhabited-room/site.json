@@ -251,7 +251,14 @@
     1920,
     1200
    ],
-   "note": "The eye of someone on the bend of the arrival path: the Bower across the inside of the bend, through planting."
+   "note": "The eye of someone on the bend of the arrival path: the Bower across the inside of the bend, through planting.",
+   "travel": {
+    "from_at_m": [
+     22.99,
+     6.17
+    ],
+    "note": "Through the time-lapse the eye walks in along the path, 4.5 m, to where the still is taken."
+   }
   },
   "lookout": {
    "at_m": [
@@ -269,7 +276,14 @@
     1920,
     1200
    ],
-   "note": "Just inside the entry, looking through the room and out to the meadow."
+   "note": "Just inside the entry, looking through the room and out to the meadow.",
+   "travel": {
+    "from_at_m": [
+     4.05,
+     2.3
+    ],
+    "note": "Through the time-lapse the eye comes a metre further into the room."
+   }
   },
   "whole": {
    "location_m": [
@@ -291,7 +305,11 @@
    "moments": [
     "planted",
     "year-10"
-   ]
+   ],
+   "travel": {
+    "orbit_deg": 26.0,
+    "note": "Through the time-lapse the view turns 26 degrees round the room."
+   }
   },
   "section": {
    "section": true,
@@ -315,15 +333,15 @@
    "section": true,
    "cut_y_m": -0.2,
    "centre_m": [
-    5.25,
-    1.9
+    5.9,
+    1.0
    ],
-   "width_m": 5.2,
+   "width_m": 10.4,
    "size_px": [
-    1500,
-    1875
+    1920,
+    1200
    ],
-   "note": "The plant's view: the same cut at the uphill pier, from under the roots to above the first joints."
+   "note": "The plant's view: the same cut at the uphill pier, a third of it below the ground, with the room on one side and the planting on the other."
   },
   "plan": {
    "plan": true,
@@ -414,7 +432,7 @@
    "ball_shown_days": 60
   },
   "timelapse": {
-   "note": "The same views photographed through the ten years, to be played as a film: the day after planting, then four days of every growing season (spring, early summer, high summer, autumn). No winter day is taken, because the site round the climbers is one summer afternoon and does not change with the date. `views` says which views are taken: 1 for every date, or a month and day for that day of each year only.",
+   "note": "The same views photographed through the ten years, to be played as a film: the day after planting, then four days of every growing season (spring, early summer, high summer, autumn). No winter day is taken, because the site round the climbers is one summer afternoon and does not change with the date. `views` says which views are taken: 1 for every date, or a month and day for that day of each year only. A view's camera may travel as the film runs (cameras.<view>.travel). No labels are baked into a frame; frames.json says where the named places fall in each.",
    "first": "2027-03-13",
    "each_year": [
     "04-25",
@@ -426,9 +444,10 @@
     "arrival": 1,
     "lookout": 1,
     "plant": 1,
-    "whole": "06-15"
+    "whole": "06-15",
+    "section": "06-15"
    },
-   "scale": 0.5,
+   "scale": 0.6667,
    "samples": 16
   }
  },

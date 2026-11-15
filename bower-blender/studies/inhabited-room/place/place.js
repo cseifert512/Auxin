@@ -1,6 +1,6 @@
 /* "The place": the whole place first, then into it. Everything shown was made beforehand (manifest.js);
-   this page only chooses which picture, marks and words to show. Each view is a sequence of frames of any
-   length, on one line of days; the named moments are ticks on that line. */
+   this page only chooses which picture, marks and words to show. The picture fills the window and everything
+   else floats over it. Each view is a sequence of frames on one line of days, and plays by itself on entry. */
 (() => {
   'use strict';
   const P = window.BOWER_THE_PLACE;
@@ -8,19 +8,16 @@
   const NS = 'http://www.w3.org/2000/svg';
   const query = new URLSearchParams(location.search);
   const stations = new Map(P.stations.map((s) => [s.id, s]));
-  const still = query.has('still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (query.has('embed')) document.body.classList.add('embed');
-  if (still) document.body.classList.add('still');
+  const still = query.has('still');
+  const calm = still || matchMedia('(prefers-reduced-motion: reduce)').matches;   // no zooms, no drift, no playing on entry
+  const body = document.body;
+  if (query.has('embed')) body.classList.add('embed');
+  body.classList.toggle('still', still);
+  body.classList.toggle('calm', calm);
 
   const state = { station: P.start, day: P.moments[0].day, life: false, playing: false };
-  let shot = null, timer = null;
+  let shot = null, timer = null, W = 0, H = 0, bubbles = [];
   const cache = new Map();   // pictures asked for ahead of being shown, kept so the browser holds them
-  const allDays = Object.values(P.views).flatMap((v) => v.frames.map((f) => f.day));
-  const span = [Math.min(...allDays), Math.max(...allDays)];
-
-  // the stage is drawn at 1600 x 900 and scaled to the window
-  const fitStage = () => document.documentElement.style.setProperty('--k', Math.min(innerWidth / 1600, innerHeight / 900));
-  addEventListener('resize', fitStage); fitStage();
 
   const svg = (tag, attrs = {}, text) => {
     const node = document.createElementNS(NS, tag);
@@ -28,83 +25,135 @@
     if (text !== undefined) node.textContent = text;
     return node;
   };
-  const view = () => P.views[stations.get(state.station).view];
-  /** The frame the picture shows: the last one this view has on or before the chosen day. */
+  const station = () => stations.get(state.station);
+  const view = (s = station()) => P.views[s.view];
+  /** The frame on show: the last one this view has on or before the chosen day. */
   const frame = (v = view()) => [...v.frames].reverse().find((f) => f.day <= state.day) ?? v.frames[0];
   /** The named moment a day falls in, for the words and figures. */
   const moment = (day) => [...P.moments].reverse().find((m) => m.day <= day) ?? P.moments[0];
   /** A figure for the frame on show: the frame's own, else the moment's, else the one value the manifest has. */
   const figure = (key, f, m) => f.fig?.[key] ?? P.figures[key]?.values?.[m.id] ?? P.figures[key]?.value ?? null;
   const say = (words, id) => (typeof words === 'string' ? words : words[id] ?? words.default ?? '');
-  const preload = (v) => { for (const f of v.frames) if (!cache.has(f.file)) { const img = new Image(); img.src = f.file; cache.set(f.file, img); } };
+  const load = (file) => { if (!cache.has(file)) { const img = new Image(); img.decoding = 'async'; img.src = file; cache.set(file, img); } return cache.get(file); };
+  /** Milliseconds a frame: brisk when a view has many, slow when few. */
+  const rate = (n = view().frames.length) => (n >= 24 ? 1000 / 8 : n >= 8 ? 1000 / 5 : 1200);
 
-  /** One picture fitted into the picture area, with its click targets. */
-  function build(station, f) {
-    const v = P.views[station.view], box = $('pic');
-    const k = Math.min(box.clientWidth / v.size[0], box.clientHeight / v.size[1]);
-    const w = v.size[0] * k, h = v.size[1] * k, x0 = (box.clientWidth - w) / 2, y0 = (box.clientHeight - h) / 2;
+  // ---- the picture, edge to edge ----
+  /** Where a picture sits on the stage: covering it, unless it is far wider or taller than the stage (a section),
+      when it is shown whole and the bands beside it take the colours of its edges. */
+  function fit(v) {
+    const [iw, ih] = v.size, a = iw / ih, s = W / H, whole = a > s * 1.3 || a < s / 1.3;
+    const k = whole ? Math.min(W / iw, H / ih) : Math.max(W / iw, H / ih), w = iw * k, h = ih * k;
+    return { x: (W - w) / 2, y: (H - h) / 2, w, h, whole, wide: a > s };
+  }
+  function lay(node) {
+    const b = node.fit = fit(node.v), e = node.v.edges;
+    Object.assign(node.img.style, { left: `${b.x}px`, top: `${b.y}px`, width: `${b.w}px`, height: `${b.h}px` });
+    node.style.background = b.whole && e ? (b.wide ? `linear-gradient(${e.top} 50%, ${e.bottom} 50%)` : `linear-gradient(to right, ${e.left} 50%, ${e.right} 50%)`) : '';
+  }
+  function makeShot(v, f, how) {
     const node = document.createElement('div');
-    node.className = 'shot';
-    Object.assign(node.style, { width: `${w}px`, height: `${h}px`, left: `${x0}px`, top: `${y0}px` });
-    node.dataset.station = station.id; node.dataset.file = f.file;
-    const img = new Image(); img.alt = v.note; img.src = f.file;
-    const marks = svg('svg', { class: `marks${shot?.dataset.station === station.id ? ' again' : ''}`, viewBox: `0 0 ${w} ${h}` });
-    station.targets.forEach((target, i) => {
-      const name = target.at.find((n) => v.places[n]);
-      if (!name) return;
-      const [x, y] = [v.places[name][0] * w, v.places[name][1] * h];
-      const left = x > w - 260;   // the label goes to whichever side has room
-      const g = svg('g', { class: 'hot', tabindex: 0, role: 'button', 'aria-label': target.label });
-      const inner = svg('g', { class: 'in', style: `animation-delay:${i * 120}ms` });   // they arrive one after another
-      const tx = x + (left ? -26 : 26), anchor = left ? 'end' : 'start';
-      const fig = svg('text', { class: 'fig', x: tx, y: y + 26, 'text-anchor': anchor });
-      fig.dataset.key = target.figure ?? ''; fig.dataset.suffix = target.suffix ?? '';
-      inner.append(svg('circle', { class: 'pulse', cx: x, cy: y, r: 8, style: `animation-delay:${(i * 0.6) % 2.4}s` }),
-        svg('circle', { class: 'ring', cx: x, cy: y, r: 17 }), svg('circle', { class: 'core', cx: x, cy: y, r: 6 }),
-        svg('text', { x: tx, y: y + 4, 'text-anchor': anchor }, target.label), fig);
-      g.append(inner);
-      const go = () => goTo(target.to);
-      g.addEventListener('click', go);
-      g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
-      marks.append(g);
-    });
-    node.box = { x: x0, y: y0, w, h, places: v.places };
-    node.append(img, marks);
+    node.className = `shot${how ? ` ${how}` : ''}`;
+    node.v = v; node.file = f.file;
+    node.img = new Image(); node.img.alt = v.note; node.img.src = f.file;
+    node.append(node.img); lay(node);
     return node;
   }
-
-  /** Put the right picture on top. A view with few frames dissolves from one to the next; a dense one just steps. */
-  function show() {
-    const station = stations.get(state.station), f = frame();
-    if (shot?.dataset.station === station.id) {
-      if (shot.dataset.file === f.file) return;
-      if (view().frames.length >= 8) { shot.dataset.file = f.file; shot.querySelector('img').src = f.file; return; }
+  /** A named place on a frame, in stage pixels: the frame's own places when it has them (the camera moves),
+      else the view's; labels only ever from the frame. Null when out of frame. */
+  function spot(names, f, v, b, frameOnly) {
+    for (const n of names) {
+      const p = f.places ? f.places[n] : frameOnly ? null : v.places[n];
+      if (!p) continue;
+      const x = b.x + p[0] * b.w, y = b.y + p[1] * b.h;
+      return x > 8 && x < W - 8 && y > 8 && y < H - 8 ? [x, y] : null;
     }
-    const before = shot, next = build(station, f);
-    $('pic').insertBefore(next, $('life'));
-    shot = next;
-    const reveal = () => { next.classList.add('on'); if (before) setTimeout(() => before.remove(), still ? 0 : 520); };
-    const img = next.querySelector('img');
-    if (still || !before) reveal();
-    else if (img.complete) requestAnimationFrame(() => requestAnimationFrame(reveal));
-    else { img.onload = reveal; img.onerror = reveal; }
+    return null;
   }
 
-  function chrome() {
-    const station = stations.get(state.station), f = frame(), m = moment(f.day), days = new Set(view().frames.map((x) => x.day));
-    $('title').textContent = station.title;
-    $('back').disabled = state.station === P.start;
-    $('caption').textContent = say(station.caption, m.id);
-    $('figures').replaceChildren(...station.figures.filter((key) => figure(key, f, m) !== null).map((key) => {
-      const fig = P.figures[key], li = document.createElement('li');
+  // ---- bubbles: the ways on, and in a cut the parts named ----
+  function buildMarks(s) {
+    bubbles = [];
+    const all = [...s.targets.map((t) => ({ ...t, open: true })), ...(s.labels ?? []).map((t) => ({ ...t, at: [t.at] }))];
+    $('marks').replaceChildren(...all.map((t, i) => {
+      const g = svg('g', t.open ? { class: 'hot', tabindex: 0, role: 'button', 'aria-label': t.label } : { class: 'lab' });
+      const inner = svg('g', { class: 'in', style: `animation-delay:${i * 120}ms` });   // they arrive one after another
+      const name = svg('text', { x: 26, y: 4 }, t.label), fig = svg('text', { class: 'fig', x: 26, y: 26 });
+      fig.dataset.key = t.figure ?? ''; fig.dataset.suffix = t.suffix ?? '';
+      if (t.open) inner.append(svg('circle', { class: 'pulse', r: 8, style: `animation-delay:${(i * 0.6) % 2.4}s` }), svg('circle', { class: 'ring', r: 17 }));
+      inner.append(svg('circle', { class: 'core', r: 6 }), name, fig);
+      g.append(inner);
+      const b = { t, g, texts: [name, fig], left: false, at: null };
+      if (t.open) {
+        const go = () => goTo(t.to, b.at);
+        g.addEventListener('click', go);
+        g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+      }
+      bubbles.push(b);
+      return g;
+    }));
+    placeMarks();
+  }
+  /** Each bubble rides with its place on the frame on show; a transform only, no layout. */
+  function placeMarks() {
+    if (!shot) return;
+    const f = frame(shot.v);
+    for (const b of bubbles) {
+      b.at = spot(b.t.at, f, shot.v, shot.fit, !b.t.open);
+      b.g.classList.toggle('gone', !b.at);
+      if (!b.at) continue;
+      b.g.setAttribute('transform', `translate(${b.at[0].toFixed(1)},${b.at[1].toFixed(1)})`);
+      const left = b.at[0] > W - 280;   // the label goes to whichever side has room
+      if (left !== b.left) { b.left = left; for (const t of b.texts) { t.setAttribute('x', left ? -26 : 26); t.setAttribute('text-anchor', left ? 'end' : 'start'); } }
+    }
+  }
+
+  /** The frame on show, in the picture on top: within a view the picture steps, its bubbles follow. */
+  function show() {
+    const f = frame();
+    if (shot && shot.file !== f.file) { shot.file = f.file; shot.img.src = load(f.file).src; }
+    placeMarks();
+  }
+
+  // ---- the words, figures and dial over the picture ----
+  function buildChrome(s) {
+    const v = view(s), first = v.frames[0].day, last = v.frames.at(-1).day;
+    $('title').textContent = s.title;
+    $('back').hidden = s.id === P.start;
+    $('figures').replaceChildren(...s.figures.map((key) => {
+      const li = document.createElement('li');
+      li.dataset.key = key; li.title = P.figures[key].source;
       li.innerHTML = '<b></b><span></span><small></small>';
-      li.children[0].textContent = figure(key, f, m);
-      li.children[1].textContent = fig.label;
-      li.children[2].textContent = f.fig?.[key] ? `${fig.kind}, this frame` : fig.kind; li.title = fig.source;
+      li.children[1].textContent = P.figures[key].label;
       return li;
     }));
+    Object.assign($('scrub'), { min: first, max: last, disabled: first === last });
+    const width = $('ticks').clientWidth, days = new Set(v.frames.map((f) => f.day));
+    $('ticks').replaceChildren(...P.moments.filter((m) => m.day >= first && m.day <= last).map((m) => {
+      const li = document.createElement('li'), button = document.createElement('button'), share = (m.day - first) / (last - first || 1);
+      li.dataset.moment = m.id; li.dataset.x = share * width; li.style.left = `${share * 100}%`;
+      li.classList.toggle('missing', !days.has(m.day));   // no picture of that day: it shows the one before
+      button.type = 'button'; button.title = m.says; button.textContent = m.month;
+      button.addEventListener('click', () => setMoment(m.id));
+      li.append(button);
+      return li;
+    }));
+    const n = v.frames.length;
+    $('rendering').textContent = v.expected && n < v.expected ? `rendering: ${n} of ${v.expected}` : '';
+    body.classList.toggle('drift', !calm && !s.section);   // perspective views drift slowly; sections stay put
+  }
+  function chrome() {
+    const s = station(), f = frame(), m = moment(f.day);
+    $('caption').textContent = say(s.caption, m.id);
+    for (const li of $('figures').children) {
+      const value = figure(li.dataset.key, f, m);
+      li.hidden = value === null;
+      if (value === null || li.children[0].textContent === value) continue;
+      li.children[0].textContent = value;
+      li.children[2].textContent = f.fig?.[li.dataset.key] ? `${P.figures[li.dataset.key].kind}, this frame` : P.figures[li.dataset.key].kind;
+    }
     // each bubble's live figure, from the frame on show; it ticks when it changes
-    for (const t of shot?.querySelectorAll('text.fig') ?? []) {
+    for (const t of $('marks').querySelectorAll('text.fig')) {
       const value = t.dataset.key ? figure(t.dataset.key, f, m) : null, text = value === null ? '' : value + t.dataset.suffix;
       if (text === t.textContent) continue;
       if (t.textContent) t.classList.toggle('tick-a', !t.classList.toggle('tick-b'));   // swap animations: no layout read
@@ -116,71 +165,117 @@
     const shownAt = [];
     const ticks = [...$('ticks').children].sort((a, b) => (b.dataset.moment === f.moment) - (a.dataset.moment === f.moment));
     for (const li of ticks) {
-      const x = Number(li.dataset.x), room = shownAt.every((s) => Math.abs(s - x) > 130);
-      li.classList.toggle('missing', !days.has(Number(li.dataset.day)));   // no picture of that day here: the view keeps the one before
+      const x = Number(li.dataset.x), room = shownAt.every((x2) => Math.abs(x2 - x) > 130);
       li.classList.toggle('quiet', !room);
       if (room) shownAt.push(x);
       li.firstChild.setAttribute('aria-current', String(li.dataset.moment === f.moment));
     }
-    document.body.classList.toggle('playing', state.playing);
-    $('play').textContent = state.playing ? '❚❚ Pause' : '▶ Play';
+    body.classList.toggle('playing', state.playing);
+    $('play').textContent = state.playing ? '❚❚' : '▶';
+    $('play').setAttribute('aria-label', state.playing ? 'Pause' : 'Play');
     $('lifebtn').setAttribute('aria-pressed', String(state.life));
-    $('life').style.display = state.life && P.life.views.includes(station.view) ? '' : 'none';
+    $('life').style.display = state.life && P.life.views.includes(s.view) ? '' : 'none';
   }
 
-  const current = () => ({ station: state.station, view: stations.get(state.station).view, day: state.day, frame: frame().file, moment: moment(frame().day).id, life: state.life, playing: state.playing, stations: [...stations.keys()], moments: P.moments.map((m) => m.id) });
+  const current = () => ({ station: state.station, view: station().view, day: state.day, frame: frame().file, moment: moment(frame().day).id, life: state.life, playing: state.playing, frames: view().frames.length, expected: view().expected ?? null, stations: [...stations.keys()], moments: P.moments.map((m) => m.id) });
   function changed() {
     chrome();
     if (parent !== window) parent.postMessage({ type: 'bower-place:state', state: current() }, '*');
     return current();
   }
 
-  function goTo(id) {
+  // ---- going into a view, and back out ----
+  /** Into a view: the picture zooms toward the bubble clicked (`at`) while the next fades in over it from a little
+      larger; without `at` it reverses, the next settling from close in on the bubble that led here. */
+  function goTo(id, at) {
     if (!stations.has(id)) throw new Error(`No such place in the drawing: ${id}`);
-    state.station = id; preload(view()); show(); return changed();
+    const before = shot, from = state.station, s = stations.get(id), v = view(s);
+    play(false, true);
+    state.station = id;
+    const f0 = calm ? v.frames.at(-1) : v.frames[0];
+    state.day = f0.day;
+    v.frames.forEach((f) => load(f.file));
+    const motion = !!before && !calm;
+    let how = before ? 'enter' : 'on';
+    let origin = null;
+    if (motion && !at) {
+      const back = s.targets.find((t) => t.to === from);
+      origin = back && spot(back.at, f0, v, fit(v)) || [W / 2, H / 2];
+      how = 'enter back';
+    }
+    const next = makeShot(v, f0, how);
+    if (origin) next.style.transformOrigin = `${origin[0]}px ${origin[1]}px`;
+    $('world').insertBefore(next, $('life'));
+    shot = next;
+    buildChrome(s);
+    $('marks').replaceChildren(); bubbles = [];
+    const settle = () => {
+      if (shot !== next) return;
+      buildMarks(s);
+      if (!calm && v.frames.length > 1) play(true);
+      changed();
+    };
+    if (!before) settle();
+    else {
+      const go = () => {
+        if (motion) {
+          before.style.transformOrigin = at ? `${at[0]}px ${at[1]}px` : `${W / 2}px ${H / 2}px`;
+          before.classList.add(at ? 'leave' : 'shrink');
+        }
+        requestAnimationFrame(() => requestAnimationFrame(() => next.classList.replace('enter', 'on')));
+        setTimeout(() => { before.remove(); settle(); }, still ? 0 : 640);
+      };
+      // wait for the picture (not long) so the fade is to a picture, not to nothing
+      Promise.race([next.img.decode().catch(() => {}), new Promise((r) => setTimeout(r, 700))]).then(go);
+    }
+    // then the first frames of the views one click away
+    setTimeout(() => { for (const t of s.targets) load(P.views[stations.get(t.to).view].frames[0].file); }, 1500);
+    return changed();
   }
-  /** A named moment ('year-3'), a day ('day:837') or a number of days after the start of the run. */
+  /** A named moment ('year-3'), a day ('day:837') or a number of days after the start of the run. Pauses. */
   function setMoment(at) {
     const named = P.moments.find((m) => m.id === at);
     const day = named ? named.day : Number(String(at).replace('day:', ''));
     if (!Number.isFinite(day)) throw new Error(`No such moment: ${at}`);
-    state.day = Math.max(span[0], Math.min(span[1], day)); show(); return changed();
+    const frames = view().frames;
+    play(false, true);
+    state.day = Math.max(frames[0].day, Math.min(frames.at(-1).day, day)); show(); return changed();
   }
   function setLife(on) { state.life = !!on; return changed(); }
-  /** Milliseconds a frame: brisk when a view has many, slow when few. */
-  const rate = (n = view().frames.length) => (n >= 24 ? 1000 / 12 : n >= 8 ? 1000 / 6 : 1200);
-  /** Once through every frame of this view at that steady rate, from `from` (a frame index). */
-  function play(on = !state.playing, from = 0) {
+  /** Plays through this view's frames, holds 2.5 s on the last, and starts again, until paused. It waits for a
+      picture that has not arrived rather than stepping past it. */
+  function play(on = !state.playing, quiet = false) {
     clearTimeout(timer);
-    state.playing = on;
-    if (on) {
-      const frames = view().frames, ms = rate();
-      let i = from;
-      const step = () => { setMoment(frames[i].day); i += 1; if (i < frames.length) timer = setTimeout(step, ms); else { state.playing = false; changed(); } };
-      step();
+    state.playing = !!on && view().frames.length > 1;
+    if (state.playing) {
+      const frames = view().frames;
+      let i = frames.indexOf(frame()) + 1;
+      if (i >= frames.length) i = 0;
+      const step = () => {
+        const f = frames[i], img = load(f.file);
+        if (!img.complete) { timer = setTimeout(step, 60); return; }
+        state.day = f.day; show(); changed();
+        i += 1;
+        if (i < frames.length) timer = setTimeout(step, rate());
+        else { i = 0; timer = setTimeout(step, 2500); }
+      };
+      timer = setTimeout(step, i === 0 ? 400 : rate());
     }
-    return changed();
+    return quiet ? null : changed();
   }
-  /** For the deck: seconds a full play of this view takes, and a seek within it that pauses. */
+  /** For the deck: seconds one pass through this view takes, and a seek within it that pauses. */
   const duration = () => (view().frames.length * rate()) / 1000;
   function setT(seconds) {
     const frames = view().frames, i = Math.max(0, Math.min(frames.length - 1, Math.floor((seconds * 1000) / rate())));
-    play(false);
-    return setMoment(frames[i].day);
+    return setMoment(`day:${frames[i].day}`);
   }
-  const nudge = (by) => { const frames = view().frames, i = frames.indexOf(frame()) + by; if (frames[i]) { play(false); setMoment(frames[i].day); } };
+  const nudge = (by) => { const frames = view().frames, f = frames[frames.indexOf(frame()) + by]; if (f) setMoment(`day:${f.day}`); };
 
   // ---- the page's controls ----
-  Object.assign($('scrub'), { min: span[0], max: span[1] });
-  $('scrub').addEventListener('input', (e) => { play(false); setMoment(Number(e.target.value)); });
-  for (const m of P.moments) {
-    const li = document.createElement('li'), button = document.createElement('button');
-    const share = (m.day - span[0]) / (span[1] - span[0] || 1);
-    li.dataset.moment = m.id; li.dataset.day = m.day; li.dataset.x = share * $('ticks').clientWidth; li.style.left = `${share * 100}%`;
-    button.type = 'button'; button.title = m.says; button.textContent = m.month;
-    button.addEventListener('click', () => { play(false); setMoment(m.id); });
-    li.append(button); $('ticks').append(li);
-  }
+  $('scrub').addEventListener('input', (e) => {   // snaps to the nearest frame there is: never a day without a picture
+    const day = Number(e.target.value), near = view().frames.reduce((a, f) => (Math.abs(f.day - day) < Math.abs(a.day - day) ? f : a));
+    setMoment(`day:${near.day}`);
+  });
   $('back').addEventListener('click', () => goTo(P.start));
   $('play').addEventListener('click', () => play());
   $('lifebtn').addEventListener('click', () => setLife(!state.life));
@@ -188,22 +283,33 @@
   $('realfrom').textContent = `From ${P.real.from}`;
   $('realbtn').addEventListener('click', () => { const open = $('real').hidden; $('real').hidden = !open; $('realbtn').setAttribute('aria-expanded', String(open)); });
   addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') goTo(P.start);
+    if (e.key === 'Escape' && state.station !== P.start) goTo(P.start);
     if (e.target === $('scrub')) return;   // the slider steps itself
     if (e.key === 'ArrowRight') nudge(1);
     if (e.key === 'ArrowLeft') nudge(-1);
+    if (e.key === ' ' && e.target === body) { e.preventDefault(); play(); }
   });
+  let pending = 0;
+  function measure() {
+    W = $('stage').clientWidth; H = $('stage').clientHeight;
+    $('marks').setAttribute('viewBox', `0 0 ${W} ${H}`); $('life').setAttribute('viewBox', `0 0 ${W} ${H}`);
+    for (const node of $('world').querySelectorAll('.shot')) lay(node);
+  }
+  addEventListener('resize', () => {
+    cancelAnimationFrame(pending);
+    pending = requestAnimationFrame(() => { measure(); buildChrome(station()); placeMarks(); chrome(); });
+  });
+  measure();
 
   // ---- life: an illustration, not a finding. A few birds cross the picture now and then and sometimes settle. ----
   const birds = [];
   const rnd = (a, b) => a + Math.random() * (b - a);
   function fly(b, now) {
-    const box = shot?.box, perch = box?.places[P.life.perch];
-    if (!box) return;
-    const at = (x, y) => [box.x + x * box.w, box.y + y * box.h];
+    if (!shot) return;
+    const perch = spot([P.life.perch], frame(shot.v), shot.v, shot.fit);
     const fromLeft = Math.random() < 0.5, settle = !!perch && !b.perched && Math.random() < 0.35;
-    b.p0 = b.perched ? b.p2 : at(fromLeft ? -0.08 : 1.08, rnd(0.05, 0.35));
-    b.p2 = settle ? at(perch[0] + rnd(-0.03, 0.03), perch[1]) : at(fromLeft ? 1.1 : -0.1, rnd(0.05, 0.4));
+    b.p0 = b.perched ? b.p2 : [fromLeft ? -0.08 * W : 1.08 * W, rnd(0.05, 0.35) * H];
+    b.p2 = settle ? [perch[0] + rnd(-30, 30), perch[1]] : [fromLeft ? 1.1 * W : -0.1 * W, rnd(0.05, 0.4) * H];
     b.p1 = [(b.p0[0] + b.p2[0]) / 2 + rnd(-80, 80), Math.min(b.p0[1], b.p2[1]) - rnd(40, 160)];
     b.t0 = now + (b.perched ? 0 : rnd(1500, 9000)); b.dur = rnd(5000, 9000); b.perched = false; b.settle = settle;
   }
@@ -214,7 +320,6 @@
   function tick(now) {
     requestAnimationFrame(tick);
     if (!state.life || $('life').style.display === 'none') return;
-    $('life').setAttribute('viewBox', `0 0 ${$('pic').clientWidth} ${$('pic').clientHeight}`);
     for (const b of birds) {
       if (!b.p0) fly(b, now);
       else if (!b.perched && now > b.t0 + b.dur) { if (b.settle) { b.perched = true; b.t0 = now; b.dur = rnd(3000, 7000); } else fly(b, now); }

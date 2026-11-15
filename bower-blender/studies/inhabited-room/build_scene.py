@@ -1471,6 +1471,25 @@ def timelapse_dates(run) -> list:
     return out
 
 
+def travel(cam, v: dict, share: float) -> None:
+    """Put a camera where it is `share` of the way (0 to 1) through its travel, if its view has one (site.json,
+    cameras.<view>.travel): walking in from `from_at_m` to where it stands, or turning `orbit_deg` round its target."""
+    move = v.get("travel")
+    if not move:
+        return
+    ease = share * share * (3.0 - 2.0 * share)
+    target = Vector(v["target_m"])
+    if "from_at_m" in move:
+        (ax, ay), (bx, by) = move["from_at_m"], v["at_m"]
+        x, y = ax + (bx - ax) * ease, ay + (by - ay) * ease
+        cam.location = (x, y, surface_z(x, y) + v["eye_m"])
+    elif "orbit_deg" in move:
+        a = radians(move["orbit_deg"]) * (ease - 0.5)
+        out = Vector(v["location_m"]) - target
+        cam.location = target + Vector((out.x * cos(a) - out.y * sin(a), out.x * sin(a) + out.y * cos(a), out.z))
+    cam.rotation_euler = (target - cam.location).to_track_quat("-Z", "Y").to_euler()
+
+
 def timelapse(scene, colls, cams, mats, run, systems, views: list, out_dir: Path) -> None:
     """Each view asked for on every date of the time-lapse: <out>/<view>/<nnn>.jpg, and frames.json saying what each
     frame is. Each date's climbers and roots are drawn, photographed and thrown away, so the scene file keeps only its
@@ -1478,8 +1497,10 @@ def timelapse(scene, colls, cams, mats, run, systems, views: list, out_dir: Path
     import datetime
 
     import grown
+    import project_places
 
     t = SITE["growth"]["timelapse"]
+    places = project_places.named_places(SITE, GROUND)
     switch = bpy.data.node_groups["STUDY_section_switch"].nodes
     notes = {"section": colls["S95_SECTION_NOTES"], "plant": colls["S96_PLANT_NOTES"]}
     scene.render.use_stamp = False
@@ -1493,7 +1514,7 @@ def timelapse(scene, colls, cams, mats, run, systems, views: list, out_dir: Path
         started = time.time()
         drew = grown.draw(run, date, temp, colls["S99_ASSET_SOURCES"], TOOLS, "tl")
         drew.update(draw_roots(systems, drew["day"], run["lastDay"], temp, mats, "tl", date))
-        frame = {"index": k, "date": date, "day": drew["day"], "says": datetime.date.fromisoformat(date).strftime("%B %Y"), **{key: drew[key] for key in ("stem_m", "thickest_stem_mm", "leaves", "flowers", "roots_m", "root_reach_m")}, "views": []}
+        frame = {"index": k, "date": date, "day": drew["day"], "says": datetime.date.fromisoformat(date).strftime("%B %Y"), **{key: drew[key] for key in ("stem_m", "thickest_stem_mm", "leaves", "flowers", "roots_m", "root_reach_m")}, "views": [], "places": {}}
         for view in views:
             when = t["views"].get(view)
             if when is None or (isinstance(when, str) and k and not date.endswith(when)):
@@ -1503,10 +1524,13 @@ def timelapse(scene, colls, cams, mats, run, systems, views: list, out_dir: Path
             on = bool(v.get("section"))
             switch["section_on"].outputs[0].default_value = 1.0 if on else 0.0
             switch["section_y"].outputs[0].default_value = v.get("cut_y_m", CUT_Y)
-            for key, coll in notes.items():
-                coll.hide_render = key != view
+            for coll in notes.values():
+                coll.hide_render = True  # no labels are baked into a frame: the page that plays them draws its own
+            travel(cams[view], v, k / max(1, len(dates) - 1))
             scene.cycles.samples = t["samples"]
             scene.render.resolution_x, scene.render.resolution_y = (int(px * t["scale"]) for px in v["size_px"])
+            bpy.context.view_layer.update()
+            frame["places"][view] = project_places.seen(scene, cams[view], places)
             (out_dir / view).mkdir(exist_ok=True)
             scene.render.filepath = str(out_dir / view / f"{k:03d}.jpg")
             bpy.ops.render.render(write_still=True)
@@ -1517,10 +1541,12 @@ def timelapse(scene, colls, cams, mats, run, systems, views: list, out_dir: Path
             bpy.data.objects.remove(obj, do_unlink=True)
             if data is not None and data.users == 0:
                 (bpy.data.curves if isinstance(data, bpy.types.Curve) else bpy.data.meshes).remove(data)
-        (out_dir / "frames.json").write_text(json.dumps({"note": "Written by build_scene.py --timelapse: one entry for each date photographed, with what the grown run has on the plants that day and which views have a picture of it (<view>/<index>.jpg). The roots are a sketch, not the run's.", "run": SITE["growth"]["run"], "snapshot": SNAPSHOT, "frames": frames}, indent=1) + chr(10), encoding="utf-8")
+        (out_dir / "frames.json").write_text(json.dumps({"note": "Written by build_scene.py --timelapse: one entry for each date photographed, with what the grown run has on the plants that day and which views have a picture of it (<view>/<index>.jpg). The roots are a sketch, not the run's.", "run": SITE["growth"]["run"], "snapshot": SNAPSHOT, "expected": len(dates), "frames": frames}) + chr(10), encoding="utf-8")
         log(f"time-lapse {k + 1} of {len(dates)}, {date}: {', '.join(frame['views'])} in {round(time.time() - started)} s")
     colls["S50_BOWER_PLANTING"].children.unlink(temp)
     bpy.data.collections.remove(temp)
+    for view in views:  # every camera back where its still is taken from
+        travel(cams[view], SITE["cameras"][view], 1.0 if "from_at_m" in SITE["cameras"][view].get("travel", {}) else 0.5)
     switch["section_on"].outputs[0].default_value = 0.0
     for coll in notes.values():
         coll.hide_render = True

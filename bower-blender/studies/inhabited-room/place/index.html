@@ -7,29 +7,33 @@
 <!--
   A drawing to explore: the whole place first, then into it. Pictures, places and figures were made beforehand
   (manifest.js, by package_place.py); this page only chooses what to show, and opens from its folder.
+  The picture fills the window; everything else floats over it.
   ?embed ?station= ?moment= (a moment id or day:<n>) ?life=1 ?still. Hooks and messages: README.md.
 -->
 <link rel="stylesheet" href="place.css">
 </head>
 <body class="place">
 <div id="stage">
+  <div id="world" aria-live="polite">
+    <svg id="life" aria-hidden="true"></svg>
+    <svg id="marks"></svg>
+  </div>
+  <div class="shade top"></div><div class="shade foot"></div>
   <header>
-    <button id="back" type="button">← The place</button>
     <h1 id="title"></h1>
-    <div class="tools">
-      <button id="lifebtn" type="button" aria-pressed="false" title="Birds: an illustration, not a finding">Life</button>
-      <button id="realbtn" type="button" aria-expanded="false">What is real</button>
-    </div>
-  </header>
-  <div id="pic" aria-live="polite"><svg id="life" aria-hidden="true"></svg></div>
-  <aside id="rail">
+    <button id="back" type="button">← The place</button>
     <p id="caption"></p>
-    <ul id="figures"></ul>
+  </header>
+  <div class="tools">
+    <button id="realbtn" type="button" aria-expanded="false">What is real</button>
+    <button id="lifebtn" type="button" aria-pressed="false" title="Birds: an illustration, not a finding">Life</button>
     <div id="real" hidden><ul id="reallines"></ul><p class="from" id="realfrom"></p></div>
-  </aside>
+  </div>
+  <ul id="figures"></ul>
   <nav id="dial" aria-label="When">
-    <button id="play" type="button">▶ Play</button>
+    <button id="play" type="button" aria-label="Pause"></button>
     <strong id="date"></strong>
+    <span id="rendering"></span>
     <div class="track">
       <input id="scrub" type="range" min="0" max="1" step="1" value="0" aria-label="Day">
       <ol id="ticks"></ol>
