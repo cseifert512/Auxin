@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 const environment={window:{}};
 vm.runInNewContext(await readFile(new URL('../time-experiment.js',import.meta.url),'utf8'),environment);
-const {occupationAt,birdAt,hummingbirdAt}=environment.window.DESIGNX_V8_TIME_EXPERIMENT;
+const {occupationAt,birdAt,hummingbirdAt,depthVisibility}=environment.window.DESIGNX_V8_TIME_EXPERIMENT;
 const person=(time,id)=>occupationAt(time).find(p=>p.id===id);
 const distance=(a,b)=>Math.hypot(...a.map((v,i)=>v-b[i]));
 const piers=Array.from({length:6},(_,i)=>[6.2*Math.cos(i*Math.PI/3),6.2*Math.sin(i*Math.PI/3),0]);
@@ -30,4 +30,23 @@ assert.ok(upper.target[2]-lower.target[2]>.35,'The hummingbird should move betwe
 for(const bird of [lower,upper])assert.ok(distance(bird.point,bird.target)<.24,'The hover should be beside the flower');
 assert.equal(hummingbirdAt(50.8).feeding,false);assert.equal(hummingbirdAt(51),null);
 assert.equal(JSON.stringify(occupationAt(50)),JSON.stringify(occupationAt(50)));
-console.log('PASS: grounded pauses and gestures; resumed travel; distinct bird routes; bloom-targeted hummingbird.');
+// Pace changes should be perceptible, continuous and safely below a jog.
+for(const id of ['through','around']){
+  const speeds=[];
+  for(let time=13.01;time<50.9;time+=.02){
+    const p=person(time,id),next=person(time+.01,id);if(!p||!next)continue;
+    const speed=distance(p.point,next.point)/.01;
+    assert.ok(speed<1.85,'Routes should not jump or accelerate into running');
+    if(p.action==='walk'&&p.speed>.7)speeds.push(speed);
+    const turn=Math.abs(Math.atan2(Math.sin(next.heading-p.heading),Math.cos(next.heading-p.heading)));
+    assert.ok(turn<.12,'Facing should change smoothly, including entering and leaving pauses');
+  }
+  assert.ok(Math.max(...speeds)-Math.min(...speeds)>.5,'Each person should vary their pace');
+}
+const encoded=metres=>Math.floor(metres/64*65534);
+const depth=new Uint16Array([encoded(5),65535,encoded(15),encoded(15)]);
+assert.equal(depthVisibility(depth,2,2,0,0,10),0,'A person behind timber must be hidden');
+assert.equal(depthVisibility(depth,2,2,0,1,10),1,'A person in front of timber must remain visible');
+assert.equal(depthVisibility(depth,2,2,1,0,10),1,'Clear background must preserve the person');
+assert.equal(depthVisibility(depth,2,2,.5,0,10),.5,'The edge should mix visibility, not invent intermediate geometry');
+console.log('PASS: depth ordering and edge coverage; varied walking pace and smooth turns; grounded pauses; distinct birds and flower visits.');

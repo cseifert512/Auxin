@@ -294,13 +294,14 @@ try {
     for(const sample of motion.samples) for(const person of sample.people) {
       for(const pier of piers) assert.ok(Math.hypot(person.point[0]-pier[0],person.point[1]-pier[1])>1.2,'Walkers must clear the timber piers');
     }
-    const through=motion.samples.slice(0,180).flatMap(s=>s.people.filter(p=>p.id==='through'));
+    const through=motion.samples.slice(0,220).flatMap(s=>s.people.filter(p=>p.id==='through'));
     assert.ok(through.some(p=>p.point[0]>6)&&through.some(p=>Math.hypot(p.point[0],p.point[1])<.3)&&through.some(p=>p.point[0]<-6),'A person should arrive, cross the room and leave');
     for(const id of ['through','around']) {
       const a=motion.samples.find(s=>s.time===21).people.find(p=>p.id===id),b=motion.samples.find(s=>s.time===22).people.find(p=>p.id===id);
       const moved=Math.hypot(...a.point.map((v,i)=>v-b.point[i]));
-      assert.ok(moved>1&&moved<1.3,'Walk cycles must accompany visible travel at an everyday pace');
-      assert.ok(Math.abs(a.cycle-b.cycle)>.05,'Feet must advance with travelled distance');
+      assert.ok(moved>.65&&moved<1.85,'Walk cycles must accompany visible travel at a varied everyday pace');
+      const step=motion.samples.find(s=>Math.abs(s.time-21.3)<.001).people.find(p=>p.id===id);
+      assert.ok(Math.abs(a.cycle-step.cycle)>.1,'Feet must advance within a stride, even when a full second repeats a similar pose');
     }
     assert.equal(motion.before,null);assert.equal(motion.between,null);
     assert.equal(motion.arriving.flying,true);assert.equal(motion.perched.flying,false);assert.equal(motion.leaving.flying,true);
@@ -331,6 +332,55 @@ try {
     assert.match(await host('growth').locator('video').getAttribute('src'),/approach-ink-16x9\.(mp4|webm)$/);
     assert.equal(await page.locator('.slide.v7-growth-slide').count(),1);
     assert.equal(await page.locator('.slide.v8-time-experiment-slide').count(),1);
+  });
+  await test('Time depth hides people behind members and leaves in all three cameras', async () => {
+    const slide=await activate('v8-time-experiment-slide');await experimentReady();
+    await page.waitForFunction(()=>document.querySelector('[data-v8-time-experiment]').dataset.gesturesReady==='true');
+    for(const variant of ['orbit','fixed','rise']){
+      await experiment().locator(`[data-time-variant="${variant}"]`).click();await experimentReady();
+      const samples=[];let proof=false;
+      for(const time of [17,19,22,25,28,32,36,40,41.2,45,48,50.2]){
+        await experimentSeek(time/51);const state=await experimentState();
+        assert.equal(state.depthReady,true,'The selected movie frame needs its matching depth');
+        samples.push(...state.occlusion);
+        if(!proof&&state.occlusion.some(p=>p.hidden>.08&&p.hidden<.85)){
+          await screenshot(`slide-03-depth-${variant}`,slide);proof=true;
+        }
+      }
+      assert.ok(samples.some(p=>p.hidden>.9),`${variant}: people behind the structure should disappear`);
+      assert.ok(samples.some(p=>p.hidden>.02&&p.hidden<.9),`${variant}: individual members and leaves should partly hide people`);
+      assert.ok(samples.some(p=>p.hidden<.01),`${variant}: people in clear view should remain visible`);
+    }
+    await experiment().locator('[data-time-variant="orbit"]').click();await experimentReady();
+    await experimentSeek(26/51);
+    const canvas=experiment().locator('canvas'),image=await canvas.evaluate(el=>el.toDataURL());
+    await frames();assert.equal(await canvas.evaluate(el=>el.toDataURL()),image);
+    await experimentSeek(27/51);await experimentSeek(26/51);
+    assert.equal(await canvas.evaluate(el=>el.toDataURL()),image,'Depth, gait and gestures should reproduce a scrubbed moment');
+    await experimentSeek(25.9/51);await experiment().getByRole('button',{name:'Play drawing',exact:true}).click();
+    await page.waitForFunction(()=>document.querySelector('[data-v8-time-experiment]').v8Controller.getState().time>27.1);
+    await experiment().getByRole('button',{name:'Pause drawing',exact:true}).click();
+    assert.equal((await experimentState()).depthReady,true,'Autoplay should cross depth chunk boundaries without losing inhabitants');
+  });
+  await test('Time reduced-motion mode opens at a still, depth-composited summer', async () => {
+    await page.emulateMedia({reducedMotion:'reduce'});await page.goto(href+'#slide-03');await page.reload();await experimentReady();
+    const state=await experimentState();assert.equal(state.playing,false);assert.equal(state.depthReady,true);assert.equal(state.time,49);
+    const canvas=experiment().locator('canvas'),image=await canvas.evaluate(el=>el.toDataURL());await frames();
+    assert.equal(await canvas.evaluate(el=>el.toDataURL()),image);
+    await page.emulateMedia({reducedMotion:'no-preference'});
+  });
+  await test('Missing Time depth retains the film without see-through inhabitants', async () => {
+    expectingLoadFailure=true;
+    const pattern=/\/v8\/assets\/time-experiment\/depth\/.*\.webp(?:\?|$)/;
+    await page.route(pattern,route=>route.abort('failed'));
+    try{
+      await page.goto(href+'#slide-03');await page.reload();await experimentReady();
+      await experimentSeek(26/51);const state=await experimentState();
+      assert.equal(state.error,null);assert.equal(state.depthReady,false);assert.deepEqual(state.occlusion,[]);
+      assert.ok(await experiment().locator('video').evaluate(el=>el.readyState>=2));
+    }finally{await page.unroute(pattern);expectingLoadFailure=false;}
+    await page.reload();await experimentReady();await experimentSeek(26/51);
+    assert.equal((await experimentState()).depthReady,true);
   });
   await test('Missing Time experiment film shows its still and recovers on retry', async () => {
     expectingLoadFailure = true;
