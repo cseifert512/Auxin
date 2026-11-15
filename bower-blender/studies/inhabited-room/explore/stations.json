@@ -1,0 +1,328 @@
+{
+  "note": "The places a viewer can go in the drawing, and the few words on each. Authored for the study; the deck may reword, reorder or leave out any of it. A caption or a label's text may be one string or one per configuration. `at` names a place in manifest.configurations[..].points; `to` is where the text sits, in pixels of the frame, from the place. `measures` are keys of manifest.configurations[..].quantities. Layers are stacked in the order they are listed here: the last lies on top.",
+  "paper": "EEF3EA",
+  "ink": "102820",
+  "start": "whole",
+  "layers": {
+    "timber": {
+      "name": "Timber",
+      "colour": "8A6A3F"
+    },
+    "walking-route": {
+      "name": "Where people walk",
+      "colour": "B99A63"
+    },
+    "care-area": {
+      "name": "Where it is tended from",
+      "colour": "B4492F"
+    },
+    "root-zones": {
+      "name": "Root zones",
+      "colour": "7A4A1E"
+    },
+    "footings": {
+      "name": "Footings",
+      "colour": "2F4F7F"
+    },
+    "water": {
+      "name": "Water",
+      "colour": "2A8CA8"
+    },
+    "support-lines": {
+      "name": "Training lines",
+      "colour": "1F6FD0"
+    },
+    "plant-routes": {
+      "name": "Climbers and their way up",
+      "colour": "2E8B3A"
+    }
+  },
+  "configurations": [
+    "found",
+    "baseline",
+    "proposal"
+  ],
+  "stations": [
+    {
+      "id": "whole",
+      "title": "The whole place",
+      "view": "whole",
+      "layers": [],
+      "caption": "A garden room on the day it is planted.",
+      "labels": [],
+      "measures": [],
+      "hotspots": [
+        {
+          "at": "path.east",
+          "to": "room",
+          "says": "Walk in"
+        },
+        {
+          "at": "floor.middle",
+          "to": "ground",
+          "says": "Open the ground"
+        },
+        {
+          "at": "pier.R1.P1.foot",
+          "to": "pier",
+          "says": "Look at this pier"
+        }
+      ]
+    },
+    {
+      "id": "room",
+      "title": "The room",
+      "view": "arrival",
+      "layers": [],
+      "caption": "Arriving from the south. Nothing has grown yet.",
+      "labels": [],
+      "measures": [],
+      "hotspots": [
+        {
+          "at": "pier.R1.P1.foot",
+          "to": "pier",
+          "says": "Look at this pier"
+        }
+      ]
+    },
+    {
+      "id": "ground",
+      "title": "Its ground",
+      "view": "whole",
+      "layers": [
+        "footings",
+        "root-zones",
+        "plant-routes",
+        "support-lines",
+        "walking-route",
+        "care-area",
+        "water"
+      ],
+      "caption": "What holds it up, where it roots, and how it is reached.",
+      "labels": [
+        {
+          "at": "pile.R1.P2.1.tip",
+          "text": "screw piles",
+          "to": [
+            70,
+            30
+          ]
+        },
+        {
+          "at": "rooted.R1.P3.1",
+          "text": "where the climbers root",
+          "to": [
+            80,
+            -30
+          ]
+        },
+        {
+          "at": "care-path.east",
+          "text": "care path",
+          "to": [
+            60,
+            40
+          ]
+        },
+        {
+          "at": "path.east",
+          "text": "the way in",
+          "to": [
+            90,
+            50
+          ]
+        }
+      ],
+      "measures": [
+        "piles",
+        "climbers_in_soil",
+        "training_line_m"
+      ],
+      "hotspots": [
+        {
+          "at": "pier.R1.P1.foot",
+          "to": "pier",
+          "says": "Look at this pier"
+        }
+      ]
+    },
+    {
+      "id": "pier",
+      "title": "One pier",
+      "view": "pier",
+      "configuration": "found",
+      "layers": [
+        "footings",
+        "plant-routes",
+        "support-lines"
+      ],
+      "caption": {
+        "found": "The climbers we grew start here, at the feet of their lines. Every one stands on steel.",
+        "baseline": "Keep the pier. Move the climbers out to where there is ground.",
+        "proposal": "Open the pier. Each climber roots at the foot of its own line."
+      },
+      "labels": [
+        {
+          "at": "footing.R1.P1",
+          "text": {
+            "found": "steel cap",
+            "baseline": "steel cap",
+            "proposal": "open ground, on a frame"
+          },
+          "to": [
+            -150,
+            70
+          ]
+        },
+        {
+          "at": "rooted.R1.P1.2",
+          "text": {
+            "found": "a climber, on the cap",
+            "baseline": "root zone",
+            "proposal": "a climber, in soil"
+          },
+          "to": [
+            130,
+            -60
+          ]
+        }
+      ],
+      "measures": [
+        "climbers_in_soil",
+        "steel_over_the_ground_m2",
+        "soil_per_climber_m3"
+      ],
+      "hotspots": []
+    },
+    {
+      "id": "change",
+      "title": "The change",
+      "view": "pier",
+      "configuration": "proposal",
+      "compare": [
+        "baseline",
+        "proposal"
+      ],
+      "layers": [
+        "footings",
+        "root-zones",
+        "plant-routes",
+        "support-lines"
+      ],
+      "caption": {
+        "found": "As found: every climber on steel.",
+        "baseline": "Keep the pier. Climbers move out, and are handed to their lines above head height.",
+        "proposal": "Open the pier. Each climber roots at the foot of its own line."
+      },
+      "labels": [
+        {
+          "at": "footing.R1.P1",
+          "text": {
+            "found": "steel cap",
+            "baseline": "steel cap",
+            "proposal": "frame, open between"
+          },
+          "to": [
+            -150,
+            70
+          ]
+        },
+        {
+          "at": "rooted.R1.P1.1",
+          "text": {
+            "found": "on the cap",
+            "baseline": "root zone",
+            "proposal": "rooted here"
+          },
+          "to": [
+            140,
+            40
+          ]
+        },
+        {
+          "at": "meets.R1.P1.1",
+          "text": {
+            "found": "its line",
+            "baseline": "handed across here",
+            "proposal": "meets its line here"
+          },
+          "to": [
+            150,
+            -40
+          ]
+        }
+      ],
+      "measures": [
+        "climbers_in_soil",
+        "meets_its_lines_m",
+        "cable_on_the_arches_m",
+        "steel_over_the_ground_m2",
+        "soil_per_climber_m3",
+        "piles"
+      ],
+      "hotspots": []
+    },
+    {
+      "id": "arrival-and-care",
+      "title": "Arriving and tending",
+      "view": "arrival",
+      "compare": [
+        "baseline",
+        "proposal"
+      ],
+      "layers": [
+        "walking-route",
+        "care-area"
+      ],
+      "caption": {
+        "found": "As found, nobody has said how it is tended.",
+        "baseline": "A wide way in. Tended from outside, on steps.",
+        "proposal": "A narrower way in, between planted legs. Tended from the floor."
+      },
+      "labels": [
+        {
+          "at": "tended.R1.P1",
+          "text": "tended from here",
+          "to": [
+            -120,
+            -70
+          ]
+        }
+      ],
+      "spans": [
+        {
+          "from": "way-in.west",
+          "to": "way-in.east",
+          "measure": "way_in_m"
+        }
+      ],
+      "measures": [
+        "way_in_m",
+        "floor_m2",
+        "tended"
+      ],
+      "hotspots": [
+        {
+          "at": "pier.R1.P1.foot",
+          "to": "change",
+          "says": "Back to the pier"
+        }
+      ]
+    }
+  ],
+  "measure_names": {
+    "climbers": "Climbers",
+    "climbers_in_soil": "Rooted in soil",
+    "meets_its_lines_m": "Meets its line",
+    "cable_on_the_arches_m": "Cable on the arches",
+    "steel_over_the_ground_m2": "Steel over the ground, each pier",
+    "soil_per_climber_m3": "Kept soil, each climber",
+    "soil_all_m3": "Kept soil, in all",
+    "way_in_m": "The way in",
+    "piles": "Piles",
+    "training_line_m": "Training line",
+    "line_out_of_reach_m": "Line out of reach",
+    "floor_m2": "Floor",
+    "tended": "Tended"
+  }
+}

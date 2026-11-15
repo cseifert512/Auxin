@@ -29,7 +29,7 @@
       "R1.B5",
       "R1.B6"
     ],
-    "note": "Two bays are walked through, on one line from south to north. The other four are planted across: open to look through, not to walk through. The floor stops 0.9 m short of the pier ring, so every pier stands in a bed."
+    "note": "Two bays are walked through, on one line from south to north. The other four are planted across: open to look through, not to walk through. The floor's shape belongs to the configuration."
   },
   "paths": {
     "width_m": 2.4,
@@ -73,7 +73,8 @@
   },
   "planting_at_installation": {
     "cane_height_m": 2.5,
-    "note": "One climber at each root zone, drawn as a tied cane with a few leaves: a diagram of a plant put in at 2 to 3 m, not a grown or simulated one."
+    "note": "One climber at each place a configuration roots one, drawn as a tied stem with a few leaves: a diagram of a plant put in at 2 to 3 m, not a grown or simulated one. root_ball_m is a drawing assumption used only to say whether a climber stands wholly on steel; it is not a horticultural requirement.",
+    "root_ball_m": 0.3
   },
   "garden": {
     "trees": [
@@ -178,13 +179,25 @@
     },
     {
       "avatar": "Gardener_Male_01",
-      "pose": "tend",
-      "at_m": [
-        -7.32,
-        0.12
-      ],
-      "facing_deg": 0.0,
-      "does": "tying in a shoot at the west pier, from the standing pad"
+      "does": "tending the climbers at the pier left of the entrance",
+      "by_configuration": {
+        "found": {
+          "pose": "tend",
+          "at_pad_of": "R1.P1"
+        },
+        "baseline": {
+          "pose": "tend",
+          "at_pad_of": "R1.P1"
+        },
+        "proposal": {
+          "pose": "tend_low",
+          "at_m": [
+            -2.12,
+            -3.67
+          ],
+          "facing_deg": -120.0
+        }
+      }
     }
   ],
   "cameras": {
@@ -214,6 +227,81 @@
     },
     "site_plan": {
       "width_m": 44.0
+    },
+    "whole": {
+      "location_m": [
+        -6.5,
+        -25.5,
+        13.0
+      ],
+      "target_m": [
+        0.0,
+        0.5,
+        0.8
+      ],
+      "lens_mm": 36.0,
+      "note": "The whole place from the south, raised: the view to come back to."
+    },
+    "pier": {
+      "location_m": [
+        -1.3,
+        -8.85,
+        5.1
+      ],
+      "target_m": [
+        -2.75,
+        -4.95,
+        0.5
+      ],
+      "lens_mm": 35.0,
+      "layers_reach_m": 9.0,
+      "note": "Pier R1.P1, left of the entrance, looked down on from the south: its ground in front, the way in on the right, the room beyond. In this view the layers stop 9 m from the camera, so that the far piers do not show behind this one."
     }
-  }
+  },
+  "configurations": {
+    "found": {
+      "label": "As found",
+      "snapshot": "six-bay-radial-v1",
+      "footing": "cap",
+      "planting": "at-the-lines",
+      "floor": {
+        "shape": "hexagon",
+        "corner_radius_m": 5.3
+      },
+      "care": "outside",
+      "what": "The room as the existing work has it. The footing is the ground draft's: a steel cap on screw piles under each pier. The climbers are where the grown planting starts them: at the feet of the training lines. The two were made apart, and every climber stands on a cap."
+    },
+    "baseline": {
+      "label": "Baseline, corrected",
+      "snapshot": "six-bay-radial-v1",
+      "footing": "cap",
+      "planting": "root-zones-outside",
+      "floor": {
+        "shape": "hexagon",
+        "corner_radius_m": 5.3
+      },
+      "care": "outside",
+      "what": "The same pier with nothing on steel: two root zones outside each pier, a feeder cable up each arch leg, and a hand-over to the training lines above head height."
+    },
+    "proposal": {
+      "label": "Proposal",
+      "snapshot": "six-bay-radial-open-pier",
+      "footing": "frame",
+      "planting": "at-the-lines",
+      "floor": {
+        "shape": "round",
+        "radius_m": 4.55
+      },
+      "care": "from-the-floor",
+      "frame": {
+        "finger_width_m": 0.12,
+        "tie_width_m": 0.1,
+        "pile_head_m": 0.3,
+        "hub_margin_m": 0.1,
+        "note": "The pier opened, as the frozen study six-bay-radial-open-pier has it, and stood on a frame instead of a plate: a plate under the two arch legs, three piles tied in a triangle, and a finger from that triangle out to each lattice leg, leaving the arc between the legs open for the climbers. Authored for this study; not engineered."
+      },
+      "what": "The pier opened and stood on a frame, so that each climber roots in open ground at the foot of its own line. The floor loses its corners to make room, and the plants are tended from its edge."
+    }
+  },
+  "default_configuration": "baseline"
 }

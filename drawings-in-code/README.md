@@ -255,6 +255,11 @@ with the laps cut this way marked. It has no studio pictures: its `piece.json` a
 shown in turn, with marks and labels drawn over them where the studio says each place falls. It does not yet
 show its cause happening, and is to be drawn again in the manner of the first.
 
+`exports/deck/inhabited-room/` is not made here. It is a drawing to explore (one room, its ground, one pier,
+and the pier designed three ways), packed from a Blender scene by
+`../bower-blender/studies/inhabited-room/package_explorer.py`. Its own `README.md` says what it holds and how
+a slide drives it.
+
 `deck/<name>/` holds what a vignette is made from: `piece.json` (views and sets of moments, if it uses studio
 pictures), `data.mjs` (what it is drawn from, worked out from the model and the runs) and `index.html` (the
 page). It opens from its folder in `exports/deck/`; `.claude/launch.json` serves that folder as `pieces` on

@@ -120,7 +120,7 @@ def add(coll, site, ground, cut_y, tag, status) -> None:
     b = (a[0] + 2.6, a[1] - 2.6 * 0.56)
     stroke(a, b, sun, "NT_sun_ray", 0.05)
     quad([b, (b[0] - 0.36, b[1] + 0.02), (b[0] - 0.2, b[1] + 0.32)], sun, "NT_sun_head")
-    note("Care from outside", f"A woodchip path behind the beds and a standing pad at each pier: tending crosses neither the entrance nor a bed. The hand-overs are {lo} to {hi} m up, so it takes a pair of steps.", left + 4.9, row, 30, (-7.3, 1.45), "proposal", True)
+    note("Care from outside", f"A woodchip path behind the beds and a standing pad at each pier: tending crosses neither the entrance nor a bed. The hand-overs are {lo} to {hi} m up, so it takes a pair of steps.", left + 4.9, row, 30, (-7.35, soil + 0.12), "proposal", True)
 
     # sky, right
     high = top - 0.62

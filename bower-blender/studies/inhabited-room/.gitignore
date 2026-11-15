@@ -3,3 +3,5 @@ assets/
 build.log
 *.blend1
 _*.blend
+# the pictures and masks build_scene.py --export writes, before package_explorer.py packs them
+export/
