@@ -515,7 +515,7 @@ try {
     }
     await activate('v8-time-experiment-slide'); await experimentReady(); assert.equal((await experimentState()).playing,false);
     await experimentSeek(.64); await experimentPaused();
-    await activate('v7-computation-slide');assert.equal(await host('growth').evaluate(el=>el.v8Controller.getState().running),false);
+    await activate('variability-slide');assert.equal(await host('growth').evaluate(el=>el.v8Controller.getState().running),false);
     await page.emulateMedia({reducedMotion:'no-preference'});
   });
   await test('Learning diagram supports direct inspection without a playback strip',async()=>{
@@ -601,10 +601,10 @@ try {
     await screenshot('print-03-time-experiment',experimentPrint);
     await screenshot('print-04-light',page.locator('.slide.v8-light-slide'));
     await screenshot('print-05-space',page.locator('.slide.v8-space-slide'));
-    await screenshot('print-08-consequences',page.locator('.slide.v7-computation-slide'));
-    await screenshot('print-11-manufacturing',page.locator('.slide.factory-focus-slide'));
-    await screenshot('print-16-learning',page.locator('.slide.v7-learning-flow-slide'));
-    await screenshot('print-13-invitation',page.locator('.slide.v8-reference-slide'));
+    await screenshot('print-06-living-place',page.locator('.slide.v8-ground-slide'));
+    await screenshot('print-09-manufacturing',page.locator('.slide.factory-focus-slide'));
+    await screenshot('print-14-learning',page.locator('.slide.v7-learning-flow-slide'));
+    await screenshot('print-11-invitation',page.locator('.slide.v8-reference-slide'));
   });
   await test('Story map loads and no edition 09 dependencies remain', async () => {
     await page.goto(new URL('story-map.html', href).href); await page.waitForLoadState('domcontentloaded'); assert.match(await page.locator('body').innerText(), /story|presentation|drawing/i);
