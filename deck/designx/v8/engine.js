@@ -30,31 +30,28 @@
     title: 'Can we make it? Can it grow? Can we afford it?',
     theme: 'v8-engine-slide',
     html: `<section class="v7-scene v7-computation v8-engine" data-v8-engine data-v8-engine-side="fabrication" aria-labelledby="v8-engine-title">
-      <h2 id="v8-engine-title" class="v7-title">Can we make it?<br><span>Can it grow?</span><br>Can we afford it?</h2>
+      <h2 id="v8-engine-title" class="v8-engine-kicker">The design engine</h2>
       <section class="v7-check-panel v7-fabrication-panel" aria-labelledby="v8-engine-fabrication">
-        <h3 id="v8-engine-fabrication">Fabricatability</h3>
+        <h3 id="v8-engine-fabrication" class="v8-engine-question">Can we<br><em>make it?</em></h3>
+        <h4>Fabricatability</h4>
         <p class="v7-check-description">Can we make and assemble the form?</p>
         ${choices('fabrication', 'Example fabrication considerations')}
-        <p class="v7-capability">Geometry and joint studies exist.<br>Daniel’s engine in development.</p>
         <a class="v7-study-link" href="6/#slide-06" target="_blank" rel="noopener">Current geometry study ↗</a>
       </section>
       <section class="v7-check-panel v7-planting-panel" aria-labelledby="v8-engine-planting">
-        <h3 id="v8-engine-planting">Plantability</h3>
+        <h3 id="v8-engine-planting" class="v8-engine-question">Can it<br><em>grow?</em></h3>
+        <h4>Plantability</h4>
         <p class="v7-check-description">Does the form support the intended growth?</p>
         ${choices('planting', 'Example proposed plantability considerations')}
         <p class="v7-capability">Growth studies exist.<br>Integrated checks proposed.</p>
       </section>
       <section class="v7-check-panel v7-cost-panel" aria-labelledby="v8-engine-cost">
-        <h3 id="v8-engine-cost">Cost</h3>
+        <h3 id="v8-engine-cost" class="v8-engine-question">Can we<br><em>afford it?</em></h3>
+        <h4>Cost</h4>
         <p class="v7-check-description">Can this design fit the client’s budget?</p>
         ${choices('cost', 'Example proposed cost and affordability considerations')}
         <p class="v7-capability">Proposed cost and budget checks.</p>
       </section>
-      <div class="v7-shared-geometry">
-        <span aria-hidden="true">↔</span>
-        <div><h3>Shared geometry</h3><p>The designer weighs the trade-offs.</p></div>
-        <span aria-hidden="true">↔</span>
-      </div>
       <div id="v8-engine-readout" class="v7-nudge-readout" aria-live="polite" aria-atomic="true">
         <span data-v8-engine-label>${labels.fabrication}</span>
         <p data-v8-engine-text>${considerations.fabrication[0].text}</p>
@@ -64,7 +61,6 @@
         <p><strong>Growth informs geometry.</strong> Reach, light and establishment.</p>
         <p><strong>The budget informs geometry.</strong> Quantities, processes and installation.</p>
       </div>
-      <p class="v7-status">Illustrative design questions. Selection explains a possible response; it does not run an evaluator.</p>
     </section>`,
     notes: 'This restores the original v7 explanation of the engine as a distinct part of the argument. The adjacent pier study shows a particular design decision and its consequences. Here we explain the intended method for deriving and comparing those questions across a design. Fabricatability asks whether members, connections and the assembly can be made. Plantability asks whether the form provides the conditions for the intended growth and architectural experience. Cost asks whether the proposed scope can fit the client’s agreed budget, using geometry-dependent quantities, production and installation assumptions, dated supplier quotes and eventually evidence from making. Affordability is a feasibility question, not a claim that the engine finds the cheapest form. All three inform shared geometry. The designer reconciles the trade-offs and retains responsibility for revising the proposal. Existing code generates timber members and joints, reports geometric quantities and supports plant-growth studies. These are distinct developments, not a demonstrated integrated evaluation engine. The building subsystem explicitly labels its geometry and clearances as provisional and does not establish structural or fabrication adequacy. Plant rates and behaviour largely use provisional assumptions. Integrated plantability checks and a calibrated monetary cost or budget evaluator remain proposed. The controls on this slide select authored examples. They do not regenerate geometry, run growth, obtain prices, calculate a budget, or certify feasibility.',
     source: 'Adapted for v8 from the original computation scene in deck/designx/v7/living.js and the three-question version in Bower_Web/public/designx/v7/living.js. Capability wording checked against bower-blender/bower/member.py, timber.py and snapshot.py, Horti-code-ture/packages/core/src/sim/engine.ts, and the existing drawings-in-code pipeline. Cost and plantability integration remain proposed.'
