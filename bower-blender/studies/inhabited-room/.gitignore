@@ -1,0 +1,5 @@
+# borrowed assets are fetched, not kept: python fetch_assets.py
+assets/
+build.log
+*.blend1
+_*.blend

@@ -434,6 +434,8 @@ output/gate2_shifts.json        record of the Gate 2 parameter-shift checks
 output/gate2_forms.json         record of the forms, with the long hall's milled check
 output/gate3_rooms.json         record of the joined rooms: the edits, the milled check, how the roofs meet
 views/                          renders and viewport captures
+studies/inhabited-room/         a scene study round a snapshot: the six-bay room as a place at installation,
+                                with ground, beds, footings, water, care and people (its own README)
 ```
 
 The construction of each level is described at the top of its module.

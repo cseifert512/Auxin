@@ -1,0 +1,219 @@
+{
+  "note": "The authored site of the inhabited-room study. Every number here is a provisional choice made for this study, to be argued with: none is surveyed, engineered or a horticultural requirement. Metres, Z up, Y north, the same frame as the building. build_scene.py reads this file; change a value and run it again.",
+  "baseline": {
+    "snapshot": "six-bay-radial-v1",
+    "why": "It is the snapshot drawings-in-code/snapshot.json selects, so the grown plantings, the plates and the deck already stand on it. v2 only recuts 18 laps; open-pier is a study, to be applied to this scene next."
+  },
+  "setting": {
+    "note": "Illustrative: a level clearing in a temperate garden, northern hemisphere. There is no surveyed site.",
+    "entrance_faces": "south",
+    "sun_azimuth_deg": 252.0,
+    "sun_note": "The sky is a photograph (assets.json), mirrored and turned so that its sun stands in the west-south-west and its open side lies behind the room: a late afternoon, with the sun over the left shoulder of someone arriving. Its height, 27 degrees, is the photograph's; no date or latitude is modelled.",
+    "sky_mirrored": true
+  },
+  "levels": {
+    "note": "Datum 0.0 is the underside of the timber feet, as in the snapshot. The soil level is not chosen here: it is feet_above_soil_m from bower/ground.py.",
+    "floor_centre_m": -0.03,
+    "floor_fall": 0.0166,
+    "floor_buildup_note": "Built up on the stripped ground, not dug into it: bound gravel on a free-draining base, held by a steel edge."
+  },
+  "room": {
+    "floor_corner_radius_m": 5.3,
+    "through_bays": [
+      "R1.B1",
+      "R1.B4"
+    ],
+    "planted_bays": [
+      "R1.B2",
+      "R1.B3",
+      "R1.B5",
+      "R1.B6"
+    ],
+    "note": "Two bays are walked through, on one line from south to north. The other four are planted across: open to look through, not to walk through. The floor stops 0.9 m short of the pier ring, so every pier stands in a bed."
+  },
+  "paths": {
+    "width_m": 2.4,
+    "landing_m": 1.2,
+    "ramp_gradient": 0.05,
+    "length_m": 20.0
+  },
+  "beds": {
+    "outer_radius_m": 8.3,
+    "soil_depth_m": 0.6,
+    "mulch_m": 0.05,
+    "note": "Two crescents, east and west, each round three piers. Their soil is the garden's own, loosened and improved in place, not a container: soil_depth_m only matches the root zones' depth in bower/ground.py."
+  },
+  "care": {
+    "path_radius_m": 9.0,
+    "path_width_m": 0.9,
+    "station_out_m": 1.15,
+    "station_size_m": [
+      0.9,
+      0.6
+    ],
+    "pad_m": 0.45,
+    "note": "A woodchip path round the back of each bed, leaving the approach on the ramp, short of the entrance, with one stepping pad in to a standing pad outside each pier."
+  },
+  "water": {
+    "standpipe_m": [
+      -2.7,
+      -10.05
+    ],
+    "drip_radius_m": 7.55,
+    "hollow_m": [
+      13.5,
+      10.5
+    ],
+    "hollow_radius_m": 3.2,
+    "hollow_depth_m": 0.4,
+    "fall": 0.03,
+    "fall_towards_deg": 38.0,
+    "level_radius_m": 10.5,
+    "note": "A standpipe where the care path leaves the approach feeds a drip line round the back of the beds, with a ring at each root zone, for the establishment years. The floor sheds to the beds; beyond the level ground the garden falls north-east to a damp hollow."
+  },
+  "planting_at_installation": {
+    "cane_height_m": 2.5,
+    "note": "One climber at each root zone, drawn as a tied cane with a few leaves: a diagram of a plant put in at 2 to 3 m, not a grown or simulated one."
+  },
+  "garden": {
+    "trees": [
+      [
+        -7.0,
+        17.5,
+        1.0,
+        20
+      ],
+      [
+        7.5,
+        19.5,
+        1.15,
+        140
+      ],
+      [
+        17.5,
+        9.5,
+        0.95,
+        250
+      ],
+      [
+        -18.5,
+        13.5,
+        1.1,
+        75
+      ],
+      [
+        12.5,
+        15.5,
+        0.85,
+        300
+      ]
+    ],
+    "border": {
+      "from_deg": 106.0,
+      "to_deg": 168.0,
+      "radius_m": 13.6,
+      "count": 8,
+      "scale": [
+        0.38,
+        0.55
+      ]
+    },
+    "log_m": [
+      -12.7,
+      2.0,
+      100.0
+    ],
+    "note": "Trees stand to the north, behind the room as you arrive; the south and west are left open to the sun. A border of large shrubs to the north-west gives the care path a back without shading the beds in the afternoon. Each tree is x, y, scale, turn; the border's angles run anticlockwise from east."
+  },
+  "people": [
+    {
+      "avatar": "Female_Adult_01",
+      "pose": "walk",
+      "at_m": [
+        0.45,
+        -9.3
+      ],
+      "facing_deg": 86.0,
+      "does": "arriving"
+    },
+    {
+      "avatar": "Male_Child_01",
+      "pose": "walk_b",
+      "at_m": [
+        -0.4,
+        -8.2
+      ],
+      "facing_deg": 97.0,
+      "does": "arriving, a step ahead"
+    },
+    {
+      "avatar": "Male_Adult_04",
+      "pose": "talk",
+      "at_m": [
+        -0.85,
+        1.25
+      ],
+      "facing_deg": 12.0,
+      "does": "talking in the middle of the room"
+    },
+    {
+      "avatar": "Female_Adult_08",
+      "pose": "look_up",
+      "at_m": [
+        0.5,
+        1.75
+      ],
+      "facing_deg": 200.0,
+      "does": "looking up into the crown"
+    },
+    {
+      "avatar": "Male_Adult_02",
+      "pose": "stand",
+      "at_m": [
+        3.55,
+        1.5
+      ],
+      "facing_deg": 20.0,
+      "does": "pausing at the planted edge"
+    },
+    {
+      "avatar": "Gardener_Male_01",
+      "pose": "tend",
+      "at_m": [
+        -7.32,
+        0.12
+      ],
+      "facing_deg": 0.0,
+      "does": "tying in a shoot at the west pier, from the standing pad"
+    }
+  ],
+  "cameras": {
+    "arrival": {
+      "location_m": [
+        0.85,
+        -15.4,
+        1.6
+      ],
+      "target_m": [
+        -0.1,
+        0.0,
+        2.45
+      ],
+      "lens_mm": 27.0,
+      "note": "The eye of someone arriving on the approach path."
+    },
+    "section": {
+      "cut_y_m": -0.44,
+      "looking": "north",
+      "centre_m": [
+        0.0,
+        2.0
+      ],
+      "width_m": 30.0,
+      "note": "A vertical cut 10 mm inside the southern feet of piers R1.P6 and R1.P3, through the southern root zone and pile of each."
+    },
+    "site_plan": {
+      "width_m": 44.0
+    }
+  }
+}

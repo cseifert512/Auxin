@@ -1,0 +1,718 @@
+{
+ "note": "Written by fetch_assets.py: every borrowed file, where it came from and its hash.",
+ "files": [
+  {
+   "file": "assets/polyhaven/hdris/meadow_2_2k.hdr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/meadow_2_2k.hdr",
+   "bytes": 6280107,
+   "md5": "5df4449d333ec6b6b729f7c9eeb85c32",
+   "source": "polyhaven.com/a/meadow_2",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/textures/pebble_ground_01/pebble_ground_01_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/pebble_ground_01/pebble_ground_01_diff_1k.jpg",
+   "bytes": 531564,
+   "md5": "dacb96491a6432f97ea8b49c6f6f9d5e",
+   "source": "polyhaven.com/a/pebble_ground_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/textures/pebble_ground_01/pebble_ground_01_nor_gl_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/pebble_ground_01/pebble_ground_01_nor_gl_1k.jpg",
+   "bytes": 1005046,
+   "md5": "f27198fb4b796277233aed6b89c7a830",
+   "source": "polyhaven.com/a/pebble_ground_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/textures/pebble_ground_01/pebble_ground_01_rough_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/pebble_ground_01/pebble_ground_01_rough_1k.jpg",
+   "bytes": 244041,
+   "md5": "abc38d44d667e1bbfcc08b3037b512df",
+   "source": "polyhaven.com/a/pebble_ground_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/textures/leafy_grass/leafy_grass_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_diff_1k.jpg",
+   "bytes": 1195394,
+   "md5": "0dbc071e91d6905edfcfbe8eb785a1ab",
+   "source": "polyhaven.com/a/leafy_grass",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/textures/leafy_grass/leafy_grass_nor_gl_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_nor_gl_1k.jpg",
+   "bytes": 1466049,
+   "md5": "8279e096e204ea326d57a318869f99df",
+   "source": "polyhaven.com/a/leafy_grass",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/textures/leafy_grass/leafy_grass_rough_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_rough_1k.jpg",
+   "bytes": 511385,
+   "md5": "05f6bb1383e12b327727d313c5899cf2",
+   "source": "polyhaven.com/a/leafy_grass",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/textures/brown_mud_leaves_01/brown_mud_leaves_01_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_mud_leaves_01/brown_mud_leaves_01_diff_1k.jpg",
+   "bytes": 1206953,
+   "md5": "5340848384f9bb19bfa6e7ac459683d7",
+   "source": "polyhaven.com/a/brown_mud_leaves_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/textures/brown_mud_leaves_01/brown_mud_leaves_01_nor_gl_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_mud_leaves_01/brown_mud_leaves_01_nor_gl_1k.jpg",
+   "bytes": 1486072,
+   "md5": "3698df51ef8262ddf2248ffca1e73196",
+   "source": "polyhaven.com/a/brown_mud_leaves_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/textures/brown_mud_leaves_01/brown_mud_leaves_01_rough_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_mud_leaves_01/brown_mud_leaves_01_rough_1k.jpg",
+   "bytes": 644332,
+   "md5": "3896f151d1b1de421a61c3c5d9a742b0",
+   "source": "polyhaven.com/a/brown_mud_leaves_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/textures/wood_chip_path/wood_chip_path_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_chip_path/wood_chip_path_diff_1k.jpg",
+   "bytes": 1000152,
+   "md5": "8b5da33ea5d2352a55a46ac4e80c3bb5",
+   "source": "polyhaven.com/a/wood_chip_path",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/textures/wood_chip_path/wood_chip_path_nor_gl_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_chip_path/wood_chip_path_nor_gl_1k.jpg",
+   "bytes": 1332341,
+   "md5": "50527cd1e763242101d392391b1547c2",
+   "source": "polyhaven.com/a/wood_chip_path",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/textures/wood_chip_path/wood_chip_path_rough_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_chip_path/wood_chip_path_rough_1k.jpg",
+   "bytes": 413024,
+   "md5": "68514508893e5be152c7bcaea9e90068",
+   "source": "polyhaven.com/a/wood_chip_path",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/tree_small_02/tree_small_02_1k.blend",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/tree_small_02/tree_small_02_1k.blend",
+   "bytes": 63805841,
+   "md5": "d602d9e4df77457454ac427fd37d0b53",
+   "source": "polyhaven.com/a/tree_small_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/tree_small_02/textures/tree_small_02_branch_diff_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/tree_small_02/tree_small_02_branch_diff_1k.png",
+   "bytes": 1277270,
+   "md5": "2da9ea379228636c4fda2fde9a11d760",
+   "source": "polyhaven.com/a/tree_small_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/tree_small_02/textures/tree_small_02_branch_nor_gl_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/tree_small_02/tree_small_02_branch_nor_gl_1k.png",
+   "bytes": 5754879,
+   "md5": "4b6ae81428061986d42f205d03ec1989",
+   "source": "polyhaven.com/a/tree_small_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/tree_small_02/textures/tree_small_02_branch_rough_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/tree_small_02/tree_small_02_branch_rough_1k.png",
+   "bytes": 421614,
+   "md5": "6189ac57979c248f9eb362ca04c5619e",
+   "source": "polyhaven.com/a/tree_small_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/tree_small_02/textures/tree_small_02_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_diff_1k.jpg",
+   "bytes": 863246,
+   "md5": "a7287a3f4e7f0d4577cb949b245f5b14",
+   "source": "polyhaven.com/a/tree_small_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/tree_small_02/textures/tree_small_02_leaves_alpha_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/tree_small_02/tree_small_02_leaves_alpha_1k.png",
+   "bytes": 264711,
+   "md5": "63199ba87a9e8928424bd8c3b8017bd0",
+   "source": "polyhaven.com/a/tree_small_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/tree_small_02/textures/tree_small_02_leaves_diff_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/tree_small_02/tree_small_02_leaves_diff_1k.png",
+   "bytes": 2338424,
+   "md5": "2c667193084725e8553062ddbdc73c7d",
+   "source": "polyhaven.com/a/tree_small_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/tree_small_02/textures/tree_small_02_leaves_nor_gl_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/tree_small_02/tree_small_02_leaves_nor_gl_1k.png",
+   "bytes": 4903387,
+   "md5": "e81c5d7e7fc09af321e8c5ac5b4948f2",
+   "source": "polyhaven.com/a/tree_small_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/tree_small_02/textures/tree_small_02_leaves_rough_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/tree_small_02/tree_small_02_leaves_rough_1k.png",
+   "bytes": 1043665,
+   "md5": "49c08fb74ed781e9632b543b8e19c8cb",
+   "source": "polyhaven.com/a/tree_small_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/tree_small_02/textures/tree_small_02_nor_gl_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/tree_small_02/tree_small_02_nor_gl_1k.exr",
+   "bytes": 2462999,
+   "md5": "eccf7df1617a8d6d841dff98bf58dc3a",
+   "source": "polyhaven.com/a/tree_small_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/tree_small_02/textures/tree_small_02_rough_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/tree_small_02/tree_small_02_rough_1k.exr",
+   "bytes": 978557,
+   "md5": "af3b33e4b262b8ac40a94ee5d93ce13e",
+   "source": "polyhaven.com/a/tree_small_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/shrub_01/shrub_01_1k.blend",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/shrub_01/shrub_01_1k.blend",
+   "bytes": 6535174,
+   "md5": "dfbacf2c8c64823862ec8b9747d7687e",
+   "source": "polyhaven.com/a/shrub_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/shrub_01/textures/shrub_01_rough_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/shrub_01/shrub_01_rough_1k.exr",
+   "bytes": 343569,
+   "md5": "c6ae41b62c1c57052c08172a43be3710",
+   "source": "polyhaven.com/a/shrub_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/shrub_01/textures/shrub_01_nor_gl_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/shrub_01/shrub_01_nor_gl_1k.exr",
+   "bytes": 1651867,
+   "md5": "4aef6afcfa09fb4647c6737bb8aac518",
+   "source": "polyhaven.com/a/shrub_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/shrub_01/textures/shrub_01_alpha_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/shrub_01/shrub_01_alpha_1k.png",
+   "bytes": 132597,
+   "md5": "5ed0301c1bf12c291f183563a2b8c370",
+   "source": "polyhaven.com/a/shrub_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/shrub_01/textures/shrub_01_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/shrub_01/shrub_01_diff_1k.jpg",
+   "bytes": 502162,
+   "md5": "c5ac2665a0e2b4f11fd20b3296d62fe2",
+   "source": "polyhaven.com/a/shrub_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/shrub_01/textures/shrub_01_disp_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/shrub_01/shrub_01_disp_1k.png",
+   "bytes": 970478,
+   "md5": "845e0d26fbdde75ab18d0e57785d3410",
+   "source": "polyhaven.com/a/shrub_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/shrub_04/shrub_04_1k.blend",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/shrub_04/shrub_04_1k.blend",
+   "bytes": 1550296,
+   "md5": "27780d7fce949de204fba43b371b5361",
+   "source": "polyhaven.com/a/shrub_04",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/shrub_04/textures/shrub_04_mask_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/shrub_04/shrub_04_mask_1k.png",
+   "bytes": 9682,
+   "md5": "71e10fbe2c9062dc90f3541879f9a975",
+   "source": "polyhaven.com/a/shrub_04",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/shrub_04/textures/shrub_04_alpha_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/shrub_04/shrub_04_alpha_1k.png",
+   "bytes": 42906,
+   "md5": "c899653f9884941bdb2ada187809f4c8",
+   "source": "polyhaven.com/a/shrub_04",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/shrub_04/textures/shrub_04_nor_gl_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/shrub_04/shrub_04_nor_gl_1k.exr",
+   "bytes": 957536,
+   "md5": "00f06b7500c7831b0791ad9965b7ac61",
+   "source": "polyhaven.com/a/shrub_04",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/shrub_04/textures/shrub_04_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/shrub_04/shrub_04_diff_1k.jpg",
+   "bytes": 373350,
+   "md5": "b2b4682a82f44be10b8d4b4d481a4fe8",
+   "source": "polyhaven.com/a/shrub_04",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/shrub_04/textures/shrub_04_rough_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/shrub_04/shrub_04_rough_1k.exr",
+   "bytes": 278598,
+   "md5": "ecaba426cb6acfffab0b2ebcd95c1b8d",
+   "source": "polyhaven.com/a/shrub_04",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/fern_02/fern_02_1k.blend",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/fern_02/fern_02_1k.blend",
+   "bytes": 261459,
+   "md5": "6ad31e08091b148241683d48486be258",
+   "source": "polyhaven.com/a/fern_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/fern_02/textures/fern_02_rough_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/fern_02/fern_02_rough_1k.exr",
+   "bytes": 267009,
+   "md5": "1e937f3f3db87e520601f8e94363a5dc",
+   "source": "polyhaven.com/a/fern_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/fern_02/textures/fern_02_alpha_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/fern_02/fern_02_alpha_1k.png",
+   "bytes": 114589,
+   "md5": "1421e5e36946c23a7ddcc907de89025c",
+   "source": "polyhaven.com/a/fern_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/fern_02/textures/fern_02_nor_gl_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/fern_02/fern_02_nor_gl_1k.exr",
+   "bytes": 801563,
+   "md5": "c4c2dc925e3ecdb86a6a123a21acfc5b",
+   "source": "polyhaven.com/a/fern_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/fern_02/textures/fern_02_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/fern_02/fern_02_diff_1k.jpg",
+   "bytes": 315705,
+   "md5": "82c18a6cfd5ae91c37c0e078f591181c",
+   "source": "polyhaven.com/a/fern_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/periwinkle_plant/periwinkle_plant_1k.blend",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/periwinkle_plant/periwinkle_plant_1k.blend",
+   "bytes": 1680482,
+   "md5": "6920bf78874cc7b966c63e73f1a14ddb",
+   "source": "polyhaven.com/a/periwinkle_plant",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/periwinkle_plant/textures/periwinkle_plant_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/periwinkle_plant/periwinkle_plant_diff_1k.jpg",
+   "bytes": 349879,
+   "md5": "32b2cba340cf12c976f0fb4c26cc5721",
+   "source": "polyhaven.com/a/periwinkle_plant",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/periwinkle_plant/textures/periwinkle_plant_disp_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/periwinkle_plant/periwinkle_plant_disp_1k.png",
+   "bytes": 1468054,
+   "md5": "e9ef80367e859afb039f5b4e75126a12",
+   "source": "polyhaven.com/a/periwinkle_plant",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/periwinkle_plant/textures/periwinkle_plant_nor_gl_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/periwinkle_plant/periwinkle_plant_nor_gl_1k.exr",
+   "bytes": 948959,
+   "md5": "cd0b5ca28048313378a396adcf379198",
+   "source": "polyhaven.com/a/periwinkle_plant",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/periwinkle_plant/textures/periwinkle_plant_opacity_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/periwinkle_plant/periwinkle_plant_opacity_1k.png",
+   "bytes": 86094,
+   "md5": "4386b4cf7a9cc7d79ad1db812b1d8e50",
+   "source": "polyhaven.com/a/periwinkle_plant",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/periwinkle_plant/textures/periwinkle_plant_rough_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/periwinkle_plant/periwinkle_plant_rough_1k.exr",
+   "bytes": 188102,
+   "md5": "ae2d0e3aafe77bbf19bc5d52e10f90c3",
+   "source": "polyhaven.com/a/periwinkle_plant",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/periwinkle_plant/textures/periwinkle_plant_translucency_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/periwinkle_plant/periwinkle_plant_translucency_1k.png",
+   "bytes": 5292609,
+   "md5": "699e7a9dc78f89dba26046a6bb79a6f8",
+   "source": "polyhaven.com/a/periwinkle_plant",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/dandelion_01/dandelion_01_1k.blend",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/dandelion_01/dandelion_01_1k.blend",
+   "bytes": 1416316,
+   "md5": "0e410c8dcf989314bf261e810cc83efc",
+   "source": "polyhaven.com/a/dandelion_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/dandelion_01/textures/dandelion_01_alpha_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/dandelion_01/dandelion_01_alpha_1k.png",
+   "bytes": 130962,
+   "md5": "0602f861e5f2639060a6093a9c2cf446",
+   "source": "polyhaven.com/a/dandelion_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/dandelion_01/textures/dandelion_01_nor_gl_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/dandelion_01/dandelion_01_nor_gl_1k.exr",
+   "bytes": 1082158,
+   "md5": "9333f9f8971271cd1fbcbebfb8f37a8d",
+   "source": "polyhaven.com/a/dandelion_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/dandelion_01/textures/dandelion_01_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dandelion_01/dandelion_01_diff_1k.jpg",
+   "bytes": 470035,
+   "md5": "3516eea45aea05ed60188266abf68323",
+   "source": "polyhaven.com/a/dandelion_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/dandelion_01/textures/dandelion_01_mask_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/dandelion_01/dandelion_01_mask_1k.png",
+   "bytes": 12650,
+   "md5": "56eb735990096759269fc0ad9c1e7212",
+   "source": "polyhaven.com/a/dandelion_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/dandelion_01/textures/dandelion_01_rough_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/dandelion_01/dandelion_01_rough_1k.exr",
+   "bytes": 411740,
+   "md5": "9fc1f130ee33497abaace39378606e2d",
+   "source": "polyhaven.com/a/dandelion_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/grass_medium_02/grass_medium_02_1k.blend",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/grass_medium_02/grass_medium_02_1k.blend",
+   "bytes": 318842,
+   "md5": "14cffdc414f42565302df84c4652938c",
+   "source": "polyhaven.com/a/grass_medium_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/grass_medium_02/textures/grass_medium_02_alpha_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/grass_medium_02/grass_medium_02_alpha_1k.png",
+   "bytes": 110617,
+   "md5": "b231cd6a1b5eb7ae21e7c2e626f8318c",
+   "source": "polyhaven.com/a/grass_medium_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/grass_medium_02/textures/grass_medium_02_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/grass_medium_02/grass_medium_02_diff_1k.jpg",
+   "bytes": 161235,
+   "md5": "4bb5230e09358d60dd767331685b2d36",
+   "source": "polyhaven.com/a/grass_medium_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/grass_medium_02/textures/grass_medium_02_dry_diff_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/grass_medium_02/grass_medium_02_dry_diff_1k.png",
+   "bytes": 825429,
+   "md5": "4710aead1b58c89749e6d199363f0f6c",
+   "source": "polyhaven.com/a/grass_medium_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/grass_medium_02/textures/grass_medium_02_nor_gl_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/grass_medium_02/grass_medium_02_nor_gl_1k.exr",
+   "bytes": 241121,
+   "md5": "d6cf0459753aaa6935204cb6d3c2dc7f",
+   "source": "polyhaven.com/a/grass_medium_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/grass_medium_02/textures/grass_medium_02_rough_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/grass_medium_02/grass_medium_02_rough_1k.exr",
+   "bytes": 374549,
+   "md5": "84116a519b7054c72f0aba9e306c3466",
+   "source": "polyhaven.com/a/grass_medium_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/dead_tree_trunk/dead_tree_trunk_1k.blend",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/dead_tree_trunk/dead_tree_trunk_1k.blend",
+   "bytes": 4790647,
+   "md5": "29ffc6e16019a81a39e7fb64a4f20d3f",
+   "source": "polyhaven.com/a/dead_tree_trunk",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/dead_tree_trunk/textures/dead_tree_trunk_rough_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/dead_tree_trunk/dead_tree_trunk_rough_1k.exr",
+   "bytes": 1059360,
+   "md5": "33c80eb2607c41741d1baec1277b0c5b",
+   "source": "polyhaven.com/a/dead_tree_trunk",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/dead_tree_trunk/textures/dead_tree_trunk_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dead_tree_trunk/dead_tree_trunk_diff_1k.jpg",
+   "bytes": 713480,
+   "md5": "fe92c64532d4684d3239f6edc7733192",
+   "source": "polyhaven.com/a/dead_tree_trunk",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/dead_tree_trunk/textures/dead_tree_trunk_nor_gl_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/dead_tree_trunk/dead_tree_trunk_nor_gl_1k.exr",
+   "bytes": 2229503,
+   "md5": "1dce445b503a15992514e713c04584dd",
+   "source": "polyhaven.com/a/dead_tree_trunk",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/rocketbox/Gardener_Male_01/Gardener_Male_01.fbx",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Professions/Gardener_Male_01/Export/Gardener_Male_01.fbx",
+   "bytes": 517152,
+   "md5": "04e86226c1471527c5dd3e89ebdc06a6",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Professions/Gardener_Male_01",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md"
+  },
+  {
+   "file": "assets/rocketbox/Gardener_Male_01/textures/m106_body_color.jpg",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Professions/Gardener_Male_01/Textures/m106_body_color.tga",
+   "bytes": 137619,
+   "md5": "5cf38ad1a964cfa5cccd8ae1476c3a2f",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Professions/Gardener_Male_01",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Gardener_Male_01/textures/m106_head_color.jpg",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Professions/Gardener_Male_01/Textures/m106_head_color.tga",
+   "bytes": 197666,
+   "md5": "b65a97760b594b39af6008d1f49b9cd9",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Professions/Gardener_Male_01",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Gardener_Male_01/textures/m106_opacity_color.png",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Professions/Gardener_Male_01/Textures/m106_opacity_color.tga",
+   "bytes": 1387721,
+   "md5": "022c2bf8729105ee3836cd1bdcba27ff",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Professions/Gardener_Male_01",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Female_Adult_08/Female_Adult_08.fbx",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Female_Adult_08/Export/Female_Adult_08.fbx",
+   "bytes": 594640,
+   "md5": "777e127316a95f9a66d1c764377c635d",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Female_Adult_08",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md"
+  },
+  {
+   "file": "assets/rocketbox/Female_Adult_08/textures/f008_body_color.jpg",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Female_Adult_08/Textures/f008_body_color.tga",
+   "bytes": 198798,
+   "md5": "36af6d03e2ec6250644728e085391dee",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Female_Adult_08",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Female_Adult_08/textures/f008_head_color.jpg",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Female_Adult_08/Textures/f008_head_color.tga",
+   "bytes": 183373,
+   "md5": "33857927db26262da2086a58cbf4c7f7",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Female_Adult_08",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Female_Adult_08/textures/f008_opacity_color.png",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Female_Adult_08/Textures/f008_opacity_color.tga",
+   "bytes": 1012864,
+   "md5": "40caab2eee2d4c68025ab015b0eb99c6",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Female_Adult_08",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Male_Adult_04/Male_Adult_04.fbx",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Male_Adult_04/Export/Male_Adult_04.fbx",
+   "bytes": 571296,
+   "md5": "a8995e687a2809d722fadcc0e792f357",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Male_Adult_04",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md"
+  },
+  {
+   "file": "assets/rocketbox/Male_Adult_04/textures/m006_body_color.jpg",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Male_Adult_04/Textures/m006_body_color.tga",
+   "bytes": 191511,
+   "md5": "c82b957f42899813efffc2815bab9e23",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Male_Adult_04",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Male_Adult_04/textures/m006_head_color.jpg",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Male_Adult_04/Textures/m006_head_color.tga",
+   "bytes": 180388,
+   "md5": "ae77f5ce5f42aaa25f9fcf1f59d26164",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Male_Adult_04",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Male_Adult_04/textures/m006_opacity_color.png",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Male_Adult_04/Textures/m006_opacity_color.tga",
+   "bytes": 1129389,
+   "md5": "1161e5410247e66218178b77f04ef397",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Male_Adult_04",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Female_Adult_01/Female_Adult_01.fbx",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Female_Adult_01/Export/Female_Adult_01.fbx",
+   "bytes": 609152,
+   "md5": "edc5ad26bfec057fd0feb5d982b062de",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Female_Adult_01",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md"
+  },
+  {
+   "file": "assets/rocketbox/Female_Adult_01/textures/f001_body_color.jpg",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Female_Adult_01/Textures/f001_body_color.tga",
+   "bytes": 208516,
+   "md5": "af2ec7761ab1d8208132a39dd97284a3",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Female_Adult_01",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Female_Adult_01/textures/f001_head_color.jpg",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Female_Adult_01/Textures/f001_head_color.tga",
+   "bytes": 196687,
+   "md5": "6c7bb5dcb89bde9deeaffb48826f629b",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Female_Adult_01",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Female_Adult_01/textures/f001_opacity_color.png",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Female_Adult_01/Textures/f001_opacity_color.tga",
+   "bytes": 856322,
+   "md5": "be5195951ab9ec903d3c01f06181f55f",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Female_Adult_01",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Male_Child_01/Male_Child_01.fbx",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Children/Male_Child_01/Export/Male_Child_01.fbx",
+   "bytes": 506912,
+   "md5": "7e2c833d5834ac1aa4b51852dbeac152",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Children/Male_Child_01",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md"
+  },
+  {
+   "file": "assets/rocketbox/Male_Child_01/textures/cm001_body_color.jpg",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Children/Male_Child_01/Textures/cm001_body_color.tga",
+   "bytes": 197852,
+   "md5": "077daf8d96321028bcc0a668a90ec8af",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Children/Male_Child_01",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Male_Child_01/textures/cm001_head_color.jpg",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Children/Male_Child_01/Textures/cm001_head_color.tga",
+   "bytes": 126213,
+   "md5": "18b815360d15d1aa50c1ba31adaa0d6b",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Children/Male_Child_01",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Male_Adult_02/Male_Adult_02.fbx",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Male_Adult_02/Export/Male_Adult_02.fbx",
+   "bytes": 539920,
+   "md5": "2c23d7417d2b994c86800def22b5fe7a",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Male_Adult_02",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md"
+  },
+  {
+   "file": "assets/rocketbox/Male_Adult_02/textures/m003_body_color.jpg",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Male_Adult_02/Textures/m003_body_color.tga",
+   "bytes": 177568,
+   "md5": "9a45c88b567465408f3aaaef4d0960b7",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Male_Adult_02",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Male_Adult_02/textures/m003_head_color.jpg",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Male_Adult_02/Textures/m003_head_color.tga",
+   "bytes": 156393,
+   "md5": "5fde041b95f9255a998ab80c0bbe60f9",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Male_Adult_02",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  },
+  {
+   "file": "assets/rocketbox/Male_Adult_02/textures/m003_opacity_color.png",
+   "from": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Adults/Male_Adult_02/Textures/m003_opacity_color.tga",
+   "bytes": 956052,
+   "md5": "c7420a2ccfb8ae10f5c742fa1e90dc75",
+   "source": "github.com/microsoft/Microsoft-Rocketbox/tree/master/Assets/Avatars/Adults/Male_Adult_02",
+   "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+   "reduced_to_px": 1024
+  }
+ ]
+}
