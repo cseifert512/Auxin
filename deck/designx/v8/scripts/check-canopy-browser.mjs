@@ -1,2 +1,2 @@
-process.env.DECK_TEST='Canopy|Nineteen-slide';
+process.env.DECK_TEST='Canopy|Sixteen-slide';
 await import('./check.mjs');

@@ -17,13 +17,15 @@ for(const projection of ['perspective','axonometric']){
     assert.ok([...p,...frame.matrix,...frame.eye].every(Number.isFinite));
   }
 }
-// The insert must keep all prior slide objects and authored content untouched.
+// The approved orbit replaces the two Time studies and the care placeholder;
+// all other slide objects and authored content must remain untouched.
 const environment={window:{}};vm.runInNewContext(await readFile(new URL('../story.js',import.meta.url),'utf8'),environment);
 const originalStory=environment.window.DESIGNX_V8_STORY,originalSlides=originalStory.map(s=>({theme:s.theme,title:s.title,html:`original-${s.number}`,notes:s.purpose}));
-const snapshot=JSON.stringify(originalSlides);environment.window.DESIGNX_SLIDES=originalSlides.slice();environment.window.DESIGNX_META={targetSlideCount:18};
+const retained=originalSlides.filter(s=>!['v7-growth-slide','v8-time-experiment-slide','v8-care-slide'].includes(s.theme));
+const snapshot=JSON.stringify(retained);environment.window.DESIGNX_SLIDES=originalSlides.slice();environment.window.DESIGNX_META={targetSlideCount:18};
 vm.runInNewContext(await readFile(new URL('../canopy-orbit.js',import.meta.url),'utf8'),environment);
-assert.equal(environment.window.DESIGNX_SLIDES.length,19);assert.equal(environment.window.DESIGNX_SLIDES[3].theme,'v8-canopy-orbit-slide');
+assert.equal(environment.window.DESIGNX_SLIDES.length,16);assert.equal(environment.window.DESIGNX_SLIDES[1].theme,'v8-canopy-orbit-slide');
 assert.equal(JSON.stringify(environment.window.DESIGNX_SLIDES.filter(s=>s.theme!=='v8-canopy-orbit-slide')),snapshot);
-assert.deepEqual(environment.window.DESIGNX_SLIDES.filter(s=>s.theme!=='v8-canopy-orbit-slide'),originalSlides);
-assert.equal(environment.window.DESIGNX_V8_STORY.length,19);
-console.log('PASS: full orbit, varying eye height, true overhead hold, genuine projection matrices and unchanged existing slides.');
+assert.deepEqual(environment.window.DESIGNX_SLIDES.filter(s=>s.theme!=='v8-canopy-orbit-slide'),retained);
+assert.equal(environment.window.DESIGNX_V8_STORY.length,16);
+console.log('PASS: full orbit, genuine projection matrices and the selected sixteen-slide sequence, with all retained slides unchanged.');

@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const port = Number(process.argv[2] ?? process.env.PORT ?? 5312);
-const newest = '/designx/v8';
+const newest = '/designx';
 const made = resolve(root, '../drawings-in-code/exports/deck');
 
 const types = {
@@ -39,6 +39,8 @@ const types = {
 
 // the file an address stands for, or null
 function find(path) {
+  if (path === '/designx') path = '/designx/v8/index.html';
+  if (path === '/designx/1') path = '/designx/index.html';
   const file = resolve(root, normalize(`.${path}`));
   if (file !== resolve(root) && !file.startsWith(resolve(root) + sep)) return null;
   if (!existsSync(file) && path.startsWith('/designx/pieces/')) {
