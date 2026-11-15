@@ -2,6 +2,7 @@
 
     python study_openings.py            # every opening of site.json, pier_study.ring_radius_m
     python study_openings.py --keep     # do not grow again where a run's report is already there
+    python study_openings.py --no-light # do not make the light copies of the runs (scenes/<snapshot>/light/, 7 MB each)
 
 For each opening this makes the building (a trial of design/six_bay_meadow.json with that ring radius, or the real
 snapshot where the opening is the design's own), sets its pier out as this study does (set_out_meadow.py), hands the
@@ -55,7 +56,7 @@ def one(radius: float, keep: bool) -> dict:
     own = abs(design["timber"]["piers"]["ring_radius_m"] - radius) < 1e-9
     name = CFG["snapshot"] if own else f"trial-meadow-pier-{round(radius * 100):03d}"
     if not own:
-        run(f"python scripts/trial_snapshot.py {name} timber.piers.ring_radius_m={radius} --design=design/six_bay_meadow.json", BLENDER)
+        run(f'"{sys.executable}" scripts/trial_snapshot.py {name} timber.piers.ring_radius_m={radius} --design=design/six_bay_meadow.json', BLENDER)
     ground = set_out_meadow.set_out("meadow", {**CFG, "snapshot": name}, SITE)
     members = S.built(name)["group"]["members"]
     run(f"npm run convert -- {name}", DRAWINGS)
@@ -118,8 +119,11 @@ def main() -> None:
         out["openings"].append(entry)
         target.write_text(json.dumps(out) + "\n", encoding="utf-8")  # after each, so that a stopped run still says what it made
         print(f"{entry['snapshot']}: ring {radius} m, feet {entry['feet_apart_m']} m apart, way in {entry['way_in_m']} m, June sun {entry['sun']['mean_june_h']} h a climber, {entry['sun']['full_sun']} of {len(entry['plants'])} in full sun, stems by year {entry['growth']['stem_m_by_year']}, review {entry['footing_review'] or 'nothing'}", flush=True)
-    run(f"npm run lighten -- {CFG['snapshot']} {RUN}", DRAWINGS)
-    print("lightened", CFG["snapshot"], flush=True)
+    for entry in out["openings"]:  # a light copy of every opening's run, so that a drawing can show the plants at any of them
+        if "--no-light" in sys.argv or not (DRAWINGS / "scenes" / entry["snapshot"] / "runs" / RUN / "growth.json").exists():
+            continue
+        run(f"npm run lighten -- {entry['snapshot']} {RUN}", DRAWINGS)
+        print("lightened", entry["snapshot"], flush=True)
 
 
 if __name__ == "__main__":
