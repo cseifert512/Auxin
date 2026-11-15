@@ -42,12 +42,14 @@ await context.route('**/*', async route => {
   } catch (error) { await route.fulfill({ status: 404, contentType: 'text/plain', body: `${pathname}: ${error.message}` }); }
 });
 const page = await context.newPage();
+let expectingLoadFailure = false;
 page.on('pageerror', error => result.errors.push(error.message));
-page.on('response', response => { if (response.status() >= 400) result.missingAssets.push({ status: response.status(), url: response.url() }); });
-page.on('requestfailed', request => { const error = request.failure()?.errorText || ''; if (!/ERR_ABORTED|NS_BINDING_ABORTED/.test(error)) result.failedRequests.push({ url: request.url(), error }); });
+page.on('response', response => { if (response.status() >= 400 && !expectingLoadFailure) result.missingAssets.push({ status: response.status(), url: response.url() }); });
+page.on('requestfailed', request => { const error = request.failure()?.errorText || ''; if (!expectingLoadFailure && !/ERR_ABORTED|NS_BINDING_ABORTED/.test(error)) result.failedRequests.push({ url: request.url(), error }); });
 const host = kind => page.locator(`[data-v8-study="${kind}"]`);
 const frames = (count = 12) => page.evaluate(n => new Promise(done => { const step = () => --n <= 0 ? done() : requestAnimationFrame(step); requestAnimationFrame(step); }), count);
 async function test(name, fn) {
+  if(process.env.DECK_TEST && !new RegExp(process.env.DECK_TEST).test(name)) return;
   console.log(`[v8 QA] START ${name}`);
   try { await fn(); result.passed.push(name); console.log(`[v8 QA] PASS ${name}`); }
   catch (error) { result.failures.push({ name, message: error.stack || error.message }); console.log(`[v8 QA] FAIL ${name}: ${error.message}`); }
@@ -62,11 +64,15 @@ async function activate(theme) {
   const slide = page.locator(`#slide-${String(number).padStart(2, '0')}.is-active`); await slide.waitFor(); return slide;
 }
 async function ready(kind) {
-  await page.waitForFunction(kind => { const el = document.querySelector(`[data-v8-study="${kind}"]`); return el?.querySelector('.v8-study')?.dataset.ready === 'true' && el.querySelector('iframe')?.contentWindow.__ready && el.querySelector('.v8-study-loading')?.hidden; }, kind);
+  await page.waitForFunction(kind => { const el = document.querySelector(`[data-v8-study="${kind}"]`); return el?.querySelector('.v8-study')?.dataset.ready === 'true' && (kind === 'growth' ? el.querySelector('.v8-growth-message')?.hidden : el.querySelector('iframe')?.contentWindow.__ready && el.querySelector('.v8-study-loading')?.hidden); }, kind);
 }
 async function snapshot(kind) {
   return host(kind).evaluate((el, kind) => {
     const doc = el.querySelector('iframe')?.contentDocument;
+    if(kind==='growth') {
+      const state=el.v8Controller.getState();
+      return {mode:state.mode,view:state.view,range:Number(el.querySelector('input').value),play:el.querySelector('[data-v8-study-play]').textContent,caption:el.querySelector('output').textContent,childPosition:Math.round(state.time/state.duration*1000),renderedFrame:state.renderedFrame,canvasLabel:el.querySelector('canvas').getAttribute('aria-label')};
+    }
     return { mode: el.querySelector('.v8-study')?.dataset.mode, range: Number(el.querySelector('input')?.value), play: el.querySelector('[data-v8-study-play]')?.textContent, caption: el.querySelector('output')?.textContent,
       childPosition: kind === 'growth' ? Number(doc?.getElementById('scrub')?.value) : parseFloat(doc?.getElementById('fill')?.style.width || 'NaN') * 10 };
   }, kind);
@@ -77,7 +83,7 @@ async function pausedStable(kind) {
 }
 async function setRange(kind, value) {
   await host(kind).locator('input').evaluate((el, value) => { el.value = String(value); el.dispatchEvent(new Event('input', { bubbles: true })); }, value);
-  await frames(2); const state = await pausedStable(kind); assert.equal(state.range, value); assert.ok(Math.abs(state.childPosition - value) <= 1, `Child seek ${state.childPosition} differs from ${value}`); return state;
+  await ready(kind); await frames(2); const state = await pausedStable(kind); assert.equal(state.range, value); assert.ok(Math.abs(state.childPosition - value) <= 1, `Child seek ${state.childPosition} differs from ${value}`); return state;
 }
 async function screenshot(name, locator = page.locator('.slide.is-active')) {
   await page.evaluate(() => document.fonts.ready); await locator.evaluate(el => Promise.all([...el.querySelectorAll('img')].map(img => img.decode().catch(() => {}))));
@@ -106,18 +112,67 @@ try {
   });
   await test('Growth tabs, paused seeking, playback and enlargement retain the chosen view', async () => {
     const slide = await activate('v7-growth-slide'); await ready('growth');
+    assert.equal((await snapshot('growth')).mode,'time'); assert.equal((await snapshot('growth')).view,2); assert.equal((await snapshot('growth')).play,'Play');
+    const still=await host('growth').locator('canvas').evaluate(el=>el.toDataURL());await frames();assert.equal(await host('growth').locator('canvas').evaluate(el=>el.toDataURL()),still,'Paused inhabitants must stay still');
     for (const [index, mode] of ['space', 'light', 'time'].entries()) { await slide.locator(`[data-v7-growth="${index}"]`).click(); assert.equal((await snapshot('growth')).mode, mode); assert.equal(await slide.locator(`[data-v7-growth="${index}"]`).getAttribute('aria-pressed'), 'true'); await setRange('growth', 437); }
-    await host('growth').getByRole('button', { name: 'Winter', exact: true }).click(); assert.match((await pausedStable('growth')).caption, /winter/i);
-    await host('growth').getByRole('button', { name: 'Summer', exact: true }).click(); assert.match((await pausedStable('growth')).caption, /summer/i); await screenshot('slide-03-growth', slide);
+    await host('growth').getByRole('button', { name: 'Winter', exact: true }).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption, /winter/i);
+    await host('growth').getByRole('button', { name: 'Summer', exact: true }).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption, /summer/i); await screenshot('slide-03-growth', slide);
     await slide.locator('[data-v7-growth="1"]').click(); assert.equal(await host('growth').getByRole('button', { name: 'Winter', exact: true }).count(), 0);
-    await host('growth').getByRole('button', { name: 'Noon', exact: true }).click(); assert.match((await pausedStable('growth')).caption, /noon/i);
+    await host('growth').getByRole('button', { name: 'Noon', exact: true }).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption, /noon/i);
+    assert.equal(await host('growth').getByRole('button',{name:'Above',exact:true}).count(),0);assert.equal(await host('growth').getByRole('button',{name:'Establishing',exact:true}).count(),1);
     const before = await setRange('growth', 555); await openStudy('growth'); assert.deepEqual(await pausedStable('growth'), before, 'Enlarging must preserve mode, position and pause');
     await screenshot('growth-enlarged', page.locator('.v8-study-dialog[open]')); await closeStudy(); await ready('growth'); assert.deepEqual(await pausedStable('growth'), before, 'Returning must preserve the same drawing');
     assert.equal(await page.evaluate(() => document.activeElement?.dataset.v8Open), 'growth');
     await host('growth').locator('[data-v8-study-play]').click(); await page.waitForFunction(() => Number(document.querySelector('[data-v8-study="growth"] input').value) > 555);
-    await host('growth').locator('[data-v8-study-play]').click(); const paused = await pausedStable('growth');
+    await host('growth').locator('[data-v8-study-play]').click(); await ready('growth'); const paused = await pausedStable('growth');
     await activate('v7-anatomy-slide'); assert.equal(await host('growth').locator('iframe').count(), 0);
     await activate('v7-growth-slide'); await ready('growth'); assert.deepEqual(await pausedStable('growth'), paused);
+    await host('growth').getByRole('button',{name:'Inhabitants on',exact:true}).click();
+    assert.equal(await host('growth').evaluate(el=>el.v8Controller.getState().occupation),false);
+  });
+  await test('A scene decision changes the drawing, quantities and review flags together',async()=>{
+    const slide=await activate('v7-computation-slide');
+    await page.waitForFunction(()=>document.querySelector('[data-v8-consequences]')?.dataset.ready==='true');
+    await slide.getByRole('button',{name:'Entrance',exact:true}).click();
+    await page.waitForFunction(()=>document.querySelector('[data-v8-consequences]')?.dataset.stage==='1');
+    assert.match(await slide.innerText(),/3.61 m between the legs/);
+    await slide.getByRole('button',{name:'Baseline',exact:true}).click();
+    await page.waitForFunction(()=>document.querySelector('[data-v8-consequences]')?.dataset.configuration==='baseline');
+    assert.match(await slide.innerText(),/4.87 m between the legs/);await screenshot('slide-06-consequences',slide);
+    await slide.getByRole('button',{name:'Opened pier',exact:true}).click();await slide.getByRole('button',{name:'Designer review',exact:true}).click();
+    await page.waitForFunction(()=>document.querySelector('[data-v8-consequences]')?.dataset.stage==='3');
+    assert.match(await slide.innerText(),/0.23 m/);assert.match(await slide.innerText(),/0.24 m/);
+  });
+  await test('Missing growth frame has an honest static fallback and recovers on retry',async()=>{
+    expectingLoadFailure=true;
+    const pattern='**/04-plants-make-space-timber/frames/time-30.webp';
+    await page.route(pattern,route=>route.abort('failed'));
+    try{
+      await page.goto(href+'#slide-03');await page.reload();await ready('growth');
+      await host('growth').getByRole('button',{name:'Winter',exact:true}).click();
+      await page.waitForFunction(()=>document.querySelector('[data-v8-study="growth"]')?.v8Controller?.getState().fallback);
+      assert.match((await snapshot('growth')).caption,/Static fallback.*summer/);
+      assert.match((await snapshot('growth')).canvasLabel,/summer/);
+      await page.unroute(pattern);
+      await host('growth').getByRole('button',{name:'Retry drawing',exact:true}).click();await ready('growth');
+      assert.match((await snapshot('growth')).caption,/winter/i);
+    }finally{await page.unroute(pattern);expectingLoadFailure=false;}
+  });
+  await test('Reduced motion, view selection and bounded frame loading',async()=>{
+    await page.emulateMedia({reducedMotion:'reduce'});
+    await page.goto(href+'#slide-03');await page.reload();await ready('growth');assert.equal((await snapshot('growth')).play,'Play');
+    await host('growth').getByRole('button',{name:'Approach',exact:true}).click();assert.equal((await snapshot('growth')).view,1);
+    await host('growth').locator('input').evaluate(el=>{for(let i=0;i<=1000;i+=71){el.value=String(i);el.dispatchEvent(new Event('input',{bubbles:true}));}});
+    assert.ok(await host('growth').evaluate(el=>el.v8Controller.getState().pendingFrames<=3));await ready('growth');
+    await activate('v7-computation-slide');assert.equal(await host('growth').evaluate(el=>el.v8Controller.getState().running),false);
+    await page.emulateMedia({reducedMotion:'no-preference'});
+  });
+  await test('Learning trace can be played, paused, scrubbed and left without motion',async()=>{
+    const slide=await activate('v7-learning-flow-slide');await slide.locator('[data-v7flow-select="growing"]').click();
+    assert.equal(await slide.locator('[data-v7-flow]').getAttribute('data-trace-step'),'plantability');
+    await slide.locator('[data-sequence-range]').fill('600');
+    assert.equal(await slide.locator('[data-v7-flow]').getAttribute('data-trace-step'),'validation');await screenshot('slide-14-learning',slide);
+    const before=await slide.locator('[data-sequence-range]').inputValue();await frames();assert.equal(await slide.locator('[data-sequence-range]').inputValue(),before);
   });
   await test('Pier exploration preserves time and other intentions remain placeholders', async () => {
     const slide = await activate('v7-anatomy-slide'); await slide.locator('[data-v7-intent="1"]').click();
@@ -155,9 +210,13 @@ try {
   await test('Static reading view has twenty scenes, complete factory diagrams and no broken images', async () => {
     const print = new URL(href); print.search = '?print=1'; await page.goto(print.href); await page.waitForFunction(() => Boolean(window.DESIGNX));
     await page.evaluate(() => Promise.race([Promise.all([window.DESIGNX_READY, window.DESIGNX_FACTORY_READY]), new Promise((_, reject) => setTimeout(() => reject(new Error('Static factory preparation exceeded 20 seconds')), 20000))]));
+    await page.waitForFunction(()=>document.querySelector('[data-v8-consequences]')?.dataset.ready==='true');
     assert.equal(await page.locator('.slide.is-active').count(), 20); assert.equal(await page.locator('[data-v8-study] iframe').count(), 0); assert.equal(await page.locator('[data-factory-poster] svg').count(), 4);
     const images = await page.locator('.slide img').evaluateAll(images => images.map(img => ({ src: img.currentSrc || img.src, complete: img.complete, width: img.naturalWidth })));
     assert.ok(images.length); assert.deepEqual(images.filter(img => !img.complete || !img.width), []);
+    await screenshot('print-03-time',page.locator('#slide-03'));
+    await screenshot('print-06-consequences',page.locator('#slide-06'));
+    await screenshot('print-09-manufacturing',page.locator('#slide-09'));
   });
   await test('Story map loads and no edition 09 dependencies remain', async () => {
     await page.goto(new URL('story-map.html', href).href); await page.waitForLoadState('domcontentloaded'); assert.match(await page.locator('body').innerText(), /story|presentation|drawing/i);

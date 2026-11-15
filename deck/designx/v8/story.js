@@ -30,12 +30,12 @@ window.DESIGNX_V8_STORY = [
   {
     "number": 3,
     "baseSlide": 4,
-    "title": "Plants make space.",
+    "title": "A room through time",
     "theme": "v7-growth-slide",
     "purpose": "Make the living experience visible through Space, Light and Time: a useful room from installation whose enclosure, atmosphere and occupation can develop with planting and seasons.",
     "stays": "The Space, Light and Time structure and explorable drawing controls. Keep the ability to choose a view, pause, linger and return to the presentation.",
-    "drawing": "Use the available timber growth drawing now. The eventual whole-scene version carries the same room through Space, Light and Time with ground, planting, occupation and tending visible. The light study shows a midsummer day; seasonal views belong in Time.",
-    "status": "Existing generated growth scenario and authored spatial/light drawings are available. They are not observed establishment, a growth forecast or validated light performance. First inhabited arrival and section drafts exist; the coordinated whole-scene Space, Light and Time presentation remains pending.",
+    "drawing": "Time occupies the principal drawing space, with Inside selected and a compact Above / Approach / Inside control. Space retains the unrolled panorama; Light selects one stage of establishment across a midsummer day. Ghost people and birds form a separate authored occupation layer. Pause, scrub and enlargement retain the selected moment.",
+    "status": "Interactive pre-rendered growth and light scenarios, with a separate authored occupation layer. No live plant geometry is rendered in the browser. The lightweight player loads selected frames on demand. Ghost paths are diagrammatic; no behaviour, collision or habitat model is claimed. Coordinated scene, ground and seasonal care work remains separate.",
     "transition": "The experience above ground depends on relationships that the arrival view cannot reveal. Open up the same room.",
     "speakerBridge": "The character of the room depends on more than what we see overhead. It begins in the ground and in the conditions we provide for life."
   },
@@ -66,12 +66,12 @@ window.DESIGNX_V8_STORY = [
   {
     "number": 6,
     "baseSlide": 6,
-    "title": "Can we make it? Can it grow?",
+    "title": "One change, several consequences",
     "theme": "v7-computation-slide",
     "purpose": "Explain the design method through the pier: fabrication, establishment, access and cost inform a shared geometry, with the designer responsible for negotiating their trade-offs.",
     "stays": "Fabricatability and Plantability, Daniel’s engine in development, the proposed plantability extension and the explicit designer’s role. Preserve the distinction between a demonstration control and a working evaluator.",
-    "drawing": "Plan one worked example using the pier: carry the changed opening through member and joint requirements, rooting/light/support conditions, entrance clearance and quantities. Show known inputs, assumptions and unresolved checks separately.",
-    "status": "Existing conceptual interface; geometry and fabrication work are in development. A separate growth simulator and generated studies exist, but integrated plantability and calibrated cost checks are proposed. The shared-constraint worked example is pending.",
+    "drawing": "Inspect Plant support, Entrance, Making and Designer review through one large scene view. Toggle baseline and opened-pier alternatives, or play and scrub the explanation. Reuse the inhabited-room export's fixed images, masks, stable threshold anchors and geometry-derived quantities. Changes select existing alternatives; they do not regenerate the design.",
+    "status": "The coordinated scene export supplies the displayed geometry and quantities. Its footing arrangements are authored, unengineered proposals; exported review flags remain visible. Quantities are derived from digital geometry before playback, not physical measurements. Integrated plantability and calibrated cost checks remain proposed.",
     "transition": "Site and living conditions make each design particular. That raises the central production challenge of variation.",
     "speakerBridge": "If the geometry responds to the life and conditions of its place, variation is inevitable. Our task is to make that variation workable."
   },
@@ -106,7 +106,7 @@ window.DESIGNX_V8_STORY = [
     "theme": "factory-focus-slide v5-factory-focus",
     "purpose": "Make the production method tangible: form a member, compare it with its target and machine its connections. Explain the role of measurement in assembling the intended room.",
     "stays": "The existing Form, Measure and Machine studies, their controls and the distinction between established techniques and Bower’s proposed integration.",
-    "drawing": "Retain the three selected stations. Use scanning and joint machining to explain why a connection in the eventual room needs a measurable relationship between intended and made geometry.",
+    "drawing": "Retain the three selected stations with a compact Argesta heading, shared annotation hierarchy and bottom playback controls. Each selected operation explains its consequence for the room or assembly. Geometry, source timing, fourteen-station exploration and original notes remain unchanged.",
     "status": "Existing authored process animations. Scan deviations are schematic, not measurements from Bower production. The line has not been built.",
     "transition": "Having shown a route to making, state the proposed offer through which a customer would commission, receive and care for a Bower.",
     "speakerBridge": "That is the making we are developing. For the customer, it needs to become a clear offer for one complete place."
@@ -166,7 +166,7 @@ window.DESIGNX_V8_STORY = [
     "theme": "v7-learning-flow-slide",
     "purpose": "Trace the intended information flow from brief and budget through candidate geometry, checks, designer review, making and living, then through validation back to revised rules.",
     "stays": "The detailed interactive flowchart, including cost, supplier quotes, validation and the distinction between revising one design and improving future rules.",
-    "drawing": "Keep the detailed interactive flow distinct from the project cycle. Trace the pier decision through selected inputs, checks and designer review, then show how a future observation would be validated before changing a rule. Linger in the detail when useful and return to the complete diagram.",
+    "drawing": "Keep the complete flowchart and its Design, Making, Growing and Cost lenses. A pauseable, scrubbable trace follows one explanation through selected nodes. Making follows target geometry, future measurements, validation and revised allowances. Growing follows a support hypothesis, future observation, review and possible rule revision. Selection is an authored explanation, not executing automation.",
     "status": "Intended information flow. Geometry and fabrication are in development; integrated plantability, uncalibrated cost evaluation and physical feedback remain proposed. The external growth study does not establish that this entire flow operates.",
     "transition": "Alongside technical learning, the inhabited and cared-for result could become a reference that creates demand for another commission.",
     "speakerBridge": "That is how a project could improve our knowledge. The place itself can also help someone else understand what they want to commission."

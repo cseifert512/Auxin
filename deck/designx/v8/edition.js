@@ -16,15 +16,21 @@
   window.DESIGNX_SLIDES = story.map(item => {
     const slide = item.baseSlide ? prior[item.baseSlide - 1] : newDrawing(item);
     const template = document.createElement('template'); template.innerHTML = slide.html;
+    if (item.baseSlide === 6) template.innerHTML = window.DESIGNX_V8_COMPUTATION.html;
     const content = template.content;
     content.querySelectorAll('a[href="https://www.bowerbuild.org/designx/v7"]').forEach(link => { link.href = 'v8/'; link.textContent = 'Bower · Edition 08 ↗'; });
     if (item.baseSlide === 4) {
+      content.querySelector('.v7-title').innerHTML = 'A room <em>through time</em>';
+      const choices = content.querySelector('.v7-choices');
+      choices.prepend(choices.querySelector('[data-v7-growth="2"]'));
+      choices.querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.v7Growth === '2')));
+      content.querySelector('.v7-growth-line').textContent = 'A place to inhabit from installation, changing with growth and seasons.';
       const slot = content.querySelector('.v7-drawing-space');
       slot.classList.add('v8-growth-slot');
       slot.querySelector('.v7-drawing-note').hidden = true;
-      slot.insertAdjacentHTML('beforeend', `<div class="v8-study-poster v8-season-poster">${poster('seasonal-summer.webp','The same three views of the six-bay growth scenario in summer.','Summer')}${poster('seasonal-winter.webp','The same three views of the six-bay growth scenario in winter.','Winter')}</div><div class="v8-study-host slide-interaction" data-v8-study="growth" aria-label="Explore the existing growth study"></div>`);
+      slot.insertAdjacentHTML('beforeend', `<div class="v8-study-poster v8-time-poster"><div class="v8-static-view"><img src="v8/assets/studies/seasonal-summer.webp" alt="Inside the six-bay room in the generated summer scenario."></div><p>Inside · established summer scenario</p></div><div class="v8-study-host slide-interaction" data-v8-study="growth" aria-label="Explore the room through time"></div>`);
       content.querySelector('.v7-growth-line').insertAdjacentHTML('afterend','<button type="button" class="v8-open-study slide-interaction" data-v8-open="growth">Enlarge study ↗</button>');
-      content.querySelector('.v7-status').textContent = 'Existing six-bay growth study. Concept geometry and trial planting; scenarios on stated assumptions, not forecasts.';
+      content.querySelector('.v7-status').textContent = 'Generated growth scenario on provisional assumptions. Ghost inhabitants are an authored occupation study; no measured outcomes.';
     }
     if (item.baseSlide === 5) {
       const slot = content.querySelector('.v7-anatomy-drawing'); slot.classList.add('v8-pier-slot');
@@ -32,8 +38,9 @@
       slot.querySelector('.v7-drawing-note').hidden = true;
       content.querySelector('.v7-status').textContent = 'The existing pier study connects planting conditions and entrance clearance. Provisional light model; ground integration is the next drawing.';
     }
-    return { ...slide, act:chapter(item.number), comparisonIndex:item.baseSlide ? item.baseSlide - 1 : item.number === 4 ? 3 : 12,
-      notes: `${slide.notes}<br><br><strong>Story connection</strong><br>${esc(item.purpose)}<br><br><strong>Continue to the next slide</strong><br>${esc(item.transition)}<br><br><strong>Drawing plan</strong><br>${esc(item.drawing)}`,
+    return { ...slide, title:item.title, act:chapter(item.number), comparisonIndex:item.baseSlide ? item.baseSlide - 1 : item.number === 4 ? 3 : 12,
+      source:item.baseSlide === 6 ? 'Inhabited-room export, authored by the scene study: manifest.json, fixed views, layer masks, stable anchors and quantities from configuration geometry. The browser recomputes nothing. Footing proposals remain unengineered.' : slide.source,
+      notes: `${item.baseSlide === 6 ? 'Follow one change through plant support, entry, making and designer review. Baseline and opened-pier views, quantities and unresolved checks come from the coordinated inhabited-room handoff. Their threshold widths are measured from digital timber geometry, not a built Bower. The scene study owns these alternatives. This drawing selects existing results and explains consequences; it is not a live design evaluator. Fabricatability remains in development, integrated plantability and calibrated cost checks remain proposed, and the designer is responsible for reconciling the trade-offs.' : slide.notes}<br><br><strong>Story connection</strong><br>${esc(item.purpose)}<br><br><strong>Continue to the next slide</strong><br>${esc(item.transition)}<br><br><strong>Drawing plan</strong><br>${esc(item.drawing)}<br><br><strong>Evidence status</strong><br>${esc(item.status)}`,
       html:template.innerHTML };
   });
   window.DESIGNX_META = Object.freeze({...window.DESIGNX_META,edition:8,targetSlideCount:20,exportReady:false,status:'integrated-working-draft'});
@@ -62,7 +69,8 @@
     let current = null, expanded = null, returnButton = null, beforePrinting = false;
     const mount = record => {
       if (record.controller) return;
-      record.controller = window.DESIGNX_V8_STUDIES.mount(record.host,record.kind);
+      record.controller = record.kind === 'growth' ? window.DESIGNX_V8_GROWTH.mount(record.host) : window.DESIGNX_V8_STUDIES.mount(record.host,record.kind);
+      record.host.v8Controller = record.controller;
       record.host.classList.add('v8-mounted');
       if (record === growth) record.home.querySelector('.v8-study-poster').setAttribute('aria-hidden','true');
     };
@@ -91,8 +99,8 @@
     root.querySelectorAll('[data-v8-open]').forEach(button => button.addEventListener('click',() => {
       const record = button.dataset.v8Open === 'growth' ? growth : pier;
       expanded = record; returnButton = button;
-      dialog.querySelector('h2').textContent = record === growth ? 'Plants make space' : 'The pier opens';
-      dialog.querySelector('.v8-dialog-status').textContent = record === growth ? 'Existing growth scenario on stated assumptions. The inhabited scene and its ground relationships are being developed.' : 'Existing design study. Opening the pier changes planting conditions and narrows the entrance. Provisional light model.';
+      dialog.querySelector('h2').textContent = record === growth ? 'A room through time' : 'The pier opens';
+      dialog.querySelector('.v8-dialog-status').textContent = record === growth ? 'Pre-rendered plant images with authored ghost inhabitants. Playback explores a scenario; it does not run plant geometry or predict occupation.' : 'Existing design study. Opening the pier changes planting conditions and narrows the entrance. Provisional light model.';
       move(record,dialog.querySelector('.v8-dialog-surface')); mount(record); dialog.showModal(); active();
     }));
     const modes = ['space','light','time'];

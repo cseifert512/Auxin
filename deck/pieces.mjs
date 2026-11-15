@@ -18,6 +18,7 @@ const to = resolve(top, 'deck/designx/pieces');
 const pieces = [
   'a-room-through-time', // a slide of its own: the one piece drawn live
   '04-plants-make-space-timber', // Plants make space: the room unrolled, the light on its floor, and through time
+  'inhabited-room', // v8 computational consequences: scene-owned views, masks, anchors and quantities
   '05-shaded-room-timber.webp', // Growth changes the geometry: the plate for Shaded room
   'shaded-at-the-pier', // a slide of its own: the plants were shading each other
   '06-grown-again', // a slide of its own: the same pier grown three times
