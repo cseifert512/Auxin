@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#eef3ea">
+  <title>Room through time · Rendering comparison · Bower</title>
+  <link rel="stylesheet" href="compare.css">
+</head>
+<body>
+  <header class="page-header">
+    <a class="wordmark" href="../../">bower<span>Drawing experiments</span></a>
+    <a class="back-link" href="../../#slide-03">Return to the presentation ↗</a>
+  </header>
+  <main>
+    <div class="introduction">
+      <div><p class="eyebrow">Room through time / Rendering comparison</p><h1>One room. One orbit.</h1></div>
+      <p>Compare the existing film with live timber and a baked plant layer. Switching keeps the same moment. Only the selected version runs.</p>
+    </div>
+    <div class="selection-bar">
+      <div class="variant-tabs" role="group" aria-label="Rendering version">
+        <button type="button" data-variant="original" aria-pressed="true">Original film</button>
+        <button type="button" data-variant="hybrid" aria-pressed="false">Hybrid</button>
+        <button type="button" data-variant="compressed" aria-pressed="false" hidden>Compressed film</button>
+      </div>
+      <span class="variant-description" id="variant-description">The existing camera-study film.</span>
+    </div>
+    <section class="viewer" aria-label="Room through time comparison">
+      <img class="poster" id="poster" src="../../assets/time-experiment/orbit-poster.jpg" alt="The established room, with timber and planting, seen from the programmed orbit.">
+      <div class="drawing-surface" id="drawing-surface"></div>
+      <div class="viewer-status" id="viewer-status" role="status"><span class="status-dot"></span><span id="status-text">Reading the comparison…</span></div>
+      <span class="viewer-label" id="viewer-label">Original film</span>
+    </section>
+    <div class="playback">
+      <button class="play-button" id="play" type="button" disabled aria-label="Play drawing">Play</button>
+      <div class="time-readout"><output id="time-readout">0.0 s</output><span id="phase-readout">Assembly</span></div>
+      <div class="timeline"><label class="sr-only" for="scrub">Time in the camera study</label><input id="scrub" type="range" min="0" max="51" value="0" step="0.01" disabled><div class="timeline-labels"><span>Assembly</span><span>Planting</span><span>Growth and seasons</span><span>51 s</span></div></div>
+      <button type="button" class="quiet-button" id="restart" disabled>Restart</button>
+    </div>
+    <div class="measurement-heading"><div><p class="eyebrow">Measured in this browser</p><h2>What changes?</h2></div><button type="button" class="quiet-button" id="download-results" disabled>Save measurements ↓</button></div>
+    <div class="metrics-grid" aria-live="off">
+      <div class="metric"><span>First drawable frame</span><strong id="metric-startup">—</strong><small>Since selecting this version</small></div>
+      <div class="metric"><span>Declared asset size</span><strong id="metric-payload">—</strong><small id="metric-payload-note">Media and model files</small></div>
+      <div class="metric"><span>Display callback rate</span><strong id="metric-cadence">—</strong><small>During visible playback</small></div>
+      <div class="metric"><span>Dropped video frames</span><strong id="metric-dropped">—</strong><small>Reported by the video decoder</small></div>
+    </div>
+    <details class="comparison-details" open>
+      <summary>Compare measurements</summary>
+      <div class="table-scroll"><table><thead><tr><th scope="col">Version</th><th scope="col">First frame</th><th scope="col">Assets</th><th scope="col">Mean callback rate</th><th scope="col">Stalls</th><th scope="col">Dropped / decoded</th></tr></thead><tbody id="comparison-rows"></tbody></table></div>
+      <p class="measurement-note">Startup includes local preparation and loading. Revisited files may already be cached. Display callbacks are not GPU timings or unique film frames. These readings describe this device and connection; use an empty cache and the same network settings for a loading comparison.</p>
+    </details>
+    <div class="study-notes">
+      <p><strong>Look closely.</strong> Watch the planting against the timber edges, the gaps through the canopy and the shadows on the floor. Pause and switch versions at the same moment to check alignment.</p>
+      <p id="evidence-note"><strong>Scope.</strong> A separate rendering experiment using the existing growth scenario and programmed camera. The presentation slide is unchanged. Plant growth and material ageing remain illustrative model outputs.</p>
+    </div>
+    <p class="error-note" id="error-note" role="alert" hidden></p>
+  </main>
+  <footer>bower<span>Living architecture / A delivery experiment</span></footer>
+  <script type="module" src="compare.js"></script>
+</body>
+</html>

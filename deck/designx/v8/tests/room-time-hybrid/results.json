@@ -1,0 +1,169 @@
+{
+  "schema": "bower.room-time-comparison-results/1",
+  "measuredAt": "2026-11-15T17:46:18.012Z",
+  "browser": "157.0.8103.52",
+  "gpu": "Intel UHD Graphics",
+  "protocol": {
+    "viewport": {
+      "width": 1600,
+      "height": 1100
+    },
+    "deviceScaleFactor": 1,
+    "browserCache": "Disabled through CDP; fresh browser context for every trial",
+    "profiles": [
+      {
+        "id": "local",
+        "label": "Unthrottled localhost",
+        "latencyMs": 0,
+        "downloadBytesPerSecond": -1
+      },
+      {
+        "id": "slow",
+        "label": "5 Mbps download / 80 ms added latency",
+        "latencyMs": 80,
+        "downloadBytesPerSecond": 625000
+      }
+    ],
+    "playback": "Unthrottled: seven seconds from t42; throttled: complete sequence from t0",
+    "screenshots": [
+      6,
+      13,
+      28,
+      42,
+      49
+    ],
+    "note": "The added latency is the CDP latency parameter. This local test does not measure public hosting, DNS, TLS or real-world mobile graphics.",
+    "server": "Isolated local static HTTP server, no-store, byte ranges, gzip text; binary media/models unchanged"
+  },
+  "assetBytes": {
+    "original": 39599179,
+    "hybrid": 25355903,
+    "compressed": 11196571
+  },
+  "trials": [
+    {
+      "variant": "original",
+      "profile": "local",
+      "navigationToReadyMs": 751.0346,
+      "receivedAtReadyBytes": 2453769,
+      "localPlayback": {
+        "droppedFrames": 0,
+        "stalls": 0,
+        "mediaAdvancedSeconds": 7.044400000000003
+      }
+    },
+    {
+      "variant": "hybrid",
+      "profile": "local",
+      "navigationToReadyMs": 3674.6182999999983,
+      "receivedAtReadyBytes": 10151802,
+      "localPlayback": {
+        "droppedFrames": 0,
+        "stalls": 0,
+        "mediaAdvancedSeconds": 7,
+        "renderP50Ms": 2.099999999627471,
+        "renderP95Ms": 6.899999998509884
+      }
+    },
+    {
+      "variant": "compressed",
+      "profile": "local",
+      "navigationToReadyMs": 238.58170000000246,
+      "receivedAtReadyBytes": 2322697,
+      "localPlayback": {
+        "droppedFrames": 0,
+        "stalls": 0,
+        "mediaAdvancedSeconds": 6.997799999999998
+      }
+    },
+    {
+      "variant": "original",
+      "profile": "slow",
+      "navigationToReadyMs": 961.8156999999992,
+      "receivedAtReadyBytes": 377088,
+      "slowPlayback": {
+        "completed": true,
+        "wallSeconds": 65.27355809999999,
+        "mediaSeconds": 51,
+        "stalls": 28,
+        "droppedFrames": 27,
+        "decodedFrames": 1221
+      }
+    },
+    {
+      "variant": "hybrid",
+      "profile": "slow",
+      "navigationToReadyMs": 9840.805199999988,
+      "receivedAtReadyBytes": 5367942,
+      "slowPlayback": {
+        "completed": true,
+        "wallSeconds": 51.300258,
+        "mediaSeconds": 51,
+        "stalls": 0,
+        "droppedFrames": 0,
+        "decodedFrames": 608
+      }
+    },
+    {
+      "variant": "compressed",
+      "profile": "slow",
+      "navigationToReadyMs": 928.5353000000177,
+      "receivedAtReadyBytes": 372588,
+      "slowPlayback": {
+        "completed": true,
+        "wallSeconds": 51.15678319999998,
+        "mediaSeconds": 51,
+        "stalls": 0,
+        "droppedFrames": 0,
+        "decodedFrames": 610
+      }
+    }
+  ],
+  "baseAlignment": [
+    {
+      "time": 6,
+      "meanAbsoluteChannelDifference": 0,
+      "fractionChannelsOver16": 0
+    },
+    {
+      "time": 13,
+      "meanAbsoluteChannelDifference": 0.09526203703703703,
+      "fractionChannelsOver16": 0
+    },
+    {
+      "time": 28,
+      "meanAbsoluteChannelDifference": 0,
+      "fractionChannelsOver16": 0
+    },
+    {
+      "time": 42,
+      "meanAbsoluteChannelDifference": 0,
+      "fractionChannelsOver16": 0
+    },
+    {
+      "time": 49,
+      "meanAbsoluteChannelDifference": 0,
+      "fractionChannelsOver16": 0
+    }
+  ],
+  "limitations": [
+    "One trial per variant/profile by default; results are exploratory, not statistically stable benchmarks.",
+    "CPU render-submission times and display callbacks are not GPU execution times.",
+    "Initial transferred bytes include HTML, CSS, scripts, manifest, poster and media/model traffic received up to readiness; the complete media file need not be downloaded.",
+    "The slow profile includes full playback; detailed screenshots and seven-second decoder samples use the local profile.",
+    "A new browser context clears page/media caches, but operating-system file caches and GPU driver shader caches can remain warm.",
+    "Pixel differences between variants include compression, foliage resolution and any scene-rendering differences. They are not a perceptual quality verdict.",
+    "The new bake and the original film can have different wind phase after the material transition. Bare-timber source/client comparisons isolate camera/material alignment."
+  ],
+  "uiChecks": {
+    "checks": [
+      "Direct hybrid link preserves requested time",
+      "Switching all versions preserves the moment",
+      "Play, pause and scrub work and remain paused",
+      "Rapid replacement cancels stale hybrid loading",
+      "Mobile layout has no page overflow",
+      "Existing source film hash unchanged"
+    ],
+    "errors": []
+  }
+}
