@@ -3,6 +3,7 @@
 @font-face { font-family: 'Safiro'; src: url('fonts/safiro-regular-webfont.woff2') format('woff2'); font-weight: 400; }
 @font-face { font-family: 'Safiro'; src: url('fonts/safiro-medium-webfont.woff2') format('woff2'); font-weight: 500 700; }
 @font-face { font-family: 'Argesta Display'; src: url('fonts/argestadisplay-regular-webfont.woff2') format('woff2'); }
+@font-face { font-family: 'Argesta Display'; font-style: italic; src: url('fonts/argestadisplay-regularitalic-webfont.woff2') format('woff2'); }
 @font-face { font-family: 'Argesta Text'; src: url('fonts/argestatext-regular-webfont.woff2') format('woff2'); }
 :root {
   --paper: #EEF3EA; --ink: #102820; --muted: #4D6559; --rule: #B1C1B580; --red: #B4492F; --leaf: #B7CD7B;
@@ -15,9 +16,10 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 button:disabled { cursor: default; }
 #stage { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; transform: translate(-50%, -50%) scale(var(--k)); overflow: hidden; }
 
-/* ---- the place: the picture is the whole stage; everything else floats over it ---- */
+/* ---- the place: a 1600 x 900 slide set like the deck's v8 full-slide drawings (deck/designx/v8/drawings.css,
+   drawing-timeline.css, growth-player.css). The picture fills it; letterboxed on a dark ground in any other window. ---- */
 .place { background: #0b1a14; }
-.place #stage { inset: 0; left: 0; top: 0; width: auto; height: auto; transform: none; color: #fff; }
+.place #stage { --drawing-paper: #eef3ea; background: #0b1a14; }
 #world { position: absolute; inset: 0; transform-origin: 50% 50%; }
 .drift #world { animation: drift 18s ease-in-out infinite alternate; }
 @keyframes drift { from { transform: none; } to { transform: scale(1.035) translate(-6px, -4px); } }
@@ -35,67 +37,73 @@ button:disabled { cursor: default; }
 #life, #marks { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 #life { pointer-events: none; }
 .bird { fill: none; stroke: #fff; stroke-width: 1.4; stroke-linecap: round; opacity: 0; }
-#marks { transition: opacity 200ms; }
+
+/* bubbles: a 9 px red dot in a thin 20 px ring with a soft 1 px dark halo; the name only when wanted */
 .hot { cursor: pointer; outline: none; }
-.hot, .lab { transition: opacity 300ms ease; }
 .gone { visibility: hidden; }
-.hot .ring { fill: rgba(255, 255, 255, .22); stroke: #fff; stroke-width: 2.5; }
-.hot .core { fill: var(--red); stroke: #fff; stroke-width: 2; }
-.lab .core { fill: none; stroke: #fff; stroke-width: 2.5; }   /* a part named: hollow, opens nothing */
-#marks text { font: 500 18px var(--sans); fill: #fff; paint-order: stroke; stroke: rgba(8, 22, 16, .55); stroke-width: 5px; stroke-linejoin: round; }
-#marks .lab text { font-size: 15px; }
-#marks .fig { font-weight: 400; font-size: 13px; fill: rgba(255, 255, 255, .85); }
-#marks .lab .fig { font-size: 12px; }
-#marks .fig.tick-a { animation: tick-a 600ms ease-out; }
-#marks .fig.tick-b { animation: tick-b 600ms ease-out; }
-@keyframes tick-a { from { fill: #ffb49c; } }
-@keyframes tick-b { from { fill: #ffb49c; } }
-.hot:focus .ring { fill: rgba(180, 73, 47, .45); }
-/* alive, in the factory's spirit: they arrive in turn, the dot pulses slowly, nothing reacts to hover */
-.in { transform-box: fill-box; transform-origin: 0 50%; animation: arrive 360ms ease-out backwards; }
-@keyframes arrive { from { opacity: 0; transform: scale(.6); } }
-.hot .pulse { fill: none; stroke: #fff; stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: pulse 2.4s ease-out infinite; }
-@keyframes pulse { from { transform: scale(1); opacity: .8; } to { transform: scale(4); opacity: 0; } }
-.calm .in, .calm .pulse, .calm #marks .fig { animation: none !important; }
+.hot .hit { fill: transparent; }   /* 44 px to hit, though the dot is small */
+.hot .ring { fill: none; stroke: rgba(255, 255, 255, .85); stroke-width: 1.25; }
+.hot .core { fill: var(--red); }
+.lab .core { fill: none; stroke: #fff; stroke-width: 1.5; }   /* a part named: hollow, opens nothing */
+.ring, .core { filter: drop-shadow(0 0 1px rgba(0, 0, 0, .6)); }
+.hot .pulse { fill: none; stroke: rgba(255, 255, 255, .7); stroke-width: 1; transform-box: fill-box; transform-origin: center; animation: breathe 3.2s ease-out infinite; }
+@keyframes breathe { from { transform: scale(1); opacity: .8; } to { transform: scale(1.5); opacity: 0; } }
+#marks text { font: 500 12px var(--sans); letter-spacing: .08em; fill: #fff; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .7)); opacity: 0; transition: opacity 250ms ease; pointer-events: none; }
+#marks.names text, #marks .near text, #marks .hot:focus text { opacity: 1; }
+.hot:focus-visible .ring { stroke: #fff; stroke-width: 2; }
+.in { transform-box: fill-box; transform-origin: center; animation: arrive 360ms ease-out backwards; }   /* in turn */
+@keyframes arrive { from { opacity: 0; transform: scale(.5); } }
+.calm .in, .calm .pulse { animation: none !important; }
 .calm .pulse { display: none; }
+.calm #marks text { transition: none; }
 
-/* soft dark only where words sit: the top-left corner and the bottom band */
-.shade { position: absolute; pointer-events: none; }
-.shade.top { left: 0; top: 0; width: min(70%, 900px); height: 240px; background: radial-gradient(ellipse at 0 0, rgba(6, 18, 13, .55), rgba(6, 18, 13, 0) 70%); }
-.shade.foot { left: 0; right: 0; bottom: 0; height: 220px; background: linear-gradient(to top, rgba(6, 18, 13, .62), rgba(6, 18, 13, 0)); }
-.place header, .tools, #figures, #dial { position: absolute; text-shadow: 0 1px 8px rgba(0, 0, 0, .45); }
-.place header { left: 28px; top: 20px; max-width: 60%; }
-.place h1 { display: inline; margin: 0 18px 0 0; font: 400 26px/1.1 var(--display); letter-spacing: -.02em; }
-#back { font-size: 14px; color: rgba(255, 255, 255, .85); border-bottom: 1px solid rgba(255, 255, 255, .5); }
-#caption { margin: 6px 0 0; font: 400 16px/1.3 var(--serif); color: rgba(255, 255, 255, .88); }
-.tools { right: 28px; top: 22px; display: flex; gap: 18px; font-size: 13px; }
-.tools button { color: rgba(255, 255, 255, .85); }
-.tools button[aria-pressed="true"], .tools button[aria-expanded="true"] { color: #fff; border-bottom: 1px solid #fff; }
-#real { position: absolute; right: 0; top: 28px; width: 340px; font-size: 13px; line-height: 1.4; text-align: right; }
+/* v8 sets a title within the drawing over a fade of paper (drawings.css .v8-growth-scene:after and .v7-title) */
+.veil { position: absolute; left: 0; right: 0; pointer-events: none; opacity: .85; }
+.veil.top { top: 0; height: 175px; background: linear-gradient(var(--drawing-paper), transparent); }
+.veil.foot { bottom: 0; height: 175px; background: linear-gradient(transparent, var(--drawing-paper)); }   /* the same fade, under the time line */
+.place h1 { position: absolute; left: 52px; top: 34px; margin: 0; max-width: 1300px; font: italic 400 84px/1.08 var(--display);
+  letter-spacing: -.045em; color: var(--ink); text-shadow: 0 1px 18px var(--drawing-paper); pointer-events: none; }
+#back { position: absolute; left: 56px; top: 136px; font: 400 18px/1.3 var(--sans); color: #000; text-decoration: underline; text-underline-offset: 4px; text-shadow: 0 1px 3px var(--drawing-paper); }
+/* "What is real" as v8's inspect link and its panel (growth-player.css .v8-growth-inspect, details summary, .v8-growth-details) */
+.inspect { position: absolute; right: 52px; top: 59px; }
+#realbtn { font: 400 17px/1.3 var(--sans); color: #536d59; padding: 6px 0; white-space: nowrap; text-shadow: 0 1px 3px var(--drawing-paper); }
+#realbtn::after { content: ' +'; }
+#realbtn[aria-expanded="true"]::after { content: ' \2212'; }
+#real { position: absolute; right: 0; top: 38px; width: 520px; background: #eef3eafa; border: 1px solid #b1c1b5; padding: 24px 28px; box-shadow: 0 8px 25px #10282015; color: #284639; font: 400 15px/1.45 var(--sans); }
 #real ul { margin: 0; padding: 0; list-style: none; }
-#real li { margin-bottom: 5px; }
-.from { margin: 8px 0 0; font-size: 11px; color: rgba(255, 255, 255, .7); }
-#figures { right: 28px; bottom: 104px; width: 210px; list-style: none; margin: 0; padding: 0; }
-#figures li { padding: 7px 0 6px; border-top: 1px solid rgba(255, 255, 255, .28); }
-#figures b { display: block; font: 500 21px/1.1 var(--sans); letter-spacing: -.01em; }
-#figures span { font-size: 12px; }
-#figures small { display: block; font-size: 10px; color: rgba(255, 255, 255, .65); }
-#dial { left: 28px; right: 28px; bottom: 14px; display: grid; grid-template-columns: auto auto 1fr; column-gap: 14px; align-items: baseline; }
-#play { width: 30px; height: 30px; border: 1px solid rgba(255, 255, 255, .7); border-radius: 50%; font-size: 11px; line-height: 28px; color: #fff; align-self: center; }
-#date { font: 400 20px/1.2 var(--serif); }
-#rendering { font-size: 11px; color: rgba(255, 255, 255, .7); letter-spacing: .04em; }
-.track { grid-column: 1 / -1; position: relative; padding-top: 8px; }
-#scrub { width: 100%; margin: 0; accent-color: #fff; }
-#ticks { list-style: none; margin: 0; padding: 0; position: relative; height: 24px; }
-#ticks li { position: absolute; top: 0; transform: translateX(-50%); width: 120px; text-align: center; }
-#ticks li:first-child { transform: none; text-align: left; }
-#ticks li:last-child:not(:first-child) { transform: translateX(-100%); text-align: right; }
-#ticks button { font-size: 11px; color: rgba(255, 255, 255, .7); border-top: 2px solid rgba(255, 255, 255, .35); padding-top: 4px; width: 100%; }
-#ticks button[aria-current="true"] { color: #fff; border-top-color: var(--red); }
-#ticks li.missing button { opacity: .5; }
-#ticks li.quiet button { color: transparent; text-shadow: none; }   /* no room for its label beside a nearer one: the tick stays */
+#real li { margin: 0 0 8px; }
+.from { margin: 12px 0 0; font-size: 12px; color: #536d59; }
 
-.embed h1, .embed #caption, .embed .tools, .embed #figures, .embed #dial, .embed .shade.foot { display: none; }
+/* the time line as v8's bottom playback controls (drawing-timeline.css .v8-drawing-timeline and its slider) */
+#dial { position: absolute; left: 52px; right: 52px; bottom: 42px; display: grid; grid-template-columns: 60px 245px minmax(0, 1fr); gap: 23px; align-items: center;
+  padding: 16px 0 7px; color: #000; text-shadow: 0 1px 3px var(--drawing-paper), 0 -1px 3px var(--drawing-paper); }
+#play { padding: 6px 0; color: #000; font: 400 18px/1.3 var(--sans); text-align: left; }
+.when { display: flex; flex-direction: column; gap: 6px; }
+#date { font: 400 25px/1.15 var(--sans); white-space: nowrap; }
+#rendering { font: 400 13px/1.3 var(--sans); white-space: nowrap; }
+#rendering:empty { display: none; }
+.track { position: relative; min-width: 0; padding-bottom: 28px; }
+#scrub { display: block; width: 100%; appearance: none; -webkit-appearance: none; height: 22px; background: transparent; cursor: ew-resize; margin: 0; }
+#scrub::-webkit-slider-runnable-track { height: 1px; background: #000; }
+#scrub::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 9px; height: 18px; margin-top: -8px; border: 0; border-radius: 0; background: #000; }
+#scrub::-moz-range-track, #scrub::-moz-range-progress { height: 1px; background: #000; }
+#scrub::-moz-range-thumb { width: 9px; height: 18px; border: 0; border-radius: 0; background: #000; }
+#scrub:focus-visible { outline: 1px solid #000; outline-offset: 5px; }
+#scrub:disabled { cursor: default; }
+#ticks { list-style: none; margin: 0; padding: 0; position: absolute; left: 4.5px; right: 4.5px; top: 28px; height: 18px; }
+#ticks li { position: absolute; top: 0; transform: translateX(-50%); }
+#ticks li:first-child { transform: none; }
+#ticks li:last-child:not(:first-child) { transform: translateX(-100%); }
+#ticks button { position: relative; font: 400 13px/1.3 var(--sans); color: #000; white-space: nowrap; }
+#ticks button::before { content: ''; position: absolute; left: 50%; top: -12px; width: 1px; height: 6px; background: #000; }
+#ticks li:first-child button::before { left: 0; }
+#ticks li:last-child:not(:first-child) button::before { left: auto; right: 0; }
+#ticks button[aria-current="true"] { text-decoration: underline; text-underline-offset: 3px; }
+#ticks li.missing button { opacity: .5; }
+#ticks li.quiet button { color: transparent; text-shadow: none; }   /* no room for its label beside a nearer one: the mark stays */
+.place button:focus-visible { outline: 2px solid #789951; outline-offset: 5px; }
+
+/* ?embed: the same slide, filling its iframe; title and controls are already set as v8 sets them */
 
 /* ---- the pier study, as a design tool ---- */
 .pier header { position: absolute; left: 48px; right: 48px; top: 24px; height: 80px; }

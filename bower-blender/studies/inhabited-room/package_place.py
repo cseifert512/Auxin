@@ -282,7 +282,7 @@ def main() -> None:
     for view, v in views.items():
         v["note"] = site["cameras"].get(view, {}).get("note", "")
     says = {m["id"]: m for m in site["growth"]["moments"]}
-    for font in ("safiro-regular-webfont.woff2", "safiro-medium-webfont.woff2", "argestadisplay-regular-webfont.woff2", "argestatext-regular-webfont.woff2"):
+    for font in ("safiro-regular-webfont.woff2", "safiro-medium-webfont.woff2", "argestadisplay-regular-webfont.woff2", "argestadisplay-regularitalic-webfont.woff2", "argestatext-regular-webfont.woff2"):
         if (FONTS / font).exists():
             shutil.copyfile(FONTS / font, OUT / "fonts" / font)
     manifest = {

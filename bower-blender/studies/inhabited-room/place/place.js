@@ -29,11 +29,8 @@
   const view = (s = station()) => P.views[s.view];
   /** The frame on show: the last one this view has on or before the chosen day. */
   const frame = (v = view()) => [...v.frames].reverse().find((f) => f.day <= state.day) ?? v.frames[0];
-  /** The named moment a day falls in, for the words and figures. */
+  /** The named moment a day falls in. */
   const moment = (day) => [...P.moments].reverse().find((m) => m.day <= day) ?? P.moments[0];
-  /** A figure for the frame on show: the frame's own, else the moment's, else the one value the manifest has. */
-  const figure = (key, f, m) => f.fig?.[key] ?? P.figures[key]?.values?.[m.id] ?? P.figures[key]?.value ?? null;
-  const say = (words, id) => (typeof words === 'string' ? words : words[id] ?? words.default ?? '');
   const load = (file) => { if (!cache.has(file)) { const img = new Image(); img.decoding = 'async'; img.src = file; cache.set(file, img); } return cache.get(file); };
   /** Milliseconds a frame: brisk when a view has many, slow when few. */
   const rate = (n = view().frames.length) => (n >= 24 ? 1000 / 8 : n >= 8 ? 1000 / 5 : 1200);
@@ -72,18 +69,21 @@
   }
 
   // ---- bubbles: the ways on, and in a cut the parts named ----
+  /** A target is a small red dot in a thin ring; a part named in a cut, a hollow dot. Names show for a moment
+      when a view opens, then only near the pointer or with keyboard focus. */
+  let pointer = null, namesTimer = 0;
   function buildMarks(s) {
     bubbles = [];
     const all = [...s.targets.map((t) => ({ ...t, open: true })), ...(s.labels ?? []).map((t) => ({ ...t, at: [t.at] }))];
     $('marks').replaceChildren(...all.map((t, i) => {
       const g = svg('g', t.open ? { class: 'hot', tabindex: 0, role: 'button', 'aria-label': t.label } : { class: 'lab' });
       const inner = svg('g', { class: 'in', style: `animation-delay:${i * 120}ms` });   // they arrive one after another
-      const name = svg('text', { x: 26, y: 4 }, t.label), fig = svg('text', { class: 'fig', x: 26, y: 26 });
-      fig.dataset.key = t.figure ?? ''; fig.dataset.suffix = t.suffix ?? '';
-      if (t.open) inner.append(svg('circle', { class: 'pulse', r: 8, style: `animation-delay:${(i * 0.6) % 2.4}s` }), svg('circle', { class: 'ring', r: 17 }));
-      inner.append(svg('circle', { class: 'core', r: 6 }), name, fig);
+      const name = svg('text', { x: 16, y: 4 }, t.label);
+      if (t.open) inner.append(svg('circle', { class: 'hit', r: 22 }), svg('circle', { class: 'pulse', r: 10, style: `animation-delay:${(i * 0.6) % 2.4}s` }), svg('circle', { class: 'ring', r: 10 }), svg('circle', { class: 'core', r: 4.5 }));
+      else inner.append(svg('circle', { class: 'core', r: 3.5 }));
+      inner.append(name);
       g.append(inner);
-      const b = { t, g, texts: [name, fig], left: false, at: null };
+      const b = { t, g, name, left: false, at: null };
       if (t.open) {
         const go = () => goTo(t.to, b.at);
         g.addEventListener('click', go);
@@ -92,6 +92,9 @@
       bubbles.push(b);
       return g;
     }));
+    clearTimeout(namesTimer);
+    $('marks').classList.add('names');
+    if (!still) namesTimer = setTimeout(() => $('marks').classList.remove('names'), 1600);
     placeMarks();
   }
   /** Each bubble rides with its place on the frame on show; a transform only, no layout. */
@@ -103,9 +106,14 @@
       b.g.classList.toggle('gone', !b.at);
       if (!b.at) continue;
       b.g.setAttribute('transform', `translate(${b.at[0].toFixed(1)},${b.at[1].toFixed(1)})`);
-      const left = b.at[0] > W - 280;   // the label goes to whichever side has room
-      if (left !== b.left) { b.left = left; for (const t of b.texts) { t.setAttribute('x', left ? -26 : 26); t.setAttribute('text-anchor', left ? 'end' : 'start'); } }
+      const left = b.at[0] > W - 240;   // the name goes to whichever side has room
+      if (left !== b.left) { b.left = left; b.name.setAttribute('x', left ? -16 : 16); b.name.setAttribute('text-anchor', left ? 'end' : 'start'); }
     }
+    near();
+  }
+  /** A name shows while the pointer is within about 130 px of its dot. */
+  function near() {
+    for (const b of bubbles) b.g.classList.toggle('near', !!(pointer && b.at && Math.hypot(b.at[0] - pointer[0], b.at[1] - pointer[1]) < 130));
   }
 
   /** The frame on show, in the picture on top: within a view the picture steps, its bubbles follow. */
@@ -115,18 +123,12 @@
     placeMarks();
   }
 
-  // ---- the words, figures and dial over the picture ----
+  // ---- the title and the time line over the picture (the figures stay in the manifest, not drawn) ----
   function buildChrome(s) {
     const v = view(s), first = v.frames[0].day, last = v.frames.at(-1).day;
     $('title').textContent = s.title;
     $('back').hidden = s.id === P.start;
-    $('figures').replaceChildren(...s.figures.map((key) => {
-      const li = document.createElement('li');
-      li.dataset.key = key; li.title = P.figures[key].source;
-      li.innerHTML = '<b></b><span></span><small></small>';
-      li.children[1].textContent = P.figures[key].label;
-      return li;
-    }));
+    document.title = s.id === P.start ? 'The place' : `${s.title}: the place`;
     Object.assign($('scrub'), { min: first, max: last, disabled: first === last });
     const width = $('ticks').clientWidth, days = new Set(v.frames.map((f) => f.day));
     $('ticks').replaceChildren(...P.moments.filter((m) => m.day >= first && m.day <= last).map((m) => {
@@ -143,22 +145,7 @@
     body.classList.toggle('drift', !calm && !s.section);   // perspective views drift slowly; sections stay put
   }
   function chrome() {
-    const s = station(), f = frame(), m = moment(f.day);
-    $('caption').textContent = say(s.caption, m.id);
-    for (const li of $('figures').children) {
-      const value = figure(li.dataset.key, f, m);
-      li.hidden = value === null;
-      if (value === null || li.children[0].textContent === value) continue;
-      li.children[0].textContent = value;
-      li.children[2].textContent = f.fig?.[li.dataset.key] ? `${P.figures[li.dataset.key].kind}, this frame` : P.figures[li.dataset.key].kind;
-    }
-    // each bubble's live figure, from the frame on show; it ticks when it changes
-    for (const t of $('marks').querySelectorAll('text.fig')) {
-      const value = t.dataset.key ? figure(t.dataset.key, f, m) : null, text = value === null ? '' : value + t.dataset.suffix;
-      if (text === t.textContent) continue;
-      if (t.textContent) t.classList.toggle('tick-a', !t.classList.toggle('tick-b'));   // swap animations: no layout read
-      t.textContent = text;
-    }
+    const s = station(), f = frame();
     $('date').textContent = f.month;
     $('scrub').value = f.day;
     // a tick's label shows when it is the moment on show, or when it has room beside those already shown
@@ -171,9 +158,7 @@
       li.firstChild.setAttribute('aria-current', String(li.dataset.moment === f.moment));
     }
     body.classList.toggle('playing', state.playing);
-    $('play').textContent = state.playing ? '❚❚' : '▶';
-    $('play').setAttribute('aria-label', state.playing ? 'Pause' : 'Play');
-    $('lifebtn').setAttribute('aria-pressed', String(state.life));
+    $('play').textContent = state.playing ? 'Pause' : 'Play';
     $('life').style.display = state.life && P.life.views.includes(s.view) ? '' : 'none';
   }
 
@@ -278,7 +263,6 @@
   });
   $('back').addEventListener('click', () => goTo(P.start));
   $('play').addEventListener('click', () => play());
-  $('lifebtn').addEventListener('click', () => setLife(!state.life));
   $('reallines').replaceChildren(...P.real.lines.map((t) => Object.assign(document.createElement('li'), { textContent: t })));
   $('realfrom').textContent = `From ${P.real.from}`;
   $('realbtn').addEventListener('click', () => { const open = $('real').hidden; $('real').hidden = !open; $('realbtn').setAttribute('aria-expanded', String(open)); });
@@ -289,16 +273,18 @@
     if (e.key === 'ArrowLeft') nudge(-1);
     if (e.key === ' ' && e.target === body) { e.preventDefault(); play(); }
   });
-  let pending = 0;
+  // the stage is a 1600 x 900 slide, scaled into the window (or the iframe) and centred
+  W = 1600; H = 900;
+  let k = 1, origin0 = [0, 0];
   function measure() {
-    W = $('stage').clientWidth; H = $('stage').clientHeight;
+    k = Math.min(innerWidth / W, innerHeight / H);
+    document.documentElement.style.setProperty('--k', k);
+    origin0 = [(innerWidth - W * k) / 2, (innerHeight - H * k) / 2];
     $('marks').setAttribute('viewBox', `0 0 ${W} ${H}`); $('life').setAttribute('viewBox', `0 0 ${W} ${H}`);
-    for (const node of $('world').querySelectorAll('.shot')) lay(node);
   }
-  addEventListener('resize', () => {
-    cancelAnimationFrame(pending);
-    pending = requestAnimationFrame(() => { measure(); buildChrome(station()); placeMarks(); chrome(); });
-  });
+  addEventListener('resize', measure);
+  $('stage').addEventListener('pointermove', (e) => { pointer = [(e.clientX - origin0[0]) / k, (e.clientY - origin0[1]) / k]; near(); });
+  $('stage').addEventListener('pointerleave', () => { pointer = null; near(); });
   measure();
 
   // ---- life: an illustration, not a finding. A few birds cross the picture now and then and sometimes settle. ----

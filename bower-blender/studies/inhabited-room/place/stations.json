@@ -6,10 +6,8 @@
  "real": {
   "from": "bower-blender/studies/inhabited-room/README.md",
   "lines": [
-   "The climbers are one run of the plant simulator.",
-   "Each species has a plain leaf and a plain flower: where growth is, not what it looks like.",
-   "The sky, the beds, the meadow and the woodland are one summer afternoon at every moment.",
-   "The site is designed, not surveyed. Nothing here is engineered."
+   "The climbers are one run of the plant simulator (place-10y, on snapshot six-bay-meadow-v2), each species drawn with a plain leaf and flower; the roots are sketched by a stated rule.",
+   "Sky, beds, meadow and woodland are one summer afternoon at every date. The site is designed, not surveyed, and nothing here is engineered."
   ]
  },
  "life": {
