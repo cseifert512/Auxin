@@ -496,7 +496,13 @@ def lay(design: dict, group: dict, joints, lines: list) -> dict:
                     break
                 travelled, far = travelled + step, b.at_m
             far = max(far, first.from_m + line_cfg["min_length_m"])
-            back = L._line(arch, line_cfg, bodies, cuts.get(arch_id, []), floor, face="outer", span=(first.from_m, far), tag="feeder.back", kind="feeder")
+            # The far end may fall in a housing cut for another member, where no standoff can stand. The cable then stops short of it,
+            # and a stretch left shorter than the least length is no line at all: two piers of a regular six-bay room lost theirs that way.
+            # So it runs on, a little at a time, to the next place a standoff can stand.
+            back, reach = [], far
+            while not back and reach <= far + 0.6:
+                back = L._line(arch, line_cfg, bodies, cuts.get(arch_id, []), floor, face="outer", span=(first.from_m, reach), tag="feeder.back", kind="feeder")
+                reach += 0.1
             front = L._line(arch, line_cfg, bodies, cuts.get(arch_id, []), floor, face=L.EXTERIOR, span=(line_cfg["foot_clear_m"], first.from_m + f["overlap_m"]), centre=centre, tag="feeder", kind="feeder")
             feeders += front[:1] + back[:1]
             for z in chosen:

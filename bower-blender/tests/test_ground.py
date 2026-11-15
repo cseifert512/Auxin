@@ -237,6 +237,20 @@ def test_the_frozen_six_bay_room_and_the_design_as_it_stands_take_ground_too():
             assert len(G.zone_rows(group["ground"])) == len(group["ground"]["root_zones"])
 
 
+def test_every_pier_of_a_regular_room_gets_the_same_feeders():
+    radial = T.load(REPO.parent / "releases" / "six-bay-radial-v1" / "design.json")  # six piers alike: what one gets, all get
+    piers = [p["id"] for p in radial["rooms"][0]["piers"]]
+    zones = [zone for pier in piers for zone in beside(radial, pier=pier)]
+    ground, _ = laid(radial, zones)
+    names = sorted(line.id for line in ground["feeders"])
+    assert len(names) == 24, names  # a feeder up the outside and one on the back, for each of twelve arch legs
+    assert sum(name.endswith(".feeder.back") for name in names) == 12
+    by_pier = {}
+    for handover in ground["handovers"]:
+        by_pier[handover.pier] = by_pier.get(handover.pier, 0) + 1
+    assert set(by_pier.values()) == {6} and sorted(by_pier) == sorted(piers)
+
+
 if __name__ == "__main__":
     tests = [fn for name, fn in sorted(globals().items()) if name.startswith("test_")]
     for fn in tests:
