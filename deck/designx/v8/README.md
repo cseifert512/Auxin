@@ -10,7 +10,7 @@ We encounter a Bower and understand why someone would want it. Looking more clos
 
 `story.js` is the slide-by-slide editorial map. Every entry records the source v7 slide, its role, what stays, the intended drawing, current evidence status and the connection to the next slide. `story-map.html` presents that map with links to each slide. The deck's Notes include the same connections and drawing briefs alongside the original source notes.
 
-The eighteen-slide sequence is: Bower → original room through time → Time camera comparison → light through the day → plants make space → the living place → variability → manufacturing → form/measure/machine → customers → help us make it real → design/build/grow → care → how the system learns → team → construction at scale → future possibilities → the first Bower and the means to make many.
+The eighteen-slide sequence is: Bower → original room through time → Time camera comparison → light through the day → nature makes space → the living place → variability → manufacturing → form/measure/machine → customers → help us make it real → design/build/grow → care → how the system learns → team → construction at scale → future possibilities → the first Bower and the means to make many.
 
 ## What is present
 
