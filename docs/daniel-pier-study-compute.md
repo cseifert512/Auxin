@@ -1,9 +1,42 @@
-# For Daniel: running the pier study's growth runs
+# For Daniel: the pier study
 
-Clay's laptop is busy rendering. This is the part of the work that is computation, not rendering,
-and can run on another machine. It needs no Blender.
+Two things here: three drawings to look at, which need nothing but a browser, and the growth runs
+behind one of them, which can be run again on another machine. Neither needs Blender.
 
-## What it is
+## Look at the drawings first
+
+They are in the repository as finished pages. After cloning, open each file in a browser:
+
+| Open | What it is |
+|---|---|
+| `drawings-in-code/exports/deck/opening-the-pier/index.html` | One pier and its four climbers, grown twice by the plant simulator: legs together on the left, legs apart (the design) on the right, over ten years. Under them, the six openings tried and how each scored. |
+| `drawings-in-code/exports/deck/a-year-of-care/index.html` | The same pier through its sixth year, with the simulated gardener's eleven visits: what is cut each time shows in red. |
+| `drawings-in-code/exports/deck/a-room-through-time/index.html` | The whole room growing, already in the deck. |
+
+Each plays by itself; drag the rail at the bottom to move through time. "What is real +" at the
+top right of the first two says where every part comes from.
+
+To see them inside the deck instead: `node deck/serve.mjs 5312`, then
+`http://localhost:5312/designx/v8`.
+
+**What Clay is not sure of** is the first one. It is meant to carry one argument: we changed the
+shape of the building for what the plants need, and a tool told us how far to go. Questions worth
+your eye:
+
+- Does the picture make that case to someone seeing it cold?
+- Is the result behind it sound? Across the room, opening the piers takes the climbers that get
+  the sun their species asks for from 12 of 24 to 19 of 24, and they climb higher and flower more.
+  At this one pier three of the four climbers flower more with the legs apart and the rose does
+  worse. Each opening is one run on one seed, so nobody yet knows how much of that is chance.
+- Is the footing's verdict, which decides how far the piers open, a rule you would stand behind?
+  It is this study's draft (`bower-blender/studies/inhabited-room/set_out_meadow.py`), not
+  engineering.
+
+## Running the growth runs again
+
+Clay's laptop is busy rendering. This is the part of the work that is computation, not rendering.
+
+### What it is
 
 The six-bay Bower's piers were opened: each pier's legs stand in a ring 2.4 m across instead of
 bunched at 0.7 m. The study asks what that does for the climbers planted at the feet. It makes the
