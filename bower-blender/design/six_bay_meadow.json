@@ -1,6 +1,6 @@
 {
   "schema": "bower.design/1",
-  "note": "The six-bay radial room with its piers opened (ring_radius_m 1.2), standing on ground that falls 1 in 25 toward 195 degrees: each pier's foot_z_m is that ground at the pier, below the highest pier's, so every leg is cut to its own pier (bower/floor.py). Its training lines stand further off the timber at a foot, for a woody stem to thicken (foot_gap_m: a provisional allowance, with no girth figure behind it). The site is studies/inhabited-room/site.json.",
+  "note": "The six-bay radial room with its piers opened (ring_radius_m 1.2), standing on ground that falls 1 in 25 toward 195 degrees: each pier's foot_z_m is that ground at the pier, below the highest pier's, so every leg is cut to its own pier (bower/floor.py). Its training lines stand further off the timber at a foot, for a woody stem to thicken (foot_gap_m: a provisional allowance, with no girth figure behind it). The site is studies/inhabited-room/site.json. Its arches are slimmer than the level room's, 180 by 300 mm in place of 260 by 400, so that they read as kin to the lattice they carry: like every section here, a provisional concept value, not an engineered size.",
   "units": "m",
   "axes": {
     "up": "+Z",
@@ -311,8 +311,8 @@
     "note": "Primary members. Sections and the review radius are provisional concept values pending engineering and a fabricator's limits.",
     "sections_m": {
       "arch": [
-        0.26,
-        0.4
+        0.18,
+        0.3
       ],
       "inner": [
         0.14,
