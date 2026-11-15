@@ -18,7 +18,7 @@
   Everything drawn comes from data.js, which `node pipeline/vignette.mjs opening-the-pier` writes (data.mjs says how):
   two runs of the plant simulator cut down to this pier, and the building model's timber at this pier in each
   opening. What is on a plant on a day is decided here by the simulator's own rules (presence.ts, as grown.py ports
-  them). Drag the handle, or sideways on the pictures, to move through the years; ten seconds after you let go it
+  them). Drag the handle, or sideways on the pictures, to move through the years; as soon as you let go it
   carries on. ?embed (no title, no keys) ?still. Hooks: __setT(seconds) (draws at once), __play(), __duration, __ready.
 -->
 <style>
@@ -319,14 +319,14 @@
 
   // ---- playing: the slow ten years, and the hand that takes over ----
   let paused = false, hand = null, tp = 0, clock = 0, last = performance.now();
-  const RESUME = 10;
+  const RESUME = 0;   // seconds after the hand lets go before it carries on: at once, since nothing here pauses it
   const current = () => (STILL ? JUNE10 : hand ? hand.day : dayAt(tp));
   function draw(force) { const d = current(); if (force || Math.floor(clamp(d, PLANTED, LASTDAY)) !== drawn) frame(d); }
   function loop(ms) {
     const dt = Math.min(0.1, (ms - last) / 1000); last = ms;
     if (!paused) {
       clock += dt;
-      if (hand && !hand.down && clock - hand.up > RESUME) { tp = hand.day >= JUNE10 ? MOVE : timeOf(hand.day); hand = null; }   // nobody's hand for ten seconds: carry on from where it stands
+      if (hand && !hand.down && clock - hand.up > RESUME) { tp = hand.day >= JUNE10 ? MOVE : timeOf(hand.day); hand = null; }   // the hand has let go: carry on from where it stands
       else if (!hand) tp = (tp + dt) % DUR;
     }
     draw(false);

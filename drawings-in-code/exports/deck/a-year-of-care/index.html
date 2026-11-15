@@ -16,7 +16,7 @@
   Everything drawn comes from data.js, which `node pipeline/vignette.mjs a-year-of-care` writes (data.mjs says how):
   one run of the plant simulator, cut down to this pier and 2032, and the building model's timber at this pier. What
   is on a plant on a day is decided here by the simulator's own rules (presence.ts, as grown.py ports them).
-  Drag the handle, or sideways on the picture, to move through the year; ten seconds after you let go it carries on.
+  Drag the handle, or sideways on the picture, to move through the year; as soon as you let go it carries on from there.
   ?embed (no title, no keys) ?still. Hooks: __setT(seconds) (draws at once), __play(), __duration, __ready.
 -->
 <style>
@@ -303,7 +303,7 @@
   const STILL_VISIT = Math.max(0, V.findIndex((v) => v.date.endsWith('-08-01')));
   const holdOf = (k) => TL.find((x) => x.kind === 'hold' && x.v === k);
   let paused = false, hand = null, tp = 0, clock = 0, last = performance.now();
-  const RESUME = 10;
+  const RESUME = 0;   // seconds after the hand lets go before it carries on: at once, since nothing here pauses it
   /** Under a hand there are no holds: the day under it, and a visit within three days shows its red and its sentence. */
   function handState(day) {
     day = clamp(day, 0, YD - 1);
@@ -322,7 +322,7 @@
     const dt = Math.min(0.1, (ms - last) / 1000); last = ms;
     if (!paused) {
       clock += dt;
-      if (hand && !hand.down && clock - hand.up > RESUME) {   // nobody's hand for ten seconds: carry on from where it stands
+      if (hand && !hand.down && clock - hand.up > RESUME) {   // the hand has let go: carry on from where it stands
         const s = handState(hand.day); hand = null;
         if (s.v >= 0) tp = holdOf(s.v).t1;
         else { const m = TL.find((x) => x.kind === 'move' && s.day >= x.d0 && s.day <= x.d1); tp = m ? m.t0 + (m.t1 - m.t0) * (s.day - m.d0) / Math.max(1, m.d1 - m.d0) : 0; }
