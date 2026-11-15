@@ -1,41 +1,141 @@
 {
-  "note": "Borrowed assets for the inhabited-room study: people, surrounding vegetation, ground textures and sky. None of it is Bower geometry or Bower planting. The files are not in git: `python fetch_assets.py` downloads them into ./assets and writes assets.lock.json (every file, its source address, size and hash).",
-  "polyhaven": {
-    "site": "https://polyhaven.com",
-    "licence": "CC0 1.0 (public domain): https://polyhaven.com/license",
-    "hdris": [
-      {"id": "meadow_2", "res": "2k", "use": "sky, sunlight and the distant tree line"}
-    ],
-    "textures": [
-      {"id": "pebble_ground_01", "res": "1k", "use": "the room floor and the approach path (a bound gravel surface)"},
-      {"id": "leafy_grass", "res": "1k", "use": "mown lawn around the room"},
-      {"id": "brown_mud_leaves_01", "res": "1k", "use": "the surface of the planting beds"},
-      {"id": "wood_chip_path", "res": "1k", "use": "the care path round the back of the beds"}
-    ],
-    "models": [
-      {"id": "tree_small_02", "res": "1k", "use": "garden trees to the north and east, as a generic small deciduous tree"},
-      {"id": "shrub_01", "res": "1k", "use": "the mixed border and the garden side of the beds"},
-      {"id": "shrub_04", "res": "1k", "use": "the mixed border and the garden side of the beds"},
-      {"id": "fern_02", "res": "1k", "use": "the shaded bed edges and the damp hollow"},
-      {"id": "periwinkle_plant", "res": "1k", "use": "low cover on the beds across the four planted bays"},
-      {"id": "dandelion_01", "res": "1k", "use": "the unmown strip beside the care path"},
-      {"id": "grass_medium_02", "res": "1k", "use": "the unmown strip beside the care path"},
-      {"id": "dead_tree_trunk", "res": "1k", "use": "a log left by the border"}
-    ]
-  },
-  "rocketbox": {
-    "site": "https://github.com/microsoft/Microsoft-Rocketbox",
-    "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
-    "branch": "master",
-    "texture_px": 1024,
-    "note": "Rigged, clothed figures. Only the colour textures are fetched, and they are reduced from 2048 px TGA to texture_px JPEG or PNG to keep the study light.",
-    "avatars": [
-      {"path": "Professions/Gardener_Male_01", "use": "someone tending the plants at a pier"},
-      {"path": "Adults/Female_Adult_08", "use": "one of two people talking in the middle of the room"},
-      {"path": "Adults/Male_Adult_04", "use": "one of two people talking in the middle of the room"},
-      {"path": "Adults/Female_Adult_01", "use": "someone arriving with a child"},
-      {"path": "Children/Male_Child_01", "use": "a child arriving"},
-      {"path": "Adults/Male_Adult_02", "use": "someone pausing at a planted edge"}
-    ]
-  }
+ "note": "Borrowed assets for the inhabited-room study: people, surrounding vegetation, ground textures and sky. None of it is Bower geometry or Bower planting. The files are not in git: `python fetch_assets.py` downloads them into ./assets and writes assets.lock.json (every file, its source address, size and hash).",
+ "polyhaven": {
+  "site": "https://polyhaven.com",
+  "licence": "CC0 1.0 (public domain): https://polyhaven.com/license",
+  "hdris": [
+   {
+    "id": "meadow_2",
+    "res": "2k",
+    "use": "sky, sunlight and the distant tree line"
+   }
+  ],
+  "textures": [
+   {
+    "id": "pebble_ground_01",
+    "res": "1k",
+    "use": "the room floor and the approach path (a bound gravel surface)"
+   },
+   {
+    "id": "leafy_grass",
+    "res": "1k",
+    "use": "mown lawn around the room"
+   },
+   {
+    "id": "brown_mud_leaves_01",
+    "res": "1k",
+    "use": "the surface of the planting beds"
+   },
+   {
+    "id": "wood_chip_path",
+    "res": "1k",
+    "use": "the care path round the back of the beds"
+   }
+  ],
+  "models": [
+   {
+    "id": "tree_small_02",
+    "res": "1k",
+    "use": "garden trees to the north and east, as a generic small deciduous tree"
+   },
+   {
+    "id": "shrub_01",
+    "res": "1k",
+    "use": "the mixed border and the garden side of the beds"
+   },
+   {
+    "id": "shrub_04",
+    "res": "1k",
+    "use": "the mixed border and the garden side of the beds"
+   },
+   {
+    "id": "fern_02",
+    "res": "1k",
+    "use": "the shaded bed edges and the damp hollow"
+   },
+   {
+    "id": "periwinkle_plant",
+    "res": "1k",
+    "use": "low cover on the beds across the four planted bays"
+   },
+   {
+    "id": "dandelion_01",
+    "res": "1k",
+    "use": "the unmown strip beside the care path"
+   },
+   {
+    "id": "grass_medium_02",
+    "res": "1k",
+    "use": "the unmown strip beside the care path"
+   },
+   {
+    "id": "dead_tree_trunk",
+    "res": "1k",
+    "use": "a log left by the border"
+   },
+   {
+    "id": "shrub_02",
+    "res": "1k",
+    "use": "massed planting at the back of the sheltered bed"
+   },
+   {
+    "id": "shrub_03",
+    "res": "1k",
+    "use": "massed planting in the middle of both beds"
+   },
+   {
+    "id": "celandine_01",
+    "res": "1k",
+    "use": "flowering ground cover at the front of the beds"
+   },
+   {
+    "id": "grass_medium_01",
+    "res": "1k",
+    "use": "grasses on the sunny bed and in the meadow"
+   },
+   {
+    "id": "shrub_sorrel_01",
+    "res": "1k",
+    "use": "low flowering planting on the sunny bed"
+   },
+   {
+    "id": "nettle_plant",
+    "res": "1k",
+    "use": "the woodland's edge"
+   }
+  ]
+ },
+ "rocketbox": {
+  "site": "https://github.com/microsoft/Microsoft-Rocketbox",
+  "licence": "MIT: https://github.com/microsoft/Microsoft-Rocketbox/blob/master/LICENSE.md",
+  "branch": "master",
+  "texture_px": 1024,
+  "note": "Rigged, clothed figures. Only the colour textures are fetched, and they are reduced from 2048 px TGA to texture_px JPEG or PNG to keep the study light.",
+  "avatars": [
+   {
+    "path": "Professions/Gardener_Male_01",
+    "use": "someone tending the plants at a pier"
+   },
+   {
+    "path": "Adults/Female_Adult_08",
+    "use": "one of two people talking in the middle of the room"
+   },
+   {
+    "path": "Adults/Male_Adult_04",
+    "use": "one of two people talking in the middle of the room"
+   },
+   {
+    "path": "Adults/Female_Adult_01",
+    "use": "someone arriving with a child"
+   },
+   {
+    "path": "Children/Male_Child_01",
+    "use": "a child arriving"
+   },
+   {
+    "path": "Adults/Male_Adult_02",
+    "use": "someone pausing at a planted edge"
+   }
+  ]
+ }
 }

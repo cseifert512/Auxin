@@ -13,9 +13,12 @@ Pure Python (no bpy).
 """
 from __future__ import annotations
 
+import copy
 import math
 
 from bower import ground as G
+from bower.joints import find_joints
+from bower.timber import build_design_timber
 from bower.floor import Floor
 from bower.lines import on_floor
 
@@ -34,9 +37,10 @@ def sole_footing(pier_xy, feet: list, cfg: dict, piles: dict) -> dict:
     The two arch legs stand on a small plate at the pier. The six lattice legs stand on one curved beam, on the arc
     they already stand on. Two ties run from the plate to the beam's ends, clear of the places the climbers are
     planted, so the whole is one closed shape. It stands on three screw piles: one under the plate, two under the beam,
-    set a little outside it so that they keep away from the climbers. The feet run a little way into the soil and the
-    sole lies under them, so none of it is seen: narrow bars with soil over, under and between them. The checks are the
-    ground draft's own three rules for piles; what fails is said.
+    set a little outside it so that they keep away from the climbers. The feet run a little way into the soil; the sole
+    lies under the bed, and a slender stub comes up from it to a shoe under each foot, so none of it is seen and the
+    bed's soil is whole but for the stubs. The checks are the ground draft's own three rules for piles; what fails is
+    said.
     """
     hub = [corners for m, _, corners in feet if m.family == "arch"]
     legs = sorted((_centre(corners) for m, _, corners in feet if m.family != "arch"), key=lambda c: math.atan2(c[1] - pier_xy[1], c[0] - pier_xy[0]))
@@ -69,6 +73,8 @@ def sole_footing(pier_xy, feet: list, cfg: dict, piles: dict) -> dict:
         "hull_area_m2": round(G._area(G._hull([c for _, _, corners in feet for c in corners] + pile_at)), 2),
         "cap_depth_m": piles["cap_depth_m"],
         "piles_m": [S._r(p) for p in pile_at],
+        "stubs_m": [{"member": m.id, "at": S._r(_centre(corners)), "size_m": cfg["arch_stub_m"] if m.family == "arch" else cfg["stub_m"]} for m, _, corners in feet],
+        "shoes_m": [[S._r(c) for c in corners] for _, _, corners in feet],
         "_feet": [_centre(corners) for _, _, corners in feet],
     }
 
@@ -186,7 +192,11 @@ def set_out(name: str, cfg: dict, site: dict) -> dict:
     out["mesh_status"] = S.PROPOSAL + " (a fine mesh round each joint, to keep growth out of it: its make, its fixing and whether it holds water against the timber are not known)"
 
     # what the level room would have been: the same design without its foot levels
-    level_room = S.built(cfg["planting_from"])
+    flat = copy.deepcopy({k: v for k, v in design.items()})
+    for pier in flat["rooms"][0]["piers"]:
+        pier.pop("foot_z_m", None)
+    flat_members = build_design_timber(flat)[0]["members"]
+    level_room = {"group": {"members": flat_members}, "joints": find_joints(flat_members, flat["timber"])[0]}
     was = {m.id: m.path.length for m in level_room["group"]["members"]}
     longer = {m.id: round(m.path.length - was[m.id], 3) for m in members if m.id in was and m.path.length - was[m.id] > 1e-4}
     scarfs = sum(1 for j in joints if j.kind == "scarf") - sum(1 for j in level_room["joints"] if j.kind == "scarf")
@@ -198,6 +208,9 @@ def set_out(name: str, cfg: dict, site: dict) -> dict:
     hull = sorted({f["hull_area_m2"] for f in footings.values()})
     standoffs = [math.dist(a, c) for line in out["training_lines"] for a, c in line["standoffs_m"]]
     way = next(e for e in out["entrances"] if e["bay"] == site["room"]["entry_bay"])
+    deep = g["sole_below_soil_m"]  # the sole lies this far down, under the loosened bed
+    first = next(iter(footings.values()))
+    stub_m2 = round(sum(s["size_m"] ** 2 for s in first["stubs_m"]), 3)
     rf, beds = site["floor"]["radius_m"], site["beds"]
     arc = math.radians(180.0 - 2.0 * beds["opening_half_deg"])
     bed_m2 = 0.5 * arc * ((beds["outer_radius_m"] ** 2 - rf**2) + (beds["sheltered_outer_radius_m"] ** 2 - rf**2))
@@ -206,7 +219,8 @@ def set_out(name: str, cfg: dict, site: dict) -> dict:
         "climbers": {"value": len(plants), "says": f"{len(plants)} climbers", "from": S.CARRIED},
         "climbers_in_soil": {"value": in_soil, "of": len(plants), "says": f"{in_soil} of {len(plants)} rooted in soil", "from": S.MEASURED},
         "planted_from_its_cable_m": {"value": cfg["plant_in_m"], "says": f"each planted {cfg['plant_in_m']} m from the foot of its own cable", "from": S.PROPOSAL},
-        "steel_over_the_ground_m2": {"value": steel, "within_m2": hull, "buried_m": [sunk, round(sunk + pile_cfg["cap_depth_m"], 3)], "says": f"{steel[0]} m2 of steel within {hull[0]} m2 at each pier, buried: its top {round(sunk * 1000)} mm under the soil, none of it seen", "from": S.MEASURED},
+        "steel_over_the_ground_m2": {"value": steel, "within_m2": hull, "buried_m": [deep, round(deep + pile_cfg["cap_depth_m"], 3)], "says": f"{steel[0]} m2 of steel under each pier, {deep} m down: under the bed, not in it", "from": S.MEASURED},
+        "steel_through_the_bed": {"value": len(first["stubs_m"]), "plan_m2": stub_m2, "sizes_m": sorted({s["size_m"] for s in first["stubs_m"]}), "long_m": round(deep - sunk, 3), "says": f"through the bed, {len(first['stubs_m'])} slender stubs at each pier and nothing else: {stub_m2} m2 in plan", "from": S.PROPOSAL},
         "timber_in_the_ground_m": {"value": sunk, "says": f"every foot runs {round(sunk * 1000)} mm into the soil", "from": S.PROPOSAL},
         "loosened_soil_m3": {"value": round(bed_m2 * g["soil_depth_m"], 1), "bed_m2": round(bed_m2, 1), "says": f"{round(bed_m2)} m2 of bed, loosened {g['soil_depth_m']} m deep, open to the ground beyond", "from": S.PROPOSAL},
         "piles": {"value": sum(len(f["piles_m"]) for f in footings.values()), "says": f"{sum(len(f['piles_m']) for f in footings.values())} screw piles", "from": S.PROPOSAL},

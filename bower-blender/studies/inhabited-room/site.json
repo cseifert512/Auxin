@@ -9,7 +9,7 @@
   "sky_mirrored": true
  },
  "ground": {
-  "note": "One even fall, 1 in 25 toward the west-north-west, on which the room stands without a levelled platform: each pier's feet are at that pier's own ground, and run feet_below_soil_m (about 3 in) into it, so the timber comes straight out of the soil and no footing is seen. The steel sole is buried under the feet. Soil is continuous round every pier. A swale on the uphill side takes what runs off the garden round the room; it and the floor's own water end in a planted hollow below. No soil, water table or rainfall is known.",
+  "note": "One even fall, 1 in 25 toward the west-north-west, on which the room stands without a levelled platform: each pier's feet are at that pier's own ground, and run feet_below_soil_m (about 3 in) into it, so the timber comes straight out of the soil and no footing is seen. The steel sole lies under the bed, sole_below_soil_m down, and a slender steel stub comes up from it to each foot: the bed's soil is whole but for those stubs. A swale on the uphill side takes what runs off the garden round the room; it and the floor's own water end in a planted hollow below. No soil, water table or rainfall is known.",
   "fall": 0.04,
   "fall_towards_deg": 195.0,
   "even_to_m": 45.0,
@@ -30,7 +30,8 @@
    "depth_m": 0.6
   },
   "rill_from_deg": 196.0,
-  "feet_below_soil_m": 0.075
+  "feet_below_soil_m": 0.075,
+  "sole_below_soil_m": 0.6
  },
  "room": {
   "entry_bay": "R1.B3",
@@ -168,7 +169,7 @@
  },
  "planting_at_installation": {
   "cane_height_m": 2.5,
-  "note": "One climber at each place a configuration roots one, drawn as a tied stem with a few leaves: a diagram of a plant put in at 2 to 3 m, not a grown or simulated one. root_ball_m is a drawing assumption used only to say whether a climber stands wholly on steel; it is not a horticultural requirement.",
+  "note": "Used only where no grown run is found: one climber at each place, drawn as a tied stem with a few leaves. root_ball_m is a drawing assumption for the section; it is not a horticultural requirement.",
   "root_ball_m": 0.3
  },
  "people": [
@@ -286,11 +287,15 @@
     1920,
     1200
    ],
-   "note": "The whole place from the sunny side, raised."
+   "note": "The whole place from the sunny side, raised.",
+   "moments": [
+    "planted",
+    "year-10"
+   ]
   },
   "section": {
    "section": true,
-   "cut_y_m": -0.25,
+   "cut_y_m": -0.2,
    "centre_m": [
     -3.5,
     3.0
@@ -300,11 +305,15 @@
     3000,
     1350
    ],
-   "note": "A vertical cut through the uphill and the downhill pier, R1.P3 and R1.P6, looking north-east to the woodland."
+   "note": "A vertical cut through the uphill and the downhill pier, R1.P3 and R1.P6, looking north-east to the woodland: through one leg of each, its stub, the sole under it and the root ball beside it.",
+   "moments": [
+    "planted",
+    "year-10"
+   ]
   },
   "plant": {
    "section": true,
-   "cut_y_m": -0.25,
+   "cut_y_m": -0.2,
    "centre_m": [
     5.25,
     1.9
@@ -327,13 +336,17 @@
     1600,
     1600
    ],
-   "note": "The site from above, in the building's axes: for checking the views against one layout."
+   "note": "The site from above, in the building's axes: for checking the views against one layout.",
+   "moments": [
+    "planted",
+    "year-10"
+   ]
   }
  },
  "configurations": {
   "meadow": {
    "label": "Designed for the plant",
-   "snapshot": "six-bay-meadow-v1",
+   "snapshot": "six-bay-meadow-v2",
    "planting_from": "six-bay-radial-open-pier",
    "footing": "sole",
    "sole": {
@@ -342,7 +355,10 @@
     "tie_width_m": 0.1,
     "pile_head_m": 0.3,
     "pile_out_m": 0.12,
-    "pile_at_deg": 35.0
+    "pile_at_deg": 35.0,
+    "stub_m": 0.06,
+    "arch_stub_m": 0.08,
+    "shoe_m": 0.012
    },
    "planting": "at-the-cables",
    "plant_in_m": 0.12,
@@ -351,8 +367,40 @@
     "length_m": 0.16,
     "proud_m": 0.008
    },
-   "what": "The pier designed for the plant on the designed site: legs cut to each pier's ground and run a little way into it, a buried steel sole on three screw piles that nobody sees, a trunk cable held off each leg with a climber rooted at its foot, and fine mesh round the joints the climbers reach."
+   "what": "The pier designed for the plant on the designed site: legs cut to each pier's ground and run a little way into it; a steel sole on three screw piles under the bed, with a slender stub up to each foot, so that nobody sees a footing and the bed's soil is whole; a trunk cable held off each leg with a climber rooted at its foot."
   }
  },
- "default_configuration": "meadow"
+ "default_configuration": "meadow",
+ "growth": {
+  "note": "The climbers are grown by the simulator on this snapshot, with this scene's own cables and planting places (grow_inputs.py), and drawn at these moments. Each is one day of one run: 24 climbers planted as 3 m specimens on 12 March 2027, trained and pruned by the simulator's gardener. The site round them does not change with the date: the sky, the beds, the meadow and the woodland are one summer afternoon throughout.",
+  "run": "place-10y",
+  "command": "npm run grow -- <snapshot> trained 10 7 --specimen=3 --bower=bower-place.json --name=place-10y",
+  "moments": [
+   {
+    "id": "planted",
+    "date": "2027-03-13",
+    "says": "The day after planting, March 2027"
+   },
+   {
+    "id": "year-1",
+    "date": "2027-07-15",
+    "says": "First summer, July 2027"
+   },
+   {
+    "id": "year-3",
+    "date": "2029-06-15",
+    "says": "Year 3, June 2029"
+   },
+   {
+    "id": "year-6",
+    "date": "2032-06-15",
+    "says": "Year 6, June 2032"
+   },
+   {
+    "id": "year-10",
+    "date": "2036-06-15",
+    "says": "Year 10, June 2036"
+   }
+  ]
+ }
 }

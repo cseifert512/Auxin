@@ -260,6 +260,13 @@ and the pier designed three ways), packed from a Blender scene by
 `../bower-blender/studies/inhabited-room/package_explorer.py`. Its own `README.md` says what it holds and how
 a slide drives it.
 
+`scenes/six-bay-meadow-v2/bower-place.json` is not made here either. That snapshot stands on sloping ground, and
+`convert` strings its cables 75 mm off every leg and puts every planting place at one level. The same study's
+`grow_inputs.py` writes a second description beside `bower.json` with its own cables (wider at a foot, at each
+pier's own level) and its own planting places, and `npm run grow -- six-bay-meadow-v2 trained 10 7 --specimen=3
+--bower=bower-place.json --name=place-10y` grows on that. The study's README says what the simulator still
+gets wrong on ground that is not level.
+
 `deck/<name>/` holds what a vignette is made from: `piece.json` (views and sets of moments, if it uses studio
 pictures), `data.mjs` (what it is drawn from, worked out from the model and the runs) and `index.html` (the
 page). It opens from its folder in `exports/deck/`; `.claude/launch.json` serves that folder as `pieces` on

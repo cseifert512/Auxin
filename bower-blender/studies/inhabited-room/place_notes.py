@@ -119,7 +119,7 @@ def add(colls, site, ground, tools) -> None:
     # --- the section: the whole place, cut through the uphill and the downhill pier ---
     s = Sheet(colls["S95_SECTION_NOTES"], cut, tag, status, 0.4)
     left, right, bottom, top = extent(cams["section"])
-    s.note("One fall, and nothing levelled", left + 0.6, top - 0.6, small=f"The place cut through its uphill and its downhill pier, on the day it is planted." + chr(10) + f"The ground falls 1 in {fall}: {drop} m across the room.")
+    s.note("One fall, and nothing levelled", left + 0.6, top - 0.6, small=f"The place cut through its uphill and its downhill pier." + chr(10) + f"The ground falls 1 in {fall}: {drop} m across the room.")
     hol = site["ground"]["hollow"]
     s.note("planted hollow", left + 0.9, 3.0, (hol["at_m"][0], plane(hol["at_m"][0], cut) - hol["depth_m"] + 0.06), small="where the swale and the" + chr(10) + "floor's water end")
     s.note("longest legs", lx - 7.6, lz + 6.2, (lx + 0.05, lz + 1.3), small=f"{drop} m longer than uphill")
@@ -129,7 +129,7 @@ def add(colls, site, ground, tools) -> None:
     s.note("swale", sw - 1.4, plane(sw, cut) + 3.0, (sw, plane(sw, cut) - 0.16), small="the garden's run-off" + chr(10) + "goes round the room")
     s.note("bed soil, loosened in place", lx - 8.2, lz - 1.9, (lx + 0.9, lz - 0.75), small="open to the ground round it")
     s.note("the floor follows the ground", -3.6, plane(0.0, cut) - 1.3, (-1.5, plane(-1.5, cut) + 0.03), small="bound gravel, no platform, no step")
-    s.note("buried sole on screw piles", hx + 1.7, hz - 1.9, (hx - 0.08, hz - 1.5), small="no footing is seen")
+    s.note("sole under the bed", hx + 1.7, hz - 1.9, (hx - 0.6, hz + 0.075 - site["ground"]["sole_below_soil_m"] - 0.06), small="on screw piles; no footing is seen")
 
     # --- the plant's view: the same cut at the uphill pier ---
     p = Sheet(colls["S96_PLANT_NOTES"], cams["plant"]["cut_y_m"], tag, status, 0.105)
@@ -137,15 +137,14 @@ def add(colls, site, ground, tools) -> None:
     soil = ground["soil_at_pier_m"][high]
     near = min((pl for pl in ground["plants"] if pl["pier"] == high), key=lambda pl: abs(pl["root_m"][1] - cut))
     rx = near["root_m"][0]
+    leg_x = next(st["at"][0] for st in ground["footings"][high]["stubs_m"] if st["member"] == near["leg"])  # the leg the cut passes through
     up = min(near["route_m"], key=lambda pt: abs(pt[2] - (hz + 1.9)))
-    seen = [m for m in ground["mesh_sleeves"] if m["kind"] not in ("base", "pier_mitre") and left + 0.4 < m["at_m"][0] < right - 0.4 and hz + 1.6 < m["at_m"][2] < top - 0.5 and m["at_m"][1] > cut]
-    p.note("What the plant asked for", left + 0.15, bottom + 0.6, small="One pier, from under its roots to its first joints," + chr(10) + "on the day it is planted.")
+    p.note("What the plant asked for", left + 0.15, bottom + 0.6, small="One pier, from under its roots to its first joints." + chr(10) + "The climbers are the simulator's, on the day shown.")
     p.note("cable for the trunk", left + 0.15, top - 1.15, (up[0], up[2]), small=f"{round(cable['foot_gap_m'] * 1000)} mm off the leg at the foot," + chr(10) + f"{round(cable['gap_m'] * 1000)} mm higher up")
-    p.note("thin growth on the timber", left + 0.15, top - 2.1, small="tied in by hand; not drawn")
-    if seen:
-        m = min(seen, key=lambda m: m["at_m"][1])
-        p.note("mesh at each joint", right - 1.75, top - 0.6, (m["at_m"][0], m["at_m"][2]), small="keeps growth out of the joints")
+    p.note("thin growth on the timber", left + 0.15, top - 2.1, small="tied in by the gardener")
+    p.note("fine mesh at each joint", right - 1.75, top - 0.6, small="too fine to see from here; not drawn")
     p.note("planted at its cable", right - 1.55, soil + 1.75, (rx, soil + 0.14), small=f"{round(q['planted_from_its_cable_m']['value'] * 1000)} mm from the cable's foot")
-    p.note("timber into the soil", right - 1.55, soil + 1.0, (hx - 0.1, soil - 0.03), small=f"{sunk} mm; the steel is under it, unseen")
-    p.note("root ball, in open soil", left + 0.15, soil - 0.5, (rx, soil - 0.16), small="no plate under it")
-    p.note("screw pile", right - 1.5, soil - 0.75, (hx - 0.08, soil - 1.1), small=f"{ground['piles']['length_m']} m long, {ground['footings'][high]['nearest_pile_to_a_climber_m']} m from" + chr(10) + "the nearest climber")
+    p.note("timber into the soil", right - 1.55, soil + 1.0, (leg_x, soil - 0.03), small=f"{sunk} mm, onto a slender steel stub")
+    p.note("sole under the bed", right - 1.5, soil - 0.42, (leg_x + 0.25, soil - site["ground"]["sole_below_soil_m"] - 0.06), small="the bed's soil is whole above it")
+    p.note("root ball, in open soil", left + 0.15, soil - 0.5, (rx - 0.05, soil - 0.2), small="as planted; roots are not modelled")
+    p.note("screw pile", right - 1.5, soil - 0.98, (hx - 0.08, soil - 1.25), small=f"{ground['piles']['length_m']} m long, {ground['footings'][high]['nearest_pile_to_a_climber_m']} m from" + chr(10) + "the nearest climber")
