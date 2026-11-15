@@ -1,0 +1,56 @@
+/* Keep v7's drawing-board typography, three checks and shared designer review. */
+.designx-v8 .v8-engine .v7-title {
+  top:64px;
+  margin:0;
+  font:600 82px/.99 var(--sans);
+  letter-spacing:-.045em;
+}
+
+.designx-v8 .v8-engine .v7-check-panel {
+  top:350px;
+  width:440px;
+  height:280px;
+}
+
+.designx-v8 .v8-engine .v7-fabrication-panel {left:80px;right:auto}
+.designx-v8 .v8-engine .v7-planting-panel {left:580px;right:auto}
+.designx-v8 .v8-engine .v7-cost-panel {left:auto;right:80px}
+
+.designx-v8 .v8-engine .v7-check-panel h3 {margin:0}
+.designx-v8 .v8-engine .v7-check-description {margin-bottom:0;min-height:65px}
+.designx-v8 .v8-engine .v7-capability {margin-bottom:0;font-size:16px;line-height:1.25}
+.designx-v8 .v8-engine .v7-cost-panel .v7-capability,
+.designx-v8 .v8-engine .v7-planting-panel .v7-capability {color:#B7CD7B}
+
+.designx-v8 .v8-engine .v7-check-choices button {cursor:pointer}
+.designx-v8 .v8-engine .v7-check-choices button[aria-pressed=true] {color:#B7CD7B;border-bottom-color:#B7CD7B}
+.designx-v8 .v8-engine[data-v8-engine-side=fabrication] .v7-fabrication-panel,
+.designx-v8 .v8-engine[data-v8-engine-side=planting] .v7-planting-panel,
+.designx-v8 .v8-engine[data-v8-engine-side=cost] .v7-cost-panel {border-top-color:#B7CD7B}
+
+.designx-v8 .v8-engine .v7-shared-geometry {
+  top:663px;
+  left:80px;
+  right:80px;
+  gap:20px;
+}
+.designx-v8 .v8-engine .v7-shared-geometry > div {display:flex;align-items:center;gap:24px}
+.designx-v8 .v8-engine .v7-shared-geometry h3 {margin:0;font-size:35px}
+.designx-v8 .v8-engine .v7-shared-geometry p {margin:0;font-size:20px}
+.designx-v8 .v8-engine .v7-nudge-readout {top:730px;grid-template-columns:280px 1fr}
+.designx-v8 .v8-engine .v7-nudge-readout > p {margin:0;font-size:27px;line-height:1.25}
+.designx-v8 .v8-engine .v7-status {font-size:13px}
+
+.designx-v8.print-mode .v8-engine .v7-check-summary {
+  top:736px;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:60px;
+}
+.designx-v8 .v8-engine .v7-check-summary p {margin:0}
+@media print {
+  .designx-v8 .v8-engine .v7-check-summary {
+    top:736px;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:60px;
+  }
+}

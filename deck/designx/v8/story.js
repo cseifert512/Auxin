@@ -1,4 +1,4 @@
-/* Edition 08: seventeen scenes. Consolidated learning and a concrete first-reference finding. */
+/* Edition 08: twenty scenes, including the engine and a particular design decision. */
 window.DESIGNX_V8_STORY = [
   {
     "number": 1,
@@ -90,15 +90,28 @@ window.DESIGNX_V8_STORY = [
     "baseSlide": 6,
     "title": "One change, several consequences",
     "theme": "v7-computation-slide",
-    "purpose": "Explain the design method through the pier: fabrication, establishment, access and cost inform a shared geometry, with the designer responsible for negotiating their trade-offs.",
-    "stays": "Fabricatability and Plantability, Daniel’s engine in development, the proposed plantability extension and the explicit designer’s role. Preserve the distinction between a demonstration control and a working evaluator.",
+    "purpose": "Follow one authored pier change through plant support, entrance and making, so the trade-offs can be seen in a particular place.",
+    "stays": "The coordinated scene export, baseline and opened-pier alternatives, stable anchors and quantities. Preserve the distinction between selecting an authored alternative and running an evaluator.",
     "drawing": "Inspect Plant support, Entrance, Making and Designer review through one large scene view. Toggle baseline and opened-pier alternatives, or play and scrub the explanation. Reuse the inhabited-room export's fixed images, masks, stable threshold anchors and geometry-derived quantities. Changes select existing alternatives; they do not regenerate the design.",
     "status": "The coordinated scene export supplies the displayed geometry and quantities. Its footing arrangements are authored, unengineered proposals; exported review flags remain visible. Quantities are derived from digital geometry before playback, not physical measurements. Integrated plantability and calibrated cost checks remain proposed.",
-    "transition": "Site and living conditions make each design particular. That raises the central production challenge of variation.",
-    "speakerBridge": "If the geometry responds to the life and conditions of its place, variation is inevitable. Our task is to make that variation workable."
+    "transition": "This particular decision reveals the questions that a design engine must help us assess across the form.",
+    "speakerBridge": "The pier drawing makes the consequences visible. The engine is the method we are developing to assess making, growth and budget together."
   },
   {
     "number": 9,
+    "baseSlide": 6,
+    "engine": true,
+    "title": "Can we make it? Can it grow? Can we afford it?",
+    "theme": "v8-engine-slide",
+    "purpose": "Restore the engine’s distinct role: fabrication, intended growth and the client’s budget inform shared geometry, with the designer weighing their trade-offs.",
+    "stays": "The successful v7 engine explanation, Daniel’s development work, the proposed plantability extension and designer review. Affordability joins making and growth as a feasibility question.",
+    "drawing": "Keep the original drawing-board composition and selectable considerations. Fabricatability, Plantability and Cost lead into shared geometry and an authored example response. A later coordinated drawing could connect these checks to the pier and manufacturing studies; this slide does not run an integrated evaluator.",
+    "status": "Geometry and joint code and growth studies exist. Daniel’s fabrication engine remains in development; integrated plantability and calibrated cost or budget checks remain proposed. No prices, validated savings or feasibility certification are claimed.",
+    "transition": "The engine helps make place-specific variation workable. That leads to the production challenge: different forms, made through a repeatable process.",
+    "speakerBridge": "The aim is to reconcile these questions within an agreed budget while preserving what makes each place particular. That means making variability manufacturable."
+  },
+  {
+    "number": 10,
     "baseSlide": 2,
     "title": "Nature builds by growing.",
     "theme": "variability-slide",
@@ -110,7 +123,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "Variability is the essence of nature and the enemy of industry. Bower’s bet is to make variability manufacturable."
   },
   {
-    "number": 10,
+    "number": 11,
     "baseSlide": 7,
     "title": "Different parts. A repeatable process.",
     "theme": "factory-slide v5-factory-overview",
@@ -122,7 +135,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "The parts can differ while the method repeats. Forming, measuring and machining show how we intend to carry the design through that process."
   },
   {
-    "number": 11,
+    "number": 12,
     "baseSlide": 8,
     "title": "Form. Measure. Machine.",
     "theme": "factory-focus-slide v5-factory-focus",
@@ -134,19 +147,19 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "We have been discussing Bowers with prospective clients. A repeated request is to see one completed place."
   },
   {
-    "number": 12,
+    "number": 13,
     "baseSlide": 14,
     "title": "The first Bower is the missing reference.",
     "theme": "commercial-loop-slide",
     "purpose": "Explain the specific commercial barrier found in England conversations: prospective clients want a completed Bower they can visit and assess.",
     "stays": "The value of a built reference, grounded in founder-reported conversations with cultural institutions, estate owners and private prospects.",
-    "drawing": "Replace the commercial flywheel with the finding and its consequence: a place to visit, experience, examine and discuss. Use the studio typography; do not invent a built-project photograph, testimonial, number of prospects or conversion forecast.",
-    "status": "Founder-reported customer discovery supplied in November 2026. Repeated interest conditional on seeing a completed Bower; no orders or guaranteed conversion are asserted. The first built reference remains to be delivered.",
+    "drawing": "A provisional timing sketch reveals the same inhabited-room arrival image from a pale ghost into full colour, then holds it. Pause, replay or scrub. “A place they can visit” is the editorial caption. The sticky note briefs the final coordinated drawing; the current render is an early scene draft.",
+    "status": "Founder-reported customer discovery supplied in November 2026. Repeated interest conditional on seeing a completed Bower; no orders or guaranteed conversion are asserted. The first built reference remains to be delivered. The reveal changes opacity and colour in an existing design render; it is not a completed-project photograph, construction sequence or growth simulation.",
     "transition": "The missing reference gives the first commission a concrete purpose. Explain how a client would commission and receive that place.",
     "speakerBridge": "The first Bower needs to work for its client and be a place others can experience. This is the proposed route to commissioning it."
   },
   {
-    "number": 13,
+    "number": 14,
     "baseSlide": 13,
     "title": "One Bower. Three steps.",
     "theme": "v7-commercial-model-slide",
@@ -158,7 +171,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "The third step matters as much as the first two. Care has to be designed into the room, as well as agreed in the offer."
   },
   {
-    "number": 14,
+    "number": 15,
     "baseSlide": null,
     "title": "Care is part of the architecture",
     "theme": "v8-care-slide",
@@ -170,7 +183,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "We already revise designs through our digital studies. Making and caring for a real Bower will give us another kind of evidence."
   },
   {
-    "number": 15,
+    "number": 16,
     "baseSlide": 11,
     "title": "How the system learns.",
     "theme": "v7-learning-flow-slide",
@@ -182,7 +195,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "Each project can provide both a place future clients can visit and evidence that improves our work. Building that connection is how we work together."
   },
   {
-    "number": 16,
+    "number": 17,
     "baseSlide": 16,
     "title": "Architecture. Ecology. Software. Manufacturing.",
     "theme": "team-slide",
@@ -194,7 +207,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "This is the team and the work we are beginning with. The reason to develop the method reaches well beyond one garden room."
   },
   {
-    "number": 17,
+    "number": 18,
     "baseSlide": 1,
     "title": "We’re about to build the world again.",
     "theme": "material-problem-slide",
@@ -206,7 +219,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "If we are about to build so much, the way those places participate in the living world matters. A room is where we begin to develop that approach."
   },
   {
-    "number": 18,
+    "number": 19,
     "baseSlide": 17,
     "title": "A room is the beginning.",
     "theme": "v7-future-slide",
@@ -218,7 +231,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "That is the horizon. The useful next step is to make the first Bower real and establish how we will deliver and learn from it."
   },
   {
-    "number": 19,
+    "number": 20,
     "baseSlide": 18,
     "title": "Buildings that grow.",
     "theme": "closing image-slide",
