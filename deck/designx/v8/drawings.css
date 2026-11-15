@@ -34,7 +34,7 @@
 .designx-v8 .v8-consequences button[aria-pressed=true],.designx-v8 .v8-growth-player button[aria-pressed=true]{background:transparent!important;color:#102820!important;border-bottom:2px solid #102820}
 .designx-v8 .v8-growth-player button{font-size:20px}
 .designx-v8 .v8-growth-player .v8-growth-selector-label,.designx-v8 .v8-growth-player .v8-growth-occupation{font-size:17px}
-.designx-v8 .v8-growth-player .v8-study-caption{font-size:18px;width:310px}
+.designx-v8 .v8-growth-player .v8-study-caption{font-size:16px;width:auto}
 .designx-v8 .v8-growth-player .v8-growth-evidence{font-size:14px}
 .designx-v8 .v8-growth-player .v8-growth-view-label{display:none}
 .designx-v8.print-mode .v8-sequence-controls,.designx-v8.print-mode .v8-consequence-config,.designx-v8.print-mode .v8-drawing-tabs{display:none}

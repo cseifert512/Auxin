@@ -29,15 +29,40 @@ window.DESIGNX_V8_STORY = [
     "baseSlide": 4,
     "title": "A room through time",
     "theme": "v7-growth-slide",
-    "purpose": "Make the living experience visible through Space, Light and Time: a useful room from installation whose enclosure, atmosphere and occupation can develop with planting and seasons.",
+    "purpose": "See how one inhabitable room develops from installation through establishment and seasons.",
     "stays": "The Space, Light and Time structure and explorable drawing controls. Keep the ability to choose a view, pause, linger and return to the presentation.",
-    "drawing": "Time occupies the principal drawing space, with Inside selected and a compact Above / Approach / Inside control. Space retains the unrolled panorama; Light selects one stage of establishment across a midsummer day. Ghost people and birds form a separate authored occupation layer. Pause, scrub and enlargement retain the selected moment.",
-    "status": "Interactive pre-rendered growth and light scenarios, with a separate authored occupation layer. No live plant geometry is rendered in the browser. The lightweight player loads selected frames on demand. Ghost paths are diagrammatic; no behaviour, collision or habitat model is claimed. Coordinated scene, ground and seasonal care work remains separate.",
-    "transition": "The experience above ground depends on relationships that the arrival view cannot reveal. Open up the same room.",
-    "speakerBridge": "The character of the room depends on more than what we see overhead. It begins in the ground and in the conditions we provide for life."
+    "drawing": "One large Inside view autoplays from installation. Pause or scrub to linger; secondary views and the optional short assembly sequence sit in Inspect.",
+    "status": "Pre-rendered growth scenario based on provisional assumptions, with a separate authored occupation layer. No live plant geometry or measured performance.",
+    "transition": "The changing room also changes the light falling on its floor.",
+    "speakerBridge": "The character of the room depends on more than what we see overhead. It begins in the ground and in the conditions we provide for life.",
+    "growthMode": "time"
   },
   {
+    "baseSlide": 4,
+    "stays": "The existing six-bay timber and planting images, source assumptions and inspectable timeline.",
+    "status": "Pre-rendered scenario on provisional assumptions; not a measured outcome or forecast.",
     "number": 4,
+    "growthMode": "light",
+    "title": "Light through the day",
+    "theme": "v8-light-slide",
+    "purpose": "Compare the light at installation, during establishment and with mature planting at the same moment of a midsummer day.",
+    "drawing": "Three aligned growth stages remain visible together. A single autoplaying timeline moves the sun through the day; pause or scrub to compare their shadows.",
+    "transition": "Move from the shadow plan to the enclosure experienced inside the room."
+  },
+  {
+    "baseSlide": 4,
+    "stays": "The existing six-bay timber and planting images, source assumptions and inspectable timeline.",
+    "status": "Pre-rendered scenario on provisional assumptions; not a measured outcome or forecast.",
+    "number": 5,
+    "growthMode": "space",
+    "title": "Plants make space",
+    "theme": "v8-space-slide",
+    "purpose": "Experience how planting changes the enclosure of the room.",
+    "drawing": "A large unrolled interior panorama autoplays through growth and seasons. Drag to turn; pause or scrub to inspect the changing edge.",
+    "transition": "The room depends on relationships below and around it: ground, roots, water and foundations."
+  },
+  {
+    "number": 6,
     "baseSlide": null,
     "title": "The ground sustains the room",
     "theme": "v8-ground-slide",
@@ -49,7 +74,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "Once we draw these relationships together, they begin to change the design. The pier gives us a concrete example."
   },
   {
-    "number": 5,
+    "number": 7,
     "baseSlide": 5,
     "title": "Growth changes the geometry.",
     "theme": "v7-anatomy-slide",
@@ -61,7 +86,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "We cannot judge this change from the plant study alone. We also have to ask what it means for making, cost and the way people enter."
   },
   {
-    "number": 6,
+    "number": 8,
     "baseSlide": 6,
     "title": "One change, several consequences",
     "theme": "v7-computation-slide",
@@ -73,7 +98,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "If the geometry responds to the life and conditions of its place, variation is inevitable. Our task is to make that variation workable."
   },
   {
-    "number": 7,
+    "number": 9,
     "baseSlide": 2,
     "title": "Nature builds by growing.",
     "theme": "variability-slide",
@@ -85,7 +110,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "Variability is the essence of nature and the enemy of industry. Bower’s bet is to make variability manufacturable."
   },
   {
-    "number": 8,
+    "number": 10,
     "baseSlide": 7,
     "title": "Different parts. A repeatable process.",
     "theme": "factory-slide v5-factory-overview",
@@ -97,7 +122,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "The parts can differ while the method repeats. Forming, measuring and machining show how we intend to carry the design through that process."
   },
   {
-    "number": 9,
+    "number": 11,
     "baseSlide": 8,
     "title": "Form. Measure. Machine.",
     "theme": "factory-focus-slide v5-factory-focus",
@@ -109,7 +134,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "We have been discussing Bowers with prospective clients. A repeated request is to see one completed place."
   },
   {
-    "number": 10,
+    "number": 12,
     "baseSlide": 14,
     "title": "The first Bower is the missing reference.",
     "theme": "commercial-loop-slide",
@@ -121,7 +146,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "The first Bower needs to work for its client and be a place others can experience. This is the proposed route to commissioning it."
   },
   {
-    "number": 11,
+    "number": 13,
     "baseSlide": 13,
     "title": "One Bower. Three steps.",
     "theme": "v7-commercial-model-slide",
@@ -133,7 +158,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "The third step matters as much as the first two. Care has to be designed into the room, as well as agreed in the offer."
   },
   {
-    "number": 12,
+    "number": 14,
     "baseSlide": null,
     "title": "Care is part of the architecture",
     "theme": "v8-care-slide",
@@ -145,7 +170,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "We already revise designs through our digital studies. Making and caring for a real Bower will give us another kind of evidence."
   },
   {
-    "number": 13,
+    "number": 15,
     "baseSlide": 11,
     "title": "How the system learns.",
     "theme": "v7-learning-flow-slide",
@@ -157,7 +182,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "Each project can provide both a place future clients can visit and evidence that improves our work. Building that connection is how we work together."
   },
   {
-    "number": 14,
+    "number": 16,
     "baseSlide": 16,
     "title": "Architecture. Ecology. Software. Manufacturing.",
     "theme": "team-slide",
@@ -169,7 +194,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "This is the team and the work we are beginning with. The reason to develop the method reaches well beyond one garden room."
   },
   {
-    "number": 15,
+    "number": 17,
     "baseSlide": 1,
     "title": "We’re about to build the world again.",
     "theme": "material-problem-slide",
@@ -181,7 +206,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "If we are about to build so much, the way those places participate in the living world matters. A room is where we begin to develop that approach."
   },
   {
-    "number": 16,
+    "number": 18,
     "baseSlide": 17,
     "title": "A room is the beginning.",
     "theme": "v7-future-slide",
@@ -193,7 +218,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "That is the horizon. The useful next step is to make the first Bower real and establish how we will deliver and learn from it."
   },
   {
-    "number": 17,
+    "number": 19,
     "baseSlide": 18,
     "title": "Buildings that grow.",
     "theme": "closing image-slide",

@@ -11,7 +11,7 @@ const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'C:/BOWER/Bower_Web/node_modules/playwright');
 const href = process.env.DECK_URL || 'http://localhost:5312/designx/v8/';
 const origin = new URL(href).origin;
-const expectedThemes = ['cover', 'buyers-slide', 'v7-growth-slide', 'v8-ground-slide', 'v7-anatomy-slide', 'v7-computation-slide', 'variability-slide', 'factory-slide', 'factory-focus-slide', 'commercial-loop-slide', 'v7-commercial-model-slide', 'v8-care-slide', 'v7-learning-flow-slide', 'team-slide', 'material-problem-slide', 'v7-future-slide', 'closing'];
+const expectedThemes = ['cover', 'buyers-slide', 'v7-growth-slide', 'v8-light-slide', 'v8-space-slide', 'v8-ground-slide', 'v7-anatomy-slide', 'v7-computation-slide', 'variability-slide', 'factory-slide', 'factory-focus-slide', 'commercial-loop-slide', 'v7-commercial-model-slide', 'v8-care-slide', 'v7-learning-flow-slide', 'team-slide', 'material-problem-slide', 'v7-future-slide', 'closing'];
 const result = { passed: [], failures: [], errors: [], missingAssets: [], failedRequests: [], externalRequests: [], slides: [] };
 const dependencies = new Set();
 const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_PATH || 'C:/Users/cseif/AppData/Local/ms-playwright/chromium_headless_shell-1223/chrome-headless-shell-win64/chrome-headless-shell.exe' });
@@ -46,7 +46,8 @@ let expectingLoadFailure = false;
 page.on('pageerror', error => result.errors.push(error.message));
 page.on('response', response => { if (response.status() >= 400 && !expectingLoadFailure) result.missingAssets.push({ status: response.status(), url: response.url() }); });
 page.on('requestfailed', request => { const error = request.failure()?.errorText || ''; if (!expectingLoadFailure && !/ERR_ABORTED|NS_BINDING_ABORTED/.test(error)) result.failedRequests.push({ url: request.url(), error }); });
-const host = kind => page.locator(`[data-v8-study="${kind}"]`);
+const hostSelector = (kind, mode = 'time') => `[data-v8-study="${kind}"]${kind === 'growth' ? `[data-growth-mode="${mode}"]` : ''}`;
+const host = (kind, mode = 'time') => page.locator(hostSelector(kind, mode));
 const frames = (count = 12) => page.evaluate(n => new Promise(done => { const step = () => --n <= 0 ? done() : requestAnimationFrame(step); requestAnimationFrame(step); }), count);
 async function test(name, fn) {
   if(process.env.DECK_TEST && !new RegExp(process.env.DECK_TEST).test(name)) return;
@@ -63,27 +64,31 @@ async function activate(theme) {
   }, theme);
   const slide = page.locator(`#slide-${String(number).padStart(2, '0')}.is-active`); await slide.waitFor(); return slide;
 }
-async function ready(kind) {
-  await page.waitForFunction(kind => { const el = document.querySelector(`[data-v8-study="${kind}"]`); return el?.querySelector('.v8-study')?.dataset.ready === 'true' && (kind === 'growth' ? el.querySelector('.v8-growth-message')?.hidden : el.querySelector('iframe')?.contentWindow.__ready && el.querySelector('.v8-study-loading')?.hidden); }, kind);
+async function ready(kind, mode = 'time') {
+  await page.waitForFunction(({ kind, selector }) => { const el = document.querySelector(selector); return el?.querySelector('.v8-study')?.dataset.ready === 'true' && (kind === 'growth' ? el.querySelector('.v8-growth-message')?.hidden : el.querySelector('iframe')?.contentWindow.__ready && el.querySelector('.v8-study-loading')?.hidden); }, { kind, selector: hostSelector(kind, mode) });
 }
-async function snapshot(kind) {
-  return host(kind).evaluate((el, kind) => {
+async function snapshot(kind, mode = 'time') {
+  return host(kind, mode).evaluate((el, kind) => {
     const doc = el.querySelector('iframe')?.contentDocument;
     if(kind==='growth') {
       const state=el.v8Controller.getState();
-      return {mode:state.mode,view:state.view,range:Number(el.querySelector('input').value),play:el.querySelector('[data-v8-study-play]').textContent,caption:el.querySelector('output').textContent,childPosition:Math.round(state.time/state.duration*1000),renderedFrame:state.renderedFrame,canvasLabel:el.querySelector('canvas').getAttribute('aria-label')};
+      return {mode:state.mode,view:state.view,range:Number(el.querySelector('input[type=range]').value),play:el.querySelector('[data-v8-study-play]').textContent,caption:el.querySelector('output').textContent,childPosition:Math.round(state.time/state.duration*1000),renderedFrame:state.renderedFrame,canvasLabel:el.querySelector('canvas').getAttribute('aria-label')};
     }
     return { mode: el.querySelector('.v8-study')?.dataset.mode, range: Number(el.querySelector('input')?.value), play: el.querySelector('[data-v8-study-play]')?.textContent, caption: el.querySelector('output')?.textContent,
       childPosition: kind === 'growth' ? Number(doc?.getElementById('scrub')?.value) : parseFloat(doc?.getElementById('fill')?.style.width || 'NaN') * 10 };
   }, kind);
 }
-async function pausedStable(kind) {
-  const before = await snapshot(kind); assert.equal(before.play, 'Play', `${kind} should be paused`); await frames();
-  const after = await snapshot(kind); assert.equal(after.range, before.range, 'Parent timeline moved while paused'); assert.equal(after.childPosition, before.childPosition, 'Child drawing moved while paused'); return after;
+async function pausedStable(kind, mode = 'time') {
+  const before = await snapshot(kind, mode); assert.equal(before.play, 'Play', `${kind}/${mode} should be paused`); await frames();
+  const after = await snapshot(kind, mode); assert.equal(after.range, before.range, 'Parent timeline moved while paused'); assert.equal(after.childPosition, before.childPosition, 'Child drawing moved while paused'); return after;
 }
-async function setRange(kind, value) {
-  await host(kind).locator('input').evaluate((el, value) => { el.value = String(value); el.dispatchEvent(new Event('input', { bubbles: true })); }, value);
-  await ready(kind); await frames(2); const state = await pausedStable(kind); assert.equal(state.range, value); assert.ok(Math.abs(state.childPosition - value) <= 1, `Child seek ${state.childPosition} differs from ${value}`); return state;
+async function setRange(kind, value, mode = 'time') {
+  await host(kind, mode).locator('input[type=range]').evaluate((el, value) => { el.value = String(value); el.dispatchEvent(new Event('input', { bubbles: true })); }, value);
+  await ready(kind, mode); await frames(2); const state = await pausedStable(kind, mode); assert.equal(state.range, value); assert.ok(Math.abs(state.childPosition - value) <= 1, `Child seek ${state.childPosition} differs from ${value}`); return state;
+}
+async function inspectGrowth(mode = 'time', open = true) {
+  const details = host('growth', mode).locator('details');
+  if (await details.evaluate(el => el.open) !== open) await details.locator('summary').click();
 }
 async function screenshot(name, locator = page.locator('.slide.is-active')) {
   await page.evaluate(() => document.fonts.ready); await locator.evaluate(el => Promise.all([...el.querySelectorAll('img')].map(img => img.decode().catch(() => {}))));
@@ -98,8 +103,8 @@ await mkdir(resolve(root, '.qa'), { recursive: true });
 try {
   console.log('[v8 QA] Loading edition 08'); await page.goto(href); await page.waitForFunction(() => Boolean(window.DESIGNX && window.DESIGNX_V8_STORY));
   result.slides = await page.evaluate(() => window.DESIGNX_SLIDES.map((slide, i) => ({ number: i + 1, title: slide.title, theme: slide.theme })));
-  await test('Seventeen-slide narrative consolidates learning and keeps a distinct customer-reference finding', async () => {
-    assert.deepEqual(result.slides.map(slide => slide.theme.split(' ')[0]), expectedThemes); assert.equal(await page.evaluate(() => window.DESIGNX_V8_STORY.length), 17);
+  await test('Nineteen-slide narrative gives Time, Light and Space their own drawings', async () => {
+    assert.deepEqual(result.slides.map(slide => slide.theme.split(' ')[0]), expectedThemes); assert.equal(await page.evaluate(() => window.DESIGNX_V8_STORY.length), 19);
     assert.match(await page.locator('body').getAttribute('class'), /designx-v7/); assert.match(await page.locator('body').getAttribute('class'), /designx-v8/);
   });
   await test('Learning phases and first-reference evidence remain clear', async () => {
@@ -109,13 +114,13 @@ try {
     assert.match(await proof.innerText(), /wanted to see one completed Bower/);
     assert.equal(await proof.locator('[data-flywheel]').count(),0);
     assert.ok(Number.isFinite(await page.evaluate(() => window.DESIGNX_SLIDES.find(slide => slide.theme.includes('v8-reference-slide')).sourceIndex)),'Reference slide must retain its original comparison target');
-    await screenshot('slide-10-reference',proof);
+    await screenshot('slide-12-reference',proof);
     const learning = await activate('v7-learning-flow-slide');
     assert.deepEqual(await learning.locator('.v7flow-phase').allTextContents(),['Designing each Bower','Making and living with it']);
     for (const phase of await learning.locator('.v7flow-phase').all()) assert.ok(await phase.isVisible(),'Learning phase label should be visible');
     assert.match(await learning.locator('.v7flow-status').innerText(),/Digital geometry and growth studies exist/);
     assert.equal(await learning.locator('[data-v7flow-select="growing"]').getAttribute('aria-pressed'),'true');
-    await screenshot('slide-13-learning-initial',learning);
+    await screenshot('slide-15-learning-initial',learning);
   });
   await test('Customer discussions and proposed commercial terms remain intact', async () => {
     const buyers = await activate('buyers-slide');
@@ -124,27 +129,62 @@ try {
     assert.match(await buyers.innerText(), /not signed commissions/i); await screenshot('slide-02-customers', buyers);
     const offer = await activate('v7-commercial-model-slide');
     for (const pattern of [/£65,000/, /Deducted from total build cost/i, /Fixed\s+build price/i, /Annual\s+care/i]) assert.match(await offer.innerText(), pattern);
-    await screenshot('slide-10-commercial', offer);
+    await screenshot('slide-13-commercial', offer);
   });
-  await test('Growth tabs, paused seeking, playback and enlargement retain the chosen view', async () => {
+  await test('Time fills its slide, autoplays from installation and remains inspectable', async () => {
     const slide = await activate('v7-growth-slide'); await ready('growth');
-    assert.equal((await snapshot('growth')).mode,'time'); assert.equal((await snapshot('growth')).view,2); assert.equal((await snapshot('growth')).play,'Play');
+    const initial = await snapshot('growth');
+    assert.equal(initial.mode,'time'); assert.equal(initial.view,2); assert.equal(initial.play,'Pause');
+    assert.ok(initial.renderedFrame >= 16, 'Autoplay should start with the usable room, not construction');
+    assert.equal(await slide.locator('[data-v7-growth], [data-v8-open="growth"]').count(),0);
+    const drawingShare = await slide.evaluate(el => { const drawing=el.querySelector('.v8-growth-screen').getBoundingClientRect(), bounds=el.getBoundingClientRect(); return drawing.width*drawing.height/(bounds.width*bounds.height); });
+    assert.ok(drawingShare > .65, `Drawing occupies only ${(drawingShare*100).toFixed(1)}% of the slide`);
+    assert.equal(await host('growth').locator('button:visible').count(),1,'Only the pause button should compete with the drawing before inspection');
+    await host('growth').locator('[data-v8-study-play]').click(); await ready('growth'); await pausedStable('growth');
     const still=await host('growth').locator('canvas').evaluate(el=>el.toDataURL());await frames();assert.equal(await host('growth').locator('canvas').evaluate(el=>el.toDataURL()),still,'Paused inhabitants must stay still');
-    for (const [index, mode] of ['space', 'light', 'time'].entries()) { await slide.locator(`[data-v7-growth="${index}"]`).click(); assert.equal((await snapshot('growth')).mode, mode); assert.equal(await slide.locator(`[data-v7-growth="${index}"]`).getAttribute('aria-pressed'), 'true'); await setRange('growth', 437); }
+    await inspectGrowth();
+    assert.equal(await host('growth').getByRole('button',{name:'Design',exact:true}).count(),0);
     await host('growth').getByRole('button', { name: 'Winter', exact: true }).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption, /winter/i);
-    await host('growth').getByRole('button', { name: 'Summer', exact: true }).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption, /summer/i); await screenshot('slide-03-growth', slide);
-    await slide.locator('[data-v7-growth="1"]').click(); assert.equal(await host('growth').getByRole('button', { name: 'Winter', exact: true }).count(), 0);
-    await host('growth').getByRole('button', { name: 'Noon', exact: true }).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption, /noon/i);
-    assert.equal(await host('growth').getByRole('button',{name:'Above',exact:true}).count(),0);assert.equal(await host('growth').getByRole('button',{name:'Establishing',exact:true}).count(),1);
-    const before = await setRange('growth', 555); await openStudy('growth'); assert.deepEqual(await pausedStable('growth'), before, 'Enlarging must preserve mode, position and pause');
-    await screenshot('growth-enlarged', page.locator('.v8-study-dialog[open]')); await closeStudy(); await ready('growth'); assert.deepEqual(await pausedStable('growth'), before, 'Returning must preserve the same drawing');
-    assert.equal(await page.evaluate(() => document.activeElement?.dataset.v8Open), 'growth');
-    await host('growth').locator('[data-v8-study-play]').click(); await page.waitForFunction(() => Number(document.querySelector('[data-v8-study="growth"] input').value) > 555);
-    await host('growth').locator('[data-v8-study-play]').click(); await ready('growth'); const paused = await pausedStable('growth');
+    await host('growth').getByRole('button', { name: 'Summer', exact: true }).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption, /summer/i);
+    await inspectGrowth('time',false); await screenshot('slide-03-growth', slide);
+    await setRange('growth',999); await host('growth').locator('[data-v8-study-play]').click();
+    await page.waitForFunction(selector => Number(document.querySelector(selector+' input[type=range]').value)<200,hostSelector('growth'));
+    await ready('growth'); assert.ok((await snapshot('growth')).renderedFrame>=16,'Loop must return to installation');
+    await host('growth').locator('[data-v8-study-play]').click();
+    await inspectGrowth(); await host('growth').locator('[data-v8-assembly]').check(); await ready('growth');
+    assert.equal((await pausedStable('growth')).renderedFrame,0);
+    assert.ok((await setRange('growth',50)).renderedFrame<16,'Optional assembly should be inspectable');
+    assert.equal((await setRange('growth',100)).renderedFrame,16,'Assembly must occupy only the first tenth');
+    await host('growth').locator('[data-v8-assembly]').uncheck(); await ready('growth');
+    assert.equal((await pausedStable('growth')).renderedFrame,16);
+    const paused=await setRange('growth',555); await inspectGrowth('time',false);
     await activate('v7-anatomy-slide'); assert.equal(await host('growth').locator('iframe').count(), 0);
+    assert.equal(await host('growth').evaluate(el=>el.v8Controller.getState().running),false);
     await activate('v7-growth-slide'); await ready('growth'); assert.deepEqual(await pausedStable('growth'), paused);
+    await inspectGrowth();
     await host('growth').getByRole('button',{name:'Inhabitants on',exact:true}).click();
     assert.equal(await host('growth').evaluate(el=>el.v8Controller.getState().occupation),false);
+    await inspectGrowth('time',false);
+  });
+  await test('Light compares three stages and Space keeps its own autoplaying panorama', async () => {
+    const light=await activate('v8-light-slide'); await ready('growth','light');
+    assert.equal((await snapshot('growth','light')).mode,'light'); assert.equal((await snapshot('growth','light')).play,'Pause');
+    assert.deepEqual(await host('growth','light').locator('.v8-light-labels span').allTextContents(),['At installation','Establishing','Mature']);
+    assert.ok(await host('growth','light').locator('.v8-light-labels').isVisible());
+    assert.match((await snapshot('growth','light')).canvasLabel,/Installation.*establishing.*mature/i);
+    assert.equal(await host('growth','light').locator('[data-v8-view]').count(),0);
+    await inspectGrowth('light'); await host('growth','light').getByRole('button',{name:'Noon',exact:true}).click(); await ready('growth','light');
+    assert.match((await pausedStable('growth','light')).caption,/noon/i); await inspectGrowth('light',false); await screenshot('slide-04-light',light);
+    const lightPaused=await snapshot('growth','light');
+    const space=await activate('v8-space-slide'); await ready('growth','space');
+    assert.equal((await snapshot('growth','space')).mode,'space'); assert.equal((await snapshot('growth','space')).play,'Pause');
+    await setRange('growth',555,'space');
+    const pan=await host('growth','space').evaluate(el=>el.v8Controller.getState().pan);
+    await host('growth','space').locator('canvas').press('Shift+ArrowRight');
+    assert.notEqual(await host('growth','space').evaluate(el=>el.v8Controller.getState().pan),pan,'Panorama should remain turnable');
+    await pausedStable('growth','space'); await screenshot('slide-05-space',space);
+    await activate('v8-light-slide'); await ready('growth','light'); assert.deepEqual(await pausedStable('growth','light'),lightPaused,'Each drawing keeps its own paused moment');
+    assert.equal(await host('growth','space').evaluate(el=>el.v8Controller.getState().running),false);
   });
   await test('A scene decision changes the drawing, quantities and review flags together',async()=>{
     const slide=await activate('v7-computation-slide');
@@ -154,7 +194,7 @@ try {
     assert.match(await slide.innerText(),/3.61 m between the legs/);
     await slide.getByRole('button',{name:'Baseline',exact:true}).click();
     await page.waitForFunction(()=>document.querySelector('[data-v8-consequences]')?.dataset.configuration==='baseline');
-    assert.match(await slide.innerText(),/4.87 m between the legs/);await screenshot('slide-06-consequences',slide);
+    assert.match(await slide.innerText(),/4.87 m between the legs/);await screenshot('slide-08-consequences',slide);
     await slide.getByRole('button',{name:'Opened pier',exact:true}).click();await slide.getByRole('button',{name:'Designer review',exact:true}).click();
     await page.waitForFunction(()=>document.querySelector('[data-v8-consequences]')?.dataset.stage==='3');
     assert.match(await slide.innerText(),/0.23 m/);assert.match(await slide.innerText(),/0.24 m/);
@@ -164,7 +204,7 @@ try {
     const pattern='**/04-plants-make-space-timber/frames/time-30.webp';
     await page.route(pattern,route=>route.abort('failed'));
     try{
-      await page.goto(href+'#slide-03');await page.reload();await ready('growth');
+      await page.goto(href+'#slide-03');await page.reload();await ready('growth');await inspectGrowth();
       await host('growth').getByRole('button',{name:'Winter',exact:true}).click();
       await page.waitForFunction(()=>document.querySelector('[data-v8-study="growth"]')?.v8Controller?.getState().fallback);
       assert.match((await snapshot('growth')).caption,/Static fallback.*summer/);
@@ -177,9 +217,13 @@ try {
   await test('Reduced motion, view selection and bounded frame loading',async()=>{
     await page.emulateMedia({reducedMotion:'reduce'});
     await page.goto(href+'#slide-03');await page.reload();await ready('growth');assert.equal((await snapshot('growth')).play,'Play');
+    await inspectGrowth();
     await host('growth').getByRole('button',{name:'Approach',exact:true}).click();assert.equal((await snapshot('growth')).view,1);
-    await host('growth').locator('input').evaluate(el=>{for(let i=0;i<=1000;i+=71){el.value=String(i);el.dispatchEvent(new Event('input',{bubbles:true}));}});
+    await host('growth').locator('input[type=range]').evaluate(el=>{for(let i=0;i<=1000;i+=71){el.value=String(i);el.dispatchEvent(new Event('input',{bubbles:true}));}});
     assert.ok(await host('growth').evaluate(el=>el.v8Controller.getState().pendingFrames<=3));await ready('growth');
+    for (const [mode,theme] of [['light','v8-light-slide'],['space','v8-space-slide']]) {
+      await activate(theme); await ready('growth',mode); assert.equal((await snapshot('growth',mode)).play,'Play');
+    }
     await activate('v7-computation-slide');assert.equal(await host('growth').evaluate(el=>el.v8Controller.getState().running),false);
     await page.emulateMedia({reducedMotion:'no-preference'});
   });
@@ -187,20 +231,20 @@ try {
     const slide=await activate('v7-learning-flow-slide');await slide.locator('[data-v7flow-select="growing"]').click();
     assert.equal(await slide.locator('[data-v7-flow]').getAttribute('data-trace-step'),'plantability');
     await slide.locator('[data-sequence-range]').fill('600');
-    assert.equal(await slide.locator('[data-v7-flow]').getAttribute('data-trace-step'),'validation');await screenshot('slide-13-learning',slide);
+    assert.equal(await slide.locator('[data-v7-flow]').getAttribute('data-trace-step'),'validation');await screenshot('slide-15-learning',slide);
     const before=await slide.locator('[data-sequence-range]').inputValue();await frames();assert.equal(await slide.locator('[data-sequence-range]').inputValue(),before);
   });
   await test('Pier exploration preserves time and other intentions remain placeholders', async () => {
     const slide = await activate('v7-anatomy-slide'); await slide.locator('[data-v7-intent="1"]').click();
     assert.equal(await slide.locator('.v7-drawing-note').isVisible(), true); assert.equal(await slide.locator('.v8-pier-example').isVisible(), false);
-    await slide.locator('[data-v7-intent="0"]').click(); assert.equal(await slide.locator('.v8-pier-example').isVisible(), true); await screenshot('slide-05-pier', slide); await openStudy('pier');
+    await slide.locator('[data-v7-intent="0"]').click(); assert.equal(await slide.locator('.v8-pier-example').isVisible(), true); await screenshot('slide-07-pier', slide); await openStudy('pier');
     for (const name of ['Planted', 'Shaded', 'Piers open', 'Grown again']) { await host('pier').getByRole('button', { name, exact: true }).click(); assert.ok((await pausedStable('pier')).caption.length); }
     await setRange('pier', 555); await host('pier').locator('[data-v8-study-play]').click(); await page.waitForFunction(() => Number(document.querySelector('[data-v8-study="pier"] input').value) > 555);
     await host('pier').locator('[data-v8-study-play]').click(); const before = await pausedStable('pier'); await screenshot('pier-enlarged', page.locator('.v8-study-dialog[open]'));
     await closeStudy(); await openStudy('pier'); assert.deepEqual(await pausedStable('pier'), before, 'Reopening must retain the paused pier'); await closeStudy();
   });
   await test('Original factory overview and Form / Measure / Machine controls work', async () => {
-    const overview = await activate('factory-slide'); await factoryReady('overview', 'overview'); await screenshot('slide-08-factory', overview);
+    const overview = await activate('factory-slide'); await factoryReady('overview', 'overview'); await screenshot('slide-10-factory', overview);
     assert.equal(await overview.locator('[data-factory-focus]').count(), 1); await overview.locator('[data-factory-notes]').click(); await page.locator('#factory-notes[open]').waitFor();
     await page.locator('#factory-notes').getByRole('button', { name: 'Close drawing dialog', exact: true }).click();
     await page.frameLocator('.slide.is-active [data-factory-surface] iframe').locator('[data-factory-station="05-press"]').press('Enter');
@@ -214,25 +258,27 @@ try {
     await focus.locator('[data-factory-seek]').evaluate(el => { el.value = '42'; el.dispatchEvent(new Event('input', { bubbles: true })); });
     await page.waitForFunction(() => { const state = window.DESIGNX_FACTORY.getStates().find(item => item.viewer === 'focus'); return Math.abs(state.time / state.duration - .42) < .001 && !state.playing; });
     const before = await page.evaluate(() => window.DESIGNX_FACTORY.getStates().find(item => item.viewer === 'focus').time); await frames();
-    assert.equal(await page.evaluate(() => window.DESIGNX_FACTORY.getStates().find(item => item.viewer === 'focus').time), before); await screenshot('slide-09-factory-focus', focus);
+    assert.equal(await page.evaluate(() => window.DESIGNX_FACTORY.getStates().find(item => item.viewer === 'focus').time), before); await screenshot('slide-11-factory-focus', focus);
   });
   await test('Index, notes, new drawing slots and print link remain usable', async () => {
-    await screenshot('slide-04-ground', await activate('v8-ground-slide')); await screenshot('slide-12-care', await activate('v8-care-slide'));
-    await page.locator('#open-index').click(); assert.equal(await page.locator('#slide-index[open] [data-go]').count(), 17);
-    await page.locator('#slide-index [data-go]').last().click(); assert.equal(await page.evaluate(() => window.DESIGNX.current), 17);
+    await screenshot('slide-06-ground', await activate('v8-ground-slide')); await screenshot('slide-14-care', await activate('v8-care-slide'));
+    await page.locator('#open-index').click(); assert.equal(await page.locator('#slide-index[open] [data-go]').count(), 19);
+    await page.locator('#slide-index [data-go]').last().click(); assert.equal(await page.evaluate(() => window.DESIGNX.current), 19);
     await page.locator('#show-notes').click(); assert.match(await page.locator('#notes-content').innerText(), /Story connection|Continue to the next slide|Drawing plan/); await page.locator('[data-close-dialog="speaker-notes"]').click();
     const print = new URL(await page.locator('#pdf-link').getAttribute('href'), href); assert.equal(print.searchParams.get('print'), '1'); assert.ok(print.pathname.includes('/v8'));
   });
-  await test('Static reading view has seventeen scenes, complete factory diagrams and no broken images', async () => {
+  await test('Static reading view has nineteen scenes, complete factory diagrams and no broken images', async () => {
     const print = new URL(href); print.search = '?print=1'; await page.goto(print.href); await page.waitForFunction(() => Boolean(window.DESIGNX));
     await page.evaluate(() => Promise.race([Promise.all([window.DESIGNX_READY, window.DESIGNX_FACTORY_READY]), new Promise((_, reject) => setTimeout(() => reject(new Error('Static factory preparation exceeded 20 seconds')), 20000))]));
     await page.waitForFunction(()=>document.querySelector('[data-v8-consequences]')?.dataset.ready==='true');
-    assert.equal(await page.locator('.slide.is-active').count(), 17); assert.equal(await page.locator('[data-v8-study] iframe').count(), 0); assert.equal(await page.locator('[data-factory-poster] svg').count(), 4);
+    assert.equal(await page.locator('.slide.is-active').count(), 19); assert.equal(await page.locator('[data-v8-study] iframe').count(), 0); assert.equal(await page.locator('[data-factory-poster] svg').count(), 4);
     const images = await page.locator('.slide img').evaluateAll(images => images.map(img => ({ src: img.currentSrc || img.src, complete: img.complete, width: img.naturalWidth })));
     assert.ok(images.length); assert.deepEqual(images.filter(img => !img.complete || !img.width), []);
     await screenshot('print-03-time',page.locator('#slide-03'));
-    await screenshot('print-06-consequences',page.locator('#slide-06'));
-    await screenshot('print-09-manufacturing',page.locator('#slide-09'));
+    await screenshot('print-04-light',page.locator('#slide-04'));
+    await screenshot('print-05-space',page.locator('#slide-05'));
+    await screenshot('print-08-consequences',page.locator('#slide-08'));
+    await screenshot('print-11-manufacturing',page.locator('#slide-11'));
   });
   await test('Story map loads and no edition 09 dependencies remain', async () => {
     await page.goto(new URL('story-map.html', href).href); await page.waitForLoadState('domcontentloaded'); assert.match(await page.locator('body').innerText(), /story|presentation|drawing/i);

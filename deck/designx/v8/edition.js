@@ -5,13 +5,13 @@
   const prior = window.DESIGNX_SLIDES;
   const story = window.DESIGNX_V8_STORY;
   const esc = value => String(value).replace(/[&<>"']/g,c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  if (prior.length !== 18 || story.length !== 17) throw new Error('Edition 08 expects eighteen source scenes and seventeen story scenes.');
+  if (prior.length !== 18 || story.length !== 19) throw new Error('Edition 08 expects eighteen source scenes and nineteen story scenes.');
   const poster = (src,alt,label) => `<figure><img src="v8/assets/studies/${src}" alt="${alt}"><figcaption>${label}</figcaption></figure>`;
-  const chapter = number => number <= 4 ? 'A living place' : number <= 7 ? 'Designing the place' : number <= 9 ? 'Making the Bower' : number <= 11 ? 'The first commission' : number <= 13 ? 'Care and learning' : number === 14 ? 'The people' : 'The wider ambition';
+  const chapter = number => number <= 6 ? 'A living place' : number <= 9 ? 'Designing the place' : number <= 11 ? 'Making the Bower' : number <= 13 ? 'The first commission' : number <= 15 ? 'Care and learning' : number === 16 ? 'The people' : 'The wider ambition';
   const newDrawing = item => ({
-    title:item.title,theme:item.theme,act:item.number === 4 ? 'The living place' : 'The life of the Bower',sourceIndex:3,
-    html:`<section class="v7-scene v8-drawing-brief"><h2 class="v7-title">${esc(item.title)}</h2><p class="v8-drawing-intention">${item.number === 4 ? 'Rooting ground, water, foundations and care access shape the room above.' : 'Establishment, training and tending sustain the place the customer commissioned.'}</p><div class="v8-reserved-drawing"><aside class="v7-drawing-note"><strong>${item.number === 4 ? 'The same room, opened up' : 'The life of the room'}</strong><p>${item.number === 4 ? 'Compose the section around the relationship between roots, footings, water and the entrance. First scene drafts are available for review.' : 'Show establishment and tending in the same room, with a clear route for care and continuing occupation.'}</p></aside></div><p class="v7-status">${item.number === 4 ? 'Working scene drafts exist; presentation drawing in development. Ground, water and foundation arrangements are provisional proposals.' : 'Care drawing in development. Proposed care service; scope, delivery and pricing remain to be defined.'}</p></section>`,
-    notes:item.purpose,source:item.number === 4 ? 'Inhabited-room scene: six-bay-radial-v1 baseline; site.json and ground.json contain provisional design proposals. First arrival and section renders are linked in the story map.' : 'V7 proposed annual-care offer and the inhabited-room scene brief. No operating service or observed outcomes asserted.'
+    title:item.title,theme:item.theme,act:item.theme === 'v8-ground-slide' ? 'The living place' : 'The life of the Bower',sourceIndex:3,
+    html:`<section class="v7-scene v8-drawing-brief"><h2 class="v7-title">${esc(item.title)}</h2><p class="v8-drawing-intention">${item.theme === 'v8-ground-slide' ? 'Rooting ground, water, foundations and care access shape the room above.' : 'Establishment, training and tending sustain the place the customer commissioned.'}</p><div class="v8-reserved-drawing"><aside class="v7-drawing-note"><strong>${item.theme === 'v8-ground-slide' ? 'The same room, opened up' : 'The life of the room'}</strong><p>${item.theme === 'v8-ground-slide' ? 'Compose the section around the relationship between roots, footings, water and the entrance. First scene drafts are available for review.' : 'Show establishment and tending in the same room, with a clear route for care and continuing occupation.'}</p></aside></div><p class="v7-status">${item.theme === 'v8-ground-slide' ? 'Working scene drafts exist; presentation drawing in development. Ground, water and foundation arrangements are provisional proposals.' : 'Care drawing in development. Proposed care service; scope, delivery and pricing remain to be defined.'}</p></section>`,
+    notes:item.purpose,source:item.theme === 'v8-ground-slide' ? 'Inhabited-room scene: six-bay-radial-v1 baseline; site.json and ground.json contain provisional design proposals. First arrival and section renders are linked in the story map.' : 'V7 proposed annual-care offer and the inhabited-room scene brief. No operating service or observed outcomes asserted.'
   });
   window.DESIGNX_SLIDES = story.map(item => {
     const slide = item.baseSlide === 14 ? { ...prior[item.baseSlide - 1], ...window.DESIGNX_V8_REFERENCE } : item.baseSlide ? prior[item.baseSlide - 1] : newDrawing(item);
@@ -20,17 +20,9 @@
     const content = template.content;
     content.querySelectorAll('a[href="https://www.bowerbuild.org/designx/v7"]').forEach(link => { link.href = 'v8/'; link.textContent = 'Bower · Edition 08 ↗'; });
     if (item.baseSlide === 4) {
-      content.querySelector('.v7-title').innerHTML = 'A room <em>through time</em>';
-      const choices = content.querySelector('.v7-choices');
-      choices.prepend(choices.querySelector('[data-v7-growth="2"]'));
-      choices.querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.v7Growth === '2')));
-      content.querySelector('.v7-growth-line').textContent = 'A place to inhabit from installation, changing with growth and seasons.';
-      const slot = content.querySelector('.v7-drawing-space');
-      slot.classList.add('v8-growth-slot');
-      slot.querySelector('.v7-drawing-note').hidden = true;
-      slot.insertAdjacentHTML('beforeend', `<div class="v8-study-poster v8-time-poster"><div class="v8-static-view"><img src="v8/assets/studies/seasonal-summer.webp" alt="Inside the six-bay room in the generated summer scenario."></div><p>Inside · established summer scenario</p></div><div class="v8-study-host slide-interaction" data-v8-study="growth" aria-label="Explore the room through time"></div>`);
-      content.querySelector('.v7-growth-line').insertAdjacentHTML('afterend','<button type="button" class="v8-open-study slide-interaction" data-v8-open="growth">Enlarge study ↗</button>');
-      content.querySelector('.v7-status').textContent = 'Generated growth scenario on provisional assumptions. Ghost inhabitants are an authored occupation study; no measured outcomes.';
+      const mode = item.growthMode || 'time';
+      const image = mode === 'time' ? 'v8/assets/studies/seasonal-summer.webp' : `pieces/04-plants-make-space-timber/frames/${mode}-${mode === 'light' ? '18' : '07'}.webp`;
+      template.innerHTML = `<section class="v7-scene v8-growth-scene v8-growth-${mode}"><h2 class="v7-title">${esc(item.title)}</h2><div class="v8-growth-slot"><div class="v8-growth-print"><img src="${image}" alt="${esc(item.title)}: ${mode === 'light' ? 'installation, establishing and mature planting at midsummer noon' : 'established summer scenario'}">${mode === 'light' ? '<div class="v8-print-stages"><span>At installation</span><span>Establishing</span><span>Mature</span></div>' : ''}</div><div class="v8-study-host slide-interaction" data-v8-study="growth" data-growth-mode="${mode}" aria-label="${esc(item.title)}"></div></div><p class="v8-growth-print-status">Pre-rendered growth scenario on provisional assumptions. Authored occupation; no measured outcomes.</p></section>`;
     }
     if (item.baseSlide === 5) {
       const slot = content.querySelector('.v7-anatomy-drawing'); slot.classList.add('v8-pier-slot');
@@ -38,12 +30,12 @@
       slot.querySelector('.v7-drawing-note').hidden = true;
       content.querySelector('.v7-status').textContent = 'The existing pier study connects planting conditions and entrance clearance. Provisional light model; ground integration is the next drawing.';
     }
-    return { ...slide, title:item.title, act:chapter(item.number), comparisonIndex:item.baseSlide ? item.baseSlide - 1 : item.number === 4 ? 3 : 12,
+    return { ...slide, title:item.title, theme:item.baseSlide === 4 ? item.theme : slide.theme, act:chapter(item.number), comparisonIndex:item.baseSlide ? item.baseSlide - 1 : item.theme === 'v8-ground-slide' ? 3 : 12,
       source:item.baseSlide === 6 ? 'Inhabited-room export, authored by the scene study: manifest.json, fixed views, layer masks, stable anchors and quantities from configuration geometry. The browser recomputes nothing. Footing proposals remain unengineered.' : slide.source,
       notes: `${item.baseSlide === 6 ? 'Follow one change through plant support, entry, making and designer review. Baseline and opened-pier views, quantities and unresolved checks come from the coordinated inhabited-room handoff. Their threshold widths are measured from digital timber geometry, not a built Bower. The scene study owns these alternatives. This drawing selects existing results and explains consequences; it is not a live design evaluator. Fabricatability remains in development, integrated plantability and calibrated cost checks remain proposed, and the designer is responsible for reconciling the trade-offs.' : item.baseSlide === 11 ? "This one drawing consolidates the shared-model, project-cycle and learning-system explanations. Begin with Growing: the support route is a design hypothesis; a built Bower would let us observe establishment, clearance and the tending required; evidence review would investigate those outcomes before changing support spacing or a care plan. The same process can be explored through Making, where a member is compared with its target, or Cost, where quantities and scoped quotes are compared with actual production effort. Designing each Bower and Making and living with it identify phases of a project. They do not describe software maturity. Digital geometry and growth studies already support design iteration. Integrated checks, calibrated cost evaluation and physical feedback remain in development. No field observations are reported here. The first Bower could provide both a place prospective clients can visit and evidence that improves future designs; those are distinct uses of the same project." : slide.notes}<br><br><strong>Story connection</strong><br>${esc(item.purpose)}<br><br><strong>Continue to the next slide</strong><br>${esc(item.transition)}<br><br><strong>Drawing plan</strong><br>${esc(item.drawing)}<br><br><strong>Evidence status</strong><br>${esc(item.status)}`,
       html:template.innerHTML };
   });
-  window.DESIGNX_META = Object.freeze({...window.DESIGNX_META,edition:8,targetSlideCount:17,exportReady:false,status:'integrated-working-draft'});
+  window.DESIGNX_META = Object.freeze({...window.DESIGNX_META,edition:8,targetSlideCount:19,exportReady:false,status:'integrated-working-draft'});
 
   (window.DESIGNX_MOUNTS ||= []).push(root => {
     const printing = new URL(location.href).searchParams.get('print') === '1';
@@ -59,8 +51,7 @@
       example.hidden = button.dataset.v7Intent !== '0'; note.hidden = !example.hidden;
     });
     if (printing || location.protocol === 'file:') { root.querySelectorAll('[data-v8-open]').forEach(button => button.hidden = true); return; }
-    const growthHost = root.querySelector('[data-v8-study="growth"]');
-    const growth = {host:growthHost,home:growthHost.parentElement,slide:growthHost.closest('.slide'),controller:null,kind:'growth'};
+    const growths = [...root.querySelectorAll('[data-v8-study="growth"]')].map(host => ({host,home:host.parentElement,slide:host.closest('.slide'),controller:null,kind:'growth'}));
     const pierHost = document.createElement('div'); pierHost.className = 'v8-study-host'; pierHost.dataset.v8Study = 'pier';
     const pier = {host:pierHost,home:null,slide:anatomy.closest('.slide'),controller:null,kind:'pier'};
     const dialog = document.createElement('dialog'); dialog.className = 'v8-study-dialog'; dialog.setAttribute('aria-labelledby','v8-study-title');
@@ -72,13 +63,15 @@
       record.controller = record.kind === 'growth' ? window.DESIGNX_V8_GROWTH.mount(record.host) : window.DESIGNX_V8_STUDIES.mount(record.host,record.kind);
       record.host.v8Controller = record.controller;
       record.host.classList.add('v8-mounted');
-      if (record === growth) record.home.querySelector('.v8-study-poster').setAttribute('aria-hidden','true');
+      if (record.kind === 'growth') record.home.querySelector('.v8-growth-print').setAttribute('aria-hidden','true');
     };
     const active = () => {
       const visible = !document.hidden && !beforePrinting;
-      const grow = visible && current === growth.slide && (!expanded || expanded === growth);
-      if (grow) mount(growth);
-      growth.controller?.setActive(grow);
+      for (const record of growths) {
+        const grow = visible && current === record.slide && !expanded;
+        if (grow) mount(record);
+        record.controller?.setActive(grow);
+      }
       pier.controller?.setActive(visible && expanded === pier);
     };
     const move = (record,target) => {
@@ -94,19 +87,17 @@
     dialog.querySelector('button').onclick = () => { dialog.close(); restore(); };
     dialog.addEventListener('close',() => { if (!dialog.open) restore(); });
     dialog.addEventListener('keydown',event => event.stopPropagation());
-    growth.host.addEventListener('keydown',event => event.stopPropagation());
-    growth.host.addEventListener('wheel',event => event.stopPropagation(),{passive:true});
+    growths.forEach(record => {
+      record.host.addEventListener('keydown',event => event.stopPropagation());
+      record.host.addEventListener('wheel',event => event.stopPropagation(),{passive:true});
+    });
     root.querySelectorAll('[data-v8-open]').forEach(button => button.addEventListener('click',() => {
-      const record = button.dataset.v8Open === 'growth' ? growth : pier;
+      const record = pier;
       expanded = record; returnButton = button;
-      dialog.querySelector('h2').textContent = record === growth ? 'A room through time' : 'The pier opens';
-      dialog.querySelector('.v8-dialog-status').textContent = record === growth ? 'Pre-rendered plant images with authored ghost inhabitants. Playback explores a scenario; it does not run plant geometry or predict occupation.' : 'Existing design study. Opening the pier changes planting conditions and narrows the entrance. Provisional light model.';
+      dialog.querySelector('h2').textContent = 'The pier opens';
+      dialog.querySelector('.v8-dialog-status').textContent = 'Existing design study. Opening the pier changes planting conditions and narrows the entrance. Provisional light model.';
       move(record,dialog.querySelector('.v8-dialog-surface')); mount(record); dialog.showModal(); active();
     }));
-    const modes = ['space','light','time'];
-    root.querySelector('[data-v7-scene="growth"]').addEventListener('click',event => {
-      const button = event.target.closest('[data-v7-growth]'); if (button) growth.controller?.setMode(modes[Number(button.dataset.v7Growth)]);
-    });
     document.addEventListener('designx:slidechange',event => {
       if (expanded && expanded.slide !== event.detail.element) { dialog.close(); restore(); }
       current = event.detail.element; active();

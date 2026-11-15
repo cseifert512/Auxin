@@ -7,7 +7,6 @@
   const HOLD = .08;
   const CACHE_LIMIT = 6;
   const TIME_VIEWS = ['Above', 'Approach', 'Inside'];
-  const LIGHT_VIEWS = ['Installation', 'Establishing', 'Established'];
   const CHAPTERS = {
     time: [['Design', 0], ['Installation', 16], ['Summer', 26], ['Winter', 30]],
     space: [['Installation', 0], ['Established', 7]],
@@ -16,32 +15,30 @@
   const clamp = (value, lo, hi) => Math.max(lo, Math.min(hi, value));
   const fraction = value => ((value % 1) + 1) % 1;
 
-  function mount(host) {
+  function mount(host, options = {}) {
+    const initialMode = options.mode || host.dataset.growthMode || 'time';
     const root = document.createElement('div');
     root.className = 'v8-study v8-study-growth v8-growth-player';
-    root.innerHTML = `<div class="v8-growth-topline">
-      <nav class="v8-growth-views" aria-label="Choose a view of the room"></nav>
-      <button type="button" class="v8-growth-occupation" data-v8-occupation aria-pressed="true">Inhabitants <span>on</span></button>
-    </div>
-    <div class="v8-study-screen v8-growth-screen">
+    root.innerHTML = `<div class="v8-study-screen v8-growth-screen">
       <canvas class="v8-growth-canvas" role="img" aria-label="Growth drawing" tabindex="0"></canvas>
       <div class="v8-growth-message" role="status"><span>Open this slide to explore the drawing.</span><button type="button" data-v8-retry hidden>Retry drawing</button></div>
       <span class="v8-growth-view-label"></span>
+      <div class="v8-light-labels" aria-label="Growth stages"><span>At installation</span><span>Establishing</span><span>Mature</span></div>
     </div>
-    <nav class="v8-study-chapters" aria-label="Choose a moment in the drawing"></nav>
     <div class="v8-study-timeline">
       <button type="button" data-v8-study-play disabled>Play</button>
-      <button type="button" data-v8-study-reset disabled>Reset</button>
       <input type="range" min="0" max="1000" step="1" value="0" aria-label="Position in growth scenario" disabled>
       <output class="v8-study-caption" aria-live="off"></output>
-    </div>
-    <div class="v8-growth-evidence"><span data-v8-growth-disclosure>Pre-rendered growth scenario · authored occupation</span>
-      <details><summary>About this drawing</summary><div class="v8-growth-details">
+      <details><summary>Inspect</summary><div class="v8-growth-details">
+        <nav class="v8-growth-views" aria-label="Choose a view of the room"></nav>
+        <nav class="v8-study-chapters" aria-label="Choose a moment in the drawing"></nav>
+        <div class="v8-growth-options"><button type="button" class="v8-growth-occupation" data-v8-occupation aria-pressed="true">Inhabitants <span>on</span></button><button type="button" data-v8-study-reset disabled>Restart</button></div>
+        <label class="v8-growth-history"><input type="checkbox" data-v8-assembly> Include assembly before installation</label>
         <strong>Scenario and drawing</strong><p>Existing six-bay timber and planting study. The browser selects and blends pre-rendered images. Growth and light depend on provisional assumptions; they are not measured performance or a forecast.</p>
-        <strong>Authored occupation</strong><p>Faint people and birds suggest movement and scale. Their paths are diagrammatic, without collision, behaviour or habitat modelling. They pause and scrub with the drawing. No furniture is proposed.</p>
-        <strong>Views</strong><p>Time offers Above, Approach and Inside views of one moment. Light shows a midsummer day in plan, with a choice of growth stage. Space is a pre-rendered panorama that can be dragged to turn.</p>
+        <strong>Authored occupation</strong><p>Walking silhouettes suggest movement and scale. Their paths are authored, without collision or behaviour modelling. They pause and scrub with the drawing. No furniture is proposed. <a href="v8/assets/inhabitants/SOURCES.md" target="_blank" rel="noopener">Character source and CC0 licence</a>.</p>
+        <strong>Views</strong><p>Time begins at installation, then explores establishment and seasons. Light compares installation, establishing and mature planting through the same midsummer day. Space is an unrolled panorama; drag to turn.</p>
       </div></details>
-    </div>`;
+    </div><span data-v8-growth-disclosure class="v8-growth-evidence">Pre-rendered growth scenario · authored occupation</span>`;
     host.append(root);
     const $ = selector => root.querySelector(selector);
     const canvas = $('canvas'), ctx = canvas.getContext('2d');
@@ -49,19 +46,20 @@
     const screen = $('.v8-growth-screen'), message = $('.v8-growth-message');
     const messageText = message.querySelector('span'), retryButton = $('[data-v8-retry]');
     const playButton = $('[data-v8-study-play]'), resetButton = $('[data-v8-study-reset]');
-    const range = $('input'), output = $('output'), views = $('.v8-growth-views');
+    const range = $('input[type="range"]'), output = $('output'), views = $('.v8-growth-views');
     const chapterHost = $('.v8-study-chapters'), viewLabel = $('.v8-growth-view-label');
     const motion = matchMedia('(prefers-reduced-motion: reduce)');
-    const state = { kind: 'growth', active: false, ready: false, mode: 'time', view: 2,
-      time: 16 / 33 * (1 - HOLD) * 40, duration: 40, playing: false,
+    const state = { kind: 'growth', active: false, ready: false, mode: initialMode, view: 2,
+      time: 0, duration: {time:40,light:22,space:30}[initialMode], playing: !motion.matches, assembly: false,
       occupation: true, pan: 0, caption: '', requestedCaption: '', error: null, fallback: false };
     const savedModes = new Map(), cache = new Map(), pending = new Map();
     let manifest = null, manifestRequest = null, destroyed = false, raf = 0, last = 0;
     let renderRequest = '', displayed = null, fallback = null, held = null, serial = 0;
+    let occupants = null, occupantsPromise = null;
     const sourceURL = file => new URL(SOURCE + file, document.baseURI).href;
     const usable = () => state.active && !document.hidden && !destroyed;
     const currentMode = () => manifest?.modes.find(mode => mode.id === state.mode);
-    const viewName = () => state.mode === 'space' ? 'Inside panorama' : (state.mode === 'time' ? TIME_VIEWS : LIGHT_VIEWS)[state.view];
+    const viewName = () => state.mode === 'space' ? 'Inside panorama' : state.mode === 'light' ? 'Installation · establishing · mature' : TIME_VIEWS[state.view];
 
     function controls() {
       root.dataset.mode = state.mode;
@@ -98,12 +96,12 @@
     }
 
     function makeSelectors() {
-      const labels = state.mode === 'time' ? TIME_VIEWS : state.mode === 'light' ? LIGHT_VIEWS : [];
+      const labels = state.mode === 'time' ? TIME_VIEWS : [];
       views.setAttribute('aria-label', state.mode === 'light' ? 'Choose the planting stage in the light study' : 'Choose a view of the room');
       views.replaceChildren();
       const label = document.createElement('span');
       label.className = 'v8-growth-selector-label';
-      label.textContent = state.mode === 'light' ? 'Growth stage' : state.mode === 'space' ? 'Panorama · drag to turn' : 'View';
+      label.textContent = state.mode === 'light' ? 'Three stages · the same midsummer day' : state.mode === 'space' ? 'Panorama · drag to turn' : 'View';
       views.append(label);
       labels.forEach((text, index) => {
         const button = document.createElement('button'); button.type = 'button';
@@ -111,13 +109,25 @@
         button.addEventListener('click', () => setView(index)); views.append(button);
       });
       const mode = currentMode();
-      chapterHost.replaceChildren(...CHAPTERS[state.mode].map(([text, index]) => {
+      chapterHost.replaceChildren(...CHAPTERS[state.mode].filter(([,index]) => state.mode !== 'time' || state.assembly || index >= 16).map(([text, index]) => {
         const button = document.createElement('button'); button.type = 'button'; button.textContent = text;
-        const time = mode ? index / (mode.frames.length - 1) * (1 - HOLD) * mode.seconds : 0;
+        const time = mode ? timeForFrame(index) : 0;
         button.dataset.time = String(time); button.dataset.v8StudyChapter = String(index);
         button.addEventListener('click', () => seek(time)); return button;
       }));
+      $('.v8-growth-history').hidden = state.mode !== 'time';
       controls();
+    }
+
+    // Assembly is optional and takes only the first tenth of the full sequence.
+    // The default sequence gives its entire duration to the life of the room.
+    function timeForFrame(index) {
+      const mode = currentMode();
+      if (state.mode !== 'time') return index / (mode.frames.length - 1) * (1 - HOLD) * mode.seconds;
+      const start = state.assembly ? .1 : 0;
+      if (index < 16) return index / 16 * .1 * mode.seconds;
+      if (index <= 25) return (start + (index - 16) / 9 * (.6 - start)) * mode.seconds;
+      return (.6 + (index - 25) / 8 * .34) * mode.seconds;
     }
 
     async function fetchTimed(url, controller) {
@@ -168,7 +178,10 @@
     function selection() {
       const mode = currentMode();
       if (!mode) return null;
-      const along = Math.min(1, state.time / mode.seconds / (1 - HOLD)) * (mode.frames.length - 1);
+      const p = state.time / mode.seconds, start = state.assembly ? .1 : 0;
+      const along = state.mode !== 'time' ? Math.min(1, p / (1 - HOLD)) * (mode.frames.length - 1)
+        : state.assembly && p < start ? p / start * 16
+        : p < .6 ? 16 + (p - start) / (.6 - start) * 9 : 25 + Math.min(1, (p - .6) / .34) * 8;
       const first = Math.min(mode.frames.length - 1, Math.floor(along + 1e-9));
       const second = Math.min(mode.frames.length - 1, first + 1);
       const amount = along - first, eased = amount * amount * (3 - 2 * amount);
@@ -177,66 +190,57 @@
         caption: mode.frames[amount > .5 ? second : first].stage };
     }
 
-    // Human figures are deliberately spare silhouettes, in image coordinates.
-    // They are placed behind the timber/plant layer so the actual drawing occludes them.
-    function person(context, x, y, height, phase, opacity = .38, plan = false) {
-      context.save(); context.translate(x, y); context.scale(height, height);
-      context.fillStyle = '#536f65'; context.strokeStyle = '#536f65'; context.globalAlpha = opacity;
-      context.lineCap = 'round'; context.lineJoin = 'round';
-      if (plan) {
-        context.rotate(phase);
-        context.beginPath(); context.ellipse(0, 0, .17, .26, 0, 0, Math.PI * 2); context.fill();
-        context.beginPath(); context.arc(0, -.12, .12, 0, Math.PI * 2); context.fill();
-      } else {
-        const gait = Math.sin(phase) * .09;
-        context.beginPath(); context.arc(0, -.88, .085, 0, Math.PI * 2); context.fill();
-        context.beginPath(); context.moveTo(-.1, -.76); context.quadraticCurveTo(0, -.82, .1, -.76);
-        context.lineTo(.075, -.39); context.lineTo(-.075, -.39); context.closePath(); context.fill();
-        context.lineWidth = .062;
-        context.beginPath(); context.moveTo(-.08, -.72); context.lineTo(-.15 - gait, -.43);
-        context.moveTo(.08, -.72); context.lineTo(.15 + gait, -.43);
-        context.moveTo(-.04, -.4); context.lineTo(-.07 - gait, 0);
-        context.moveTo(.04, -.4); context.lineTo(.07 + gait, 0); context.stroke();
-      }
+    // A small atlas carries a rigged, clothed walk cycle. There is no runtime
+    // skeleton or plant mesh. Canvas coordinates are authored occupation paths.
+    function loadOccupants() {
+      if (occupantsPromise || occupants) return;
+      const base = new URL('v8/assets/inhabitants/', document.baseURI);
+      occupantsPromise = (async () => {
+        const data = JSON.parse(await (await fetchTimed(new URL('manifest.json', base), new AbortController())).text());
+        const bitmap = await createImageBitmap(await fetchTimed(new URL(data.atlas, base), new AbortController()));
+        if (destroyed) { bitmap.close(); return; }
+        occupants = { ...data, bitmap };
+        if (usable() && displayed) paint(displayed);
+      })().catch(() => { /* The architecture remains usable if optional occupants fail. */ });
+    }
+
+    function person(context, x, y, height, clock, opacity = .38, direction = 6) {
+      if (!occupants) return;
+      const a = occupants, frame = Math.floor(fraction(clock / a.duration) * a.frames);
+      const anchor = a.directions[direction].anchor;
+      const scale = height / 160;
+      context.save(); context.globalAlpha = opacity;
+      context.drawImage(a.bitmap, frame * a.cellWidth, direction * a.cellHeight, a.cellWidth, a.cellHeight,
+        x - anchor.x * scale, y - anchor.y * scale, a.cellWidth * scale, a.cellHeight * scale);
       context.restore();
     }
 
-    function bird(context, x, y, size, phase) {
-      context.save(); context.translate(x, y); context.strokeStyle = '#536f65';
-      context.globalAlpha = .34; context.lineWidth = Math.max(1, size * .12); context.lineCap = 'round';
-      const wing = Math.sin(phase) * size * .35;
-      context.beginPath(); context.moveTo(-size, wing); context.quadraticCurveTo(-size * .45, -size * .45, 0, 0);
-      context.quadraticCurveTo(size * .45, -size * .45, size, wing); context.stroke(); context.restore();
-    }
-
     function inhabitants(rect, frame) {
-      if (!state.occupation || (state.mode === 'time' && frame.first < 16)) return;
+      if (!state.occupation || !occupants || (state.mode === 'time' && frame.first < 16)) return;
       const { x, y, w, h } = rect, t = state.time;
+      const path = fraction(t / 24), returning = fraction((t + 11) / 31);
+      const fade = p => Math.min(1, p * 14, (1 - p) * 14);
       ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
       if (state.mode === 'light') {
-        // Overhead movement stays within the open central area of the shadow plan.
-        const angle = t * .18;
-        person(ctx, x + w * (.5 + Math.cos(angle) * .14), y + h * (.47 + Math.sin(angle) * .16), h * .065, angle, .43, true);
-        person(ctx, x + w * (.47 + Math.sin(angle + 2) * .12), y + h * (.49 + Math.cos(angle + 2) * .12), h * .055, angle + 2, .34, true);
+        const gap = (frame.mode.gutter || 0) * w, panel = (w - 2 * gap) / 3;
+        // Repeat one occupation path in each plan so the changing shadow is the comparison.
+        for (let i = 0; i < 3; i++) {
+          const left = x + i * (panel + gap);
+          person(ctx, left + panel * (.28 + path * .43), y + h * .52, h * .085, t, .48 * fade(path), 8);
+        }
       } else if (state.mode === 'space') {
-        [.1, .43, .79].forEach((start, i) => {
-          const px = fraction(start + t * .003 - state.pan);
-          person(ctx, x + px * w, y + h * (.89 + i * .015), h * (.2 - i * .025), t * 2.3 + i, .36);
+        [.15, .64].forEach((start, i) => {
+          const px = fraction(start + t * .018 - state.pan);
+          person(ctx, x + px * w, y + h * (.9 - i * .035), h * (.17 - i * .035), t + i * .5, .38, 6);
         });
-        bird(ctx, x + fraction(.35 + t * .004 - state.pan) * w, y + h * .4, h * .018, t * 5);
       } else if (state.view === 2) {
-        // The inspected Inside image has the ground in its lower fifth.
-        person(ctx, x + w * (.18 + .13 * Math.sin(t * .12)), y + h * .92, h * .19, t * 2.3, .39);
-        person(ctx, x + w * (.57 + .12 * Math.sin(t * .1 + 2)), y + h * .87, h * .14, t * 2.2 + 2, .31);
-        bird(ctx, x + w * (.56 + Math.sin(t * .15) * .12), y + h * (.63 + Math.cos(t * .15) * .04), h * .018, t * 5);
+        person(ctx, x + w * (.13 + path * .67), y + h * .93, h * .115, t, .42 * fade(path), 6);
+        person(ctx, x + w * (.78 - returning * .48), y + h * .86, h * .082, t + .5, .34 * fade(returning), 2);
       } else if (state.view === 1) {
-        person(ctx, x + w * (.38 + .12 * Math.sin(t * .12)), y + h * .71, h * .15, t * 2.3, .4);
-        person(ctx, x + w * (.68 + .09 * Math.sin(t * .1 + 2)), y + h * .76, h * .17, t * 2.2 + 2, .32);
-        bird(ctx, x + w * (.5 + Math.sin(t * .15) * .24), y + h * (.26 + Math.cos(t * .15) * .025), h * .015, t * 5);
+        person(ctx, x + w * (.32 + path * .38), y + h * .73, h * .12, t, .42 * fade(path), 6);
+        person(ctx, x + w * (.66 - returning * .3), y + h * .68, h * .09, t + .5, .34 * fade(returning), 2);
       } else {
-        person(ctx, x + w * (.27 + .08 * Math.sin(t * .12)), y + h * .79, h * .11, t * 2.3, .37);
-        person(ctx, x + w * (.7 + .08 * Math.sin(t * .1 + 2)), y + h * .83, h * .13, t * 2.2 + 2, .34);
-        bird(ctx, x + w * (.45 + Math.sin(t * .15) * .25), y + h * .14, h * .014, t * 5);
+        person(ctx, x + w * (.24 + path * .5), y + h * .8, h * .09, t, .4 * fade(path), 7);
       }
       ctx.restore();
     }
@@ -245,11 +249,15 @@
       const cw = canvas.width, ch = canvas.height;
       const width = bitmap.width, height = bitmap.height;
       const gap = (mode.gutter || 0) * width;
-      const sw = mode.turns ? width : (width - gap * 2) / 3;
-      const sx = mode.turns ? 0 : view * (sw + gap);
-      const scale = Math.min(cw / sw, ch / height);
+      const whole = mode.turns || state.mode === 'light';
+      const sw = whole ? width : (width - gap * 2) / 3;
+      const sx = whole ? 0 : view * (sw + gap);
+      // Inside is an immersive crop anchored to the floor; alternate whole-room
+      // views remain contained so their complete structural outline is readable.
+      const immersive = mode.turns || (state.mode === 'time' && view === 2);
+      const scale = immersive ? Math.max(cw / sw, ch / height) : Math.min(cw / sw, ch / height);
       const w = sw * scale, h = height * scale;
-      return { sx, sw, sh: height, x: (cw - w) / 2, y: (ch - h) / 2, w, h };
+      return { sx, sw, sh: height, x: (cw - w) / 2, y: immersive ? ch - h : (ch - h) / 2, w, h };
     }
 
     function paint(frame) {
@@ -280,7 +288,7 @@
       lay(first, 1 - frame.amount); mix.globalCompositeOperation = 'lighter'; lay(second, frame.amount);
       inhabitants(rect, frame);
       ctx.globalAlpha = 1; ctx.drawImage(mixCanvas, 0, 0);
-      canvas.setAttribute('aria-label', `${viewName()}. ${frame.caption}. Pre-rendered growth scenario${state.occupation ? ' with authored diagrammatic people and birds' : ''}.`);
+      canvas.setAttribute('aria-label', `${viewName()}. ${frame.caption}. Pre-rendered growth scenario${state.occupation ? ' with authored animated silhouettes' : ''}.`);
       viewLabel.textContent = state.mode === 'light' ? `Plan · ${viewName()}` : viewName();
     }
 
@@ -302,6 +310,7 @@
 
     function fail(error) {
       if (!usable() || error?.name === 'AbortError') return;
+      $('details').open = false;
       state.ready = false; state.playing = false; state.error = error.message || 'Drawing unavailable';
       cancelAnimationFrame(raf); raf = 0;
       showMessage(`This moment could not load: ${state.error}. Retry to load the selected moment.`, true);
@@ -358,8 +367,7 @@
       raf = 0;
       if (!usable() || !state.playing || !state.ready) return;
       const dt = Math.min(.1, Math.max(0, (now - last) / 1000)); last = now;
-      state.time = Math.min(state.duration, state.time + dt);
-      if (state.time >= state.duration) state.playing = false;
+      state.time = (state.time + dt) % state.duration;
       draw();
       if (state.playing && state.ready) raf = requestAnimationFrame(tick);
     }
@@ -376,8 +384,8 @@
     }
 
     function setView(value) {
-      if (destroyed || state.mode === 'space' || !Number.isInteger(Number(value)) || Number(value) < 0 || Number(value) > 2) return false;
-      state.view = Number(value); state.playing = false; cancelAnimationFrame(raf); raf = 0;
+      if (destroyed || state.mode !== 'time' || !Number.isInteger(Number(value)) || Number(value) < 0 || Number(value) > 2) return false;
+      state.view = Number(value);
       draw(); controls(); return true;
     }
 
@@ -387,8 +395,8 @@
       savedModes.set(state.mode, { time: state.time, view: state.view, pan: state.pan });
       const saved = savedModes.get(mode);
       state.mode = mode; state.duration = manifest?.modes.find(item => item.id === mode)?.seconds || { time: 40, space: 30, light: 22 }[mode];
-      state.time = saved?.time ?? (mode === 'time' ? 16 / 33 * (1 - HOLD) * 40 : mode === 'light' ? 18 / 36 * (1 - HOLD) * 22 : 0);
-      state.view = saved?.view ?? 2; state.pan = saved?.pan ?? 0; state.playing = false; state.ready = false;
+      state.time = saved?.time ?? 0;
+      state.view = saved?.view ?? 2; state.pan = saved?.pan ?? 0; state.playing = !motion.matches; state.ready = false;
       state.caption = ''; state.error = null; state.fallback = false; displayed = null; renderRequest = ''; serial++;
       cancelAnimationFrame(raf); raf = 0; ctx.clearRect(0, 0, canvas.width, canvas.height);
       makeSelectors(); draw(); controls(); return true;
@@ -403,7 +411,7 @@
 
     function sync() {
       if (!usable()) suspend();
-      else { if (state.error) showFallback(); else loadManifest(); }
+      else { loadOccupants(); if (state.error) showFallback(); else loadManifest(); }
     }
 
     function retry() {
@@ -417,6 +425,7 @@
       state.playing = !state.playing; draw(); startClock(); controls();
     });
     resetButton.addEventListener('click', () => seek(0));
+    $('[data-v8-assembly]').addEventListener('change', event => { state.assembly = event.target.checked; makeSelectors(); seek(0); });
     range.addEventListener('input', () => seek(Number(range.value) / 1000 * state.duration));
     retryButton.addEventListener('click', retry);
     $('[data-v8-occupation]').addEventListener('click', () => { state.occupation = !state.occupation; draw(); controls(); });
@@ -455,7 +464,7 @@
         state.active = false; suspend(); destroyed = true; resize.disconnect();
         document.removeEventListener('visibilitychange', sync); motion.removeEventListener('change', onMotion);
         for (const bitmap of new Set([...cache.values(), fallback].filter(Boolean))) bitmap.close?.();
-        cache.clear(); root.remove();
+        occupants?.bitmap.close(); cache.clear(); root.remove();
       }
     };
   }
