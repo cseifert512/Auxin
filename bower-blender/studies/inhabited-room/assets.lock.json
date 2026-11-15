@@ -106,6 +106,30 @@
    "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
   },
   {
+   "file": "assets/polyhaven/textures/gravel_ground_01/gravel_ground_01_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/gravel_ground_01/gravel_ground_01_diff_1k.jpg",
+   "bytes": 954257,
+   "md5": "ee99ef89fb50cfeb198db369bb7151f0",
+   "source": "polyhaven.com/a/gravel_ground_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/textures/gravel_ground_01/gravel_ground_01_nor_gl_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/gravel_ground_01/gravel_ground_01_nor_gl_1k.jpg",
+   "bytes": 1314248,
+   "md5": "8a54072ce38665da29081d57dc10cb69",
+   "source": "polyhaven.com/a/gravel_ground_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/textures/gravel_ground_01/gravel_ground_01_rough_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/gravel_ground_01/gravel_ground_01_rough_1k.jpg",
+   "bytes": 379669,
+   "md5": "65bfe11a3fa71c9ac3f07ca09a4dbd88",
+   "source": "polyhaven.com/a/gravel_ground_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
    "file": "assets/polyhaven/models/tree_small_02/tree_small_02_1k.blend",
    "from": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/tree_small_02/tree_small_02_1k.blend",
    "bytes": 63805841,
@@ -775,6 +799,246 @@
    "bytes": 453489,
    "md5": "a39338d62c23a1f9c6e3acb97d7c2eb7",
    "source": "polyhaven.com/a/nettle_plant",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/rock_moss_set_01/rock_moss_set_01_1k.blend",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/rock_moss_set_01/rock_moss_set_01_1k.blend",
+   "bytes": 2697968,
+   "md5": "8e45da22c52aa6d1f2cc685d56591065",
+   "source": "polyhaven.com/a/rock_moss_set_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/rock_moss_set_01/textures/rock_moss_set_01_nor_gl_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/rock_moss_set_01/rock_moss_set_01_nor_gl_1k.exr",
+   "bytes": 1571891,
+   "md5": "6dc88738e972c3fbbaf1ccb3480b96cb",
+   "source": "polyhaven.com/a/rock_moss_set_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/rock_moss_set_01/textures/rock_moss_set_01_rough_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_moss_set_01/rock_moss_set_01_rough_1k.jpg",
+   "bytes": 82624,
+   "md5": "ed9d8a2c863262f76f881346e8047c6a",
+   "source": "polyhaven.com/a/rock_moss_set_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/rock_moss_set_01/textures/rock_moss_set_01_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_moss_set_01/rock_moss_set_01_diff_1k.jpg",
+   "bytes": 168099,
+   "md5": "b8742301e6b4bc5683d2de712e83f772",
+   "source": "polyhaven.com/a/rock_moss_set_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/rock_moss_set_02/rock_moss_set_02_1k.blend",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/rock_moss_set_02/rock_moss_set_02_1k.blend",
+   "bytes": 2470540,
+   "md5": "097920d9edc854097dc90a8915d1deb0",
+   "source": "polyhaven.com/a/rock_moss_set_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/rock_moss_set_02/textures/rock_moss_set_02_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_moss_set_02/rock_moss_set_02_diff_1k.jpg",
+   "bytes": 194307,
+   "md5": "50a31622ba7d6f3b8157035ce375de4d",
+   "source": "polyhaven.com/a/rock_moss_set_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/rock_moss_set_02/textures/rock_moss_set_02_nor_gl_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/rock_moss_set_02/rock_moss_set_02_nor_gl_1k.exr",
+   "bytes": 1858156,
+   "md5": "7a954900c74f265458532c17521fd90d",
+   "source": "polyhaven.com/a/rock_moss_set_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/rock_moss_set_02/textures/rock_moss_set_02_rough_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_moss_set_02/rock_moss_set_02_rough_1k.jpg",
+   "bytes": 146226,
+   "md5": "5de4c0669f19304230fa550a8f3ac0f4",
+   "source": "polyhaven.com/a/rock_moss_set_02",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/boulder_01/boulder_01_1k.blend",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/boulder_01/boulder_01_1k.blend",
+   "bytes": 5370351,
+   "md5": "8841af39e9ee00855f47187c86f30fda",
+   "source": "polyhaven.com/a/boulder_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/boulder_01/textures/boulder_01_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/boulder_01/boulder_01_diff_1k.jpg",
+   "bytes": 987467,
+   "md5": "25f8a843f13369d56d37f49db05ea8c3",
+   "source": "polyhaven.com/a/boulder_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/boulder_01/textures/boulder_01_rough_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/boulder_01/boulder_01_rough_1k.exr",
+   "bytes": 496072,
+   "md5": "9c5f53182895bcf50d57e9fe5a2e7379",
+   "source": "polyhaven.com/a/boulder_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/boulder_01/textures/boulder_01_nor_gl_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/boulder_01/boulder_01_nor_gl_1k.exr",
+   "bytes": 2421732,
+   "md5": "8313f3c7c6b1df797512ddeb54f176d2",
+   "source": "polyhaven.com/a/boulder_01",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_gazania/flower_gazania_1k.blend",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/flower_gazania/flower_gazania_1k.blend",
+   "bytes": 838903,
+   "md5": "b0585cdb57a9e6e0ff5c556938774dee",
+   "source": "polyhaven.com/a/flower_gazania",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_gazania/textures/flower_gazania_disp_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/flower_gazania/flower_gazania_disp_1k.png",
+   "bytes": 1395527,
+   "md5": "de650f8a08b11c58694145fde097c8a7",
+   "source": "polyhaven.com/a/flower_gazania",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_gazania/textures/flower_gazania_alpha_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/flower_gazania/flower_gazania_alpha_1k.png",
+   "bytes": 110222,
+   "md5": "72a02f7f5a2c73e5d61e8f0b22fb3473",
+   "source": "polyhaven.com/a/flower_gazania",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_gazania/textures/flower_gazania_nor_gl_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/flower_gazania/flower_gazania_nor_gl_1k.exr",
+   "bytes": 1871003,
+   "md5": "aaab20832dfa65e357da6a4b8210f731",
+   "source": "polyhaven.com/a/flower_gazania",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_gazania/textures/flower_gazania_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/flower_gazania/flower_gazania_diff_1k.jpg",
+   "bytes": 435784,
+   "md5": "617b04076469b00d231225d565f520f4",
+   "source": "polyhaven.com/a/flower_gazania",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_gazania/textures/flower_gazania_rough_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/flower_gazania/flower_gazania_rough_1k.exr",
+   "bytes": 499753,
+   "md5": "5476ea1b87959b5ea472a23eae9e475e",
+   "source": "polyhaven.com/a/flower_gazania",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_ursinia/flower_ursinia_1k.blend",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/flower_ursinia/flower_ursinia_1k.blend",
+   "bytes": 987827,
+   "md5": "e1e29201f6b3a0a84b835ba9177bb470",
+   "source": "polyhaven.com/a/flower_ursinia",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_ursinia/textures/flower_ursinia_nor_gl_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/flower_ursinia/flower_ursinia_nor_gl_1k.exr",
+   "bytes": 1318768,
+   "md5": "7a64d850b1dfe11242dd6e5670288be5",
+   "source": "polyhaven.com/a/flower_ursinia",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_ursinia/textures/flower_ursinia_rough_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/flower_ursinia/flower_ursinia_rough_1k.exr",
+   "bytes": 296492,
+   "md5": "24858f209abdfa882b1b03c2eb17522b",
+   "source": "polyhaven.com/a/flower_ursinia",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_ursinia/textures/flower_ursinia_alpha_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/flower_ursinia/flower_ursinia_alpha_1k.png",
+   "bytes": 149494,
+   "md5": "0d18365ea414162ef9320d3b0e62abb7",
+   "source": "polyhaven.com/a/flower_ursinia",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_ursinia/textures/flower_ursinia_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/flower_ursinia/flower_ursinia_diff_1k.jpg",
+   "bytes": 382665,
+   "md5": "4317f9c3b79a7fa55450f1af82330ec9",
+   "source": "polyhaven.com/a/flower_ursinia",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_ursinia/textures/flower_ursinia_mask_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/flower_ursinia/flower_ursinia_mask_1k.png",
+   "bytes": 1154106,
+   "md5": "3df06f045f94a51de8950bd72e7d4739",
+   "source": "polyhaven.com/a/flower_ursinia",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_heliophila/flower_heliophila_1k.blend",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/flower_heliophila/flower_heliophila_1k.blend",
+   "bytes": 6112612,
+   "md5": "bd2b2e75fafd696c993b709f3a259078",
+   "source": "polyhaven.com/a/flower_heliophila",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_heliophila/textures/flower_heliophila_alpha_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/flower_heliophila/flower_heliophila_alpha_1k.png",
+   "bytes": 41796,
+   "md5": "fea8485812ce7637d2558a2cc0ba83a3",
+   "source": "polyhaven.com/a/flower_heliophila",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_heliophila/textures/flower_heliophila_translucency_1k.png",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/flower_heliophila/flower_heliophila_translucency_1k.png",
+   "bytes": 131813,
+   "md5": "4a0d8dd889c3b6f8c581b716e63d29ff",
+   "source": "polyhaven.com/a/flower_heliophila",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_heliophila/textures/flower_heliophila_diff_1k.jpg",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/flower_heliophila/flower_heliophila_diff_1k.jpg",
+   "bytes": 377527,
+   "md5": "5bc66662e45e47c957bcc893dcc79161",
+   "source": "polyhaven.com/a/flower_heliophila",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_heliophila/textures/flower_heliophila_nor_gl_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/flower_heliophila/flower_heliophila_nor_gl_1k.exr",
+   "bytes": 1169669,
+   "md5": "e70bb55f18d36c6ba60d809f8a7e441b",
+   "source": "polyhaven.com/a/flower_heliophila",
+   "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
+  },
+  {
+   "file": "assets/polyhaven/models/flower_heliophila/textures/flower_heliophila_rough_1k.exr",
+   "from": "https://dl.polyhaven.org/file/ph-assets/Models/exr/1k/flower_heliophila/flower_heliophila_rough_1k.exr",
+   "bytes": 387720,
+   "md5": "3cdb99571979e2edb112716596a0faff",
+   "source": "polyhaven.com/a/flower_heliophila",
    "licence": "CC0 1.0 (public domain): https://polyhaven.com/license"
   },
   {

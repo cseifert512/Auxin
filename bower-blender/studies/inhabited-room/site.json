@@ -43,7 +43,7 @@
  "floor": {
   "radius_m": 4.55,
   "buildup_m": 0.03,
-  "note": "Bound gravel that follows the fall of the ground, 1 in 25, with no step at its edge. No furniture."
+  "note": "A clearing of rolled gravel that follows the fall of the ground, 1 in 25, with an edge that wanders and stones at it. No furniture."
  },
  "paths": {
   "arrival": {
@@ -69,7 +69,7 @@
   "sheltered_outer_radius_m": 9.3,
   "opening_half_deg": 17.0,
   "mulch_m": 0.05,
-  "note": "Two beds, one each side of the way through, in the garden's own soil: loosened and mulched in place, not contained. Every pier stands in one."
+  "note": "There are no beds to see. Round the piers the ground is loosened before planting, in two stretches, one each side of the way through; the planting runs over it without a break."
  },
  "wall": {
   "through_m": [
@@ -401,6 +401,19 @@
     "date": "2036-06-15",
     "says": "Year 10, June 2036"
    }
-  ]
+  ],
+  "roots": {
+   "reach_base_m": 0.6,
+   "reach_per_stem_diameter": 38.0,
+   "note": "The simulator does not model roots. These are a sketch (roots.py): a few far-running shallow laterals, branches, feeders near the surface and one to three sinkers, steered clear of the steel. How far a climber's roots reach by year 10 is set from the thickest stem the run gave it, by this authored rule; nothing stands behind either number.",
+   "drawn_at_least_m": [
+    0.006,
+    0.004,
+    0.0025
+   ]
+  }
+ },
+ "planting": {
+  "note": "One planting in the manner of a naturalistic perennial garden: no beds and no lawn. It runs from the garden wall through the piers into the meadow and under the woodland's edge; grasses all through it and other kinds in drifts; low at every path, at the floor's edge and out through the look-out, taller away from them; a line of taller, wetter planting along the swale; shrubs to head height on the woodland side of the room and on the inside of the path's bend. Borrowed models stand in for plants: nobody has designed this planting and no model is a species choice. It does not change with the season."
  }
 }

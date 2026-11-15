@@ -45,11 +45,16 @@ mown grass stops.
   bound gravel that follows the ground, and each pier's legs are cut to that pier's own level. The
   timber runs 75 mm (about 3 in) into the soil and comes straight out of it. No footing is seen.
 - **Water.** A swale round the uphill side takes the garden's run-off round the room, not through
-  it. It and a line of pebbles from the floor's low edge end in a planted hollow below. A standpipe
-  and a drip line are for the establishment years only.
-- **Beds.** Two beds, massed in layers: carpet at the floor's edge, perennials and ferns behind,
-  and on the woodland side shrubs to head height for shelter. The sunny bed stays low so that light
-  and the view come in. Borrowed models stand in for a planting nobody has designed.
+  it. It and the floor's own water end in a planted hollow below. Neither is a built thing to look
+  at: each is a line of different planting. A standpipe is for the establishment years only.
+- **Planting.** One planting, with no beds and no lawn, in the manner of a naturalistic perennial
+  garden. It runs from the garden wall through the piers into the meadow and under the woodland's
+  edge. Grasses run all through it and other kinds stand in drifts. It is low at every path, at the
+  floor's edge and out through the look-out, and taller away from them. The swale reads as a line of
+  taller, wetter planting. Shrubs to head height shelter the woodland side of the room. Borrowed
+  models stand in for a planting nobody has designed.
+- **Floor.** A clearing of rolled gravel whose edge wanders and is grown over, with stones at it to
+  perch on.
 - **Life.** Two people arriving, three pausing (two at the look-out, one looking up), one tending a
   climber from the floor. No furniture.
 
@@ -68,7 +73,7 @@ from the ground up, and room for its stem to thicken for decades without bearing
 
 | | What changes | In numbers (`ground/meadow.json`) |
 |---|---|---|
-| **Ground** | No platform and no plate. The room stands on the slope as it is. The steel sole of each pier lies under the bed, 0.6 m down, on three screw piles. A slender steel stub comes up from it to a shoe under each foot, and the timber stands on that shoe 75 mm under the soil. So nobody sees a footing, and the bed's soil is whole but for eight stubs. The beds are the garden's own soil, loosened and mulched in place, not boxed in. | 24 of 24 climbers rooted in soil. Through the bed, 8 stubs at each pier: 0.034 m² in plan. 0.86 m² of steel under each pier, under the bed. 18 piles. 139 m² of bed loosened 0.6 m deep. |
+| **Ground** | No platform and no plate. The room stands on the slope as it is. The steel sole of each pier lies under the bed, 0.6 m down, on three screw piles. A slender steel stub comes up from it to a shoe under each foot, and the timber stands on that shoe 75 mm under the soil. So nobody sees a footing, and the soil is whole but for eight stubs. Round the piers the ground is loosened before planting and nothing is raised or edged: the planting runs over it without a break. | 24 of 24 climbers rooted in soil. Through the bed, 8 stubs at each pier: 0.034 m² in plan. 0.86 m² of steel under each pier, under the bed. 18 piles. 139 m² of bed loosened 0.6 m deep. |
 | **Structure** | Each pier's legs run on down to that pier's ground; nothing above the feet moves. The arches are slimmer, 180 by 300 mm, kin to the lattice they carry. Each leg that takes a climber carries a cable for the trunk, held 200 mm off the timber at the foot and coming in to 75 mm over 2.5 m, so a thickening stem cannot bear on a member or work into a joint. Each climber is planted 0.12 m from the foot of its own cable. Thin growth is tied to the timber by the gardener. | Six lengths of leg: 0, 0.064, 0.175, 0.304, 0.415 and 0.479 m longer than on level ground. 232 m of cable in 48 stretches on 497 standoffs, 75 to 195 mm long. Arches 30% of the timber, from 45%. |
 | **Making** | The roof is the level room's. Only the members that stand on the ground are made longer, each by its pier's amount. Some pass the longest piece that can be made and gain a scarf. Every joint is wrapped in fine mesh to keep growth out; it is too fine to see and is not drawn. | 32 of 111 members change length, by up to 0.89 m (a hoop that stands at two piers); 79 are unchanged. 7 more scarfs. 620 joints to wrap. |
 | **Experience** | No step and no ramp: you walk down a gentle slope into the room and out to the meadow. The way in is between planted legs. The climbers are tended from the floor and from the two thresholds, standing, with the cable at hand. | 3.6 m between the legs at the way in, for a 1.8 m path. 65 m² of floor. |
@@ -118,9 +123,15 @@ highest pier.
   the timber.
 
 **What does not change with the date.** The sky, the beds, the meadow and the woodland are one
-summer afternoon at every moment, including the March one. Roots are not modelled: the section
-draws each root ball as planted. The planting was carried from the level room without regard to
-slope, shade or the woodland.
+summer afternoon at every moment, including the March one. Which climber goes where was carried
+from the level room without regard to slope, shade or the woodland.
+
+**Roots.** The simulator does not model roots. The section draws them from a sketch with stated
+rules (`roots.py`, checked by `check_roots.py`): a few far-running shallow laterals, branches,
+feeders near the surface and one to three sinkers, growing outward over the ten years and steered
+clear of the stubs, piles and sole. How far a climber's roots reach is set from the thickest stem
+the run gave it, by an authored rule (`site.json`, `growth.roots`). Nothing stands behind it: it is
+there so that the picture shows the plant below ground too, not as evidence about any plant.
 
 ## What we would need to learn from building it
 
@@ -184,11 +195,11 @@ and the site's ground must agree: `set_out_meadow.py` stops if they are more tha
 | `S05_BOWER_TIMBER` | the linked timber, with materials that render |
 | `S10_TERRAIN` | the ground, 0.6 m of its soil, the subsoil |
 | `S20_ROOM_GROUND` | floor, arrival path, slab over the swale, mown path |
-| `S30_BEDS` | the two beds, their loosened soil, their massed planting |
+| `S30_BEDS` | the planting, and under it the ground loosened for the climbers |
 | `S40_FOUNDATIONS` | soles, stubs and screw piles |
 | `S45_SUPPORTS` | trunk cables and standoffs |
-| `S50_BOWER_PLANTING` | root balls, and one collection of climbers per moment: `S50_planted` ... `S50_year-10` |
-| `S60_WATER` | standpipe, drip line, swale bed, rill, hollow |
+| `S50_BOWER_PLANTING` | root balls, and one collection per moment of climbers and their sketched roots: `S50_planted` ... `S50_year-10` |
+| `S60_WATER` | standpipe, the planted hollow |
 | `S70_GARDEN` | woodland, wall, planting on the bend, meadow |
 | `S80_PEOPLE` | six figures |
 | `S90_CAMERAS` | `CAM_arrival`, `CAM_lookout`, `CAM_whole`, `CAM_section`, `CAM_plant`, `CAM_plan` |
@@ -198,13 +209,13 @@ The file opens on year 10. To see another moment, show its `S50_` collection and
 
 The section and the plant's view are the same scene with one switch on: node group
 `STUDY_section_switch`, `section_on` to 1, looking through `CAM_section` or `CAM_plant`. A section
-draws as steel only the steel it cuts; what lies behind the cut is drawn faintly. The bed's loosened
-soil fades into the ground round it, because it has no edge.
+draws as steel only the steel it cuts; what lies behind the cut is drawn faintly. The loosened soil
+fades into the ground round it, because it has no edge. Cables are drawn as quiet steel lines.
 
 ## Opening, changing, rendering
 
 ```powershell
-python fetch_assets.py                                  # once: the borrowed assets, 177 MB, not in git
+python fetch_assets.py                                  # once: the borrowed assets, about 215 MB, not in git
 python set_out_ground.py                                # ground/meadow.json from the snapshot and site.json
 .\run_headless.ps1 --render arrival,lookout,plant --samples 48 --scale 0.75      # every moment
 .\run_headless.ps1 --render section,whole,plan --moments planted,year-10
@@ -232,8 +243,8 @@ The moments are in `site.json`, `growth.moments`: any date from 2027-03-12 to 20
 | Source | Licence | Used for |
 |---|---|---|
 | [Poly Haven](https://polyhaven.com): `meadow_2` (HDRI, 2k) | CC0 | sky, sunlight, the distant trees |
-| Poly Haven: `pebble_ground_01`, `leafy_grass`, `brown_mud_leaves_01` (1k) | CC0 | floor, path, swale and rill; mown grass and meadow; beds and woodland floor |
-| Poly Haven: 14 plant models (1k) | CC0 | woodland and the trees on the bend; the beds' massed planting; hollow and swale; meadow; the log |
+| Poly Haven: `gravel_ground_01`, `leafy_grass`, `brown_mud_leaves_01` (1k) | CC0 | floor and path; the ground under the planting, the meadow and the woodland |
+| Poly Haven: 17 plant models and 2 sets of stones (1k) | CC0 | woodland and the trees on the bend; the planting; hollow; the stones at the floor's edge; the log |
 | [Microsoft Rocketbox](https://github.com/microsoft/Microsoft-Rocketbox): six avatars | MIT | the people |
 
 The plant models are small plants, measured, and set out at 1 to 8 times their size as clumps
@@ -256,7 +267,10 @@ shows the first pass. It has not been re-made on this site, and `build_scene.py 
 - One run, one seed. The species numbers behind it are provisional assumptions.
 - The site does not change with the date; only the climbers do.
 - No claim about other life is a finding.
-- The beds, the meadow and the woodland are borrowed models, not designs.
+- The planting, the meadow and the woodland are borrowed models in a manner of planting, not a
+  planting design. `views/` was rendered before the beds were removed: its pictures still show two
+  beds, a pebble swale and the cables in blue. They are to be rendered again once the form of the
+  explorable drawing is agreed.
 - Manufacturing is counted (members, scarfs, standoffs, joints), not planned.
 - Daniel has not reviewed the sole.
 - The explorable drawing has not been re-made on this site.

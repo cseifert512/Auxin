@@ -30,6 +30,11 @@
     "id": "wood_chip_path",
     "res": "1k",
     "use": "the care path round the back of the beds"
+   },
+   {
+    "id": "gravel_ground_01",
+    "res": "1k",
+    "use": "the floor of the room and the arrival path: a rural gravel path"
    }
   ],
   "models": [
@@ -102,6 +107,36 @@
     "id": "nettle_plant",
     "res": "1k",
     "use": "the woodland's edge"
+   },
+   {
+    "id": "rock_moss_set_01",
+    "res": "1k",
+    "use": "stones at the edge of the room's floor and along the swale"
+   },
+   {
+    "id": "rock_moss_set_02",
+    "res": "1k",
+    "use": "stones at the edge of the room's floor and in the hollow"
+   },
+   {
+    "id": "boulder_01",
+    "res": "1k",
+    "use": "a few large stones to perch on at the floor's edge"
+   },
+   {
+    "id": "flower_gazania",
+    "res": "1k",
+    "use": "a daisy-flowered perennial in the planting's drifts"
+   },
+   {
+    "id": "flower_ursinia",
+    "res": "1k",
+    "use": "a daisy-flowered perennial in the planting's drifts"
+   },
+   {
+    "id": "flower_heliophila",
+    "res": "1k",
+    "use": "a small pale flower through the grasses"
    }
   ]
  },

@@ -156,13 +156,18 @@ def ground_z(x: float, y: float) -> float:
     return plane(x, y) - max(cut, dip)
 
 
+def floor_r(a: float) -> float:
+    """How far out the room's floor runs at an angle: a clearing with an edge that wanders, not a drawn circle."""
+    return RF * (1.0 + 0.055 * sin(3.0 * a + 0.4) + 0.035 * sin(7.0 * a + 1.3) + 0.02 * sin(13.0 * a))
+
+
 def on_arrival(x, y, margin=0.0) -> bool:
     return _to_line(x, y, ARRIVAL) <= SITE["paths"]["arrival"]["width_m"] / 2.0 + margin
 
 
 def surface_z(x: float, y: float) -> float:
     """What someone stands on at a point: the floor and the arrival path follow the even fall, a little proud of it."""
-    if hypot(x, y) <= RF or on_arrival(x, y):
+    if hypot(x, y) <= floor_r(atan2(y, x)) or on_arrival(x, y):
         return plane(x, y) + BUILDUP
     return ground_z(x, y)
 
@@ -179,11 +184,11 @@ COLLECTIONS = [
     ("S05_BOWER_TIMBER", "the snapshot's timber, on its linked meshes, with materials that render"),
     ("S10_TERRAIN", "the garden's soil and its surface"),
     ("S20_ROOM_GROUND", "the room's floor, the arrival path and the mown path"),
-    ("S30_BEDS", "the two beds, their loosened soil and the planting on them"),
+    ("S30_BEDS", "the planting: one, with no bed and no edge; and under it the ground loosened for the climbers"),
     ("S40_FOUNDATIONS", "the steel sole and screw piles under each pier"),
     ("S45_SUPPORTS", "the trunk cables and their standoffs, as bower/lines.py sets them out"),
     ("S50_BOWER_PLANTING", "the climbers at installation, as diagrams"),
-    ("S60_WATER", "the standpipe and drip line; the swale, the rill and the planted hollow"),
+    ("S60_WATER", "the standpipe and the planted hollow"),
     ("S70_GARDEN", "the woodland, the garden wall, the planting on the bend of the path, the meadow: borrowed vegetation"),
     ("S80_PEOPLE", "borrowed figures"),
     ("S90_CAMERAS", "the study's cameras"),
@@ -545,12 +550,13 @@ def materials() -> dict:
         "post": flat("STUDY_post", (0.36, 0.26, 0.16), (0.3, 0.2, 0.12), rough=0.8),
         "brass": flat("STUDY_tap", (0.7, 0.55, 0.2), (0.7, 0.55, 0.2), rough=0.35, metallic=1.0),
         "damp": flat("STUDY_damp_ground", (0.075, 0.062, 0.04), CUTS["soil"], rough=0.95),
-        "line": diagram("STUDY_training_line", (0.33, 0.34, 0.35), (0.05, 0.3, 0.85), metallic=0.5, rough=0.6),
+        "gravel": textured("STUDY_gravel", "gravel_ground_01", 2.3, CUTS["floor"], tint=(1.0, 0.97, 0.9), patch=0.1, viewport=(0.6, 0.56, 0.48)),
+        "line": diagram("STUDY_training_line", (0.33, 0.34, 0.35), (0.2, 0.21, 0.23), metallic=0.5, rough=0.6),
         "feeder": diagram("STUDY_feeder", (0.33, 0.34, 0.35), (0.85, 0.12, 0.08), metallic=0.5, rough=0.6),
         "tie": diagram("STUDY_handover", (0, 0, 0), (0.1, 0.6, 0.2), only_in_section=True),
         "back_soil": diagram("STUDY_cut_backing_soil", (0, 0, 0), CUTS["soil"], only_in_section=True),
         "back_subsoil": diagram("STUDY_cut_backing_subsoil", (0, 0, 0), CUTS["subsoil"], only_in_section=True),
-        "drip": diagram("STUDY_drip_line", (0.05, 0.045, 0.04), (0.0, 0.5, 0.75), metallic=0.0, rough=0.6),
+        "drip": diagram("STUDY_drip_line", (0.05, 0.045, 0.04), (0.16, 0.15, 0.14), metallic=0.0, rough=0.6),
         "meadow": textured("STUDY_meadow", "leafy_grass", 3.1, CUTS["soil"], tint=(0.36, 0.58, 0.22), patch=0.32, viewport=(0.3, 0.4, 0.16), matte=True),
         "mown": textured("STUDY_mown_path", "leafy_grass", 1.6, CUTS["soil"], tint=(0.46, 0.9, 0.42), patch=0.1, viewport=(0.3, 0.48, 0.2), matte=True),
         "litter": textured("STUDY_woodland_floor", "brown_mud_leaves_01", 2.4, CUTS["soil"], tint=(0.75, 0.68, 0.55), patch=0.2, viewport=(0.3, 0.22, 0.14)),
@@ -1021,9 +1027,73 @@ def slab(name, top, bottom, coll, materials, slot_of, status, note):
     return obj
 
 
+def ground_material():
+    """The ground under everything: one surface, with no line anywhere on it. Rough grass where the meadow is, bare
+    soil and litter where perennials stand thick over it, leaf litter under the woodland, each fading into the next."""
+    m, nt = _begin("STUDY_ground", (0.3, 0.36, 0.17))
+    n, link = nt.nodes, nt.links.new
+    geo, xyz = n.new("ShaderNodeNewGeometry"), n.new("ShaderNodeSeparateXYZ")
+    link(geo.outputs["Position"], xyz.inputs[0])
+
+    def math(op, a, b=None):
+        node = n.new("ShaderNodeMath")
+        node.operation = op
+        for socket, value in zip(node.inputs, (a, b)):
+            if value is None:
+                continue
+            if isinstance(value, (int, float)):
+                socket.default_value = value
+            else:
+                link(value, socket)
+        return node.outputs[0]
+
+    def smooth(value, lo, hi):
+        r = n.new("ShaderNodeMapRange")
+        r.interpolation_type, r.clamp = "SMOOTHSTEP", True
+        r.inputs["From Min"].default_value, r.inputs["From Max"].default_value = lo, hi
+        link(value, r.inputs["Value"])
+        return r.outputs["Result"]
+
+    def image(tex, size_m, tint):
+        mapping, tile, mix = n.new("ShaderNodeMapping"), n.new("ShaderNodeTexImage"), n.new("ShaderNodeMix")
+        mapping.inputs["Scale"].default_value, mapping.inputs["Rotation"].default_value = (1.0 / size_m, 1.0 / size_m, 1.0), (0.0, 0.0, 0.31)
+        tile.image = bpy.data.images.load(f"//assets/polyhaven/textures/{tex}/{tex}_diff_1k.jpg", check_existing=True)
+        link(geo.outputs["Position"], mapping.inputs["Vector"])
+        link(mapping.outputs[0], tile.inputs[0])
+        mix.data_type, mix.blend_type = "RGBA", "MULTIPLY"
+        mix.inputs[0].default_value, mix.inputs[7].default_value = 1.0, (*tint, 1.0)
+        link(tile.outputs["Color"], mix.inputs[6])
+        return mix.outputs[2]
+
+    x, y = xyz.outputs["X"], xyz.outputs["Y"]
+    wood = smooth(math("SUBTRACT", y, math("MULTIPLY", math("SINE", math("MULTIPLY", x, 0.3)), -1.3)), SITE["woodland"]["edge_y_m"] - 2.2, SITE["woodland"]["edge_y_m"] + 1.2)
+    along = math("ADD", math("MULTIPLY", x, cos(ENTRY)), math("MULTIPLY", y, sin(ENTRY)))
+    across = math("ADD", math("MULTIPLY", x, -sin(ENTRY)), math("MULTIPLY", y, cos(ENTRY)))
+    garden_side = smooth(math("ADD", along, math("MULTIPLY", math("SINE", math("MULTIPLY", across, 0.35)), 0.9)), -SITE["meadow"]["begins_m"] - 3.0, -SITE["meadow"]["begins_m"] + 3.0)
+    bare = math("MAXIMUM", wood, math("MULTIPLY", garden_side, 0.28))
+    patch, vary = n.new("ShaderNodeTexNoise"), n.new("ShaderNodeMapRange")
+    patch.inputs["Scale"].default_value, patch.inputs["Detail"].default_value = 0.2, 3.0
+    vary.inputs["To Min"].default_value, vary.inputs["To Max"].default_value = 0.72, 1.2
+    link(geo.outputs["Position"], patch.inputs["Vector"])
+    link(patch.outputs["Fac"], vary.inputs["Value"])
+    mix, shade = n.new("ShaderNodeMix"), n.new("ShaderNodeMix")
+    mix.data_type = shade.data_type = "RGBA"
+    shade.blend_type = "MULTIPLY"
+    link(bare, mix.inputs[0])
+    link(image("leafy_grass", 3.1, (0.3, 0.5, 0.2)), mix.inputs[6])
+    link(image("brown_mud_leaves_01", 2.4, (0.5, 0.44, 0.34)), mix.inputs[7])
+    shade.inputs[0].default_value = 1.0
+    link(mix.outputs[2], shade.inputs[6])
+    link(vary.outputs["Result"], shade.inputs[7])
+    p = n.new("ShaderNodeBsdfPrincipled")
+    link(shade.outputs[2], p.inputs["Base Color"])
+    p.inputs["Roughness"].default_value, p.inputs["Specular IOR Level"].default_value = 1.0, 0.0
+    return _finish(m, p.outputs["BSDF"], CUTS["soil"], True)
+
+
 def terrain(colls, mats) -> None:
     fall = round(1.0 / LAND["fall"])
-    slab("GR_soil", ground_z, lambda x, y: plane(x, y) - DEPTH, colls["S10_TERRAIN"], [mats["lawn"], mats["soil"], mats["meadow"], mats["litter"]], lambda x, y: (0, 2, 3)[kind_of_ground(x, y)], PROPOSAL, f"The ground of the designed site, {DEPTH} m of its soil drawn: an even fall of 1 in {fall} with a swale and a hollow cut into it, mown grass on the garden side, meadow on the other and leaf litter under the woodland. At each pier it is feet_below_soil_m (site.json) above the pier's feet, so the timber comes straight out of the soil. Nothing is known of a real soil.")
+    slab("GR_soil", ground_z, lambda x, y: plane(x, y) - DEPTH, colls["S10_TERRAIN"], [ground_material(), mats["soil"]], lambda x, y: 0, PROPOSAL, f"The ground of the designed site, {DEPTH} m of its soil drawn: an even fall of 1 in {fall} with a swale and a hollow cut into it. One surface with no edges on it: rough grass toward the meadow, soil and litter under the thick planting of the garden side and under the woodland, each fading into the next. At each pier it is feet_below_soil_m (site.json) above the pier's feet, so the timber comes straight out of the soil. Nothing is known of a real soil.")
     slab("GR_subsoil", lambda x, y: plane(x, y) - DEPTH, lambda x, y: Z0 - 8.0, colls["S10_TERRAIN"], [mats["subsoil"], mats["subsoil"]], lambda x, y: 0, PROPOSAL, "The ground below the cultivated soil, drawn so that the piles have something to stand in. Nothing is known of it.")
     # Behind a cut the drawn soil is closed off, so that a section does not look through it at what stands in the ground beyond.
     y, xs = CUT_Y + BEYOND_M + 0.5, [k * 0.4 for k in range(-90, 91)]
@@ -1035,12 +1105,13 @@ def terrain(colls, mats) -> None:
     back.data.update()
 
 
-def room_ground(colls, mats) -> None:
+def room_ground(colls, mats, assets) -> None:
     fall = round(1.0 / LAND["fall"])
     top = lambda x, y: plane(x, y) + BUILDUP  # noqa: E731
-    add_mesh("RG_floor", *prism(circle(0.0, 0.0, RF, 96), lambda x, y: plane(x, y) - 0.15, top), colls["S20_ROOM_GROUND"], mats["floor"], PROPOSAL, f"The room's floor: a round of bound gravel {2 * RF} m across that follows the ground, 1 in {fall}, with no step at its edge and no platform under it. Whether 1 in {fall} is comfortable to stand and talk on for long is to be found out. No furniture.")
+    edge = [(floor_r(2 * pi * k / 180) * cos(2 * pi * k / 180), floor_r(2 * pi * k / 180) * sin(2 * pi * k / 180)) for k in range(180)]
+    add_mesh("RG_floor", *prism(edge, lambda x, y: plane(x, y) - 0.15, top), colls["S20_ROOM_GROUND"], mats["gravel"], PROPOSAL, f"The room's floor: a clearing of rolled gravel about {2 * RF} m across, with an edge that wanders and that the planting grows over, following the ground at 1 in {fall} with no step and no platform. Stones lie at its edge. Whether 1 in {fall} is comfortable to stand and talk on for long is to be found out. No furniture.")
     path = SITE["paths"]["arrival"]
-    outward(add_mesh("RG_arrival_path", *ribbon(ARRIVAL, path["width_m"] / 2.0, lambda x, y: plane(x, y) + BUILDUP - 0.004, lambda x, y: plane(x, y) - 0.12), colls["S20_ROOM_GROUND"], mats["floor"], PROPOSAL, path["note"] + f" Bound gravel, {path['width_m']} m wide, falling with the ground."))
+    outward(add_mesh("RG_arrival_path", *ribbon(ARRIVAL, path["width_m"] / 2.0, lambda x, y: plane(x, y) + BUILDUP - 0.004, lambda x, y: plane(x, y) - 0.12), colls["S20_ROOM_GROUND"], mats["gravel"], PROPOSAL, path["note"] + f" The same gravel as the floor, {path['width_m']} m wide, falling with the ground, with the planting coming to its edges."))
     reach = LAND["swale"]["radius_m"]
     over = [p for p in ARRIVAL if abs(hypot(*p) - reach) < 1.5]
     outward(add_mesh("RG_swale_crossing", *ribbon(over, path["width_m"] / 2.0 + 0.18, lambda x, y: plane(x, y) + BUILDUP + 0.02, lambda x, y: plane(x, y) - 0.1), colls["S20_ROOM_GROUND"], mats["pad"], PROPOSAL, "A stone slab where the arrival path crosses the swale: you step over the water's way on the way in."))
@@ -1052,102 +1123,156 @@ def room_ground(colls, mats) -> None:
         n = max(2, int(abs(s1 - s0)))
         line = [(wx + (s0 + (s1 - s0) * k / n) * cos(a), wy + (s0 + (s1 - s0) * k / n) * sin(a)) for k in range(n + 1)]
         outward(add_mesh(f"GD_wall_{name}", *ribbon(line, w["thickness_m"] / 2.0, lambda x, y: ground_z(x, y) + w["height_m"], lambda x, y: ground_z(x, y) - 0.4), colls["S70_GARDEN"], mats["wall"], PROPOSAL, w["note"] + f" {w['height_m']} m high, with a gate {w['gate_m']} m wide where the path comes through."))
-
-
-# Each bed is planted in layers, front to back. A layer runs from and to so many metres out from the floor's edge (to the
-# bed's own edge where none is given), holds as many plants as fit at its spacing, and its kinds run through it in drifts.
-PLANTING = {
-    "sheltered": [
-        {"name": "edge", "from_m": 0.1, "to_m": 0.8, "spacing_m": 0.2, "kinds": ["celandine_01", "periwinkle_plant"]},
-        {"name": "middle", "from_m": 0.8, "to_m": 2.6, "spacing_m": 0.3, "kinds": ["shrub_01", "shrub_04", "periwinkle_plant"]},
-        {"name": "ferns", "from_m": 0.6, "to_m": None, "spacing_m": 0.7, "kinds": ["fern_02"]},
-        {"name": "back", "from_m": 2.5, "to_m": None, "spacing_m": 1.15, "kinds": ["shrub_02"]},
-        {"name": "under", "from_m": 2.6, "to_m": None, "spacing_m": 0.34, "kinds": ["shrub_04", "nettle_plant", "shrub_03"]},
-    ],
-    "sunny": [
-        {"name": "edge", "from_m": 0.1, "to_m": 0.8, "spacing_m": 0.2, "kinds": ["celandine_01", "shrub_sorrel_01"]},
-        {"name": "middle", "from_m": 0.8, "to_m": None, "spacing_m": 0.3, "kinds": ["shrub_03", "shrub_01", "periwinkle_plant"]},
-        {"name": "grasses", "from_m": 1.6, "to_m": None, "spacing_m": 0.5, "kinds": ["grass_medium_02", "grass_medium_01"]},
-        {"name": "flowers", "from_m": 0.3, "to_m": None, "spacing_m": 0.9, "kinds": ["dandelion_01"]},
-    ],
-}
-# How much larger than the borrowed model each kind is set out: the models are small plants, measured, and a bed wants clumps.
-SCALES = {"celandine_01": (1.3, 1.9), "periwinkle_plant": (1.3, 2.0), "shrub_sorrel_01": (5.0, 8.0), "shrub_01": (1.9, 2.8), "shrub_04": (2.0, 3.0), "shrub_03": (1.8, 2.6), "fern_02": (0.9, 1.4), "shrub_02": (0.95, 1.35), "nettle_plant": (3.0, 4.2), "grass_medium_02": (1.8, 2.6), "grass_medium_01": (2.0, 3.0), "dandelion_01": (1.3, 2.0)}
-
-
-def massed(a0, a1, outer, layer, rng, roots, feet) -> dict:
-    """Places for one layer of a bed: as many as fit with no two nearer than its spacing, each given one of the layer's
-    kinds by where it stands, so that a kind runs in drifts and not as a speckle. The climbers' own ground is left clear."""
-    gap, kinds = layer["spacing_m"], layer["kinds"]
-    taken, out = {}, {k: [] for k in kinds}
-    for _ in range(min(60000, int(30 * (a1 - a0) * (RB_SHELTER**2 - RF**2) / (gap * gap)))):
-        a = rng.uniform(a0, a1)
-        lo = RF + layer["from_m"]
-        hi = outer(a) - 0.12 if layer["to_m"] is None else min(RF + layer["to_m"], outer(a) - 0.12)
-        if hi <= lo:
-            continue
-        r = sqrt(rng.uniform(lo * lo, hi * hi))
-        x, y = r * cos(a), r * sin(a)
-        cx, cy = int(x // gap), int(y // gap)
-        if any(hypot(x - q[0], y - q[1]) < gap for dx in (-1, 0, 1) for dy in (-1, 0, 1) for q in taken.get((cx + dx, cy + dy), ())):
-            continue
-        if any(hypot(x - q[0], y - q[1]) < 0.3 for q in roots) or any(hypot(x - q[0], y - q[1]) < 0.1 + 0.3 * gap for q in feet):
-            continue
-        taken.setdefault((cx, cy), []).append((x, y))
-        drift = sin(0.9 * x + 1.7 * y + 3.1 * len(layer["name"])) + sin(1.6 * x - 0.8 * y) + 0.5 * sin(2.9 * x + 2.3 * y)
-        out[kinds[min(len(kinds) - 1, int((drift + 2.5) / 5.0 * len(kinds)))]].append((x, y, plane(x, y) + MULCH - 0.01))
-    return out
+    # stones: a few to perch on at the floor's edge, between the piers and clear of the two ways through, and small ones scattered there
+    rng = random.Random(31)
+    piers = [atan2(y, x) for x, y in GROUND["piers"].values()]
+    clear = lambda a: all(abs((a - b + pi) % (2 * pi) - pi) > radians(13) for b in piers) and all(abs((a - b + pi) % (2 * pi) - pi) > radians(24) for b in (ENTRY, LOOKOUT))  # noqa: E731
+    large, small = [], []
+    while len(large) < 7:
+        a = rng.uniform(0, 2 * pi)
+        if clear(a) and all(abs((a - atan2(q[1], q[0]) + pi) % (2 * pi) - pi) > radians(16) for q in large):
+            r = floor_r(a) + rng.uniform(-0.35, 0.15)
+            large.append((r * cos(a), r * sin(a), plane(r * cos(a), r * sin(a)) - 0.06))
+    while len(small) < 60:
+        a = rng.uniform(0, 2 * pi)
+        if abs((a - ENTRY + pi) % (2 * pi) - pi) > radians(15) and abs((a - LOOKOUT + pi) % (2 * pi) - pi) > radians(15):
+            r = floor_r(a) + rng.uniform(-0.55, 0.3)
+            small.append((r * cos(a), r * sin(a), plane(r * cos(a), r * sin(a)) + 0.0))
+    scatter("RG_perching_stones", large, assets["rock_moss_set_02"], colls["S20_ROOM_GROUND"], (0.3, 0.5), BORROWED, "Stones at the edge of the floor, between the piers: something to perch on that is not furniture, and a hard edge the planting can grow against. Borrowed models (rock_moss_set_02, Poly Haven, CC0), a third to a half of their size.", seed=3)
+    scatter("RG_small_stones", small, assets["rock_moss_set_01"], colls["S20_ROOM_GROUND"], (0.035, 0.085), BORROWED, "Small stones where the gravel meets the planting, so that the floor has no drawn edge. Borrowed models (rock_moss_set_01, Poly Haven, CC0), much reduced.", seed=5)
 
 
 def bed_edges():
-    """The two beds: (name, from, to, outer radius as a function of the angle)."""
+    """The two stretches of prepared ground the piers stand in: (name, from, to, outer radius as a function of the angle)."""
     return (
         ("sheltered", ENTRY + OPENING, LOOKOUT - OPENING, lambda a: RB_SHELTER + 0.35 * sin(3.0 * a)),
         ("sunny", LOOKOUT + OPENING, ENTRY + 2 * pi - OPENING, lambda a: RB_SUN + 0.25 * sin(4.0 * a)),
     )
 
 
-def in_bed(x, y) -> str:
-    r, a = hypot(x, y), atan2(y, x)
-    for name, a0, a1, outer in bed_edges():
-        t = a
-        while t < a0:
-            t += 2 * pi
-        if t <= a1 and RF < r < outer(t):
-            return name
-    return ""
-
-
 def beds(colls, mats, assets) -> None:
-    rng = random.Random(11)
-    roots = [p["root_m"] for p in GROUND["plants"]]
-    feet = [c for pier in GROUND["feet"].values() for f in pier for c in f["corners_m"]]
+    """What is prepared under the planting round the piers. Nothing of it shows on the surface: there is no bed to see."""
     for name, a0, a1, outer in bed_edges():
-        outward(add_mesh(f"BD_bed_{name}", *band(a0, a1, RF, outer, lambda x, y: plane(x, y) + MULCH, lambda x, y: plane(x, y) - 0.01), colls["S30_BEDS"], mats["mulch"], PROPOSAL, SITE["beds"]["note"] + f" Mulched {MULCH} m deep."))
-        outward(add_mesh(f"BD_loosened_soil_{name}", *band(a0, a1, RF, outer, lambda x, y: plane(x, y) - 0.012, lambda x, y: plane(x, y) - DEPTH + 0.01), colls["S30_BEDS"], loosened(f"STUDY_loosened_soil_{name}", RB_SHELTER if name == "sheltered" else RB_SUN), PROPOSAL, f"The bed's soil, loosened {DEPTH} m deep and not boxed in: it is the same ground as the lawn and the meadow beside it, and is whole under every pier but for the slender stubs that come up through it to the feet. In a section it is drawn fading into the ground round it, because it has no edge. {GROUND['quantities']['loosened_soil_m3']['says']}. Seen only in a section."))
-        for layer in PLANTING[name]:
-            for kind, points in massed(a0, a1, outer, layer, rng, roots, feet).items():
-                if points:
-                    scatter(f"BD_{name}_{layer['name']}_{kind}", points, assets[kind], colls["S30_BEDS"], SCALES[kind], BORROWED, seed=len(kind) + 7 * len(layer["name"]), note=f"The {name} bed's planting, {layer['name']} layer: {len(points)} plants no nearer than {layer['spacing_m']} m, massed so that they touch and the mulch is covered. A borrowed model ({kind}, Poly Haven, CC0) at {SCALES[kind][0]} to {SCALES[kind][1]} times its size, standing in for a planting nobody has designed; not a species choice, and it does not change with the season.")
+        outward(add_mesh(f"BD_loosened_soil_{name}", *band(a0, a1, RF, outer, lambda x, y: plane(x, y) - 0.012, lambda x, y: plane(x, y) - DEPTH + 0.01), colls["S30_BEDS"], loosened(f"STUDY_loosened_soil_{name}", RB_SHELTER if name == "sheltered" else RB_SUN), PROPOSAL, f"The ground the climbers are planted in, loosened {DEPTH} m deep before planting and not boxed in or raised: the planting runs over it without a break, and it is whole under every pier but for the slender stubs that come up through it. {GROUND['quantities']['loosened_soil_m3']['says']}. In a section it is drawn fading into the ground round it, because it has no edge."))
     size = SITE["planting_at_installation"]["root_ball_m"]
-    rng = random.Random(21)
-    cut, beyond, roots = [], [], []
+    cut, beyond = [], []
     for p in GROUND["plants"]:
         x, y = p["root_m"]
-        top = plane(x, y) + MULCH - 0.03
-        here = abs(y - CUT_Y) < size / 2.0  # the section passes through this one
-        (cut if here else beyond).append(ball(x, y, top - size / 2.0, size / 2.0, size / 2.0))
-        if here:
-            for k in range(11):  # a few roots teased out of the ball: what it has on the day, not where it will go
-                turn, reach = 2 * pi * k / 11 + rng.uniform(-0.2, 0.2), rng.uniform(0.1, 0.24)
-                a = Vector((x + 0.13 * cos(turn), y + 0.13 * sin(turn), top - size * rng.uniform(0.45, 0.9)))
-                b = a + Vector((cos(turn), sin(turn), -rng.uniform(0.3, 0.9))).normalized() * reach
-                roots.append([tuple(a), tuple(a.lerp(b, 0.5) + Vector((0, 0, 0.012))), tuple(b)])
-    note = f"Each climber's root ball as it goes in, {size} m across: a drawing assumption, not a horticultural requirement. All it has on the day it is planted; the soil round it is what it grows into. Seen only in a section"
+        (cut if abs(y - CUT_Y) < size / 2.0 else beyond).append(ball(x, y, plane(x, y) - 0.03 - size / 2.0, size / 2.0, size / 2.0))
+    note = f"Each climber's root ball as it goes in, {size} m across: a drawing assumption. Seen only in a section"
     if cut:
         add_mesh("BP_root_balls", *merge(cut), colls["S50_BOWER_PLANTING"], mats["root"], PROPOSAL, note + ", where the cut passes through it.", smooth=True)
-        poly_curve("BP_roots", roots, 0.004, colls["S50_BOWER_PLANTING"], mats["root"], PROPOSAL, "A few roots teased out of the ball on the day. How far and how fast roots spread from here is not modelled.")
     add_mesh("BP_root_balls_beyond", *merge(beyond), colls["S50_BOWER_PLANTING"], mats["root_beyond"], PROPOSAL, note + ", faintly: these lie behind the cut.", smooth=True)
+
+
+_EDGE: dict = {}
+
+
+def to_a_way(x: float, y: float) -> float:
+    """How far a place is from the nearest ground that is walked on: the floor, the arrival path, the mown path. Kept on a quarter-metre grid."""
+    key = (round(x * 4), round(y * 4))
+    if key not in _EDGE:
+        gx, gy = key[0] / 4.0, key[1] / 4.0
+        _EDGE[key] = min(hypot(gx, gy) - floor_r(atan2(gy, gx)), _to_line(gx, gy, ARRIVAL) - SITE["paths"]["arrival"]["width_m"] / 2.0, _to_line(gx, gy, MOWN) - SITE["paths"]["mown"]["width_m"] / 2.0)
+    return _EDGE[key]
+
+
+def sown(inside, gap: float, bounds, rng, keep_off=()) -> list:
+    """As many places as fit with no two nearer than `gap`, wherever `inside(x, y)` holds, within bounds (x0, y0, x1, y1)."""
+    x0, y0, x1, y1 = bounds
+    taken, out = {}, []
+    for _ in range(int(9.0 * (x1 - x0) * (y1 - y0) / (gap * gap))):
+        x, y = rng.uniform(x0, x1), rng.uniform(y0, y1)
+        if not inside(x, y):
+            continue
+        cx, cy = int(x // gap), int(y // gap)
+        if any(hypot(x - q[0], y - q[1]) < gap for dx in (-1, 0, 1) for dy in (-1, 0, 1) for q in taken.get((cx + dx, cy + dy), ())):
+            continue
+        if any(hypot(x - q[0], y - q[1]) < r for q, r in keep_off):
+            continue
+        taken.setdefault((cx, cy), []).append((x, y))
+        out.append((x, y))
+    return out
+
+
+# What stands in for each kind of plant, and how much larger than the borrowed model it is set out. The models are
+# small, measured; none is a species choice. "from" and "to" are how far from a way (to_a_way) the layer runs.
+LAYERS_OF_PLANTING = [
+    {"name": "edge", "from_m": 0.05, "to_m": 0.9, "gap_m": 0.21, "within_m": 24.0, "grass": 0.2,
+     "grasses": {"grass_medium_01": (1.0, 1.5)}, "garden": {"celandine_01": (1.3, 1.9), "shrub_sorrel_01": (5.0, 8.0), "flower_ursinia": (2.0, 2.9), "periwinkle_plant": (1.2, 1.6)}, "meadow": {"celandine_01": (1.3, 1.9), "dandelion_01": (1.3, 2.0)}, "shade": {"periwinkle_plant": (1.3, 1.8), "celandine_01": (1.3, 1.9)}},
+    {"name": "middle", "from_m": 0.75, "to_m": 2.6, "gap_m": 0.32, "within_m": 27.0, "grass": 0.45,
+     "grasses": {"grass_medium_02": (1.6, 2.3), "grass_medium_01": (1.8, 2.6)}, "garden": {"shrub_01": (2.1, 3.0), "shrub_03": (1.9, 2.6), "flower_gazania": (0.3, 0.42), "shrub_04": (2.1, 3.0), "flower_heliophila": (0.55, 0.8)}, "meadow": {"flower_heliophila": (0.5, 0.75), "dandelion_01": (1.4, 2.1), "shrub_03": (1.7, 2.3)}, "shade": {"fern_02": (0.9, 1.4), "shrub_04": (2.2, 3.1), "nettle_plant": (3.0, 4.2)}},
+    {"name": "field", "from_m": 2.3, "to_m": 99.0, "gap_m": 0.36, "within_m": 20.0, "grass": 0.62,
+     "grasses": {"grass_medium_02": (2.5, 3.6), "grass_medium_01": (2.8, 3.9)}, "garden": {"flower_gazania": (0.42, 0.62), "shrub_03": (2.4, 3.2), "shrub_01": (2.8, 3.6), "flower_heliophila": (0.7, 1.0)}, "meadow": {"flower_heliophila": (0.6, 0.9), "dandelion_01": (1.6, 2.4)}, "shade": {"fern_02": (1.1, 1.9), "nettle_plant": (3.4, 4.6), "shrub_04": (2.6, 3.4)}},
+    {"name": "far", "from_m": 2.3, "to_m": 99.0, "gap_m": 0.58, "within_m": 36.0, "beyond_m": 20.0, "grass": 0.75,
+     "grasses": {"grass_medium_02": (3.0, 4.4)}, "garden": {"shrub_03": (2.8, 3.8), "flower_gazania": (0.5, 0.75)}, "meadow": {"flower_heliophila": (0.8, 1.2)}, "shade": {"fern_02": (1.3, 2.1), "nettle_plant": (3.6, 4.8)}},
+]
+
+
+def planting(colls, assets) -> None:
+    """One planting, with no bed and no edge: it runs from the garden through the piers into the meadow and under the
+    woodland. Low where people walk and at the look-out, taller away from them. Grasses run all through it; other kinds
+    stand in drifts among them. A drawing of a manner of planting, with borrowed models: nobody has designed this one."""
+    rng = random.Random(41)
+    keep_off = [(tuple(p["root_m"]), 0.3) for p in GROUND["plants"]] + [(tuple(c), 0.16) for pier in GROUND["feet"].values() for f in pier for c in f["corners_m"]]
+    w, hollow = SITE["wall"], LAND["hollow"]
+    (wx, wy), wa = w["through_m"], radians(w["along_deg"])
+    edge_y = SITE["woodland"]["edge_y_m"]
+
+    def beyond_wall(x, y):  # the far side of the garden wall is someone else's garden, and nothing is planted against the wall's foot
+        return (x - wx) * cos(wa - pi / 2) + (y - wy) * sin(wa - pi / 2) > -0.45
+
+    def open_view(x, y):  # out through the look-out the planting stays low, so the meadow is seen from inside
+        r = hypot(x, y)
+        return r < 15.0 and abs((atan2(y, x) - LOOKOUT + pi) % (2 * pi) - pi) < radians(19)
+
+    def character(x, y) -> str:
+        if y > edge_y + 1.3 * sin(0.3 * x) - 2.4:
+            return "shade"
+        along, across = x * cos(ENTRY) + y * sin(ENTRY), -x * sin(ENTRY) + y * cos(ENTRY)
+        return "meadow" if along + 0.9 * sin(0.35 * across) < -SITE["meadow"]["begins_m"] + rng.uniform(-2.5, 2.5) else "garden"
+
+    drawn = {}
+    for layer in LAYERS_OF_PLANTING:
+        reach, start = layer["within_m"], layer.get("beyond_m", 0.0)
+
+        def inside(x, y, layer=layer, reach=reach, start=start):
+            r = hypot(x - 3.0, y - 2.0)
+            if not start <= r < reach or beyond_wall(x, y) or y > edge_y + 7.0:
+                return False
+            if hypot(x - hollow["at_m"][0], y - hollow["at_m"][1]) < hollow["radius_m"] * 0.42:
+                return False
+            d = to_a_way(x, y)
+            if open_view(x, y):  # low all the way out to the meadow
+                return layer["name"] == "edge" and d > 0.05
+            return layer["from_m"] < d <= layer["to_m"]
+
+        bounds = (3.0 - reach, 2.0 - reach, 3.0 + reach, 2.0 + reach)
+        for x, y in sown(inside, layer["gap_m"], bounds, rng, keep_off):
+            kind = character(x, y)
+            share = layer["grass"] + (0.25 if kind == "meadow" else 0.0) - (0.2 if kind == "shade" else 0.0)
+            drift = sin(0.5 * x + 0.33 * y + 1.7 * len(layer["name"])) + sin(-0.31 * x + 0.57 * y + 0.4) + 0.6 * sin(0.93 * x - 0.71 * y)
+            table = layer["grasses"] if rng.random() < share else layer[kind]
+            names = list(table)
+            name = names[min(len(names) - 1, int((drift + 2.6) / 5.2 * len(names)))]
+            drawn.setdefault((layer["name"], name, table[name]), []).append((x, y, ground_z(x, y) - 0.01))
+    # the wet line: tall grass and fern along the swale and from the floor's low edge to the hollow, so that water is read as a line of different planting
+    wet = [(x + rng.uniform(-0.45, 0.45), y + rng.uniform(-0.45, 0.45)) for a, b in zip(SWALE + RILL[:1], SWALE[1:] + RILL[1:]) for k in range(max(1, int(hypot(b[0] - a[0], b[1] - a[1]) / 0.3))) for x, y in [(a[0] + (b[0] - a[0]) * k * 0.3 / max(0.3, hypot(b[0] - a[0], b[1] - a[1])), a[1] + (b[1] - a[1]) * k * 0.3 / max(0.3, hypot(b[0] - a[0], b[1] - a[1])))]]
+    wet = [(x, y) for x, y in wet if to_a_way(x, y) > 0.25]
+    drawn[("wet", "grass_medium_02", (2.6, 3.8))] = [(x, y, ground_z(x, y) - 0.01) for x, y in wet[::2]]
+    drawn[("wet", "fern_02", (1.0, 1.8))] = [(x, y, ground_z(x, y) - 0.01) for x, y in wet[1::2]]
+    # shrubs to head height: a sheltering back on the woodland side of the room, and the planting on the inside of the path's bend
+    bx, by = 15.5, 3.4
+    shelter = sown(lambda x, y: RING + 1.3 < hypot(x, y) < RB_SHELTER + 0.4 and ENTRY + OPENING + 0.15 < atan2(y, x) % (2 * pi) < LOOKOUT - OPENING - 0.15 and to_a_way(x, y) > 1.2, 1.25, (-11, -4, 11, 11), rng, keep_off)
+    bend = sown(lambda x, y: hypot(x - bx, y - by) < 3.6 and to_a_way(x, y) > 1.0, 1.35, (bx - 4, by - 4, bx + 4, by + 4), rng)
+    drawn[("shrubs", "shrub_02", (0.8, 1.25))] = [(x, y, ground_z(x, y) - 0.02) for x, y in shelter + bend]
+    total = 0
+    for (layer, name, scale), points in sorted(drawn.items()):
+        if not points:
+            continue
+        total += len(points)
+        scatter(f"PL_{layer}_{name}", points, assets[name], colls["S30_BEDS"], scale, BORROWED, seed=len(name) + 5 * len(layer), note=f"The planting, {layer}: {len(points)} plants. One planting with no bed and no edge, low where people walk and at the look-out, taller away from them, grasses all through it and other kinds in drifts. A borrowed model ({name}, Poly Haven, CC0) at {scale[0]} to {scale[1]} times its size, standing in for a planting nobody has designed; not a species choice, and it does not change with the season.")
+    log(f"planting: {total} plants in {len(drawn)} kinds and layers")
 
 
 def ball(x, y, z, r, h, around=14, up=8):
@@ -1267,11 +1392,60 @@ def grown_climbers(scene, colls, mats) -> list:
         drew = grown.draw(run, moment["date"], coll, colls["S99_ASSET_SOURCES"], {"tag": tag, "status": SIMULATED, "finish": _finish}, moment["id"])
         made.append({**moment, **drew, "collection": coll.name})
         log(f"{moment['id']} ({moment['date']}): {drew['climbers']} climbers, {drew['stem_m']} m of stem, thickest {drew['thickest_stem_mm']} mm, {drew['leaves']} leaves, {drew['flowers']} flowers")
+    drawn_roots(run, made, colls, mats)
     # each climber's first hand's breadth, from where it is planted to the foot of its cable: the run starts it at the cable
     leads = [[(q["root_m"][0], q["root_m"][1], plane(*q["root_m"]) + MULCH - 0.02), tuple(q["cable_foot_m"])] for q in GROUND["plants"]]
     poly_curve("BP_lead_in", leads, 0.006, colls["S50_BOWER_PLANTING"], mats["stem"], PROPOSAL, f"From where each climber is planted to the foot of its cable, {CFG['plant_in_m']} m away: the grown run starts each one at the cable itself.")
     scene["study_growth"] = f"{found.name}: " + "; ".join(f"{m['id']} {m['date']}" for m in made)
     return made
+
+
+def drawn_roots(run, moments, colls, mats) -> None:
+    """Each climber's roots at each moment: a sketch from stated rules (roots.py), sized from the stem the run grew.
+    The simulator does not model roots. Only a section shows them; the climber the cut passes through is drawn dark."""
+    import roots
+
+    rule = SITE["growth"]["roots"]
+    last = run["lastDay"]
+    thickest = {}
+    for stem in run["stems"]:
+        thickest[stem["plantId"]] = max(thickest.get(stem["plantId"], 0.0), max(stem["radiusMm"]) / 1000.0)
+    by_station = {q["stationId"]: q["id"] for q in run["plants"]}
+    size = SITE["planting_at_installation"]["root_ball_m"]
+    systems = []
+    for q in GROUND["plants"]:
+        plant_id = by_station.get(q["id"].replace("climber.", "bed."))
+        base = thickest.get(plant_id, 0.01)
+        x, y = q["root_m"]
+        f, level = GROUND["footings"][q["pier"]], LEVEL[q["pier"]]
+        sole = level + SUNK - SOLE
+        outer = RB_SHELTER if ENTRY + OPENING < atan2(y, x) % (2 * pi) < LOOKOUT - OPENING else RB_SUN
+        soil = roots.Soil(plane, DEPTH, (RF, outer), 0.2)
+        things = [{"kind": "post", "at": tuple(st["at"]), "half_m": st["size_m"] / 2.0, "top": level, "bottom": sole} for st in f["stubs_m"]]
+        things += [{"kind": "pile", "at": tuple(at), "radius_m": GROUND["piles"]["shaft_m"] / 2.0, "top": sole - f["cap_depth_m"]} for at in f["piles_m"]]
+        things += [{"kind": "plate", "outline": [tuple(c) for c in plate], "top": sole, "bottom": sole - f["cap_depth_m"]} for plate in f["plates_m"]]
+        reach = rule["reach_base_m"] + rule["reach_per_stem_diameter"] * 2.0 * base
+        systems.append((q, abs(y - CUT_Y) < size / 2.0, reach, roots.system(q["id"], (x, y, plane(x, y)), reach, base, soil, things, last)))
+    for moment in moments:
+        coll = bpy.data.collections[moment["collection"]]
+        for cut in (True, False):
+            curve = bpy.data.curves.new(f"RT_{moment['id']}_{'cut' if cut else 'beyond'}", "CURVE")
+            curve.dimensions, curve.bevel_depth, curve.bevel_resolution, curve.use_fill_caps = "3D", 1.0, 1, True
+            metres = 0.0
+            for q, here, reach, system in systems:
+                if here != cut:
+                    continue
+                for root in roots.on_day(system, moment["day"], last):
+                    spline = curve.splines.new("POLY")
+                    spline.points.add(len(root["points"]) - 1)
+                    spline.points.foreach_set("co", [c for at in root["points"] for c in (*at, 1.0)])
+                    spline.points.foreach_set("radius", [max(r, rule["drawn_at_least_m"][min(root["order"], 2)]) for r in root["radius_m"]])
+                    metres += sum(hypot(hypot(b[0] - a[0], b[1] - a[1]), b[2] - a[2]) for a, b in zip(root["points"], root["points"][1:]))
+            curve.materials.append(mats["root"] if cut else mats["root_beyond"])
+            obj = bpy.data.objects.new(curve.name, curve)
+            coll.objects.link(obj)
+            tag(obj, PROPOSAL, f"Roots on {moment['date']}, {round(metres)} m of them drawn: a sketch from stated rules (roots.py), not simulated and not a horticultural claim. Each climber's reach is {rule['reach_base_m']} m plus {rule['reach_per_stem_diameter']} times the thickest stem the run gave it; they keep clear of the stubs, piles and sole. Fine roots are drawn thicker than they are, so that they can be seen. " + ("The climber the section cuts through." if cut else "Climbers behind the cut, drawn faintly."))
+        moment["roots_reach_m"] = [round(min(r for _, _, r, _ in systems), 1), round(max(r for _, _, r, _ in systems), 1)]
 
 
 def show_moment(colls, moment_id: str) -> None:
@@ -1288,34 +1462,23 @@ def water(colls, mats, assets) -> None:
     add_mesh("WA_standpipe", *prism(post, g - 0.05, g + 1.05), colls["S60_WATER"], mats["post"], PROPOSAL, "A standpipe beside the way in: the proposed source of water for the establishment years, and where a can is filled. Where its supply comes from is not known.")
     tap = [(sx + 0.045, sy - 0.02), (sx + 0.16, sy - 0.02), (sx + 0.16, sy + 0.02), (sx + 0.045, sy + 0.02)]
     add_mesh("WA_tap", *prism(tap, g + 0.86, g + 0.9), colls["S60_WATER"], mats["brass"], PROPOSAL, "The tap.")
-    r = w["drip_radius_m"]
-    lift = lambda x, y: (x, y, plane(x, y) + MULCH + 0.012)  # noqa: E731
-    runs = [[lift(r * cos(a0 + (a1 - a0) * k / 60), r * sin(a0 + (a1 - a0) * k / 60)) for k in range(61)] for _, a0, a1, _ in bed_edges()]
-    runs.append([(sx, sy, g + 0.2), (sx, sy, g + 0.02), runs[0][0]])
-    for q in GROUND["plants"]:
-        zx, zy = q["root_m"]
-        b = atan2(zy, zx)
-        runs.append([lift(zx + 0.26 * cos(2 * pi * k / 24), zy + 0.26 * sin(2 * pi * k / 24)) for k in range(25)])
-        runs.append([lift(r * cos(b), r * sin(b)), lift(zx + 0.26 * cos(b), zy + 0.26 * sin(b))])
-    poly_curve("WA_drip_line", runs, 0.009, colls["S60_WATER"], mats["drip"], PROPOSAL, w["note"])
-    outward(add_mesh("WA_swale_bed", *ribbon(SWALE[:-1], 0.28, lambda x, y: ground_z(x, y) + 0.015, lambda x, y: ground_z(x, y) - 0.03), colls["S60_WATER"], mats["pebble"], PROPOSAL, f"The bed of the swale, in pebbles: a shallow cut {s['depth_m']} m deep round the uphill side of the room, which takes what runs off the garden round it instead of through it, and falls both ways to the meadow and the hollow. A drainage proposal; no rainfall or soil is known."))
-    outward(add_mesh("WA_rill", *ribbon(RILL, 0.16, lambda x, y: ground_z(x, y) + 0.018, lambda x, y: ground_z(x, y) - 0.03), colls["S60_WATER"], mats["pebble"], PROPOSAL, "A line of pebbles from the low edge of the floor to the hollow: where the floor's own water goes, made visible."))
     hx, hy = h["at_m"]
     wobble = [1.0 + 0.1 * sin(2 * pi * k / 28 * 2 + 0.7) + 0.06 * sin(2 * pi * k / 28 * 3) for k in range(28)]
     damp = [(hx + (x - hx) * f, hy + (y - hy) * f) for f, (x, y) in zip(wobble, circle(hx, hy, h["radius_m"] * 0.42, 28))]
     damp = [(x, y, ground_z(x, y) + 0.015) for x, y in damp]
-    add_mesh("WA_damp_hollow", [(hx, hy, ground_z(hx, hy) + 0.015)] + damp, [(0, 1 + k, 1 + (k + 1) % 28) for k in range(28)], colls["S60_WATER"], mats["damp"], PROPOSAL, f"The planted hollow below the room, {h['depth_m']} m down: where the swale and the rill end, and water stands for a while after rain. Its use to other life is an intention, not a finding.")
+    add_mesh("WA_damp_hollow", [(hx, hy, ground_z(hx, hy) + 0.015)] + damp, [(0, 1 + k, 1 + (k + 1) % 28) for k in range(28)], colls["S60_WATER"], mats["damp"], PROPOSAL, f"The planted hollow below the room, {h['depth_m']} m down: where the swale and the floor's water end, and water stands for a while after rain. The swale ({s['depth_m']} m deep, round the uphill side) and the way from the floor's low edge are read as lines of taller, wetter planting, not as built things. A drainage proposal; no rainfall or soil is known, and its use to other life is an intention, not a finding.")
     rng = random.Random(3)
-    ferns, rushes = [], []
-    while len(ferns) < 46:
+    ferns, rushes, stones = [], [], []
+    while len(ferns) < 40:
         t, d = rng.uniform(0, 2 * pi), h["radius_m"] * rng.uniform(0.3, 1.0)
         x, y = hx + d * cos(t), hy + d * sin(t)
         (ferns if len(ferns) <= len(rushes) * 1.2 else rushes).append((x, y, ground_z(x, y) + 0.04))
-    for k, (x, y) in enumerate(SWALE[:-1]):
-        if k % 3 == 0 and not on_arrival(x, y, 1.2):
-            ferns.append((x + rng.uniform(-0.5, 0.5), y + rng.uniform(-0.5, 0.5), ground_z(x, y) + 0.05))
-    scatter("WA_hollow_ferns", ferns, assets["fern_02"], colls["S60_WATER"], (1.0, 1.9), BORROWED, "Ferns in the hollow and along the swale: a borrowed model (fern_02, Poly Haven, CC0) marking ground that is meant to stay damp.")
-    scatter("WA_hollow_grass", rushes, assets["grass_medium_02"], colls["S60_WATER"], (1.8, 3.0), BORROWED, "Tall grass in the hollow (grass_medium_02, Poly Haven, CC0), standing in for whatever likes wet feet there.")
+    for k in range(9):  # a few stones where water arrives and stands
+        t, d = rng.uniform(0, 2 * pi), h["radius_m"] * rng.uniform(0.25, 0.6)
+        stones.append((hx + d * cos(t), hy + d * sin(t), ground_z(hx + d * cos(t), hy + d * sin(t)) - 0.03))
+    scatter("WA_hollow_ferns", ferns, assets["fern_02"], colls["S60_WATER"], (1.0, 1.9), BORROWED, "Ferns in the hollow: a borrowed model (fern_02, Poly Haven, CC0) marking ground that is meant to stay damp.")
+    scatter("WA_hollow_grass", rushes, assets["grass_medium_02"], colls["S60_WATER"], (2.4, 3.6), BORROWED, "Tall grass in the hollow (grass_medium_02, Poly Haven, CC0), standing in for whatever likes wet feet there.")
+    scatter("WA_hollow_stones", stones, assets["rock_moss_set_02"], colls["S60_WATER"], (0.12, 0.3), BORROWED, "Stones in the hollow (rock_moss_set_02, Poly Haven, CC0).", seed=8)
 
 
 def garden(colls, assets) -> None:
@@ -1333,39 +1496,9 @@ def garden(colls, assets) -> None:
         x += wood["spacing_m"]
     for k, (tx, ty, s, t) in enumerate(veil["trees"]):
         instance(f"GD_veil_tree_{k + 1}", assets["tree_small_02"], colls["S70_GARDEN"], (tx, ty, ground_z(tx, ty) - 0.03), s * 1.35, t, BORROWED, veil["note"] + " A borrowed tree (tree_small_02, Poly Haven, CC0).")
-    shrubs = [(sx, sy, ground_z(sx, sy)) for sx, sy in veil["shrubs"]]
-    low = []
-    for sx, sy in veil["shrubs"]:
-        for _ in range(5):
-            px, py = sx + rng.uniform(-1.3, 1.3), sy + rng.uniform(-1.3, 1.3)
-            if not on_arrival(px, py, 0.4):
-                low.append((px, py, ground_z(px, py)))
-    scatter("GD_veil_shrubs", shrubs, assets["shrub_01"], colls["S70_GARDEN"], (2.2, 3.4), BORROWED, veil["note"] + " Borrowed shrubs (shrub_01, Poly Haven, CC0).", seed=4)
-    scatter("GD_veil_ferns", low, assets["fern_02"], colls["S70_GARDEN"], (1.0, 1.7), BORROWED, "Low planting under the veil (fern_02, Poly Haven, CC0).", seed=6)
-    edge, under = [], []
-    for _ in range(170):
-        px = rng.uniform(wood["from_x_m"] + 8.0, wood["to_x_m"] - 8.0)
-        py = wood["edge_y_m"] + 1.3 * sin(0.3 * px) + rng.uniform(-1.4, 3.0)
-        (edge if rng.random() < 0.3 else under).append((px, py, ground_z(px, py)))
-    scatter("GD_wood_edge_shrubs", edge, assets["shrub_04"], colls["S70_GARDEN"], (2.0, 3.6), BORROWED, "Shrubs at the woodland's edge: cover between the trees and the open ground. Borrowed (shrub_04, Poly Haven, CC0); its use to birds and insects is an intention, not a finding.", seed=9)
-    scatter("GD_wood_edge_ferns", under, assets["fern_02"], colls["S70_GARDEN"], (1.1, 2.0), BORROWED, "Ferns at the woodland's edge (fern_02, Poly Haven, CC0).", seed=10)
     lx, ly = -11.5, 11.2
     instance("GD_log", assets["dead_tree_trunk"], colls["S70_GARDEN"], (lx, ly, ground_z(lx, ly) + 0.02), 1.0, 70.0, BORROWED, "A log left at the woodland's edge: dead wood kept on purpose. A borrowed model (dead_tree_trunk, Poly Haven, CC0); what lives in it is not claimed.")
-    m = SITE["meadow"]
-    tufts, flowers = [], []
-    tries = 0
-    while len(tufts) < m["tufts"] and tries < 60000:
-        tries += 1
-        d, t = m["reach_m"] * sqrt(rng.random()) , rng.uniform(LOOKOUT - 1.25, LOOKOUT + 1.25)
-        px, py = d * cos(t), d * sin(t)
-        if kind_of_ground(px, py) != 1 or _to_line(px, py, MOWN) < SITE["paths"]["mown"]["width_m"] / 2.0 + 0.25 or _to_line(px, py, RILL) < 0.3:
-            continue
-        tufts.append((px, py, ground_z(px, py) + 0.01))
-        if len(tufts) % 9 == 0:
-            flowers.append((px + 0.15, py + 0.1, ground_z(px, py) + 0.01))
-    scatter("GD_meadow_grass", tufts, assets["grass_medium_02"], colls["S70_GARDEN"], (2.0, 3.8), BORROWED, m["note"] + f" {len(tufts)} tufts of a borrowed model (grass_medium_02, Poly Haven, CC0), thickest toward the look-out; a meadow's own mix of plants is not modelled, and its use to insects is an intention.", seed=12)
-    scatter("GD_meadow_flowers", flowers, assets["dandelion_01"], colls["S70_GARDEN"], (1.3, 2.2), BORROWED, "Flowers in the meadow (dandelion_01, Poly Haven, CC0).", seed=13)
-    log(f"garden: {trees} woodland trees, {len(tufts)} meadow tufts")
+    log(f"garden: {trees} woodland trees")
 
 
 def people(colls) -> None:
@@ -1460,10 +1593,11 @@ def build(samples: int = 96):
     colls = make_collections(scene)
     mats = materials()
     link_bower(scene, colls)
-    assets = {name: asset(colls, name) for name in ("tree_small_02", "shrub_01", "shrub_02", "shrub_03", "shrub_04", "shrub_sorrel_01", "fern_02", "periwinkle_plant", "celandine_01", "nettle_plant", "dandelion_01", "grass_medium_01", "grass_medium_02", "dead_tree_trunk")}
+    assets = {name: asset(colls, name) for name in ("tree_small_02", "shrub_01", "shrub_02", "shrub_03", "shrub_04", "shrub_sorrel_01", "fern_02", "periwinkle_plant", "celandine_01", "nettle_plant", "dandelion_01", "grass_medium_01", "grass_medium_02", "flower_gazania", "flower_ursinia", "flower_heliophila", "rock_moss_set_01", "rock_moss_set_02", "dead_tree_trunk")}
     terrain(colls, mats)
-    room_ground(colls, mats)
+    room_ground(colls, mats, assets)
     beds(colls, mats, assets)
+    planting(colls, assets)
     foundations(colls, mats)
     supports(colls, mats)
     moments = grown_climbers(scene, colls, mats)

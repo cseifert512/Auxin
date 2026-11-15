@@ -13,7 +13,11 @@
    "thickest_stem_mm": 5,
    "leaves": 65,
    "flowers": 0,
-   "collection": "S50_planted"
+   "collection": "S50_planted",
+   "roots_reach_m": [
+    0.9,
+    3.7
+   ]
   },
   {
    "id": "year-1",
@@ -25,7 +29,11 @@
    "thickest_stem_mm": 6,
    "leaves": 1241,
    "flowers": 14,
-   "collection": "S50_year-1"
+   "collection": "S50_year-1",
+   "roots_reach_m": [
+    0.9,
+    3.7
+   ]
   },
   {
    "id": "year-3",
@@ -37,7 +45,11 @@
    "thickest_stem_mm": 15,
    "leaves": 9252,
    "flowers": 284,
-   "collection": "S50_year-3"
+   "collection": "S50_year-3",
+   "roots_reach_m": [
+    0.9,
+    3.7
+   ]
   },
   {
    "id": "year-6",
@@ -49,7 +61,11 @@
    "thickest_stem_mm": 38,
    "leaves": 32530,
    "flowers": 1370,
-   "collection": "S50_year-6"
+   "collection": "S50_year-6",
+   "roots_reach_m": [
+    0.9,
+    3.7
+   ]
   },
   {
    "id": "year-10",
@@ -61,7 +77,11 @@
    "thickest_stem_mm": 77,
    "leaves": 67721,
    "flowers": 3074,
-   "collection": "S50_year-10"
+   "collection": "S50_year-10",
+   "roots_reach_m": [
+    0.9,
+    3.7
+   ]
   }
  ]
 }

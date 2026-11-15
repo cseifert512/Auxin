@@ -1,0 +1,93 @@
+{
+ "note": "The words of the drawing 'The place'. Numbers are not typed here: each figure names a key in ground/meadow.growth.json (per moment) or ground/meadow.json quantities, and package_place.py reads it from there.",
+ "start": "whole",
+ "moments": ["planted", "year-1", "year-3", "year-6", "year-10"],
+ "crop_top": 0.04,
+ "real": {
+  "from": "bower-blender/studies/inhabited-room/README.md",
+  "lines": [
+   "The climbers are one run of the plant simulator.",
+   "Each species has a plain leaf and a plain flower: where growth is, not what it looks like.",
+   "The sky, the beds, the meadow and the woodland are one summer afternoon at every moment.",
+   "The site is designed, not surveyed. Nothing here is engineered."
+  ]
+ },
+ "life": {
+  "status": "illustration, not a finding",
+  "says": "Birds drawn by hand over the pictures, to show the idea of other life in the place. Nothing about birds is modelled.",
+  "views": ["whole", "arrival"],
+  "perch": "room.crown"
+ },
+ "figures": {
+  "stem_m": { "source": "growth", "unit": "m", "label": "stem, all 24 climbers" },
+  "thickest_stem_mm": { "source": "growth", "unit": "mm", "label": "thickest stem across" },
+  "leaves": { "source": "growth", "unit": "", "label": "leaves on the climbers" },
+  "flowers": { "source": "growth", "unit": "", "label": "flowers open that day" },
+  "way_in_m": { "source": "quantity", "unit": "m", "label": "between legs, way in" },
+  "fall_across_the_room_m": { "source": "quantity", "unit": "m", "label": "ground falls across room" },
+  "timber_in_the_ground_m": { "source": "quantity", "unit": "mm", "scale": 1000, "label": "timber foot in soil" },
+  "loosened_soil_m2": { "source": "quantity", "key": "loosened_soil_m3", "field": "bed_m2", "unit": "m²", "label": "bed of loosened soil" },
+  "piles": { "source": "quantity", "unit": "", "label": "screw piles" }
+ },
+ "stations": [
+  {
+   "id": "whole", "view": "whole", "title": "The place",
+   "caption": {
+    "default": "A room at the edge of a meadow",
+    "planted": "Just planted: 24 climbers, 3 m tall",
+    "year-10": "Ten years on: the roof is covered"
+   },
+   "figures": ["stem_m", "leaves", "flowers"],
+   "targets": [
+    { "label": "Arrive", "at": ["path.bend"], "to": "arrival" },
+    { "label": "Look out", "at": ["room.middle"], "to": "lookout" },
+    { "label": "One pier, cut open", "at": ["pier.R1.P3.foot"], "to": "plant" },
+    { "label": "The ground", "at": ["hollow", "meadow.path"], "to": "section" }
+   ]
+  },
+  {
+   "id": "arrival", "view": "arrival", "title": "Arrive",
+   "caption": { "default": "The room across the bend of the path", "year-6": "The growth has reached the crown" },
+   "figures": ["stem_m", "flowers", "way_in_m"],
+   "targets": [
+    { "label": "Look out", "at": ["way-in"], "to": "lookout" },
+    { "label": "One pier, cut open", "at": ["pier.R1.P3.foot"], "to": "plant" }
+   ]
+  },
+  {
+   "id": "lookout", "view": "lookout", "title": "Look out",
+   "caption": { "default": "From the way in, out to the meadow", "planted": "Full sun for the first summers" },
+   "figures": ["leaves", "flowers", "fall_across_the_room_m"],
+   "targets": [
+    { "label": "Cut through this pier", "at": ["pier.R1.P6.foot"], "to": "section" }
+   ]
+  },
+  {
+   "id": "plant", "view": "plant", "title": "One pier, cut open",
+   "caption": { "default": "The uphill pier, roots to first joints" },
+   "figures": ["thickest_stem_mm", "stem_m", "timber_in_the_ground_m"],
+   "targets": [
+    { "label": "The whole cut", "at": ["pier.R1.P3.head"], "to": "section" }
+   ]
+  },
+  {
+   "id": "section", "view": "section", "title": "The ground",
+   "caption": { "default": "A cut through two piers and their beds" },
+   "figures": ["loosened_soil_m2", "fall_across_the_room_m", "piles"],
+   "targets": [
+    { "label": "Closer at this pier", "at": ["pier.R1.P3.foot"], "to": "plant" },
+    { "label": "Look out", "at": ["look-out"], "to": "lookout" }
+   ]
+  }
+ ],
+ "pier": {
+  "title": "Opening the pier",
+  "kicker": "Study: one change, grown again",
+  "parameter": "How far apart the legs stand",
+  "stops": ["Closed", "Opened"],
+  "pictures": "Year five of the run, day 1,826: the pictures stop there",
+  "status": ["grow ten years: closed pier", "grow ten years: opened pier", "compare", "done"],
+  "reading": "In one simulated run of each, opening the pier gave the climbers more direct sun. The simulator ties growth to light, and the opened room grew faster at first, but by year ten both had grown about the same. One run, one seed, a provisional light model, and the plants' routes differ too: light is not shown to be the cause.",
+  "precomputed": "precomputed: nothing is calculated on this page"
+ }
+}
