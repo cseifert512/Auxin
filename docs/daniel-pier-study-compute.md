@@ -35,8 +35,9 @@ your eye:
 ## Running the growth runs again
 
 Clay's laptop is busy rendering. This is the part of the work that is computation, not rendering.
+Everything from here to the end is about that.
 
-### What it is
+## What the runs are
 
 The six-bay Bower's piers were opened: each pier's legs stand in a ring 2.4 m across instead of
 bunched at 0.7 m. The study asks what that does for the climbers planted at the feet. It makes the
