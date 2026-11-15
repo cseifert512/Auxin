@@ -32,8 +32,11 @@
   /** The named moment a day falls in. */
   const moment = (day) => [...P.moments].reverse().find((m) => m.day <= day) ?? P.moments[0];
   const load = (file) => { if (!cache.has(file)) { const img = new Image(); img.decoding = 'async'; img.src = file; cache.set(file, img); } return cache.get(file); };
-  /** Milliseconds a frame: brisk when a view has many, slow when few. */
-  const rate = (n = view().frames.length) => (n >= 24 ? 1000 / 8 : n >= 8 ? 1000 / 5 : 1200);
+  /** Milliseconds a frame, slow enough to see each date: half a second where a view has four dates a year (ten
+      years in about twenty seconds), longer where it has one a year. ?pace=2 doubles them, ?pace=0.5 halves them. */
+  const PACE = Number(query.get('pace')) > 0 ? Number(query.get('pace')) : 1;
+  const rate = (n = view().frames.length) => PACE * (n >= 24 ? 500 : n >= 8 ? 800 : 1500);
+  const END_HOLD = 3500 * PACE;   // on the last date, before it starts again
 
   // ---- the picture, edge to edge ----
   /** Where a picture sits on the stage: covering it, unless it is far wider or taller than the stage (a section),
@@ -143,6 +146,12 @@
     const n = v.frames.length;
     $('rendering').textContent = v.expected && n < v.expected ? `rendering: ${n} of ${v.expected}` : '';
     body.classList.toggle('drift', !calm && !s.section);   // perspective views drift slowly; sections stay put
+    // the words stand on the picture itself: white or ink, whichever the packing measured to read on this view
+    const w = v.words || {};
+    for (const zone of ['title', 'link', 'foot']) {
+      body.classList.toggle(`${zone}-ink`, w[zone] === 'ink');
+      body.classList.toggle(`${zone}-firm`, !!(w.firm && w.firm[zone]));
+    }
   }
   function chrome() {
     const s = station(), f = frame();
@@ -227,7 +236,7 @@
     state.day = Math.max(frames[0].day, Math.min(frames.at(-1).day, day)); show(); return changed();
   }
   function setLife(on) { state.life = !!on; return changed(); }
-  /** Plays through this view's frames, holds 2.5 s on the last, and starts again, until paused. It waits for a
+  /** Plays through this view's frames, holds on the last, and starts again, until paused. It waits for a
       picture that has not arrived rather than stepping past it. */
   function play(on = !state.playing, quiet = false) {
     clearTimeout(timer);
@@ -242,7 +251,7 @@
         state.day = f.day; show(); changed();
         i += 1;
         if (i < frames.length) timer = setTimeout(step, rate());
-        else { i = 0; timer = setTimeout(step, 2500); }
+        else { i = 0; timer = setTimeout(step, END_HOLD); }
       };
       timer = setTimeout(step, i === 0 ? 400 : rate());
     }

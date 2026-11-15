@@ -57,16 +57,30 @@ button:disabled { cursor: default; }
 .calm .pulse { display: none; }
 .calm #marks text { transition: none; }
 
-/* v8 sets a title within the drawing over a fade of paper (drawings.css .v8-growth-scene:after and .v7-title) */
-.veil { position: absolute; left: 0; right: 0; pointer-events: none; opacity: .85; }
-.veil.top { top: 0; height: 175px; background: linear-gradient(var(--drawing-paper), transparent); }
-.veil.foot { bottom: 0; height: 175px; background: linear-gradient(transparent, var(--drawing-paper)); }   /* the same fade, under the time line */
+/* The picture is whole to its edges: no fade of paper over its top or foot. The words stand on it in white, with only
+   a soft dark shadow to hold them where the picture is pale. */
+.veil { display: none; }
+/* White or ink, by what package_place.py measured on each view's frames under the title and under the time line
+   (manifest: views.<view>.words); place.js sets title-ink, foot-ink and, where neither colour reads on four fifths of
+   the zone, title-firm, foot-firm: a firmer halo. */
+.place {
+  --white-halo: 0 1px 2px rgba(0, 0, 0, .5), 0 0 12px rgba(0, 0, 0, .3); --white-firm: 0 1px 3px rgba(0, 0, 0, .8), 0 0 16px rgba(0, 0, 0, .6);
+  --ink-halo: 0 0 2px rgba(238, 243, 234, .6), 0 0 12px rgba(238, 243, 234, .4); --ink-firm: 0 0 3px rgba(238, 243, 234, .95), 0 0 14px rgba(238, 243, 234, .85);
+  --title-c: #fff; --title-h: var(--white-halo); --foot-c: #fff; --foot-h: var(--white-halo); --foot-s: rgba(0, 0, 0, .55);
+}
+.place.title-firm { --title-h: var(--white-firm); }
+.place.title-ink { --title-c: var(--ink); --title-h: var(--ink-halo); }
+.place.title-ink.title-firm { --title-h: var(--ink-firm); }
+.place.foot-firm { --foot-h: var(--white-firm); --foot-s: rgba(0, 0, 0, .8); }
+.place.foot-ink { --foot-c: var(--ink); --foot-h: var(--ink-halo); --foot-s: rgba(238, 243, 234, .6); }
+.place.foot-ink.foot-firm { --foot-h: var(--ink-firm); --foot-s: rgba(238, 243, 234, .95); }
 .place h1 { position: absolute; left: 52px; top: 34px; margin: 0; max-width: 1300px; font: italic 400 84px/1.08 var(--display);
-  letter-spacing: -.045em; color: var(--ink); text-shadow: 0 1px 18px var(--drawing-paper); pointer-events: none; }
-#back { position: absolute; left: 56px; top: 136px; font: 400 18px/1.3 var(--sans); color: #000; text-decoration: underline; text-underline-offset: 4px; text-shadow: 0 1px 3px var(--drawing-paper); }
-/* "What is real" as v8's inspect link and its panel (growth-player.css .v8-growth-inspect, details summary, .v8-growth-details) */
-.inspect { position: absolute; right: 52px; top: 59px; }
-#realbtn { font: 400 17px/1.3 var(--sans); color: #536d59; padding: 6px 0; white-space: nowrap; text-shadow: 0 1px 3px var(--drawing-paper); }
+  letter-spacing: -.045em; color: var(--title-c); text-shadow: var(--title-h); pointer-events: none; }
+#back { position: absolute; left: 56px; top: 136px; font: 400 18px/1.3 var(--sans); color: var(--title-c); text-decoration: underline; text-underline-offset: 4px; text-shadow: var(--title-h); }
+/* "What is real" is not shown: on the slide it read as an oddity. Where each part comes from stays in the manifest
+   (real, figures) and in the study's README. */
+.inspect { display: none; }
+#realbtn { font: 400 17px/1.3 var(--sans); color: var(--title-c); padding: 6px 0; white-space: nowrap; }
 #realbtn::after { content: ' +'; }
 #realbtn[aria-expanded="true"]::after { content: ' \2212'; }
 #real { position: absolute; right: 0; top: 38px; width: 520px; background: #eef3eafa; border: 1px solid #b1c1b5; padding: 24px 28px; box-shadow: 0 8px 25px #10282015; color: #284639; font: 400 15px/1.45 var(--sans); }
@@ -76,32 +90,34 @@ button:disabled { cursor: default; }
 
 /* the time line as v8's bottom playback controls (drawing-timeline.css .v8-drawing-timeline and its slider) */
 #dial { position: absolute; left: 52px; right: 52px; bottom: 42px; display: grid; grid-template-columns: 60px 245px minmax(0, 1fr); gap: 23px; align-items: center;
-  padding: 16px 0 7px; color: #000; text-shadow: 0 1px 3px var(--drawing-paper), 0 -1px 3px var(--drawing-paper); }
-#play { padding: 6px 0; color: #000; font: 400 18px/1.3 var(--sans); text-align: left; }
+  padding: 16px 0 7px; color: var(--foot-c); text-shadow: var(--foot-h); }
+#play { padding: 6px 0; color: var(--foot-c); font: 400 18px/1.3 var(--sans); text-align: left; }
 .when { display: flex; flex-direction: column; gap: 6px; }
 #date { font: 400 25px/1.15 var(--sans); white-space: nowrap; }
 #rendering { font: 400 13px/1.3 var(--sans); white-space: nowrap; }
 #rendering:empty { display: none; }
 .track { position: relative; min-width: 0; padding-bottom: 28px; }
 #scrub { display: block; width: 100%; appearance: none; -webkit-appearance: none; height: 22px; background: transparent; cursor: ew-resize; margin: 0; }
-#scrub::-webkit-slider-runnable-track { height: 1px; background: #000; }
-#scrub::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 9px; height: 18px; margin-top: -8px; border: 0; border-radius: 0; background: #000; }
-#scrub::-moz-range-track, #scrub::-moz-range-progress { height: 1px; background: #000; }
-#scrub::-moz-range-thumb { width: 9px; height: 18px; border: 0; border-radius: 0; background: #000; }
-#scrub:focus-visible { outline: 1px solid #000; outline-offset: 5px; }
+#scrub { filter: drop-shadow(0 0 2px var(--foot-s)); }
+#scrub::-webkit-slider-runnable-track { height: 2px; background: var(--foot-c); }
+#scrub::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 9px; height: 18px; margin-top: -8px; border: 0; border-radius: 0; background: var(--foot-c); }
+#scrub::-moz-range-track, #scrub::-moz-range-progress { height: 2px; background: var(--foot-c); }
+#scrub::-moz-range-thumb { width: 9px; height: 18px; border: 0; border-radius: 0; background: var(--foot-c); }
+#scrub:focus-visible { outline: 1px solid var(--foot-c); outline-offset: 5px; }
 #scrub:disabled { cursor: default; }
 #ticks { list-style: none; margin: 0; padding: 0; position: absolute; left: 4.5px; right: 4.5px; top: 28px; height: 18px; }
 #ticks li { position: absolute; top: 0; transform: translateX(-50%); }
 #ticks li:first-child { transform: none; }
 #ticks li:last-child:not(:first-child) { transform: translateX(-100%); }
-#ticks button { position: relative; font: 400 13px/1.3 var(--sans); color: #000; white-space: nowrap; }
-#ticks button::before { content: ''; position: absolute; left: 50%; top: -12px; width: 1px; height: 6px; background: #000; }
+#ticks button { position: relative; font: 400 13px/1.3 var(--sans); color: var(--foot-c); white-space: nowrap; }
+#ticks button::before { content: ''; position: absolute; left: 50%; top: -12px; width: 1px; height: 6px; background: var(--foot-c); box-shadow: 0 0 2px var(--foot-s); }
 #ticks li:first-child button::before { left: 0; }
 #ticks li:last-child:not(:first-child) button::before { left: auto; right: 0; }
 #ticks button[aria-current="true"] { text-decoration: underline; text-underline-offset: 3px; }
 #ticks li.missing button { opacity: .5; }
 #ticks li.quiet button { color: transparent; text-shadow: none; }   /* no room for its label beside a nearer one: the mark stays */
-.place button:focus-visible { outline: 2px solid #789951; outline-offset: 5px; }
+.place button:focus-visible { outline: 2px solid var(--foot-c); outline-offset: 5px; }
+#real, #real button { text-shadow: none; }   /* the opened panel is paper: its own dark words, no shadow */
 
 /* ?embed: the same slide, filling its iframe; title and controls are already set as v8 sets them */
 

@@ -105,6 +105,43 @@ def save(image: Image.Image, to: Path) -> Path:
     return to
 
 
+# Where the page sets words on a picture, as shares of it (left, top, right, bottom), and the two colours it has
+# for them. No fade of paper is laid under them, so each view is measured for which colour reads on it.
+WORD_ZONES = {"title": (0.03, 0.03, 0.50, 0.20), "link": (0.86, 0.05, 0.97, 0.10), "foot": (0.03, 0.84, 0.97, 0.97)}
+WORD_COLOURS = {"white": (255, 255, 255), "ink": (16, 40, 32)}
+READS, FIRM_UNDER = 3.0, 0.8   # a colour reads on a patch at 3 to 1; under four fifths of a zone, it is given a firmer halo
+
+
+def _luminance(rgb) -> float:
+    def lin(c):
+        c /= 255.0
+        return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+    return 0.2126 * lin(rgb[0]) + 0.7152 * lin(rgb[1]) + 0.0722 * lin(rgb[2])
+
+
+def reads(picture: Image.Image) -> dict:
+    """For each zone of words, the share of it on which each colour holds a contrast of 3 to 1 or better."""
+    out, w, h = {}, picture.width, picture.height
+    lum = {k: _luminance(c) for k, c in WORD_COLOURS.items()}
+    for zone, (x0, y0, x1, y1) in WORD_ZONES.items():
+        raw = picture.crop((int(x0 * w), int(y0 * h), int(x1 * w), int(y1 * h))).resize((48, 16), Image.BOX).tobytes()
+        patches = [_luminance(raw[i:i + 3]) for i in range(0, len(raw), 3)]
+        out[zone] = {k: sum(1 for p in patches if (max(l, p) + 0.05) / (min(l, p) + 0.05) >= READS) / len(patches) for k, l in lum.items()}
+    return out
+
+
+def words_for(measured: list) -> dict:
+    """The colour of each zone's words on a view: the one that reads on more of the zone in its worst frame."""
+    out = {"firm": {}, "measured": {}}
+    for zone in WORD_ZONES:
+        worst = {k: min(m[zone][k] for m in measured) for k in WORD_COLOURS}
+        best = max(worst, key=worst.get)
+        out[zone] = best
+        out["firm"][zone] = worst[best] < FIRM_UNDER
+        out["measured"][zone] = {k: round(v, 2) for k, v in worst.items()}
+    return out
+
+
 def timelapse(frames: Path, places: dict, moment_days: dict) -> dict:
     """views/timelapse/<view>/<nnn>.jpg with views/timelapse/frames.json, as far as it has been rendered.
     Not stamped, so not cropped. Each frame carries its own figures."""
@@ -140,6 +177,7 @@ def timelapse(frames: Path, places: dict, moment_days: dict) -> dict:
                 if expected:
                     views[view]["expected"] = expected
             entry = views[view]
+            entry.setdefault("_reads", []).append(reads(picture))
             frame = {"day": f["day"], "date": f["date"], "month": month(f["date"]), "file": written.relative_to(OUT).as_posix(),
                      "fig": {k: number(f[k], u) for k, u in FRAME_FIGURES.items() if f.get(k) is not None}}
             if f["day"] in moment_days:
@@ -147,6 +185,8 @@ def timelapse(frames: Path, places: dict, moment_days: dict) -> dict:
             if isinstance(f.get("places"), dict) and view in f["places"]:
                 frame["places"] = shares(f["places"][view])   # the camera moves: where each place falls on this frame
             entry["frames"].append(frame)
+    for entry in views.values():   # the colour of the words on each view, from every frame of it
+        entry["words"] = words_for(entry.pop("_reads"))
     return views
 
 
