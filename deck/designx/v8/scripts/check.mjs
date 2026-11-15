@@ -26,7 +26,7 @@ await context.route('**/*', async route => {
   if (process.env.DECK_FS_ROUTE === '0') { await route.continue(); return; }
   const pathname = decodeURIComponent(url.pathname);
   if (pathname === '/favicon.ico') { await route.fulfill({ status: 204, body: '' }); return; }
-  const documentPath=/^\/designx\/?$/.test(pathname)?'/designx/v8/index.html':/^\/designx\/1\/?$/.test(pathname)?'/designx/index.html':pathname;
+  const documentPath=/^\/designx\/?$/.test(pathname)?'/designx/index.html':/^\/designx\/1\/?$/.test(pathname)?'/designx/1/index.html':pathname;
   let file = resolve(deckRoot, `.${documentPath}`);
   try {
     if (!inside(file, deckRoot)) throw new Error('Path outside deck');
