@@ -27,7 +27,8 @@
   "fall_across_the_room_m": { "source": "quantity", "unit": "m", "label": "ground falls across room" },
   "timber_in_the_ground_m": { "source": "quantity", "unit": "mm", "scale": 1000, "label": "timber foot in soil" },
   "loosened_soil_m2": { "source": "quantity", "key": "loosened_soil_m3", "field": "bed_m2", "unit": "m²", "label": "bed of loosened soil" },
-  "piles": { "source": "quantity", "unit": "", "label": "screw piles" }
+  "piles": { "source": "quantity", "unit": "", "label": "screw piles" },
+  "root_reach_m": { "source": "frame", "unit": "m", "label": "root reach", "kind": "sketched by a stated rule, not simulated" }
  },
  "stations": [
   {
@@ -39,10 +40,10 @@
    },
    "figures": ["stem_m", "leaves", "flowers"],
    "targets": [
-    { "label": "Arrive", "at": ["path.bend"], "to": "arrival" },
-    { "label": "Look out", "at": ["room.middle"], "to": "lookout" },
-    { "label": "One pier, cut open", "at": ["pier.R1.P3.foot"], "to": "plant" },
-    { "label": "The ground", "at": ["hollow", "meadow.path"], "to": "section" }
+    { "label": "Arrive", "at": ["path.bend"], "to": "arrival", "figure": "leaves", "suffix": " leaves" },
+    { "label": "Look out", "at": ["room.middle"], "to": "lookout", "figure": "flowers", "suffix": " flowers open" },
+    { "label": "One pier, cut open", "at": ["pier.R1.P3.foot"], "to": "plant", "figure": "thickest_stem_mm", "suffix": " thickest stem" },
+    { "label": "The ground", "at": ["hollow", "meadow.path"], "to": "section", "figure": "root_reach_m", "suffix": " root reach" }
    ]
   },
   {
@@ -50,8 +51,8 @@
    "caption": { "default": "The room across the bend of the path", "year-6": "The growth has reached the crown" },
    "figures": ["stem_m", "flowers", "way_in_m"],
    "targets": [
-    { "label": "Look out", "at": ["way-in"], "to": "lookout" },
-    { "label": "One pier, cut open", "at": ["pier.R1.P3.foot"], "to": "plant" }
+    { "label": "Look out", "at": ["way-in"], "to": "lookout", "figure": "flowers", "suffix": " flowers open" },
+    { "label": "One pier, cut open", "at": ["pier.R1.P3.foot"], "to": "plant", "figure": "thickest_stem_mm", "suffix": " thickest stem" }
    ]
   },
   {
@@ -59,7 +60,7 @@
    "caption": { "default": "From the way in, out to the meadow", "planted": "Full sun for the first summers" },
    "figures": ["leaves", "flowers", "fall_across_the_room_m"],
    "targets": [
-    { "label": "Cut through this pier", "at": ["pier.R1.P6.foot"], "to": "section" }
+    { "label": "Cut through this pier", "at": ["pier.R1.P6.foot"], "to": "section", "figure": "root_reach_m", "suffix": " root reach" }
    ]
   },
   {
@@ -67,7 +68,7 @@
    "caption": { "default": "The uphill pier, roots to first joints" },
    "figures": ["thickest_stem_mm", "stem_m", "timber_in_the_ground_m"],
    "targets": [
-    { "label": "The whole cut", "at": ["pier.R1.P3.head"], "to": "section" }
+    { "label": "The whole cut", "at": ["pier.R1.P3.head"], "to": "section", "figure": "root_reach_m", "suffix": " root reach" }
    ]
   },
   {
@@ -75,8 +76,8 @@
    "caption": { "default": "A cut through two piers and their beds" },
    "figures": ["loosened_soil_m2", "fall_across_the_room_m", "piles"],
    "targets": [
-    { "label": "Closer at this pier", "at": ["pier.R1.P3.foot"], "to": "plant" },
-    { "label": "Look out", "at": ["look-out"], "to": "lookout" }
+    { "label": "Closer at this pier", "at": ["pier.R1.P3.foot"], "to": "plant", "figure": "thickest_stem_mm", "suffix": " thickest stem" },
+    { "label": "Look out", "at": ["look-out"], "to": "lookout", "figure": "flowers", "suffix": " flowers open" }
    ]
   }
  ],

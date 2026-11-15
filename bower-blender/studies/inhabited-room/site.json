@@ -54,14 +54,14 @@
    "radius_m": 16.0,
    "from_deg": 60.0,
    "to_deg": 120.0,
-   "width_m": 1.8,
-   "note": "From a gate in the garden wall, one gentle bend to the left, 17 m long: the Bower is first seen across the inside of the bend, through planting, and comes straight ahead only at the end, with the meadow through it."
+   "width_m": 1.6,
+   "note": "From a gate in the garden wall, one gentle bend to the left, 17 m long: the Bower is first seen across the inside of the bend, through planting, and comes straight ahead only at the end, with the meadow through it. Not a built path: the ground's own grass kept short, with the planting held back from it, and a few flat stones where it crosses the swale."
   },
   "mown": {
    "width_m": 1.6,
    "length_m": 30.0,
    "bend_deg": -24.0,
-   "note": "A mown path on from the look-out into the meadow."
+   "note": "On from the look-out into the meadow: the same grass, kept short."
   }
  },
  "beds": {
@@ -410,7 +410,26 @@
     0.006,
     0.004,
     0.0025
-   ]
+   ],
+   "ball_shown_days": 60
+  },
+  "timelapse": {
+   "note": "The same views photographed through the ten years, to be played as a film: the day after planting, then four days of every growing season (spring, early summer, high summer, autumn). No winter day is taken, because the site round the climbers is one summer afternoon and does not change with the date. `views` says which views are taken: 1 for every date, or a month and day for that day of each year only.",
+   "first": "2027-03-13",
+   "each_year": [
+    "04-25",
+    "06-15",
+    "08-05",
+    "10-20"
+   ],
+   "views": {
+    "arrival": 1,
+    "lookout": 1,
+    "plant": 1,
+    "whole": "06-15"
+   },
+   "scale": 0.5,
+   "samples": 16
   }
  },
  "planting": {

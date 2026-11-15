@@ -32,7 +32,23 @@ button:disabled { cursor: default; }
 .hot .ring { fill: rgba(238, 243, 234, .35); stroke: var(--paper); stroke-width: 2.5; }
 .hot .core { fill: var(--red); stroke: var(--paper); stroke-width: 2; }
 .hot text { font: 500 19px var(--sans); fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 6px; stroke-linejoin: round; }
-.hot:hover .ring, .hot:focus .ring { fill: rgba(180, 73, 47, .35); }
+.hot:focus .ring { fill: rgba(180, 73, 47, .35); }
+.hot .fig { font: 400 14px var(--sans); fill: var(--muted); }
+.hot .fig.tick-a { animation: tick-a 600ms ease-out; }
+.hot .fig.tick-b { animation: tick-b 600ms ease-out; }
+@keyframes tick-a { from { fill: var(--red); } }
+@keyframes tick-b { from { fill: var(--red); } }
+/* alive, in the factory's spirit: they arrive in turn, the dot pulses slowly, nothing reacts to hover */
+.hot .in { transform-box: fill-box; transform-origin: 0 50%; animation: arrive 360ms ease-out backwards; }
+.marks.again .hot .in { animation: none; }
+@keyframes arrive { from { opacity: 0; transform: scale(.6); } }
+.hot .pulse { fill: none; stroke: var(--red); stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: pulse 2.4s ease-out infinite; }
+@keyframes pulse { from { transform: scale(1); opacity: .8; } to { transform: scale(4); opacity: 0; } }
+.hot { transition: opacity 300ms ease; }
+.playing .hot { opacity: .55; }
+.still .hot .in, .still .hot .pulse { animation: none; }
+.still .hot .pulse { display: none; }
+@media (prefers-reduced-motion: reduce) { .hot .in, .hot .pulse, .hot .fig { animation: none !important; } .hot .pulse { display: none; } }
 #life { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .bird { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linecap: round; opacity: 0; }
 
@@ -53,15 +69,14 @@ button:disabled { cursor: default; }
 #date { font: 400 22px/1.2 var(--serif); padding-top: 4px; }
 .track { position: relative; padding-top: 6px; }
 #scrub { width: 100%; margin: 0; accent-color: var(--ink); }
-#ticks { list-style: none; margin: 0; padding: 0; position: relative; height: 80px; }
+#ticks { list-style: none; margin: 0; padding: 0; position: relative; height: 40px; }
 #ticks li { position: absolute; top: 0; transform: translateX(-50%); width: 120px; text-align: center; }
 #ticks li:first-child { transform: none; text-align: left; }
 #ticks li:last-child { transform: translateX(-100%); text-align: right; }
 #ticks button { font-size: 13px; line-height: 1.25; color: var(--muted); border-top: 2px solid var(--rule); padding-top: 6px; width: 100%; }
 #ticks button[aria-current="true"] { color: var(--ink); border-top-color: var(--red); }
 #ticks li.missing button { opacity: .45; }
-#ticks li:nth-child(even) { top: 34px; }   /* early moments sit close on a line of days: alternate rows */
-#ticks li:nth-child(even) button { border-top: 0; }
+#ticks li.quiet button { color: transparent; }   /* no room for its label beside a nearer one: the tick stays */
 
 .embed header .tools, .embed #rail, .embed #dial, .embed h1 { display: none; }
 .embed #pic { left: 0; top: 0; width: 1600px; height: 900px; }
@@ -92,14 +107,16 @@ button:disabled { cursor: default; }
 #status i { position: absolute; left: 0; bottom: 0; height: 2px; width: 0; background: var(--red); transition: width 800ms linear; }
 .rested #status i { background: var(--rule); }
 #after { position: absolute; left: 1204px; top: 124px; width: 348px; height: 740px; padding-left: 22px; border-left: 1px solid var(--rule); }
-#rows { width: 100%; border-collapse: collapse; font-size: 13px; }
-#rows th, #rows td { text-align: left; padding: 4px 6px 0 0; font-weight: 400; vertical-align: baseline; }
-#rows thead th { color: var(--muted); font-size: 12px; border-bottom: 1px solid var(--rule); padding-bottom: 4px; }
-#rows tbody th { padding-top: 9px; }
-#rows td { color: var(--muted); white-space: nowrap; padding-top: 9px; }
-#rows td.now { color: var(--ink); font-weight: 500; }
-#rows td[data-col="change"] { color: var(--red); }
-#rows tr.src td { font-size: 9.5px; color: var(--muted); white-space: normal; padding-top: 1px; line-height: 1.3; }
-#rows tr.sub td { padding-top: 16px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+.cols, #rows .fig { display: grid; grid-template-columns: 1fr 1fr; column-gap: 12px; }
+.cols { font-size: 12px; color: var(--muted); border-bottom: 1px solid var(--rule); padding-bottom: 4px; }
+.cols span:first-child { display: none; }
+#rows .fig { padding: 10px 0 8px; border-bottom: 1px solid var(--rule); align-items: baseline; }
+#rows .fig .name { font-size: 14px; }
+#rows .fig em { font: normal 500 16px var(--sans); color: var(--red); text-align: right; }
+#rows .fig b { font: 500 25px/1.15 var(--sans); color: var(--muted); letter-spacing: -.02em; }
+#rows .fig b.now { color: var(--ink); }
+#rows .sub { margin: 14px 0 0; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+#srcbtn { margin-top: 12px; font-size: 12px; color: var(--muted); border-bottom: 1px solid var(--rule); }
+#sources { margin: 6px 0 0; padding-left: 14px; font-size: 10px; line-height: 1.35; color: var(--muted); max-height: 220px; overflow: auto; }
 .reading { font-size: 13px; line-height: 1.45; margin: 18px 0 0; }
 #missing { position: absolute; left: 342px; bottom: 6px; margin: 0; color: var(--red); font-size: 12px; }

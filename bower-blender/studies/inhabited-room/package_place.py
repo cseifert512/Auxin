@@ -56,39 +56,107 @@ def number(value: float, unit: str) -> str:
     return f"{text} {unit}".strip()
 
 
-def pictures(frames: Path, days: dict) -> dict:
-    """Each view as a sequence of frames on one line of days. Today that is one picture per named moment
-    (views/<moment>/<view>.jpg); a longer sequence only needs more entries with their own day and date."""
-    places = load(HERE / "export" / "places.json")["cameras"]
-    crop = WORDS["crop_top"]
+MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+FRAME_FIGURES = {"stem_m": "m", "thickest_stem_mm": "mm", "leaves": "", "flowers": "", "roots_m": "m", "root_reach_m": "m"}
+
+
+def month(date: str) -> str:
+    """'2029-06-15' as 'June 2029': the drawing never names a day of the month."""
+    y, m = date.split("-")[:2]
+    return f"{MONTHS[int(m) - 1]} {y}"
+
+
+def place_shares(view: str, places: dict, share: float) -> dict:
+    out = {}
+    for place, p in places.get(view, {}).get("places", {}).items():
+        y = (p["y"] - share) / (1 - share)
+        if p["in_frame"] and 0 <= y <= 1:
+            out[place] = [round(p["x"], 4), round(y, 4)]
+    return out
+
+
+def save(image: Image.Image, to: Path) -> Path:
+    """WebP at quality 80 where Pillow can write it, JPEG otherwise."""
+    if image.width > MAX_W:
+        image = image.resize((MAX_W, round(image.height * MAX_W / image.width)), Image.LANCZOS)
+    if to.suffix == ".webp":
+        try:
+            image.save(to, "WEBP", quality=80, method=4)
+            return to
+        except (OSError, KeyError, ValueError):
+            to = to.with_suffix(".jpg")
+    image.save(to, "JPEG", quality=84, optimize=True, progressive=True)
+    return to
+
+
+def timelapse(frames: Path, places: dict, moment_days: dict) -> dict:
+    """views/timelapse/<view>/<nnn>.jpg with views/timelapse/frames.json, as far as it has been rendered.
+    Not stamped, so not cropped. Each frame carries its own figures."""
+    folder = HERE / "views" / "timelapse"
+    if not (folder / "frames.json").exists():
+        return {}
+    try:
+        listed = load(folder / "frames.json")["frames"]
+    except (json.JSONDecodeError, KeyError, OSError):
+        print("views/timelapse/frames.json could not be read (being rewritten?): stills only this time")
+        return {}
     views = {}
+    for f in listed:
+        for view in f.get("views", []):
+            source = folder / view / f"{f['index']:03d}.jpg"
+            if not source.exists():
+                continue   # not rendered yet
+            (frames / "tl" / view).mkdir(parents=True, exist_ok=True)
+            try:
+                with Image.open(source) as im:
+                    picture = im.convert("RGB")
+            except OSError:
+                continue   # still being written
+            written = save(picture, frames / "tl" / view / f"{f['index']:03d}.webp")
+            if view not in views:
+                with Image.open(written) as im:
+                    views[view] = {"size": list(im.size), "frames": [], "places": place_shares(view, places, 0)}
+            entry = views[view]
+            frame = {"day": f["day"], "date": f["date"], "month": month(f["date"]), "file": written.relative_to(OUT).as_posix(),
+                     "fig": {k: number(f[k], u) for k, u in FRAME_FIGURES.items() if f.get(k) is not None}}
+            if f["day"] in moment_days:
+                frame["moment"] = moment_days[f["day"]]
+            entry["frames"].append(frame)
+    return views
+
+
+def pictures(frames: Path, days: dict) -> dict:
+    """Each view as a sequence of frames on one line of days: the time-lapse where it has been rendered for a
+    view, otherwise one still per named moment (views/<moment>/<view>.jpg, cropped below the stamped strip)."""
+    places = load(HERE / "export" / "places.json")["cameras"]
+    views = timelapse(frames, places, {m["day"]: m["id"] for m in days.values()})
+    crop = WORDS["crop_top"]
+    stills = {}
     for moment in WORDS["moments"]:
         for source in sorted((HERE / "views" / moment).glob("*.jpg")):
             view = source.stem
+            if view in views:
+                continue
             image = Image.open(source).convert("RGB")
             w, h = image.size
             top = round(h * crop)   # the moment is stamped in the top-left strip; the page shows it itself
-            image = image.crop((0, top, w, h))
-            if image.width > MAX_W:
-                image = image.resize((MAX_W, round(image.height * MAX_W / image.width)), Image.LANCZOS)
-            name = f"{view}-{moment}.jpg"
-            image.save(frames / name, "JPEG", quality=84, optimize=True, progressive=True)
-            entry = views.setdefault(view, {"size": list(image.size), "frames": [], "places": {}})
-            entry["frames"].append({"day": days[moment]["day"], "date": days[moment]["date"], "moment": moment, "file": f"frames/{name}"})
-            if not entry["places"] and view in places:
-                share = top / h
-                for place, p in places[view]["places"].items():
-                    y = (p["y"] - share) / (1 - share)
-                    if p["in_frame"] and 0 <= y <= 1:
-                        entry["places"][place] = [round(p["x"], 4), round(y, 4)]
-    return views
+            written = save(image.crop((0, top, w, h)), frames / f"{view}-{moment}.jpg")
+            if view not in stills:
+                with Image.open(written) as im:
+                    stills[view] = {"size": list(im.size), "frames": [], "places": place_shares(view, places, top / h)}
+            entry = stills[view]
+            d = days[moment]
+            entry["frames"].append({"day": d["day"], "date": d["date"], "month": month(d["date"]), "moment": moment, "file": f"frames/{written.name}"})
+    return {**stills, **views}
 
 
 def figures(growth: dict, meadow: dict) -> dict:
     out = {}
     for key, f in WORDS["figures"].items():
         entry = {"label": f["label"]}
-        if f["source"] == "growth":
+        if f["source"] == "frame":   # only in the time-lapse's frames.json; nothing to fall back on in the stills
+            entry.update(kind=f["kind"], source="views/timelapse/frames.json", values={})
+        elif f["source"] == "growth":
             entry.update(kind="simulated", source="ground/meadow.growth.json, run " + growth["run"],
                          values={m["id"]: number(m[key], f["unit"]) for m in growth["moments"]})
         else:
@@ -198,7 +266,7 @@ def main() -> None:
         "computed": {"beforehand": "Every picture, place and figure.", "when_shown": "Nothing. The page chooses what to show."},
         "intention": site["intention"],
         "growth_note": site["growth"]["note"],
-        "moments": [{"id": m, "day": days[m]["day"], "date": says[m]["date"], "says": says[m]["says"]} for m in WORDS["moments"]],
+        "moments": [{"id": m, "day": days[m]["day"], "date": says[m]["date"], "month": month(says[m]["date"]), "says": says[m]["says"]} for m in WORDS["moments"]],
         "views": views,
         "figures": figures(growth, meadow),
         "real": WORDS["real"],
@@ -212,7 +280,8 @@ def main() -> None:
     for name in ("index.html", "pier-study.html", "place.css", "place.js", "pier-study.js", "README.md"):
         shutil.copyfile(HERE / "place" / name, OUT / name)
     total = sum(f.stat().st_size for f in OUT.rglob("*") if f.is_file())
-    print(f"{OUT}: {len(list((OUT / 'frames').iterdir()))} frames, {total / 1e6:.1f} MB")
+    tl = {v: len(x["frames"]) for v, x in views.items() if x["frames"] and "/tl/" in x["frames"][0]["file"]}
+    print(f"{OUT}: {total / 1e6:.1f} MB; time-lapse frames by view: {tl or 'none yet'}")
     for m in manifest["pier"]["missing"]:
         print("missing for the pier study:", m)
 

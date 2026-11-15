@@ -166,8 +166,8 @@ def on_arrival(x, y, margin=0.0) -> bool:
 
 
 def surface_z(x: float, y: float) -> float:
-    """What someone stands on at a point: the floor and the arrival path follow the even fall, a little proud of it."""
-    if hypot(x, y) <= floor_r(atan2(y, x)) or on_arrival(x, y):
+    """What someone stands on at a point: the floor is a little proud of the even fall; everywhere else it is the ground."""
+    if hypot(x, y) <= floor_r(atan2(y, x)):
         return plane(x, y) + BUILDUP
     return ground_z(x, y)
 
@@ -1110,13 +1110,7 @@ def room_ground(colls, mats, assets) -> None:
     top = lambda x, y: plane(x, y) + BUILDUP  # noqa: E731
     edge = [(floor_r(2 * pi * k / 180) * cos(2 * pi * k / 180), floor_r(2 * pi * k / 180) * sin(2 * pi * k / 180)) for k in range(180)]
     add_mesh("RG_floor", *prism(edge, lambda x, y: plane(x, y) - 0.15, top), colls["S20_ROOM_GROUND"], mats["gravel"], PROPOSAL, f"The room's floor: a clearing of rolled gravel about {2 * RF} m across, with an edge that wanders and that the planting grows over, following the ground at 1 in {fall} with no step and no platform. Stones lie at its edge. Whether 1 in {fall} is comfortable to stand and talk on for long is to be found out. No furniture.")
-    path = SITE["paths"]["arrival"]
-    outward(add_mesh("RG_arrival_path", *ribbon(ARRIVAL, path["width_m"] / 2.0, lambda x, y: plane(x, y) + BUILDUP - 0.004, lambda x, y: plane(x, y) - 0.12), colls["S20_ROOM_GROUND"], mats["gravel"], PROPOSAL, path["note"] + f" The same gravel as the floor, {path['width_m']} m wide, falling with the ground, with the planting coming to its edges."))
-    reach = LAND["swale"]["radius_m"]
-    over = [p for p in ARRIVAL if abs(hypot(*p) - reach) < 1.5]
-    outward(add_mesh("RG_swale_crossing", *ribbon(over, path["width_m"] / 2.0 + 0.18, lambda x, y: plane(x, y) + BUILDUP + 0.02, lambda x, y: plane(x, y) - 0.1), colls["S20_ROOM_GROUND"], mats["pad"], PROPOSAL, "A stone slab where the arrival path crosses the swale: you step over the water's way on the way in."))
-    mown = SITE["paths"]["mown"]
-    outward(add_mesh("RG_mown_path", *ribbon(MOWN, mown["width_m"] / 2.0, lambda x, y: ground_z(x, y) + 0.02, lambda x, y: ground_z(x, y) - 0.03), colls["S20_ROOM_GROUND"], mats["mown"], PROPOSAL, mown["note"]))
+    # The two paths are not built: each is the ground's own grass, kept short, with the planting held back from it (to_a_way).
     w = SITE["wall"]
     (wx, wy), a = w["through_m"], radians(w["along_deg"])
     for name, s0, s1 in (("south", w["from_m"], -w["gate_m"] / 2.0), ("north", w["gate_m"] / 2.0, w["to_m"])):
@@ -1138,6 +1132,9 @@ def room_ground(colls, mats, assets) -> None:
         if abs((a - ENTRY + pi) % (2 * pi) - pi) > radians(15) and abs((a - LOOKOUT + pi) % (2 * pi) - pi) > radians(15):
             r = floor_r(a) + rng.uniform(-0.55, 0.3)
             small.append((r * cos(a), r * sin(a), plane(r * cos(a), r * sin(a)) + 0.0))
+    reach = LAND["swale"]["radius_m"]
+    for at in [q for q in ARRIVAL if abs(hypot(*q) - reach) < 0.75][::2]:  # a few flat stones where the arrival path crosses the swale
+        small.append((at[0] + rng.uniform(-0.25, 0.25), at[1] + rng.uniform(-0.25, 0.25), ground_z(*at) - 0.02))
     scatter("RG_perching_stones", large, assets["rock_moss_set_02"], colls["S20_ROOM_GROUND"], (0.3, 0.5), BORROWED, "Stones at the edge of the floor, between the piers: something to perch on that is not furniture, and a hard edge the planting can grow against. Borrowed models (rock_moss_set_02, Poly Haven, CC0), a third to a half of their size.", seed=3)
     scatter("RG_small_stones", small, assets["rock_moss_set_01"], colls["S20_ROOM_GROUND"], (0.035, 0.085), BORROWED, "Small stones where the gravel meets the planting, so that the floor has no drawn edge. Borrowed models (rock_moss_set_01, Poly Haven, CC0), much reduced.", seed=5)
 
@@ -1154,15 +1151,6 @@ def beds(colls, mats, assets) -> None:
     """What is prepared under the planting round the piers. Nothing of it shows on the surface: there is no bed to see."""
     for name, a0, a1, outer in bed_edges():
         outward(add_mesh(f"BD_loosened_soil_{name}", *band(a0, a1, RF, outer, lambda x, y: plane(x, y) - 0.012, lambda x, y: plane(x, y) - DEPTH + 0.01), colls["S30_BEDS"], loosened(f"STUDY_loosened_soil_{name}", RB_SHELTER if name == "sheltered" else RB_SUN), PROPOSAL, f"The ground the climbers are planted in, loosened {DEPTH} m deep before planting and not boxed in or raised: the planting runs over it without a break, and it is whole under every pier but for the slender stubs that come up through it. {GROUND['quantities']['loosened_soil_m3']['says']}. In a section it is drawn fading into the ground round it, because it has no edge."))
-    size = SITE["planting_at_installation"]["root_ball_m"]
-    cut, beyond = [], []
-    for p in GROUND["plants"]:
-        x, y = p["root_m"]
-        (cut if abs(y - CUT_Y) < size / 2.0 else beyond).append(ball(x, y, plane(x, y) - 0.03 - size / 2.0, size / 2.0, size / 2.0))
-    note = f"Each climber's root ball as it goes in, {size} m across: a drawing assumption. Seen only in a section"
-    if cut:
-        add_mesh("BP_root_balls", *merge(cut), colls["S50_BOWER_PLANTING"], mats["root"], PROPOSAL, note + ", where the cut passes through it.", smooth=True)
-    add_mesh("BP_root_balls_beyond", *merge(beyond), colls["S50_BOWER_PLANTING"], mats["root_beyond"], PROPOSAL, note + ", faintly: these lie behind the cut.", smooth=True)
 
 
 _EDGE: dict = {}
@@ -1371,38 +1359,12 @@ def climbers(colls, mats) -> None:
     add_mesh("BP_climber_leaves", leaf_v, leaf_f, colls["S50_BOWER_PLANTING"], mats["leaf"], PROPOSAL, "Leaves on those stems, to show how little a new plant covers.")
 
 
-def grown_climbers(scene, colls, mats) -> list:
-    """The climbers at each moment of site.json, from the grown run; or, where no run is found, as a diagram of the day of planting."""
-    name = SITE["growth"]["run"]
-    scenes = REPO / "drawings-in-code" / "scenes" / SNAPSHOT
-    found = next((f for f in (scenes / "light" / f"{name}.growth", scenes / "runs" / name / "growth.json") if f.exists()), None)
-    if found is None:
-        log(f"no grown run {name} for {SNAPSHOT}: the climbers are drawn as a diagram of the day of planting. To grow them: {SITE['growth']['command']}")
-        climbers(colls, mats)
-        return []
-    sys.path.insert(0, str(HERE))
-    import grown
-
-    run = grown.load(found)
-    made = []
-    for moment in MOMENTS:
-        coll = bpy.data.collections.new(f"S50_{moment['id']}")
-        coll["study_note"] = f"{moment['says']}: the climbers on {moment['date']}, from the grown run {name}"
-        colls["S50_BOWER_PLANTING"].children.link(coll)
-        drew = grown.draw(run, moment["date"], coll, colls["S99_ASSET_SOURCES"], {"tag": tag, "status": SIMULATED, "finish": _finish}, moment["id"])
-        made.append({**moment, **drew, "collection": coll.name})
-        log(f"{moment['id']} ({moment['date']}): {drew['climbers']} climbers, {drew['stem_m']} m of stem, thickest {drew['thickest_stem_mm']} mm, {drew['leaves']} leaves, {drew['flowers']} flowers")
-    drawn_roots(run, made, colls, mats)
-    # each climber's first hand's breadth, from where it is planted to the foot of its cable: the run starts it at the cable
-    leads = [[(q["root_m"][0], q["root_m"][1], plane(*q["root_m"]) + MULCH - 0.02), tuple(q["cable_foot_m"])] for q in GROUND["plants"]]
-    poly_curve("BP_lead_in", leads, 0.006, colls["S50_BOWER_PLANTING"], mats["stem"], PROPOSAL, f"From where each climber is planted to the foot of its cable, {CFG['plant_in_m']} m away: the grown run starts each one at the cable itself.")
-    scene["study_growth"] = f"{found.name}: " + "; ".join(f"{m['id']} {m['date']}" for m in made)
-    return made
+TOOLS = None  # what grown.py needs of this file: set in grown_climbers
 
 
-def drawn_roots(run, moments, colls, mats) -> None:
-    """Each climber's roots at each moment: a sketch from stated rules (roots.py), sized from the stem the run grew.
-    The simulator does not model roots. Only a section shows them; the climber the cut passes through is drawn dark."""
+def root_systems(run) -> list:
+    """Every climber's ten-year root system, made once: a sketch from stated rules (roots.py), sized from the stem the
+    run grew. The simulator does not model roots. Each is (the plant, whether a section cuts through it, its reach, the system)."""
     import roots
 
     rule = SITE["growth"]["roots"]
@@ -1414,8 +1376,7 @@ def drawn_roots(run, moments, colls, mats) -> None:
     size = SITE["planting_at_installation"]["root_ball_m"]
     systems = []
     for q in GROUND["plants"]:
-        plant_id = by_station.get(q["id"].replace("climber.", "bed."))
-        base = thickest.get(plant_id, 0.01)
+        base = thickest.get(by_station.get(q["id"].replace("climber.", "bed.")), 0.01)
         x, y = q["root_m"]
         f, level = GROUND["footings"][q["pier"]], LEVEL[q["pier"]]
         sole = level + SUNK - SOLE
@@ -1426,26 +1387,145 @@ def drawn_roots(run, moments, colls, mats) -> None:
         things += [{"kind": "plate", "outline": [tuple(c) for c in plate], "top": sole, "bottom": sole - f["cap_depth_m"]} for plate in f["plates_m"]]
         reach = rule["reach_base_m"] + rule["reach_per_stem_diameter"] * 2.0 * base
         systems.append((q, abs(y - CUT_Y) < size / 2.0, reach, roots.system(q["id"], (x, y, plane(x, y)), reach, base, soil, things, last)))
-    for moment in moments:
-        coll = bpy.data.collections[moment["collection"]]
-        for cut in (True, False):
-            curve = bpy.data.curves.new(f"RT_{moment['id']}_{'cut' if cut else 'beyond'}", "CURVE")
-            curve.dimensions, curve.bevel_depth, curve.bevel_resolution, curve.use_fill_caps = "3D", 1.0, 1, True
-            metres = 0.0
-            for q, here, reach, system in systems:
-                if here != cut:
-                    continue
-                for root in roots.on_day(system, moment["day"], last):
-                    spline = curve.splines.new("POLY")
-                    spline.points.add(len(root["points"]) - 1)
-                    spline.points.foreach_set("co", [c for at in root["points"] for c in (*at, 1.0)])
-                    spline.points.foreach_set("radius", [max(r, rule["drawn_at_least_m"][min(root["order"], 2)]) for r in root["radius_m"]])
-                    metres += sum(hypot(hypot(b[0] - a[0], b[1] - a[1]), b[2] - a[2]) for a, b in zip(root["points"], root["points"][1:]))
-            curve.materials.append(mats["root"] if cut else mats["root_beyond"])
-            obj = bpy.data.objects.new(curve.name, curve)
-            coll.objects.link(obj)
-            tag(obj, PROPOSAL, f"Roots on {moment['date']}, {round(metres)} m of them drawn: a sketch from stated rules (roots.py), not simulated and not a horticultural claim. Each climber's reach is {rule['reach_base_m']} m plus {rule['reach_per_stem_diameter']} times the thickest stem the run gave it; they keep clear of the stubs, piles and sole. Fine roots are drawn thicker than they are, so that they can be seen. " + ("The climber the section cuts through." if cut else "Climbers behind the cut, drawn faintly."))
-        moment["roots_reach_m"] = [round(min(r for _, _, r, _ in systems), 1), round(max(r for _, _, r, _ in systems), 1)]
+    return systems
+
+
+def draw_roots(systems, day: int, last: int, coll, mats, label: str, date: str) -> dict:
+    """The roots on one day, into `coll`: the climber a section cuts through drawn dark, those behind the cut faintly.
+    While a climber is newly planted its root ball is drawn too; after that the roots have left it and it is not."""
+    import roots
+
+    rule = SITE["growth"]["roots"]
+    total, far = 0.0, 0.0
+    for here in (True, False):
+        curve = bpy.data.curves.new(f"RT_{label}_{'cut' if here else 'beyond'}", "CURVE")
+        curve.dimensions, curve.bevel_depth, curve.bevel_resolution, curve.use_fill_caps = "3D", 1.0, 1, True
+        metres = 0.0
+        for q, cut_here, reach, system in systems:
+            if cut_here != here:
+                continue
+            for root in roots.on_day(system, day, last):
+                spline = curve.splines.new("POLY")
+                spline.points.add(len(root["points"]) - 1)
+                spline.points.foreach_set("co", [c for at in root["points"] for c in (*at, 1.0)])
+                spline.points.foreach_set("radius", [max(r, rule["drawn_at_least_m"][min(root["order"], 2)]) for r in root["radius_m"]])
+                metres += sum(hypot(hypot(b[0] - a[0], b[1] - a[1]), b[2] - a[2]) for a, b in zip(root["points"], root["points"][1:]))
+                far = max(far, max(hypot(at[0] - q["root_m"][0], at[1] - q["root_m"][1]) for at in root["points"]))
+        curve.materials.append(mats["root"] if here else mats["root_beyond"])
+        obj = bpy.data.objects.new(curve.name, curve)
+        coll.objects.link(obj)
+        tag(obj, PROPOSAL, f"Roots on {date}, {round(metres)} m of them drawn: a sketch from stated rules (roots.py), not simulated and not a horticultural claim. Each climber's reach by year ten is {rule['reach_base_m']} m plus {rule['reach_per_stem_diameter']} times the thickest stem the run gave it; they keep clear of the stubs, piles and sole. Fine roots are drawn thicker than they are, so that they can be seen. " + ("The climber the section cuts through." if here else "Climbers behind the cut, drawn faintly."))
+        total += metres
+    if day <= rule["ball_shown_days"]:  # the ball it came in, while it is still all the plant has
+        size = SITE["planting_at_installation"]["root_ball_m"]
+        for here in (True, False):
+            balls = [ball(q["root_m"][0], q["root_m"][1], plane(*q["root_m"]) - 0.03 - size / 2.0, size / 2.0, size / 2.0) for q, cut_here, _, _ in systems if cut_here == here]
+            if balls:
+                obj = add_mesh(f"BP_{label}_root_balls_{'cut' if here else 'beyond'}", *merge(balls), coll, mats["root"] if here else mats["root_beyond"], PROPOSAL, f"Each climber's root ball as it goes in, {size} m across: a drawing assumption. Drawn only for the first {rule['ball_shown_days']} days; after that the roots have grown out of it. Seen only in a section.", smooth=True)
+    return {"roots_m": round(total), "root_reach_m": round(far, 1)}
+
+
+def grown_climbers(scene, colls, mats):
+    """The climbers and their roots at each moment of site.json, from the grown run; or, where no run is found, the climbers
+    as a diagram of the day of planting. Returns the moments drawn, the run and the root systems."""
+    global TOOLS
+    name = SITE["growth"]["run"]
+    scenes = REPO / "drawings-in-code" / "scenes" / SNAPSHOT
+    found = next((f for f in (scenes / "light" / f"{name}.growth", scenes / "runs" / name / "growth.json") if f.exists()), None)
+    if found is None:
+        log(f"no grown run {name} for {SNAPSHOT}: the climbers are drawn as a diagram of the day of planting. To grow them: {SITE['growth']['command']}")
+        climbers(colls, mats)
+        return [], None, None
+    sys.path.insert(0, str(HERE))
+    import grown
+
+    TOOLS = {"tag": tag, "status": SIMULATED, "finish": _finish}
+    run = grown.load(found)
+    systems = root_systems(run)
+    made = []
+    for moment in MOMENTS:
+        coll = bpy.data.collections.new(f"S50_{moment['id']}")
+        coll["study_note"] = f"{moment['says']}: the climbers on {moment['date']}, from the grown run {name}, and their roots, sketched"
+        colls["S50_BOWER_PLANTING"].children.link(coll)
+        drew = grown.draw(run, moment["date"], coll, colls["S99_ASSET_SOURCES"], TOOLS, moment["id"])
+        drew.update(draw_roots(systems, drew["day"], run["lastDay"], coll, mats, moment["id"], moment["date"]))
+        made.append({**moment, **drew, "collection": coll.name})
+        log(f"{moment['id']} ({moment['date']}): {drew['climbers']} climbers, {drew['stem_m']} m of stem, thickest {drew['thickest_stem_mm']} mm, {drew['leaves']} leaves, {drew['flowers']} flowers, {drew['roots_m']} m of root reaching {drew['root_reach_m']} m")
+    # each climber's first hand's breadth, from where it is planted to the foot of its cable: the run starts it at the cable
+    leads = [[(q["root_m"][0], q["root_m"][1], plane(*q["root_m"]) - 0.02), tuple(q["cable_foot_m"])] for q in GROUND["plants"]]
+    poly_curve("BP_lead_in", leads, 0.006, colls["S50_BOWER_PLANTING"], mats["stem"], PROPOSAL, f"From where each climber is planted to the foot of its cable, {CFG['plant_in_m']} m away: the grown run starts each one at the cable itself.")
+    scene["study_growth"] = f"{found.name}: " + "; ".join(f"{m['id']} {m['date']}" for m in made)
+    return made, run, systems
+
+
+def timelapse_dates(run) -> list:
+    """The days the time-lapse is photographed on: the day after planting, then the same few days of every growing season."""
+    import datetime
+
+    t = SITE["growth"]["timelapse"]
+    start = datetime.date.fromisoformat(run["start"])
+    end = (start + datetime.timedelta(days=run["lastDay"])).isoformat()
+    out = [t["first"]]
+    for year in range(start.year, int(end[:4]) + 1):
+        out += [f"{year}-{md}" for md in t["each_year"] if t["first"] < f"{year}-{md}" <= end]
+    return out
+
+
+def timelapse(scene, colls, cams, mats, run, systems, views: list, out_dir: Path) -> None:
+    """Each view asked for on every date of the time-lapse: <out>/<view>/<nnn>.jpg, and frames.json saying what each
+    frame is. Each date's climbers and roots are drawn, photographed and thrown away, so the scene file keeps only its
+    named moments. Nothing but the climbers and roots changes from frame to frame: the site is one afternoon throughout."""
+    import datetime
+
+    import grown
+
+    t = SITE["growth"]["timelapse"]
+    switch = bpy.data.node_groups["STUDY_section_switch"].nodes
+    notes = {"section": colls["S95_SECTION_NOTES"], "plant": colls["S96_PLANT_NOTES"]}
+    scene.render.use_stamp = False
+    for child in colls["S50_BOWER_PLANTING"].children:
+        child.hide_render = child.hide_viewport = True
+    temp = bpy.data.collections.new("S50_timelapse")
+    colls["S50_BOWER_PLANTING"].children.link(temp)
+    dates, frames = timelapse_dates(run), []
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for k, date in enumerate(dates):
+        started = time.time()
+        drew = grown.draw(run, date, temp, colls["S99_ASSET_SOURCES"], TOOLS, "tl")
+        drew.update(draw_roots(systems, drew["day"], run["lastDay"], temp, mats, "tl", date))
+        frame = {"index": k, "date": date, "day": drew["day"], "says": datetime.date.fromisoformat(date).strftime("%B %Y"), **{key: drew[key] for key in ("stem_m", "thickest_stem_mm", "leaves", "flowers", "roots_m", "root_reach_m")}, "views": []}
+        for view in views:
+            when = t["views"].get(view)
+            if when is None or (isinstance(when, str) and k and not date.endswith(when)):
+                continue  # this view is photographed on some dates only
+            v = SITE["cameras"][view]
+            scene.camera = cams[view]
+            on = bool(v.get("section"))
+            switch["section_on"].outputs[0].default_value = 1.0 if on else 0.0
+            switch["section_y"].outputs[0].default_value = v.get("cut_y_m", CUT_Y)
+            for key, coll in notes.items():
+                coll.hide_render = key != view
+            scene.cycles.samples = t["samples"]
+            scene.render.resolution_x, scene.render.resolution_y = (int(px * t["scale"]) for px in v["size_px"])
+            (out_dir / view).mkdir(exist_ok=True)
+            scene.render.filepath = str(out_dir / view / f"{k:03d}.jpg")
+            bpy.ops.render.render(write_still=True)
+            frame["views"].append(view)
+        frames.append(frame)
+        for obj in list(temp.objects):  # the day's plants are thrown away
+            data = obj.data
+            bpy.data.objects.remove(obj, do_unlink=True)
+            if data is not None and data.users == 0:
+                (bpy.data.curves if isinstance(data, bpy.types.Curve) else bpy.data.meshes).remove(data)
+        (out_dir / "frames.json").write_text(json.dumps({"note": "Written by build_scene.py --timelapse: one entry for each date photographed, with what the grown run has on the plants that day and which views have a picture of it (<view>/<index>.jpg). The roots are a sketch, not the run's.", "run": SITE["growth"]["run"], "snapshot": SNAPSHOT, "frames": frames}, indent=1) + chr(10), encoding="utf-8")
+        log(f"time-lapse {k + 1} of {len(dates)}, {date}: {', '.join(frame['views'])} in {round(time.time() - started)} s")
+    colls["S50_BOWER_PLANTING"].children.unlink(temp)
+    bpy.data.collections.remove(temp)
+    switch["section_on"].outputs[0].default_value = 0.0
+    for coll in notes.values():
+        coll.hide_render = True
+    show_moment(colls, MOMENTS[-1]["id"])
+    scene.camera = cams["arrival"]
 
 
 def show_moment(colls, moment_id: str) -> None:
@@ -1600,7 +1680,7 @@ def build(samples: int = 96):
     planting(colls, assets)
     foundations(colls, mats)
     supports(colls, mats)
-    moments = grown_climbers(scene, colls, mats)
+    moments, run, systems = grown_climbers(scene, colls, mats)
     water(colls, mats, assets)
     garden(colls, assets)
     people(colls)
@@ -1625,7 +1705,7 @@ def build(samples: int = 96):
         (HERE / "ground" / f"{CONFIG}.growth.json").write_text(json.dumps({"note": "Written by build_scene.py: what the grown run has on the plants at each moment the scene draws.", "run": SITE["growth"]["run"], "snapshot": SNAPSHOT, "moments": moments}, indent=1) + chr(10), encoding="utf-8")
     bpy.ops.wm.save_mainfile()
     log(f"saved {BLEND.name}: {len(bpy.data.objects)} objects")
-    return scene, colls, cams, moments
+    return scene, colls, cams, moments, (mats, run, systems)
 def pose_sheet(out_dir: Path) -> None:
     """Every figure in its pose, in a row: for checking the poses before they go into the scene."""
     bpy.ops.wm.read_homefile(use_empty=True, use_factory_startup=True)
@@ -1665,7 +1745,9 @@ def main(argv=None) -> None:
         if "--export" in argv:
             raise RuntimeError("the coordinated layers have not been re-made for the designed site: see the note above LAYERS")
         scale = float(argv[argv.index("--scale") + 1]) if "--scale" in argv else 1.0  # smaller pictures, for a cheap look
-        scene, colls, cams, moments = build(samples)
+        scene, colls, cams, moments, (mats, run, systems) = build(samples)
+        if "--timelapse" in argv and run:  # every date of the time-lapse, for these views
+            timelapse(scene, colls, cams, mats, run, systems, argv[argv.index("--timelapse") + 1].split(","), HERE / "views" / "timelapse")
         asked = argv[argv.index("--moments") + 1].split(",") if "--moments" in argv else [m["id"] for m in moments]  # which moments to render: all of them unless told
         render(scene, cams, colls, views, samples, out_dir, scale, [m for m in moments if m["id"] in asked])
         bpy.ops.wm.save_mainfile()

@@ -33,6 +33,8 @@
   const frame = (v = view()) => [...v.frames].reverse().find((f) => f.day <= state.day) ?? v.frames[0];
   /** The named moment a day falls in, for the words and figures. */
   const moment = (day) => [...P.moments].reverse().find((m) => m.day <= day) ?? P.moments[0];
+  /** A figure for the frame on show: the frame's own, else the moment's, else the one value the manifest has. */
+  const figure = (key, f, m) => f.fig?.[key] ?? P.figures[key]?.values?.[m.id] ?? P.figures[key]?.value ?? null;
   const say = (words, id) => (typeof words === 'string' ? words : words[id] ?? words.default ?? '');
   const preload = (v) => { for (const f of v.frames) if (!cache.has(f.file)) { const img = new Image(); img.src = f.file; cache.set(f.file, img); } };
 
@@ -46,20 +48,26 @@
     Object.assign(node.style, { width: `${w}px`, height: `${h}px`, left: `${x0}px`, top: `${y0}px` });
     node.dataset.station = station.id; node.dataset.file = f.file;
     const img = new Image(); img.alt = v.note; img.src = f.file;
-    const marks = svg('svg', { class: 'marks', viewBox: `0 0 ${w} ${h}` });
-    for (const target of station.targets) {
+    const marks = svg('svg', { class: `marks${shot?.dataset.station === station.id ? ' again' : ''}`, viewBox: `0 0 ${w} ${h}` });
+    station.targets.forEach((target, i) => {
       const name = target.at.find((n) => v.places[n]);
-      if (!name) continue;
+      if (!name) return;
       const [x, y] = [v.places[name][0] * w, v.places[name][1] * h];
       const left = x > w - 260;   // the label goes to whichever side has room
       const g = svg('g', { class: 'hot', tabindex: 0, role: 'button', 'aria-label': target.label });
-      g.append(svg('circle', { class: 'ring', cx: x, cy: y, r: 17 }), svg('circle', { class: 'core', cx: x, cy: y, r: 6 }),
-        svg('text', { x: x + (left ? -26 : 26), y: y + 6, 'text-anchor': left ? 'end' : 'start' }, target.label));
+      const inner = svg('g', { class: 'in', style: `animation-delay:${i * 120}ms` });   // they arrive one after another
+      const tx = x + (left ? -26 : 26), anchor = left ? 'end' : 'start';
+      const fig = svg('text', { class: 'fig', x: tx, y: y + 26, 'text-anchor': anchor });
+      fig.dataset.key = target.figure ?? ''; fig.dataset.suffix = target.suffix ?? '';
+      inner.append(svg('circle', { class: 'pulse', cx: x, cy: y, r: 8, style: `animation-delay:${(i * 0.6) % 2.4}s` }),
+        svg('circle', { class: 'ring', cx: x, cy: y, r: 17 }), svg('circle', { class: 'core', cx: x, cy: y, r: 6 }),
+        svg('text', { x: tx, y: y + 4, 'text-anchor': anchor }, target.label), fig);
+      g.append(inner);
       const go = () => goTo(target.to);
       g.addEventListener('click', go);
       g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
       marks.append(g);
-    }
+    });
     node.box = { x: x0, y: y0, w, h, places: v.places };
     node.append(img, marks);
     return node;
@@ -87,20 +95,34 @@
     $('title').textContent = station.title;
     $('back').disabled = state.station === P.start;
     $('caption').textContent = say(station.caption, m.id);
-    $('figures').replaceChildren(...station.figures.map((key) => {
+    $('figures').replaceChildren(...station.figures.filter((key) => figure(key, f, m) !== null).map((key) => {
       const fig = P.figures[key], li = document.createElement('li');
       li.innerHTML = '<b></b><span></span><small></small>';
-      li.children[0].textContent = fig.values ? fig.values[m.id] : fig.value;
+      li.children[0].textContent = figure(key, f, m);
       li.children[1].textContent = fig.label;
-      li.children[2].textContent = fig.kind; li.title = fig.source;
+      li.children[2].textContent = f.fig?.[key] ? `${fig.kind}, this frame` : fig.kind; li.title = fig.source;
       return li;
     }));
-    $('date').textContent = f.moment ? P.moments.find((x) => x.id === f.moment).says : f.date;
+    // each bubble's live figure, from the frame on show; it ticks when it changes
+    for (const t of shot?.querySelectorAll('text.fig') ?? []) {
+      const value = t.dataset.key ? figure(t.dataset.key, f, m) : null, text = value === null ? '' : value + t.dataset.suffix;
+      if (text === t.textContent) continue;
+      if (t.textContent) t.classList.toggle('tick-a', !t.classList.toggle('tick-b'));   // swap animations: no layout read
+      t.textContent = text;
+    }
+    $('date').textContent = f.month;
     $('scrub').value = f.day;
-    for (const li of $('ticks').children) {
+    // a tick's label shows when it is the moment on show, or when it has room beside those already shown
+    const shownAt = [];
+    const ticks = [...$('ticks').children].sort((a, b) => (b.dataset.moment === f.moment) - (a.dataset.moment === f.moment));
+    for (const li of ticks) {
+      const x = Number(li.dataset.x), room = shownAt.every((s) => Math.abs(s - x) > 130);
       li.classList.toggle('missing', !days.has(Number(li.dataset.day)));   // no picture of that day here: the view keeps the one before
+      li.classList.toggle('quiet', !room);
+      if (room) shownAt.push(x);
       li.firstChild.setAttribute('aria-current', String(li.dataset.moment === f.moment));
     }
+    document.body.classList.toggle('playing', state.playing);
     $('play').textContent = state.playing ? '❚❚ Pause' : '▶ Play';
     $('lifebtn').setAttribute('aria-pressed', String(state.life));
     $('life').style.display = state.life && P.life.views.includes(station.view) ? '' : 'none';
@@ -125,17 +147,26 @@
     state.day = Math.max(span[0], Math.min(span[1], day)); show(); return changed();
   }
   function setLife(on) { state.life = !!on; return changed(); }
-  /** Once through every frame of this view at a steady rate: brisk when there are many, slow when few. */
-  function play(on = !state.playing) {
+  /** Milliseconds a frame: brisk when a view has many, slow when few. */
+  const rate = (n = view().frames.length) => (n >= 24 ? 1000 / 12 : n >= 8 ? 1000 / 6 : 1200);
+  /** Once through every frame of this view at that steady rate, from `from` (a frame index). */
+  function play(on = !state.playing, from = 0) {
     clearTimeout(timer);
     state.playing = on;
     if (on) {
-      const frames = view().frames, ms = frames.length >= 24 ? 1000 / 12 : frames.length >= 8 ? 1000 / 6 : 1200;
-      let i = 0;
+      const frames = view().frames, ms = rate();
+      let i = from;
       const step = () => { setMoment(frames[i].day); i += 1; if (i < frames.length) timer = setTimeout(step, ms); else { state.playing = false; changed(); } };
       step();
     }
     return changed();
+  }
+  /** For the deck: seconds a full play of this view takes, and a seek within it that pauses. */
+  const duration = () => (view().frames.length * rate()) / 1000;
+  function setT(seconds) {
+    const frames = view().frames, i = Math.max(0, Math.min(frames.length - 1, Math.floor((seconds * 1000) / rate())));
+    play(false);
+    return setMoment(frames[i].day);
   }
   const nudge = (by) => { const frames = view().frames, i = frames.indexOf(frame()) + by; if (frames[i]) { play(false); setMoment(frames[i].day); } };
 
@@ -144,8 +175,9 @@
   $('scrub').addEventListener('input', (e) => { play(false); setMoment(Number(e.target.value)); });
   for (const m of P.moments) {
     const li = document.createElement('li'), button = document.createElement('button');
-    li.dataset.moment = m.id; li.dataset.day = m.day; li.style.left = `${((m.day - span[0]) / (span[1] - span[0] || 1)) * 100}%`;
-    button.type = 'button'; button.title = m.date; button.textContent = m.says;
+    const share = (m.day - span[0]) / (span[1] - span[0] || 1);
+    li.dataset.moment = m.id; li.dataset.day = m.day; li.dataset.x = share * $('ticks').clientWidth; li.style.left = `${share * 100}%`;
+    button.type = 'button'; button.title = m.says; button.textContent = m.month;
     button.addEventListener('click', () => { play(false); setMoment(m.id); });
     li.append(button); $('ticks').append(li);
   }
@@ -199,8 +231,9 @@
   if (!still) requestAnimationFrame(tick);
 
   // ---- for a slide that drives it ----
-  const actions = { goTo, setMoment, setLife, play, state: current };
-  Object.assign(window, { __goTo: goTo, __setMoment: setMoment, __setLife: setLife, __play: play, __state: current });
+  const actions = { goTo, setMoment, setLife, play, setT, state: current };
+  Object.assign(window, { __goTo: goTo, __setMoment: setMoment, __setLife: setLife, __play: play, __setT: setT, __state: current });
+  Object.defineProperty(window, '__duration', { get: duration });
   addEventListener('message', (event) => {
     const data = event.data;
     if (parent === window || event.source !== parent || data?.type !== 'bower-place:command') return;
