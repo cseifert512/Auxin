@@ -1,7 +1,4 @@
-/* Edition 08: one continuous twenty-slide story. Retains all eighteen v7
-   scenes in a new order and adds two same-place drawing briefs. baseSlide
-   identifies the original v7 position; null marks a new scene. Pending
-   drawings and proposed capabilities are not presented as completed work. */
+/* Edition 08: seventeen scenes. Consolidated learning and a concrete first-reference finding. */
 window.DESIGNX_V8_STORY = [
   {
     "number": 1,
@@ -10,7 +7,7 @@ window.DESIGNX_V8_STORY = [
     "theme": "cover image-slide",
     "purpose": "Begin with a place someone wants to inhabit: a garden room whose character emerges from structure, plants, ground, water, light, people and care. Introduce the first product and the means to make many together.",
     "stays": "The Bower identity, “And the means to make many,” and the first-product proposition. The engineered timber frame provides the initial space and structural load path.",
-    "drawing": "Keep the v7 cover while the first arrival draft is composed for the presentation. Review bower-blender/studies/inhabited-room/views/arrival.png: the furniture-free room, its ground, planting and people. Use the finished arrival on this slide and return to it on slide 20.",
+    "drawing": "Keep the v7 cover while the first arrival draft is composed for the presentation. Review bower-blender/studies/inhabited-room/views/arrival.png: the furniture-free room, its ground, planting and people. Use the finished arrival on this slide and return to it on the closing slide.",
     "status": "Existing v7 architectural concept retained. First scene arrival and section drafts exist; presentation composition and integration are pending. The scene uses six-bay-radial-v1 with provisional authored site proposals; it is not evidence of a completed Bower.",
     "transition": "Having made the proposition desirable, identify who might want the first one and why.",
     "speakerBridge": "We are beginning with an inhabitable garden room. The first question is who would value this kind of place enough to help bring it into being."
@@ -108,11 +105,23 @@ window.DESIGNX_V8_STORY = [
     "stays": "The existing Form, Measure and Machine studies, their controls and the distinction between established techniques and Bower’s proposed integration.",
     "drawing": "Retain the three selected stations with a compact Argesta heading, shared annotation hierarchy and bottom playback controls. Each selected operation explains its consequence for the room or assembly. Geometry, source timing, fourteen-station exploration and original notes remain unchanged.",
     "status": "Existing authored process animations. Scan deviations are schematic, not measurements from Bower production. The line has not been built.",
-    "transition": "Having shown a route to making, state the proposed offer through which a customer would commission, receive and care for a Bower.",
-    "speakerBridge": "That is the making we are developing. For the customer, it needs to become a clear offer for one complete place."
+    "transition": "A route to making needs a first commission. The England conversations explain what prospective clients still need to see.",
+    "speakerBridge": "We have been discussing Bowers with prospective clients. A repeated request is to see one completed place."
   },
   {
     "number": 10,
+    "baseSlide": 14,
+    "title": "The first Bower is the missing reference.",
+    "theme": "commercial-loop-slide",
+    "purpose": "Explain the specific commercial barrier found in England conversations: prospective clients want a completed Bower they can visit and assess.",
+    "stays": "The value of a built reference, grounded in founder-reported conversations with cultural institutions, estate owners and private prospects.",
+    "drawing": "Replace the commercial flywheel with the finding and its consequence: a place to visit, experience, examine and discuss. Use the studio typography; do not invent a built-project photograph, testimonial, number of prospects or conversion forecast.",
+    "status": "Founder-reported customer discovery supplied in November 2026. Repeated interest conditional on seeing a completed Bower; no orders or guaranteed conversion are asserted. The first built reference remains to be delivered.",
+    "transition": "The missing reference gives the first commission a concrete purpose. Explain how a client would commission and receive that place.",
+    "speakerBridge": "The first Bower needs to work for its client and be a place others can experience. This is the proposed route to commissioning it."
+  },
+  {
+    "number": 11,
     "baseSlide": 13,
     "title": "One Bower. Three steps.",
     "theme": "v7-commercial-model-slide",
@@ -124,7 +133,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "The third step matters as much as the first two. Care has to be designed into the room, as well as agreed in the offer."
   },
   {
-    "number": 11,
+    "number": 12,
     "baseSlide": null,
     "title": "Care is part of the architecture",
     "theme": "v8-care-slide",
@@ -132,71 +141,23 @@ window.DESIGNX_V8_STORY = [
     "stays": "The first room and the Grow stage of the proposed offer. Give establishment and care architectural substance without adding furniture or implying an operating care service.",
     "drawing": "Plan a view of the same room through establishment and seasonal tending. Show where someone reaches, waters, trains, inspects and maintains clearance, alongside changing occupation. Mark one assumption to observe in a real Bower and the design or care decision that evidence could change.",
     "status": "New care view is pending. Tending and occupation are authored scenarios, not measured outcomes. Care frequency, responsibilities, staffing, pricing and establishment commitments require agreement; no field observations are claimed.",
-    "transition": "Care creates opportunities to observe the same place we designed and made. Bring those questions into one shared design object.",
-    "speakerBridge": "As we make, inhabit and tend the room, we can compare our intentions with what happens. All of those observations need to refer back to the same place."
-  },
-  {
-    "number": 12,
-    "baseSlide": 9,
-    "title": "One learning system.",
-    "theme": "v7-learning-slide",
-    "purpose": "Define the shared object of learning: one Bower viewed through Geometry, Fabrication and Biology. Connect a measured member or joint to the spatial and living relationships it supports.",
-    "stays": "The Geometry, Fabrication and Biology lenses. Keep a single shared view underneath them so the audience recognises the same room.",
-    "drawing": "Use one shared room or section underneath the Geometry, Fabrication and Biology lenses. Geometry follows entry, enclosure and light; Fabrication follows the measured member, joint and footing; Biology follows rooting, water, support and care. Reuse the section introduced on slide 4 when it is available, changing emphasis rather than location.",
-    "status": "Existing digital assembly and illustrative questions. First same-place section draft exists; presentation composition, integration and coordinated lenses are pending. This view defines the design object to investigate and does not demonstrate validated structural or biological performance.",
-    "transition": "Once the object and its questions are clear, show the project cycle through which evidence could improve the next design.",
-    "speakerBridge": "These are three ways of looking at one room. A project gives us the opportunity to follow it from design through making, growth and use."
+    "transition": "Making, occupation and care let us compare what we intended with what happens. Follow one observation into a future design decision.",
+    "speakerBridge": "We already revise designs through our digital studies. Making and caring for a real Bower will give us another kind of evidence."
   },
   {
     "number": 13,
-    "baseSlide": 10,
-    "title": "Turn each build into better design rules.",
-    "theme": "learning-slide v4-laboratory v7-learning-overview",
-    "purpose": "Explain the project cycle: Design, Make, Grow, Measure and Learn. A specific assumption becomes something to observe, review and potentially revise before the next Bower.",
-    "stays": "The Design, Make, Grow, Measure and Learn cycle and its qualification as an intended capability.",
-    "drawing": "Keep the existing project cycle distinct from the preceding shared-object view. Anchor it in the pier assumption: an intended condition, a future observation during making or care, a review, then a possible revision to geometry or tending.",
-    "status": "Existing explanation of a proposed learning cycle. Generated scenarios are available; physical measurements, observed establishment and validated feedback rules are not demonstrated here.",
-    "transition": "The cycle states the purpose; the information trace explains how a finding would reach a design decision.",
-    "speakerBridge": "The cycle only improves the work if evidence can reach the right decision. Here is how that information would move."
-  },
-  {
-    "number": 14,
     "baseSlide": 11,
     "title": "How the system learns.",
     "theme": "v7-learning-flow-slide",
-    "purpose": "Trace the intended information flow from brief and budget through candidate geometry, checks, designer review, making and living, then through validation back to revised rules.",
-    "stays": "The detailed interactive flowchart, including cost, supplier quotes, validation and the distinction between revising one design and improving future rules.",
-    "drawing": "Keep the complete flowchart and its Design, Making, Growing and Cost lenses. A pauseable, scrubbable trace follows one explanation through selected nodes. Making follows target geometry, future measurements, validation and revised allowances. Growing follows a support hypothesis, future observation, review and possible rule revision. Selection is an authored explanation, not executing automation.",
-    "status": "Intended information flow. Geometry and fabrication are in development; integrated plantability, uncalibrated cost evaluation and physical feedback remain proposed. The external growth study does not establish that this entire flow operates.",
-    "transition": "Alongside technical learning, the inhabited and cared-for result could become a reference that creates demand for another commission.",
-    "speakerBridge": "That is how a project could improve our knowledge. The place itself can also help someone else understand what they want to commission."
+    "purpose": "Explain one learning process through a specific support-route question: design a relationship, observe establishment and tending, review the evidence, then revise a support or care decision. Keep digital iteration and physical evidence distinct.",
+    "stays": "The complete interactive information flow, its making, growing and cost traces, and the shared geometry linking them. Consolidate the separate shared-object, project-cycle and coupled-system slides into this explanation.",
+    "drawing": "Begin with the Growing trace: a proposed support route, future establishment and care observations, evidence review, and a possible revision. Allow the presenter to pause, select a node, or explore Design, Making, Cost and Whole system within this one drawing.",
+    "status": "Existing digital geometry and growth studies support design iteration. Integrated checks and feedback from built Bowers remain in development. Designing each Bower and Making and living with it describe project phases, not software readiness. The trace is authored and reports no field observations.",
+    "transition": "Delivering the first place and learning from it requires the complementary work of the founders.",
+    "speakerBridge": "Each project can provide both a place future clients can visit and evidence that improves our work. Building that connection is how we work together."
   },
   {
-    "number": 15,
-    "baseSlide": 14,
-    "title": "Built proof creates demand.",
-    "theme": "commercial-loop-slide",
-    "purpose": "Show the commercial consequence of delivering a desirable place: a commission can become an inhabitable reference, create further interest and support possible reinvestment.",
-    "stays": "Commission, Bower, Reference, Demand and Reinvest. Keep the commercial loop, with reinvestment dependent on project economics and finance.",
-    "drawing": "Plan the same-place sequence requested in v7: a site and brief; the room being delivered; the inhabited and tended place; people encountering and sharing it; and a next commission informed by it. Change the central view with each stage while retaining the identity of the Bower.",
-    "status": "Proposed commercial pathway. First arrival and section drafts exist, but the commission-to-reference stage drawings remain pending. No completed reference project, measured demand conversion or self-financing factory is claimed.",
-    "transition": "Connect the commercial and learning paths: the next commission can draw on both a trusted reference and better design knowledge.",
-    "speakerBridge": "The next Bower can start with two things the first did not have: a place people can visit, and evidence we have reviewed and learned from."
-  },
-  {
-    "number": 16,
-    "baseSlide": 15,
-    "title": "Every Bower can teach the next.",
-    "theme": "coupled-slide",
-    "purpose": "Bring repeatability into focus: commissions provide places and references, while checked observations can improve the shared design and production method.",
-    "stays": "The connected making-and-growing and commercial systems, the “Projects + observations” and “Better design rules” bridges, and the existing economic qualification.",
-    "drawing": "Keep the coupled diagram. Return briefly to the first room and the pier decision as the concrete example linking a commission, an observation and a potential revision.",
-    "status": "Intended learning and commercial systems. Plantability rules require validation; further development depends on project economics and finance. Early commissions do not automatically fund a factory or complete research programme.",
-    "transition": "Explain who is taking responsibility for connecting the architecture, living systems, computation and making.",
-    "speakerBridge": "Building that connection is also how we have to work together."
-  },
-  {
-    "number": 17,
+    "number": 14,
     "baseSlide": 16,
     "title": "Architecture. Ecology. Software. Manufacturing.",
     "theme": "team-slide",
@@ -208,7 +169,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "This is the team and the work we are beginning with. The reason to develop the method reaches well beyond one garden room."
   },
   {
-    "number": 18,
+    "number": 15,
     "baseSlide": 1,
     "title": "We’re about to build the world again.",
     "theme": "material-problem-slide",
@@ -220,7 +181,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "If we are about to build so much, the way those places participate in the living world matters. A room is where we begin to develop that approach."
   },
   {
-    "number": 19,
+    "number": 16,
     "baseSlide": 17,
     "title": "A room is the beginning.",
     "theme": "v7-future-slide",
@@ -232,7 +193,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "That is the horizon. The useful next step is to make the first Bower real and establish how we will deliver and learn from it."
   },
   {
-    "number": 20,
+    "number": 17,
     "baseSlide": 18,
     "title": "Buildings that grow.",
     "theme": "closing image-slide",
