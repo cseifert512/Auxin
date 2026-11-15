@@ -42,7 +42,9 @@ from bower.joints import find_joints  # noqa: E402
 from bower.lines import training_lines  # noqa: E402
 from bower.timber import build_design_timber  # noqa: E402
 
-SITE = json.loads((HERE / "site.json").read_text(encoding="utf-8"))
+# Which site: site.json, the designed one, or with `--site site.first-pass.json` the level garden of the first pass.
+SITE_FILE = sys.argv[sys.argv.index("--site") + 1] if "--site" in sys.argv else "site.json"
+SITE = json.loads((HERE / SITE_FILE).read_text(encoding="utf-8"))
 FOUND = "found: the existing work, as it stands"
 GENERATED = "generated: the building model's own code on the snapshot's design"
 PROPOSAL = "proposal: authored for this study"
@@ -321,6 +323,17 @@ def main() -> None:
     folder = HERE / "ground"
     folder.mkdir(exist_ok=True)
     for name, cfg in SITE["configurations"].items():
+        if cfg["footing"] == "sole":  # the pier designed for the plant, on the designed site
+            import set_out_meadow
+
+            out = set_out_meadow.set_out(name, cfg, SITE)
+            (folder / f"{name}.json").write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8")
+            print(f"{name} ({out['snapshot']}):")
+            for key, entry in out["quantities"].items():
+                print(f"   {key}: {entry['says']}")
+            notes = sorted({f["review"] for f in out["footings"].values() if f["review"]})
+            print("   footings to review:", notes or "nothing")
+            continue
         out = set_out(name, cfg)
         (folder / f"{name}.json").write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8")
         q = out["quantities"]

@@ -1,285 +1,212 @@
-# Inhabited room: the six-bay Bower as a place, at installation
+# Inhabited room: the six-bay Bower at a threshold, on the day it is planted
 
-A first scene study for [docs/fable-first-scene.md](../../../docs/fable-first-scene.md). One editable
-Blender scene puts the existing six-bay room on ground: an approach, a floor, planted edges, rooting
-soil, footings, the plants' way up, water, a way round for care, a garden and people. Two views are
-taken from that one scene. The same scene is then built in three configurations of one pier, and
-exported as a drawing a viewer can explore:
-[drawings-in-code/exports/deck/inhabited-room/](../../../drawings-in-code/exports/deck/inhabited-room/index.html)
-(its interface is in that folder's [README](explore/README.md)).
+One editable Blender scene of the six-bay Bower as a place, and a worked decision made in it: **what
+the plant needs at a pier, and what that changes in the ground, the structure, the making and the
+experience of the room.**
 
-| | |
+The site is designed, not surveyed. Nothing here is engineered, no growth is simulated, and every
+size is provisional. What is generated, what is proposed and what is borrowed are kept apart all the
+way through; see "Four kinds of thing".
+
+## What to open
+
+| Open | To see |
 |---|---|
-| ![arrival](views/arrival.png) | `views/arrival.png`, camera `CAM_arrival`: the eye of someone arriving from the south, 1.6 m above the path. |
-| ![section](views/section.png) | `views/section.png`, camera `CAM_section`: the same scene cut at the southern feet of piers `R1.P6` and `R1.P3`, looking north. |
-| ![plan](views/plan.png) | `views/plan.png`, camera `CAM_site_plan`: the layout from above, north up, for checking the two against each other. |
+| `views/arrival.png` | Arriving: the Bower across the bend of the path, through planting |
+| `views/lookout.png` | From just inside: through the room and out to the meadow |
+| `views/section.png` | The whole place cut through its uphill and downhill piers |
+| `views/plant.png` | The plant's view: one pier from under its roots to its first joints |
+| `views/whole.png`, `views/plan.png` | The whole place, raised and from above |
+| `inhabited_room.blend` | The scene itself: named collections, six cameras, a note on every object |
+| `site.json` | The site, as authored |
+| `ground/meadow.json` | The pier as set out, with every quantity quoted below and where it comes from |
 
-These three stills are from the first pass (commit `8aae963`) and show the corrected baseline. Since
-then the figure tending the plants has moved from the west pier to `R1.P1`, and piers `P3` and `P6`
-have gained the feeder they were missing; the stills have not been drawn again.
+## The site
 
-Nothing here is measured from a real Bower, and nothing in the scene is simulated growth. Every size
-is provisional. No foundation is engineered, no soil is known, and no horticultural requirement is
-claimed.
+**Intention: a threshold between garden and landscape. A place to pause, look out and feel
+sheltered.**
+
+A cultivated garden opens into a meadow, with woodland along one edge. The Bower stands where the
+mown grass stops.
+
+- **Arrival.** A path from a gate in the garden wall makes one gentle bend to the left, 17 m long.
+  The Bower is first seen across the inside of the bend, through planting, and comes straight ahead
+  only at the end, with the meadow visible through it. The path steps over the swale on a stone slab.
+- **The room.** You come in through one bay and look out through the one opposite. The other four
+  bays are planted across: shrubs and ferns on the woodland side for shelter, low planting on the
+  sunny side so the light and the view come in. A mown path goes on from the look-out into the
+  meadow.
+- **Light.** Woodland to the north and east, open sky to the south and west, and one afternoon: the
+  sun in the south-west, 27 degrees up. The sky is a photograph; no date or latitude is modelled.
+- **Ground.** One even fall of 1 in 25, 0.48 m across the room. Nothing is levelled: the floor is
+  bound gravel that follows the ground, and each pier's legs are cut to that pier's own level. The
+  timber runs 75 mm (about 3 in) into the soil and comes straight out of it: no footing is seen.
+  The soil is continuous round every pier.
+- **Water.** A swale round the uphill side takes the garden's run-off round the room, not through
+  it. It and a line of pebbles from the floor's low edge end in a planted hollow below. A standpipe
+  and a drip line are for the establishment years only.
+- **Life.** Two people arriving, three pausing (two at the look-out, one looking up), one tending a
+  climber from the floor. No furniture.
+
+North lies toward 135 degrees in the building's axes (`site.json`, `setting`), so that the section,
+which looks along +Y, has the woodland behind it.
+
+## The worked decision: a pier designed for the plant
+
+The first pass of this study ran the building model's own ground draft on the level six-bay room
+and found that **all 24 climbers the grown planting starts from stand on a steel pile cap**. The
+draft's answer keeps the cap and moves the plants out, to twelve root zones, handing each to its
+lines 2.7 to 3.1 m up. (`first-pass/README.md`, "One pier, three ways".)
+
+This pass starts from the plant instead. A woody climber needs soil where it is planted, something
+to climb from the ground up, and room for its stem to thicken for decades without bearing on the
+building. From that:
+
+| | What changes | In numbers (`ground/meadow.json`) |
+|---|---|---|
+| **Ground** | No platform and no plate. The room stands on the slope as it is. Each pier has a buried steel sole on three screw piles: a plate under the two arch legs, one curved beam under the six lattice legs, two ties. The timber feet stand on it 75 mm under the soil, so nobody sees a footing. Its bars are narrow, with soil over, under and between them, and no climber's root ball has steel under it. The two beds are the garden's own soil, loosened and mulched in place, not boxed in. | 24 of 24 climbers rooted in soil. 0.96 m² of steel within 1.81 m² at each pier, its top 75 mm under the soil. 18 piles. 139 m² of bed loosened 0.6 m deep. |
+| **Structure** | Each pier's legs run on down to that pier's ground; nothing above the feet moves. Each leg that takes a climber carries a cable for the trunk, held 200 mm off the timber at the foot and coming in to 75 mm over 2.5 m, so a thickening stem cannot bear on a member or work into a joint. Each climber is planted 0.12 m from the foot of its own cable. Thin growth is tied to the timber by hand. | Six lengths of leg: 0, 0.064, 0.175, 0.304, 0.415 and 0.479 m longer than on level ground. 232 m of cable in 48 stretches on 500 standoffs, 75 to 195 mm long. |
+| **Making** | The roof is the level room's. Only the members that stand on the ground are made longer, each by its pier's amount. Some pass the longest piece that can be made and gain a scarf. Every joint is wrapped in fine mesh to keep growth out. | 32 of 111 members change length, by up to 0.89 m (a hoop that stands at two piers); 79 are unchanged. 7 more scarfs: 620 joints, not 613. 620 joints to wrap, 56 of them within 3.2 m of the ground. |
+| **Experience** | No step and no ramp: you walk down a gentle slope into the room and out to the meadow. The way in is between planted legs. The climbers are tended from the floor and from the two thresholds, standing, with the cable at hand. | 3.61 m between the legs at the way in, for a 1.8 m path. 65 m² of floor. |
+
+The ground draft's three rules for piles could not all be met on the level room's frame (a pile
+stood 0.24 m from a climber, under the 0.3 m asked). Here they are: piles 1.26 m apart at the least,
+no foot more than 0.56 m from one, none nearer than 0.55 m to a climber.
+
+### What we would need to learn from building it
+
+Each of these is a number or a choice in this design that nothing yet stands behind.
+
+1. **How thick each stem gets at its foot, and how fast.** The 200 mm gap is an allowance. The
+   species library holds no girth figure. Measure it every year on a built pier.
+2. **Whether a stem takes the cable.** A twiner 200 mm from a timber leg may take the leg. How much
+   of the gardener's time does it take to keep thick growth on the cable and thin growth on the
+   timber, per pier, per year?
+3. **Whether mesh protects a joint or harms it.** It may keep shoots out and hold wet leaves against
+   end grain. What mesh, how fixed, and how is a joint inspected behind it?
+4. **Whether timber can stand in the ground.** The feet run 75 mm into the soil so that no footing
+   shows. The soil line is where timber rots. Which timber, treatment or detail (a drained collar, a
+   sleeve, a foot that can be replaced) makes it last, and how is a foot looked at once it is buried
+   and planted round?
+5. **Whether the sole stands up.** No load, no thrust from the arches and no soil has been looked
+   at. The piles pass through 0.6 m of loosened bed, and the steel sits in wet, cultivated soil.
+6. **What roots do at steel.** Do they thicken round a pile shaft or lift a beam? Is 0.55 m enough?
+7. **What limits the climbers in open ground.** Soil volume is no longer the limit; water, the bed
+   planting and the woodland's roots on the sheltered side may be.
+8. **Where the water goes.** Whether the floor sheds to the look-out as drawn, whether the swale is
+   needed, whether the hollow holds water or drains.
+9. **Whether people are comfortable on 1 in 25.** Standing and talking for a while, with a pram or
+   a chair; whether bound gravel stays put on it.
+10. **How accurately the ground must be known before milling.** Six leg lengths are free to a robot,
+   but they fix the building to one survey. What tolerance, and what adjustment at the shoe?
+11. **Which climber suits which pier.** The planting was carried from the level room without regard
+    to slope, shade or the woodland. The planting itself is still to be designed.
+12. **What else lives here.** The hollow, the log, the meadow and the woodland edge are intentions
+    for other life. What to watch for, and when, is not yet written down.
+
+### What is not in this pass: time
+
+Nothing grows here. The picture is the day of planting, which is honest and is also the least
+interesting day in the life of the building. Growing the planting on this pier in the simulator
+(`drawings-in-code`: convert, plant, grow) would show whether the stems take their cables, where
+growth reaches joints and what the room is like in year three and year ten. Those results would
+then change the pier again. That return trip, from grown result back to the building's parameters,
+is what "closing the loop" means; this pass makes the first half of one turn.
 
 ## Four kinds of thing
 
-Every object in the scene carries `study_status` and `study_note` (Object properties > Custom
-Properties). The section's labels use the same four words.
+Every object in the scene carries `study_status` and `study_note`.
 
-| Kind | What it covers | Where it comes from |
+| Status | What | From |
 |---|---|---|
-| linked | The timber (111 members) and the snapshot's nine cameras. | `releases/six-bay-radial-v1/bower.blend`, by a relative link. Unchanged. |
-| generated | Pile caps, screw piles, root zones, training lines, feeders, hand-overs. | `ground/<configuration>.json`, written by `set_out_ground.py`: the building model's own `bower/ground.py` and `bower/lines.py`, run unchanged on the snapshot's frozen design. |
-| proposal | Levels, floor, paths, steel edge, beds, the climbers as planted, care path and pads, standpipe, drip line, the fall of the ground and the hollow, cameras, labels. | Authored for this study in `site.json`. Change a number and build again. |
-| borrowed | People, garden plants, ground textures, the sky. | `assets.json`: Poly Haven (CC0) and Microsoft Rocketbox (MIT). Not Bower geometry and not Bower planting. |
+| **linked** | The timber: 111 milled members | `releases/six-bay-meadow-v1/bower.blend`, unchanged |
+| **generated** | Each pier's level, the trunk cables and standoffs, the joints | The building model's own code on the snapshot's design (`bower/floor.py`, `bower/lines.py`, `bower/joints.py`), run by `set_out_ground.py` |
+| **carried** | Which climber goes with which leg | `drawings-in-code/scenes/six-bay-radial-open-pier/planting.json` |
+| **proposal** | The site; the sole and piles; where each climber is planted; the mesh; the climbers as drawn | `site.json`, `set_out_meadow.py`. Authored here, provisional, not engineered |
+| **borrowed** | People, vegetation, ground textures, sky | `assets.json` |
 
-There is no fifth kind. Simulated behaviour is not in the scene: the climbers are diagrams of a newly
-planted stem, and the grown plantings of `drawings-in-code` are used only as data (which taxon the
-planting puts at which pier, and where it roots them). Nothing has been measured or observed.
+Nothing is **simulated** and nothing is **measured from a real thing**. The quantities above are
+measured from this geometry.
 
-## Baseline
+## What changed in the building model
 
-`six-bay-radial-v1`, because `drawings-in-code/snapshot.json` selects it: the grown plantings, the
-plates and the deck already stand on it. `v2` only recuts 18 laps. `open-pier` is a study and is the
-next thing to bring to this scene, not its starting point.
+Two optional settings, both in `bower-blender/README.md`. Every existing design and release builds
+exactly as before.
 
-What was found on inspection:
+- `rooms[].piers[].foot_z_m`: a pier's own foot level. Legs are lengthened to it ("A room on sloping
+  ground").
+- `timber.training_lines.foot_gap_m`, `foot_taper_m`: a cable stands further off at a foot.
 
-- The Blender that was running held an unsaved panel session on the eight-bay model, opened from the
-  old folder (`C:\BOWER\bower-blender\output\bower_v1.blend`). It was read and left alone. The study
-  was built and rendered in a second, windowless Blender (`run_headless.ps1`).
-- The snapshot's materials carry a viewport colour and nothing a path tracer can use, and a linked
-  material cannot be edited. So `BOWER_V1` is linked whole, as `releases/README.md` describes, and
-  its timber is shown through `S05_BOWER_TIMBER`: local objects with the members' own names and
-  properties, on the same linked meshes, with study materials in each family's own colour. The
-  source cameras (`70_CAMERAS`) are in the scene as linked.
-- `design.json` is the eight-bay room now, and its `ground` block is the draft at that room's
-  `R1.P6`. The six-bay snapshots carry no root zones and no training lines.
+`design/six_bay_meadow.json` uses both. Its snapshot is `releases/six-bay-meadow-v1`. The design's
+foot levels and the site's ground must agree: `set_out_meadow.py` stops if they are more than 4 mm
+apart at any pier.
 
-## The ground code, run on this room (generated)
+## The scene
 
-`python set_out_ground.py` runs `ground.beside_pier` at all six piers and then `ground.lay`. On
-`six-bay-radial-v1` it gives:
+`build_scene.py` makes `inhabited_room.blend` from an empty file every time.
 
-| | |
+| Collection | Holds |
 |---|---|
-| Root zones | 12, one outside each arch leg: 0.5 m radius, 0.6 m deep, 0.45 m3 each, 0.3 m below the feet. 4 to 6% of each lies under a cap. |
-| Footings | 6 steel caps of 0.92 to 0.93 m2, each on 3 screw piles 2.5 m long: 18 piles. |
-| Training lines | 24, on the hoops and the lattice legs that stand on the floor: 238 m of cable. |
-| Feeders | 24 cables, 48 m, on the twelve arch legs. |
-| Hand-overs | 36, between 2.66 and 3.13 m above the floor, with ties of 0.24 to 0.39 m. |
-| Line a plant from outside cannot use | 101 m of the 238 m: everything below the hand-overs. |
-| Entrances | 5.6 m between arch legs, 5.0 m between root zones, in every bay. |
+| `S05_BOWER_TIMBER` | the linked timber, with materials that render |
+| `S10_TERRAIN` | the ground, 0.6 m of its soil, the subsoil |
+| `S20_ROOM_GROUND` | floor, arrival path, slab over the swale, mown path |
+| `S30_BEDS` | the two beds, their loosened soil, their planting |
+| `S40_FOUNDATIONS` | soles and screw piles |
+| `S45_SUPPORTS` | trunk cables, standoffs, joint mesh |
+| `S50_BOWER_PLANTING` | the climbers as planted, their root balls |
+| `S60_WATER` | standpipe, drip line, swale bed, rill, hollow |
+| `S70_GARDEN` | woodland, wall, planting on the bend, meadow |
+| `S80_PEOPLE` | six figures |
+| `S90_CAMERAS` | `CAM_arrival`, `CAM_lookout`, `CAM_whole`, `CAM_section`, `CAM_plant`, `CAM_plan` |
+| `S95_SECTION_NOTES`, `S96_PLANT_NOTES` | labels, each hidden outside its own view |
 
-Three things it shows that the eight-bay draft did not:
+The section and the plant's view are the same scene with one switch on: node group
+`STUDY_section_switch`, `section_on` to 1, looking through `CAM_section` or `CAM_plant`.
 
-1. **The grown planting stands on the footings.** `drawings-in-code` roots its 24 climbers at the feet
-   of the training lines (`scenes/six-bay-radial-v1/bower.json`, stations `bed.R1.P*.*`). All 24 of
-   those places lie inside a pile cap's outline, by 0.17 to 0.30 m, and 0.87 to 0.91 m from the
-   nearest root zone the ground draft allows.
-2. **Two piers lost a cable, and the ground code is mended.** The feeder on the arch's back came out
-   at four piers and not at `P3` and `P6`. At those two a housing cut for another rib lies where the
-   cable's last standoff would stand; the stretch came out 2 mm under the least length and was
-   dropped, while its hand-overs were still reported. `bower/ground.py` now runs the feeder on to the
-   next place a standoff can stand, and a test asks that every pier of this room gets the same
-   (commit `3198b11`). The section in `views/` was drawn before that and shows the two piers without it.
-3. **The open pier is worse on this footing.** The same code on `six-bay-radial-open-pier` puts each
-   pier on a single cap of 2.35 m2 (two and a half times the area), lifts the hand-overs to 3.38 to
-   3.68 m, and finds no hand-over within reach for eight of each pier's lines. Its entrance measure
-   still reads 5.6 m, because that measure counts arch legs and root zones only: the lattice legs
-   that the open pier moves into the bay are not in it. `set_out_ground.py` therefore measures the way
-   in between the innermost legs of any kind: 4.87 m as drawn, 3.61 m with the pier opened.
+## Opening, changing, rendering
 
-## Decisions (proposals, all in `site.json`)
+```powershell
+python fetch_assets.py                                  # once: the borrowed assets, 152 MB, not in git
+python set_out_ground.py                                # ground/meadow.json from the snapshot and site.json
+.\run_headless.ps1 --render arrival,lookout,section,plant,whole,plan --samples 64
+.\run_headless.ps1 --render arrival --samples 24 --scale 0.45 --out _preview    # a cheap look
+```
 
-Each was made to be argued with, and each is one number or a few. They describe the corrected
-baseline. The proposal changes two of them, the floor and the care, as the next section says.
+Change the site in `site.json` and run the last two again. Change the building in
+`bower-blender/design/six_bay_meadow.json`, export a snapshot under a new name, point
+`configurations.meadow.snapshot` at it, and run all three.
 
-- **Orientation and route.** The entrance bay `R1.B1` faces south. One straight route runs through
-  to `R1.B4` in the north. Those two bays are walked through; the other four are planted across,
-  open to look through and not to walk through.
-- **Levels: the floor is raised, the garden stays where it is.** `ground.py` leaves open whether the
-  feet are raised or each pier stands in a sunken bed. This study takes its soil level (0.3 m below
-  the feet) as the garden's level everywhere and builds the floor up 0.27 m on the stripped ground:
-  bound gravel on a free-draining base, held by a steel edge, falling 1 in 60 from the middle to the
-  beds. Nothing is dug where roots are wanted. It costs a ramp of 1 in 20, 3.6 m long, at each end,
-  and a drop of 0.2 m from floor to bed all round.
-- **Floor.** A hexagon with its corners 0.9 m short of the piers: 9.2 m across, about 73 m2. Every
-  pier therefore stands in a bed, and the planted edge comes 0.8 m into the room under each arch.
-- **Entrance.** A path 2.4 m wide through an arch 5.6 m between its legs, so 1.6 m of planting
-  either side of the way in.
-- **Beds.** Two crescents, east and west, each round three piers, 2.1 m deep beyond the piers. They
-  are the garden's own soil loosened and mulched in place, not containers. Each root zone is kept
-  clear; the rest has low planting, sparse, as newly planted.
-- **Climbers as planted.** Twelve, 2.5 m long, one at each root zone, tied to the nearest feeder.
-  Each zone carries the taxon that the drawings' planting sends over the roof from that pier
-  (wisteria at `P2`, `P4`, `P6`; vine and akebia at `P1`, `P3`, `P5`). That is a label carried
-  across, not a check that the plant suits the place.
-- **Care.** A woodchip path 0.9 m wide round the back of each bed, leaving the approach on the ramp
-  3.5 m short of the entrance. From it, one stepping pad leads in to a standing pad outside each
-  pier, between its two root zones. Tending then crosses neither the entrance nor a bed.
-- **Water.** A standpipe where the care path leaves the approach; a drip line round the back of the
-  beds with a ring at each root zone and a sleeve under the path. The floor sheds to the beds.
-  Beyond the level ground (10.5 m from the middle) the garden falls north-east at 3% to a hollow
-  0.4 m deep.
-- **Garden.** Five trees to the north, behind the room as you arrive, leaving the south and west
-  open to the sun. A border of large shrubs to the north-west backs the care path; it was first
-  drawn to the west, where the plan showed it shading the west bed in the afternoon. A strip
-  1 m wide is left unmown outside the care path, and a log is left by the border. The border, the
-  strip, the log and the hollow are meant for other life. Those are intentions, not findings.
-- **People, no furniture.** Six figures: two arriving, two talking in the middle (one looking up into
-  the crown), one pausing at the planted edge, one tending the climbers at `R1.P1`, left of the
-  entrance: on a pad outside, reaching up, or at the floor's edge in the proposal.
-- **Light.** The sky is a photograph, mirrored and turned so that its sun stands in the
-  west-south-west, 27 degrees up, with its open side behind the room. No date or latitude is
-  modelled, and no shade study has been made.
+## Assets borrowed
 
-## One pier, three ways: `R1.P1`, left of the entrance
-
-At this pier the existing work disagrees with itself, and the scene is built in three configurations
-to show it (`site.json`, `configurations`; `python set_out_ground.py` sets out the ground of each).
-
-- **`found`: as the existing work has it.** The footing is the ground draft's steel cap on three
-  piles. The climbers are where the grown planting starts them: four at this pier, each at the foot
-  of its training line. Every one of the 24 stands with its whole root ball on a cap.
-- **`baseline`: corrected, nothing on steel.** The ground draft as it is: two root zones outside each
-  pier, a feeder cable up each arch leg, a hand-over to the training lines. Half as many climbers,
-  cable on every arch leg, and the hand-over above head height.
-- **`proposal`: the pier opened and stood on a frame.** The timber is the frozen study
-  `six-bay-radial-open-pier`: its six lattice legs stand apart on an arc 1.2 m from the two arch
-  legs. On the ground draft's plate that pier is worse (a cap of 2.35 m2). So the plate goes: the
-  arch legs keep a small plate on one pile, two more piles stand inside the arc, the three are tied
-  in a triangle, and a finger reaches from the triangle out to each lattice leg. No steel runs along
-  the arc, which is where the grown planting starts its climbers. Each roots in open ground at the
-  foot of its own line. The floor loses its corners to make room and becomes round, and the plants
-  are tended from its edge.
-
-What each comes to, measured from its own geometry by `set_out_ground.py`:
-
-| | `found` | `baseline` | `proposal` |
-|---|---|---|---|
-| Climbers rooted in soil | 0 of 24 | 12 of 12 | 24 of 24 |
-| Where a climber meets its training line | at its foot | 2.66 to 3.13 m up, handed across | at its foot |
-| Cable on the arch legs | none | 48 m | none |
-| Steel over the ground at a pier | 0.92 m2 plate | 0.92 m2 plate | 0.92 m2 of bars in 1.8 m2 of open ground |
-| Kept soil, each climber | none | 0.45 m3 | 0.28 to 0.36 m3 |
-| Kept soil, in all | none | 5.4 m3 | 7.7 m3 |
-| The way in, between the innermost legs | 4.87 m | 4.87 m | 3.61 m |
-| Screw piles | 18 | 18 | 18 |
-| Floor | 73 m2, a hexagon | 73 m2, a hexagon | 65 m2, round |
-| Tended | not set out | from a pad outside, on steps | from the floor, standing |
-
-The path is 2.4 m wide in all three, so the narrower way in still clears it by 0.6 m a side.
-
-What the proposal does not settle:
-
-- **It is not engineered.** The frame is authored geometry. Whether three piles and a few bars can
-  take an opened pier's loads, or the arches' outward push, nobody has looked at.
-- **One of the ground draft's own rules fails.** A pile stands 0.24 m from a climber where the draft
-  asks for 0.3 m. With piles 0.9 m apart and feet within 0.6 m of one, a 1.2 m arc has no place that
-  passes all three rules. The arc, the spacing or the planting has to give a little.
-- **The climbers stand close.** Four in 2 m of arc, sharing soil where their zones overlap. Whether
-  that is enough ground for a wisteria is the plant side's to say.
-- **`rooted in soil` is a drawing's test.** A climber counts as on steel when no open ground lies
-  under a root ball 0.3 m across (`planting_at_installation.root_ball_m`, an assumption).
-- **The grown planting on the open pier exists** (`drawings-in-code/scenes/six-bay-radial-open-pier`),
-  but none of it is in these pictures: the climbers here are diagrams of a plant as put in.
-
-## The drawing to explore
-
-`python package_explorer.py` packs the three configurations into
-`drawings-in-code/exports/deck/inhabited-room/`: a picture from each of three fixed cameras
-(`arrival`, `whole`, `pier`), a mask of each of eight layers in the same frame (timber, footings,
-root zones, climbers and their way up, training lines, where people walk, where it is tended from,
-water),
-where each named place falls in each picture, and the quantities above. Its page goes from the whole
-place to its ground, to the pier, to the change and back, in any order, and switching configuration
-changes picture, labels and numbers together. Nothing is computed when it is shown.
-
-That folder's [README](explore/README.md) is the interface for the deck: what the data holds, the
-stable names, and how a slide drives the page. The scene study owns the data; the deck owns the
-controls and the embedding. `deck/designx/v8` was not touched.
-
-The pictures in it are previews (1280 by 800, 24 samples), made to prove the route before the
-pictures are refined.
-
-## Assets borrowed, and what could not be had
-
-`python fetch_assets.py` downloads them (87 files, 152 MB) into `assets/`, which is not in git;
 `assets.lock.json` records every file, its source address, size and MD5.
 
 | Source | Licence | Used for |
 |---|---|---|
 | [Poly Haven](https://polyhaven.com): `meadow_2` (HDRI, 2k) | CC0 | sky, sunlight, the distant trees |
-| Poly Haven: `pebble_ground_01`, `leafy_grass`, `brown_mud_leaves_01`, `wood_chip_path` (1k) | CC0 | floor and paths, lawn, bed surface, care path |
-| Poly Haven: `tree_small_02`, `shrub_01`, `shrub_04`, `fern_02`, `periwinkle_plant`, `dandelion_01`, `grass_medium_02`, `dead_tree_trunk` (1k) | CC0 | garden trees and border, low planting on the beds, the hollow, the unmown strip, the log |
+| Poly Haven: `pebble_ground_01`, `leafy_grass`, `brown_mud_leaves_01` (1k) | CC0 | floor, path, swale and rill; mown grass and meadow; beds and woodland floor |
+| Poly Haven: `tree_small_02`, `shrub_01`, `shrub_04`, `fern_02`, `periwinkle_plant`, `dandelion_01`, `grass_medium_02`, `dead_tree_trunk` (1k) | CC0 | woodland and the trees on the bend; bed planting; hollow and swale; meadow; the log |
 | [Microsoft Rocketbox](https://github.com/microsoft/Microsoft-Rocketbox): six avatars | MIT | the people |
 
-How they are used: the Poly Haven models are linked from their own `.blend` files by relative path
-and instanced (one geometry-nodes scatter per kind, collection instances for the trees). The figures
-are imported, posed by turning their joints (`POSES` in `build_scene.py`) and textured from colour
-maps reduced from 2048 px to 1024 px.
+One small deciduous tree stands for every tree, at several sizes. No model is a species choice. The
+figures are game-quality; they show scale and use. What was looked for and not used is in
+`first-pass/README.md`.
 
-What was looked for and not used:
+## The first pass
 
-- **Local libraries.** Blender's one configured asset library points at a folder that does not exist,
-  no asset add-on is installed, and nothing under `C:\BOWER` is a reusable scene asset.
-- **The Higgsfield connector's 3D catalogue.** It imports only into its own cloud project, states no
-  licence, and the standing rule is no paid generation without permission. Not called.
-- **People on Poly Haven.** There are none, hence Rocketbox. Its figures are game-quality and stiffly
-  posed. They show scale and use; they are not portraits of anyone.
-- **Temperate trees and hedge-sized shrubs.** Poly Haven has neither by name. One small deciduous
-  tree stands in for every tree and, scaled down, for the border; the low plants are small
-  herbaceous models enlarged 1.2 to 2.2 times. None is a species choice.
-
-## Opening, changing, rendering
-
-```
-python fetch_assets.py                      # once: the borrowed assets
-python set_out_ground.py                    # writes ground/<configuration>.json
-.\run_headless.ps1 --render arrival,section,plan --samples 110
-.\run_headless.ps1 --config proposal --samples 24 --export export     # one configuration, as the drawing needs it
-python package_explorer.py                  # export/ and ground/ into the drawing's folder
-```
-
-`build_scene.py` starts from an empty file each time and writes `inhabited_room.blend` (the
-corrected baseline), or `inhabited_room.<configuration>.blend` with `--config found` or
-`--config proposal`; it refuses to run over any other open file. To work by hand, open `inhabited_room.blend`: all links are
-relative (`//../../../releases/...`, `//assets/...`).
-
-Collections: `BOWER_V1` (linked), then under `STUDY_inhabited_room`: `S05_BOWER_TIMBER`,
-`S10_TERRAIN`, `S20_ROOM_GROUND`, `S30_BEDS`, `S40_FOUNDATIONS`, `S45_SUPPORTS`,
-`S50_BOWER_PLANTING`, `S60_WATER`, `S65_CARE`, `S70_GARDEN`, `S80_PEOPLE`, `S90_CAMERAS`,
-`S95_SECTION_NOTES`, `S99_ASSET_SOURCES`.
-
-Cameras: `CAM_arrival`, `CAM_whole`, `CAM_pier`, `CAM_section`, `CAM_site_plan`, and the snapshot's own nine (`CAM_exterior`,
-`CAM_interior`, ...), linked.
-
-**The section is a switch, not a second scene.** The node group `STUDY_section_switch` holds
-`section_on` and `section_y`. At 1, every study material hides what lies south of the cut and paints
-the inside of each solid it has cut a flat colour, and `CAM_section`'s near clipping plane cuts
-everything borrowed at the same place. `render()` sets it for the section and puts it back, so the
-file is saved inhabited. By hand: set `section_on` to 1, look through `CAM_section`, and show
-`S95_SECTION_NOTES`.
-
-Three things in the section are drawn other than as they are. Cables are 8 mm thick where the real
-one is 4 mm. Buried parts more than 2 m behind the cut are left out, so that the far piers' piles do
-not appear to stand under the floor. And the cut soil is closed by a plane 2.5 m behind the cut
-(`GR_cut_backing`), so that a tree's foot or a fern further north does not show through it.
-
-**Another snapshot.** Change a configuration's `snapshot` in `site.json`, run `set_out_ground.py`, then build.
+The study began on an illustrative level garden, with three configurations of one pier (as found,
+the ground draft's correction, a first open-pier proposal) and an explorable drawing made from them.
+All of it is kept: `first-pass/README.md` says where each file is now. The explorable drawing
+(`explore/`, `drawings-in-code/exports/deck/inhabited-room/`) still shows the first pass. It has not
+been re-made on this site, and `build_scene.py --export` says so.
 
 ## Not known, not done
 
-- Whether a raised floor or sunken beds is right, and what a 0.2 m edge round the floor means for
-  people with no furniture in the room.
-- Anything about the foundations: loads, the arches' outward push, the piles beside loosened soil,
-  the weight of a built-up floor near them.
-- Whether roots can use the ground under the floor's edge, and what a standing pad does to the
-  ground it sits on.
-- How much water, how often, for how long; where the standpipe's supply comes from; whether the
-  hollow can take what the floor sheds.
-- Sun and shade at any real place and date. The trees are placed by a rule of thumb.
-- What any of the garden's additions do for other life.
-- The mature room. It is not drawn here; `drawings-in-code` grows it on the same snapshot.
+- No site exists. Soil, water table, rainfall, aspect and the trees are all authored.
+- Nothing is engineered: not the sole, the piles, the longer legs, the scarfs or timber standing in soil.
+- No growth, shade, season or year. See "What is not in this pass: time".
+- No claim about other life is a finding.
+- The planting on the beds, the meadow and the woodland are borrowed models, not designs.
+- Manufacturing is counted (members, scarfs, standoffs, joints), not planned: nothing here says
+  what a longer leg or a mesh sleeve costs at a station.
+- Daniel has not reviewed the sole.
+- The explorable drawing has not been re-made on this site.

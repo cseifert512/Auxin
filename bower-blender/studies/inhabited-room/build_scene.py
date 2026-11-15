@@ -1,6 +1,6 @@
 """Build the inhabited-room study: the six-bay Bower as a place, in one editable Blender scene.
 
-    blender-launcher.exe --background --factory-startup --disable-autoexec --python build_scene.py -- [--render arrival,section,plan] [--samples 96]
+    blender-launcher.exe --background --factory-startup --disable-autoexec --python build_scene.py -- [--render arrival,lookout,section,plant,whole,plan] [--samples 96] [--scale 0.5]
 
 or, in a Blender with a window, from the Python console:
 
@@ -14,18 +14,21 @@ can be thrown away and made again. What goes into it, and where each part comes 
                 S05_BOWER_TIMBER, local objects of the same names on the same linked meshes, because the
                 snapshot's materials carry no colour a path tracer can use and a linked material cannot
                 be given one.
-    generated   footings, piles, root zones, training lines, feeders and hand-overs, from ground.json
-                (set_out_ground.py: the building model's own bower/ground.py and bower/lines.py).
-    proposal    the site: levels, floor, paths, beds, care path, water. Authored for this study in
-                site.json; every size provisional.
+    generated   each pier's own level, the trunk cables and their standoffs, the joints: the building
+                model's own code on the snapshot's design (set_out_ground.py, ground/<configuration>.json).
+    proposal    the site (site.json: the lie of the land, floor, paths, beds, swale, hollow, wall), the
+                steel sole and piles under each pier, where each climber is planted, the mesh round the
+                joints. Authored for this study; every size provisional.
+    carried     which climber goes with which leg, from drawings-in-code's planting.
     borrowed    people, surrounding vegetation, ground textures and the sky (assets.json, fetch_assets.py).
 
-Every object carries `study_status` (one of those four) and `study_note` (what it is for).
+Every object carries `study_status` (one of those) and `study_note` (what it is for).
 
-One switch draws the section. The node group STUDY_section_switch holds two numbers, `section_on` and
-`section_y`. With section_on at 1 every study material hides what lies south of section_y and paints
-the inside of each solid it has cut with a flat colour; CAM_section clips everything else at the same
-plane. `render()` sets the switch for each view and puts it back to 0, so the file is saved inhabited.
+One switch draws a section. The node group STUDY_section_switch holds two numbers, `section_on` and
+`section_y`. With section_on at 1 every study material hides what lies on the camera's side of
+section_y and paints the inside of each solid it has cut with a flat colour; CAM_section and CAM_plant
+clip everything else at the same plane. `render()` sets the switch for each view and puts it back to
+0, so the file is saved inhabited.
 
 A windowless Blender prints nothing back: progress and errors go to build.log.
 """
@@ -39,6 +42,7 @@ import traceback
 from math import atan2, cos, degrees, exp, hypot, pi, radians, sin, sqrt  # noqa: F401
 from pathlib import Path
 
+import bmesh
 import bpy
 from mathutils import Matrix, Vector
 
@@ -46,31 +50,35 @@ HERE = Path(__file__).resolve().parent
 SITE = json.loads((HERE / "site.json").read_text(encoding="utf-8"))
 _ARGS = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
 CONFIG = _ARGS[_ARGS.index("--config") + 1] if "--config" in _ARGS else SITE["default_configuration"]
-CFG = SITE["configurations"][CONFIG]  # which snapshot, footing, planting, floor and care: see site.json
+CFG = SITE["configurations"][CONFIG]  # which snapshot, footing and planting: see site.json
 GROUND = json.loads((HERE / "ground" / f"{CONFIG}.json").read_text(encoding="utf-8"))
 BLEND = HERE / ("inhabited_room.blend" if CONFIG == SITE["default_configuration"] else f"inhabited_room.{CONFIG}.blend")
 SNAPSHOT = CFG["snapshot"]
 LOG = HERE / "build.log"
 
 LINKED = "linked: snapshot geometry, unchanged"
-GENERATED = "generated: bower/ground.py and bower/lines.py on the snapshot's design (set_out_ground.py)"
+GENERATED = "generated: the building model's own code on the snapshot's design (set_out_ground.py)"
 PROPOSAL = "proposal: authored for this study, provisional"
 BORROWED = "borrowed asset: not Bower geometry or planting (assets.json)"
-CARRIED = "carried: where drawings-in-code's grown planting starts its climbers on this snapshot"
+CARRIED = "carried: which climber goes with which leg, from drawings-in-code's planting"
 
-FLOOR = GROUND["floor_z_m"]  # the underside of the timber feet
-SOIL = FLOOR - GROUND["piles"]["feet_above_soil_m"]  # the soil level bower/ground.py sets
+LAND = SITE["ground"]
+LEVEL = GROUND["pier_levels_m"]  # the underside of each pier's timber feet
+FLOOR = GROUND["floor_z_m"]  # the feet of the highest pier
+SUNK = LAND["feet_below_soil_m"]  # how far the timber feet run into the soil: no footing is seen
+GX, GY = -LAND["fall"] * cos(radians(LAND["fall_towards_deg"])), -LAND["fall"] * sin(radians(LAND["fall_towards_deg"]))
+_TOP = max(LEVEL, key=LEVEL.get)
+Z0 = LEVEL[_TOP] + SUNK - (GX * GROUND["piers"][_TOP][0] + GY * GROUND["piers"][_TOP][1])  # the ground's level under the crown
 RING = hypot(*next(iter(GROUND["piers"].values())))  # the piers' circle
-ROUND = CFG["floor"]["shape"] == "round"
-RC = CFG["floor"]["radius_m"] if ROUND else CFG["floor"]["corner_radius_m"]
-EDGE = RC if ROUND else RC * cos(pi / 6)  # from the crown to the nearest of the floor's edge
-HW = SITE["paths"]["width_m"] / 2.0
-MOUTH = sqrt(RC * RC - HW * HW) if ROUND else EDGE  # where the floor's edge meets the edge of a path
-YL = RING * cos(pi / 6) + SITE["paths"]["landing_m"]  # where the level landing ends and the ramp begins
-RB = SITE["beds"]["outer_radius_m"]
+RF = SITE["floor"]["radius_m"]
+BUILDUP = SITE["floor"]["buildup_m"]
+RB_SHELTER, RB_SUN = SITE["beds"]["sheltered_outer_radius_m"], SITE["beds"]["outer_radius_m"]
 MULCH = SITE["beds"]["mulch_m"]
+DEPTH = LAND["soil_depth_m"]
+ENTRY, LOOKOUT = radians(SITE["room"]["entry_deg"]), radians(SITE["room"]["lookout_deg"])
+OPENING = radians(SITE["beds"]["opening_half_deg"])
 CUT_Y = SITE["cameras"]["section"]["cut_y_m"]
-BEYOND_M = 2.0  # how far behind the cut buried things are still drawn in the section
+BEYOND_M = 2.0  # how far behind the cut buried things are still drawn in a section
 
 _lines: list = []
 
@@ -82,60 +90,101 @@ def log(message: str) -> None:
 
 # --- the lie of the land ----------------------------------------------------------------------------
 
+def plane(x: float, y: float) -> float:
+    """The lie of the land before anything is cut into it: one even fall, which stops `even_to_m` out."""
+    r = hypot(x, y)
+    k = min(1.0, LAND["even_to_m"] / r) if r else 1.0
+    return Z0 + (GX * x + GY * y) * k
+
+
+def _to_run(x, y, a, b) -> float:
+    """How far a plan point is from the straight run a-b."""
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    t = max(0.0, min(1.0, ((x - a[0]) * dx + (y - a[1]) * dy) / ((dx * dx + dy * dy) or 1.0)))
+    return hypot(x - a[0] - dx * t, y - a[1] - dy * t)
+
+
+def _to_line(x, y, points) -> float:
+    return min(_to_run(x, y, a, b) for a, b in zip(points, points[1:]))
+
+
+def _swale() -> list:
+    """The swale's line: round the uphill side of the room from its high point both ways, then down to the hollow."""
+    s = LAND["swale"]
+    n = int(abs(s["to_deg"] - s["from_deg"]) / 3.0)
+    line = [(s["radius_m"] * cos(radians(s["from_deg"] + (s["to_deg"] - s["from_deg"]) * k / n)), s["radius_m"] * sin(radians(s["from_deg"] + (s["to_deg"] - s["from_deg"]) * k / n))) for k in range(n + 1)]
+    return line + [tuple(LAND["hollow"]["at_m"])]
+
+
+def _arrival() -> list:
+    """The arrival path's line, from just outside the gate to the floor's edge: one bend, then straight in through the entry bay."""
+    p = SITE["paths"]["arrival"]
+    (cx, cy), r = p["centre_m"], p["radius_m"]
+    n = 40
+    line = [(cx + r * cos(radians(p["from_deg"] + (p["to_deg"] - p["from_deg"]) * k / n)), cy + r * sin(radians(p["from_deg"] + (p["to_deg"] - p["from_deg"]) * k / n))) for k in range(n + 1)]
+    heading = radians(p["from_deg"] + 90.0)
+    line.insert(0, (line[0][0] - 1.6 * cos(heading), line[0][1] - 1.6 * sin(heading)))
+    last, end = line[-1], ((RF - 0.05) * cos(ENTRY), (RF - 0.05) * sin(ENTRY))
+    return line + [(last[0] + (end[0] - last[0]) * k / 12, last[1] + (end[1] - last[1]) * k / 12) for k in range(1, 13)]
+
+
+def _mown() -> list:
+    """The mown path's line, on from the look-out into the meadow, turning a little as it goes."""
+    p = SITE["paths"]["mown"]
+    x, y, heading = RF * cos(LOOKOUT), RF * sin(LOOKOUT), LOOKOUT
+    line, n = [(x, y)], int(p["length_m"])
+    for _ in range(n):
+        heading += radians(p["bend_deg"]) / n
+        x, y = x + cos(heading), y + sin(heading)
+        line.append((x, y))
+    return line
+
+
+SWALE, ARRIVAL, MOWN = _swale(), _arrival(), _mown()
+RILL = [(RF * cos(radians(LAND["rill_from_deg"])), RF * sin(radians(LAND["rill_from_deg"]))), tuple(LAND["hollow"]["at_m"])]
+
 
 def ground_z(x: float, y: float) -> float:
-    """The garden's surface: level round the room, falling to a hollow beyond it."""
-    w = SITE["water"]
-    g = max(0.0, min(hypot(x, y), 26.0) - w["level_radius_m"])
-    lift = -cos(atan2(y, x) - radians(w["fall_towards_deg"])) * w["fall"] * g * g / (g + 2.5)
-    d = hypot(x - w["hollow_m"][0], y - w["hollow_m"][1])
-    return SOIL + lift - w["hollow_depth_m"] * exp(-2.2 * (d / w["hollow_radius_m"]) ** 2)
+    """The ground's surface: the even fall, with the swale and the hollow cut into it."""
+    s, h = LAND["swale"], LAND["hollow"]
+    cut = s["depth_m"] * exp(-((_to_line(x, y, SWALE) / s["half_width_m"]) ** 2)) if hypot(x, y) < 24.0 else 0.0
+    dip = h["depth_m"] * exp(-2.2 * (hypot(x - h["at_m"][0], y - h["at_m"][1]) / h["radius_m"]) ** 2)
+    return plane(x, y) - max(cut, dip)
 
 
-def floor_z(x: float, y: float) -> float:
-    """The room's floor: highest at the middle, falling to the beds."""
-    return SITE["levels"]["floor_centre_m"] - SITE["levels"]["floor_fall"] * hypot(x, y)
-
-
-def hex_norm(x: float, y: float) -> float:
-    """How far out a point is, measured as the floor is: EDGE on the floor's edge, whatever its shape."""
-    if ROUND:
-        return hypot(x, y)
-    return max(x * cos(pi / 6 + k * pi / 3) + y * sin(pi / 6 + k * pi / 3) for k in range(6))
-
-
-def path_top(y: float) -> float:
-    """The approach path's surface: level with the floor's edge to the end of the landing, then a ramp down to the garden."""
-    level = floor_z(0.0, EDGE)
-    lawn = ground_z(0.0, y) + 0.012
-    return level if abs(y) <= YL else max(level - SITE["paths"]["ramp_gradient"] * (abs(y) - YL), lawn)
+def on_arrival(x, y, margin=0.0) -> bool:
+    return _to_line(x, y, ARRIVAL) <= SITE["paths"]["arrival"]["width_m"] / 2.0 + margin
 
 
 def surface_z(x: float, y: float) -> float:
-    """What someone stands on at a point."""
-    if hex_norm(x, y) <= EDGE:
-        return floor_z(x, y)
-    if abs(x) <= HW:
-        return path_top(y)
+    """What someone stands on at a point: the floor and the arrival path follow the even fall, a little proud of it."""
+    if hypot(x, y) <= RF or on_arrival(x, y):
+        return plane(x, y) + BUILDUP
     return ground_z(x, y)
 
 
+def kind_of_ground(x: float, y: float) -> int:
+    """0 the garden's mown grass, 1 meadow, 2 the woodland's floor."""
+    if y > SITE["woodland"]["edge_y_m"] + 1.3 * sin(0.3 * x) - 0.6:
+        return 2
+    along, across = x * cos(ENTRY) + y * sin(ENTRY), -x * sin(ENTRY) + y * cos(ENTRY)
+    return 1 if along + 0.9 * sin(0.35 * across) < -SITE["meadow"]["begins_m"] else 0
 # --- collections, objects, tags ---------------------------------------------------------------------
 
 COLLECTIONS = [
     ("S05_BOWER_TIMBER", "the snapshot's timber, on its linked meshes, with materials that render"),
     ("S10_TERRAIN", "the garden's soil and its surface"),
-    ("S20_ROOM_GROUND", "the room's floor, the approach and its edges"),
-    ("S30_BEDS", "the planting beds, their root zones and the low planting on them"),
-    ("S40_FOUNDATIONS", "pile caps and screw piles, as bower/ground.py sets them out"),
-    ("S45_SUPPORTS", "training lines, feeders and hand-overs, as bower/lines.py and bower/ground.py set them out"),
+    ("S20_ROOM_GROUND", "the room's floor, the arrival path and the mown path"),
+    ("S30_BEDS", "the two beds, their loosened soil and the planting on them"),
+    ("S40_FOUNDATIONS", "the steel sole and screw piles under each pier"),
+    ("S45_SUPPORTS", "the trunk cables and their standoffs, as bower/lines.py sets them out, and the mesh round the joints"),
     ("S50_BOWER_PLANTING", "the climbers at installation, as diagrams"),
-    ("S60_WATER", "the standpipe, the drip line and the damp hollow"),
-    ("S65_CARE", "the care path, stepping pads and standing pads"),
-    ("S70_GARDEN", "trees, border, unmown strip, log: borrowed vegetation"),
+    ("S60_WATER", "the standpipe and drip line; the swale, the rill and the planted hollow"),
+    ("S70_GARDEN", "the woodland, the garden wall, the planting on the bend of the path, the meadow: borrowed vegetation"),
     ("S80_PEOPLE", "borrowed figures"),
     ("S90_CAMERAS", "the study's cameras"),
     ("S95_SECTION_NOTES", "labels for the section: hidden in every other view"),
+    ("S96_PLANT_NOTES", "labels for the plant's view: hidden in every other view"),
     ("S99_ASSET_SOURCES", "linked asset collections the scatters draw on: not shown"),
 ]
 
@@ -310,8 +359,12 @@ def cut_group(solid):
         far.inputs[1].default_value = BEYOND_M
         link(sep.outputs["Y"], north.inputs[0])
         link(far.outputs[0], north.inputs[1])
-        link(sep.outputs["Z"], below.inputs[0])
-        below.inputs[1].default_value = SOIL + 0.02
+        level = n.new("ShaderNodeVectorMath")  # how high a point is above the even fall of the ground
+        level.operation = "DOT_PRODUCT"
+        link(geo.outputs["Position"], level.inputs[0])
+        level.inputs[1].default_value = (-GX, -GY, 1.0)
+        link(level.outputs["Value"], below.inputs[0])
+        below.inputs[1].default_value = Z0 + 0.02
         link(north.outputs[0], both.inputs[0])
         link(below.outputs[0], both.inputs[1])
         link(south.outputs[0], either.inputs[0])
@@ -360,7 +413,7 @@ def flat(name, colour, cut=None, rough=0.8, metallic=0.0, solid=True, vary=0.0):
     return _finish(m, p.outputs["BSDF"], cut or colour, solid)
 
 
-def textured(name, tex, size_m, cut, tint=(1.0, 1.0, 1.0), patch=0.0, viewport=(0.5, 0.5, 0.5)):
+def textured(name, tex, size_m, cut, tint=(1.0, 1.0, 1.0), patch=0.0, viewport=(0.5, 0.5, 0.5), matte=False):
     """A Poly Haven ground texture laid flat on the world's X and Y, `size_m` across."""
     m, nt = _begin(name, viewport)
     n, link = nt.nodes, nt.links.new
@@ -395,7 +448,11 @@ def textured(name, tex, size_m, cut, tint=(1.0, 1.0, 1.0), patch=0.0, viewport=(
         colour = mix2.outputs[2]
     p = n.new("ShaderNodeBsdfPrincipled")
     link(colour, p.inputs["Base Color"])
-    link(rough.outputs["Color"], p.inputs["Roughness"])
+    if matte:  # grass seen at a distance: without this a flat field mirrors the sky at a glancing angle
+        p.inputs["Roughness"].default_value = 1.0
+        p.inputs["Specular IOR Level"].default_value = 0.0
+    else:
+        link(rough.outputs["Color"], p.inputs["Roughness"])
     return _finish(m, p.outputs["BSDF"], cut, True)
 
 
@@ -425,7 +482,7 @@ CUTS = {"soil": (0.36, 0.26, 0.17), "subsoil": (0.55, 0.47, 0.38), "root": (0.08
 
 def materials() -> dict:
     return {
-        "lawn": textured("STUDY_lawn", "leafy_grass", 2.2, CUTS["soil"], tint=(0.5, 0.86, 0.4), patch=0.22, viewport=(0.28, 0.42, 0.16)),
+        "lawn": textured("STUDY_lawn", "leafy_grass", 2.2, CUTS["soil"], tint=(0.5, 0.86, 0.4), patch=0.22, viewport=(0.28, 0.42, 0.16), matte=True),
         "soil": flat("STUDY_soil", (0.2, 0.14, 0.09), CUTS["soil"], rough=0.95),
         "subsoil": flat("STUDY_subsoil", (0.38, 0.31, 0.24), CUTS["subsoil"], rough=0.95),
         "floor": textured("STUDY_floor_gravel", "pebble_ground_01", 1.5, CUTS["floor"], tint=(1.0, 0.95, 0.86), patch=0.06, viewport=(0.62, 0.58, 0.5)),
@@ -444,6 +501,13 @@ def materials() -> dict:
         "back_soil": diagram("STUDY_cut_backing_soil", (0, 0, 0), CUTS["soil"], only_in_section=True),
         "back_subsoil": diagram("STUDY_cut_backing_subsoil", (0, 0, 0), CUTS["subsoil"], only_in_section=True),
         "drip": diagram("STUDY_drip_line", (0.05, 0.045, 0.04), (0.0, 0.5, 0.75), metallic=0.0, rough=0.6),
+        "meadow": textured("STUDY_meadow", "leafy_grass", 3.1, CUTS["soil"], tint=(0.36, 0.58, 0.22), patch=0.32, viewport=(0.3, 0.4, 0.16), matte=True),
+        "mown": textured("STUDY_mown_path", "leafy_grass", 1.6, CUTS["soil"], tint=(0.46, 0.9, 0.42), patch=0.1, viewport=(0.3, 0.48, 0.2), matte=True),
+        "litter": textured("STUDY_woodland_floor", "brown_mud_leaves_01", 2.4, CUTS["soil"], tint=(0.75, 0.68, 0.55), patch=0.2, viewport=(0.3, 0.22, 0.14)),
+        "pebble": textured("STUDY_pebbles", "pebble_ground_01", 0.9, CUTS["floor"], tint=(0.8, 0.8, 0.82), viewport=(0.55, 0.55, 0.56)),
+        "wall": flat("STUDY_garden_wall", (0.3, 0.19, 0.14), (0.45, 0.3, 0.22), rough=0.95),
+        "loam": flat("STUDY_loosened_soil", (0.15, 0.1, 0.065), (0.27, 0.18, 0.11), rough=0.95, solid="buried"),
+        "mesh": flat("STUDY_joint_mesh", (0.55, 0.42, 0.2), solid=False, rough=0.5, metallic=0.8),
         "stem": flat("STUDY_climber_stem", (0.3, 0.24, 0.12), solid=False, rough=0.8),
         "leaf": flat("STUDY_climber_leaf", (0.2, 0.42, 0.1), solid=False, rough=0.6),
     }
@@ -481,325 +545,10 @@ def link_bower(scene, colls) -> None:
     log(f"linked {SNAPSHOT}: {len(colls['S05_BOWER_TIMBER'].objects)} members shown, families {sorted(timber)}")
 
 
-# --- the ground --------------------------------------------------------------------------------------
-
-AXIS = [-150.0, -100.0, -70.0, -50.0, -40.0, -34.0, -29.0, -25.0, -22.0] + [k * 0.5 for k in range(-40, 41)] + [22.0, 25.0, 29.0, 34.0, 40.0, 50.0, 70.0, 100.0, 150.0]
-
-
-def terrain(colls, mats) -> None:
-    n = len(AXIS)
-    depth = SOIL - SITE["beds"]["soil_depth_m"]
-    top = [(x, y, ground_z(x, y)) for y in AXIS for x in AXIS]
-    bottom = [(x, y, depth) for y in AXIS for x in AXIS]
-    faces, slots = [], []
-    for j in range(n - 1):
-        for i in range(n - 1):
-            a = j * n + i
-            faces.append((a, a + 1, a + n + 1, a + n))
-            slots.append(0)
-            b = n * n + a
-            faces.append((b, b + n, b + n + 1, b + 1))
-            slots.append(1)
-    rim = [j * n for j in range(n)] + [(n - 1) * n + i for i in range(1, n)] + [j * n + n - 1 for j in range(n - 2, -1, -1)] + [i for i in range(n - 2, 0, -1)]
-    for a, b in zip(rim, rim[1:] + rim[:1]):
-        faces.append((a, b, n * n + b, n * n + a))  # the rim, facing out
-        slots.append(1)
-    soil = add_mesh("GR_garden_soil", top + bottom, faces, colls["S10_TERRAIN"], [mats["lawn"], mats["soil"]], PROPOSAL, f"The garden's own soil, {SITE['beds']['soil_depth_m']} m of it drawn, with the lawn on top. Its level under the room, {SOIL} m, is feet_above_soil_m from bower/ground.py; the fall and the hollow are illustrative. No soil is known.")
-    soil.data.polygons.foreach_set("material_index", slots)
-    soil.data.update()
-    block = [(-150, -150), (150, -150), (150, 150), (-150, 150)]
-    add_mesh("GR_subsoil", *prism(block, SOIL - 3.4, depth), colls["S10_TERRAIN"], mats["subsoil"], PROPOSAL, "The ground below the cultivated soil, drawn so that the piles have something to stand in. Nothing is known of it.")
-    # Behind the cut the drawn soil is closed off. Without this the section looks straight through it at whatever
-    # stands in the ground further north: a tree's foot, a fern on the hollow's slope. Seen only when the section is on.
-    y, xs = CUT_Y + BEYOND_M + 0.5, [k * 0.5 for k in range(-60, 61)]
-    m = len(xs)
-    wall = [(x, y, ground_z(x, y) - 0.004) for x in xs] + [(x, y, depth) for x in xs] + [(x, y, SOIL - 3.4) for x in xs]
-    faces = [(i, i + 1, m + i + 1, m + i) for i in range(m - 1)] + [(m + i, m + i + 1, 2 * m + i + 1, 2 * m + i) for i in range(m - 1)]
-    back = add_mesh("GR_cut_backing", wall, faces, colls["S10_TERRAIN"], [mats["back_soil"], mats["back_subsoil"]], PROPOSAL, f"A drawing device, not a thing: the soil's cut colour on a plane {BEYOND_M + 0.5} m behind the section, so that the cut ground reads as solid. Invisible unless the section is on.")
-    back.data.polygons.foreach_set("material_index", [0] * (m - 1) + [1] * (m - 1))
-    back.data.update()
-
-
-def floor_outline():
-    """The floor's edge, anticlockwise: a hexagon with a corner towards each pier, or a circle."""
-    if ROUND:
-        return [(RC * cos(2 * pi * k / 72), RC * sin(2 * pi * k / 72)) for k in range(72)]
-    corners = [(RC * cos(radians(a)), RC * sin(radians(a))) for a in (-120, -60, 0, 60, 120, 180)]
-    out = []
-    for p, q in zip(corners, corners[1:] + corners[:1]):
-        out += [(p[0] + (q[0] - p[0]) * k / 10.0, p[1] + (q[1] - p[1]) * k / 10.0) for k in range(10)]
-    return out
-
-
-def room_ground(colls, mats) -> None:
-    rim = floor_outline()
-    n = len(rim)
-    rings = [0.25, 0.5, 0.75, 1.0]
-    verts = [(0.0, 0.0, floor_z(0, 0))]
-    for f in rings:
-        verts += [(x * f, y * f, floor_z(x * f, y * f)) for x, y in rim]
-    faces = [(0, 1 + i, 1 + (i + 1) % n) for i in range(n)]
-    for r in range(len(rings) - 1):
-        a, b = 1 + r * n, 1 + (r + 1) * n
-        faces += [(a + i, b + i, b + (i + 1) % n, a + (i + 1) % n) for i in range(n)]
-    last, low = 1 + (len(rings) - 1) * n, len(verts)
-    verts += [(x, y, SOIL) for x, y in rim]
-    faces += [(last + i, low + i, low + (i + 1) % n, last + (i + 1) % n) for i in range(n)]
-    faces.append(tuple(low + i for i in reversed(range(n))))
-    shape = f"round, {2 * RC} m across" if ROUND else f"a hexagon {round(2 * EDGE, 1)} m across, its corners {round(RING - RC, 2)} m short of the piers"
-    add_mesh("RG_floor", verts, faces, colls["S20_ROOM_GROUND"], mats["floor"], PROPOSAL, f"The room's floor, {shape}: a bound gravel surface built up {round(floor_z(0, 0) - SOIL, 2)} m on the stripped ground, not dug into it, falling 1 in {round(1 / SITE['levels']['floor_fall'])} from the middle to the beds. Every pier stands in a bed.")
-    start = MOUTH - 0.02 if ROUND else EDGE + 0.002  # a round floor's edge curves away from the path's end, so the path begins a little under it
-    for sign, name in ((-1, "south"), (1, "north")):
-        ys = [start + k * 0.4 for k in range(int((SITE["paths"]["length_m"] - start) / 0.4) + 1)]
-        v, f = [], []
-        for y in ys:
-            yy = sign * y
-            for x in (-HW, HW):
-                v.append((x, yy, path_top(yy)))
-            for x in (-HW, HW):
-                v.append((x, yy, ground_z(x, yy) + 0.003))
-        for k in range(len(ys) - 1):
-            a = 4 * k
-            quads = [(a, a + 1, a + 5, a + 4), (a + 2, a + 6, a + 7, a + 3), (a, a + 4, a + 6, a + 2), (a + 1, a + 3, a + 7, a + 5)]
-            f += quads if sign > 0 else [tuple(reversed(q)) for q in quads]
-        end = 4 * (len(ys) - 1)
-        caps = [(0, 2, 3, 1), (end, end + 1, end + 3, end + 2)]
-        f += caps if sign > 0 else [tuple(reversed(q)) for q in caps]
-        way = GROUND["entrances"][0]
-        add_mesh(f"RG_path_{name}", v, f, colls["S20_ROOM_GROUND"], mats["floor"], PROPOSAL, f"The way {'in from' if sign < 0 else 'on to'} the {name}: {SITE['paths']['width_m']} m wide, through an arch {way['between_arch_legs_m']} m between its legs and {way['between_innermost_legs_m']} m between the innermost legs that stand in it, level for {SITE['paths']['landing_m']} m outside the piers, then a ramp of 1 in {round(1 / SITE['paths']['ramp_gradient'])} down to the lawn.")
-    # A steel edge holds the built-up floor and the landings above the beds. It stands a hair outside what it holds.
-    parts, t = [], 0.012
-    runs = []  # (from, to, which way is out)
-    for p, q in zip(rim, rim[1:] + rim[:1]):
-        mouth = lambda c: abs(c[0]) < HW and abs(c[1]) > 1.0  # noqa: E731  in the mouth of a path: no edge there
-        if mouth(p) and mouth(q):
-            continue
-        if mouth(p) or mouth(q):  # the piece that crosses the path's edge is cut off at it
-            inner, outer = (p, q) if mouth(p) else (q, p)
-            k = (HW - abs(inner[0])) / (abs(outer[0]) - abs(inner[0]))
-            cut = (inner[0] + (outer[0] - inner[0]) * k, inner[1] + (outer[1] - inner[1]) * k)
-            p, q = (cut, q) if mouth(p) else (p, cut)
-        mid = Vector(((p[0] + q[0]) / 2.0, (p[1] + q[1]) / 2.0))
-        runs.append((p, q, mid.normalized()))
-    foot = YL + (floor_z(0, EDGE) - SOIL) / SITE["paths"]["ramp_gradient"]
-    for sign in (-1, 1):
-        for x in (-HW, HW):
-            runs.append(((x, sign * MOUTH), (x, sign * foot), Vector((1.0 if x > 0 else -1.0, 0.0))))
-    for p, q, out in runs:
-        along = Vector((q[0] - p[0], q[1] - p[1])).normalized()
-        nrm = Vector((-along.y, along.x))
-        nrm = nrm if nrm.dot(out) > 0 else -nrm
-        a, b = Vector(p) + nrm * 0.002, Vector(q) + nrm * 0.002
-        quad = [tuple(a), tuple(b), tuple(b + nrm * t), tuple(a + nrm * t)]
-        parts.append(prism(quad, SOIL, lambda x, y: (floor_z(x, y) if hex_norm(x, y) <= EDGE + 0.05 else path_top(y)) + 0.004))
-    add_mesh("RG_edge", *merge(parts), colls["S20_ROOM_GROUND"], mats["edge"], PROPOSAL, "A steel edge holding the built-up floor and landings above the beds. Water leaves the floor over it.")
-
-
-def bed_outline(side: int):
-    """One crescent of bed: side +1 east, -1 west. Its inner edge is the floor's own."""
-    ys = sqrt(RB * RB - HW * HW)
-    rim = sorted((p for p in floor_outline() if p[0] > HW + 1e-6), key=lambda p: -atan2(p[1], p[0]))  # the floor's east edge, from north round to south
-    pts = arc(RB, atan2(-ys, HW), atan2(ys, HW)) + [(HW, MOUTH)] + rim + [(HW, -MOUTH)]
-    return [(side * x, y) for x, y in pts]
-
-
-def stations() -> list:
-    """Each pier's standing pad and the stepping pad in to it: (pier, centre, bearing, stepping pad centre). None where the climbers are tended from the floor."""
-    if CFG["care"] != "outside":
-        return []
-    out = []
-    for pier, (px, py) in GROUND["piers"].items():
-        b, r = atan2(py, px), RING + SITE["care"]["station_out_m"]
-        out.append((pier, (r * cos(b), r * sin(b)), b, ((RB - 0.3) * cos(b), (RB - 0.3) * sin(b))))
-    return out
-
-
-def beds(colls, mats, assets) -> None:
-    rng = random.Random(11)
-    zones, plants = GROUND["root_zones"], GROUND["plants"]
-    middle = lambda corners: (sum(c[0] for c in corners) / len(corners), sum(c[1] for c in corners) / len(corners))  # noqa: E731
-    keep_clear = [(z["position_m"], z["radius_m"] + 0.12) for z in zones] + [(q["root_m"], 0.35) for q in plants]
-    keep_clear += [(middle(plate), 0.45) for f in GROUND["footings"].values() for plate in f["plates_m"]] + [(q, 0.3) for f in GROUND["footings"].values() for q in f["piles_m"]]
-    keep_clear += [(middle(f["corners_m"]), 0.3) for feet in GROUND["feet"].values() for f in feet]
-    keep_clear += [(c, 0.62) for _, c, _, _ in stations()] + [(s, 0.36) for _, _, _, s in stations()]
-    points = {"periwinkle_plant": [], "fern_02": [], "shrub_01": [], "shrub_04": []}
-    for side, name in ((1, "east"), (-1, "west")):
-        outline = bed_outline(side)
-        add_mesh(f"BD_{name}_surface", *prism(outline, SOIL, SOIL + MULCH), colls["S30_BEDS"], mats["mulch"], PROPOSAL, f"The {name} bed, round three piers: the garden's own soil loosened in place and mulched, {round(RB - RING, 1)} m deep beyond the piers and reaching in to the floor's edge under each planted arch. Not a container: its soil is GR_garden_soil.")
-        tries = 0
-        want = {"periwinkle_plant": 80, "fern_02": 26, "shrub_01": 60, "shrub_04": 60}
-        got = {k: 0 for k in want}
-        while tries < 40000 and any(got[k] < want[k] for k in want):
-            tries += 1
-            x, y = side * rng.uniform(HW, RB), rng.uniform(-RB, RB)
-            if not inside(outline, x, y) or any(hypot(x - c[0], y - c[1]) < r for c, r in keep_clear):
-                continue
-            h = hex_norm(x, y)
-            kind = rng.choice(["periwinkle_plant", "periwinkle_plant", "fern_02"]) if h < EDGE + 1.5 else rng.choice(["shrub_01", "shrub_04", "fern_02", "shrub_01", "shrub_04"])
-            if got[kind] < want[kind]:
-                got[kind] += 1
-                points[kind].append((x, y, SOIL + MULCH))
-    scales = {"periwinkle_plant": (0.9, 1.5), "fern_02": (0.8, 1.3), "shrub_01": (1.2, 2.1), "shrub_04": (1.3, 2.2)}
-    for kind, pts in points.items():
-        scatter(f"BD_low_planting_{kind}", pts, assets[kind], colls["S30_BEDS"], scales[kind], BORROWED, seed=len(kind), note=f"Low planting on the beds, as newly planted: sparse, with the mulch showing. A borrowed model ({kind}, Poly Haven, CC0) standing in for a planting nobody has designed; not a species choice.")
-    if zones:
-        status = GENERATED if CFG["planting"] == "root-zones-outside" else PROPOSAL
-        parts = [prism(circle(*z["position_m"], z["radius_m"], 40), SOIL - z["depth_m"], SOIL) for z in zones]
-        tops = [prism(circle(*z["position_m"], z["radius_m"], 40), SOIL + MULCH, SOIL + MULCH + 0.006) for z in zones]
-        each = sorted({z["soil_m3"] for z in zones})
-        where = "one outside each arch leg (ground.beside_pier)" if CFG["planting"] == "root-zones-outside" else "one at each place the grown planting starts a climber, sharing soil with its neighbours"
-        add_mesh("RZ_root_zones", *merge(parts), colls["S30_BEDS"], mats["root"], status, f"{len(zones)} root zones, {where}: {zones[0]['radius_m']} m radius, {zones[0]['depth_m']} m deep, {each[0]} to {each[-1]} m3 of kept soil each, {round(FLOOR - SOIL, 2)} m below the feet. The size is the ground draft's default, not what any plant is known to need.")
-        add_mesh("RZ_root_zone_tops", *merge(tops), colls["S30_BEDS"], mats["root"], status, "The same root zones marked on the bed: ground kept for the climbers, with nothing else planted on it.")
-    for q in plants:
-        e = bpy.data.objects.new(f"RS_{q['id']}", None)
-        e.empty_display_type, e.empty_display_size = "PLAIN_AXES", 0.3
-        e.location = (*q["root_m"], q["root_level_m"])
-        e["bower_id"], e["taxon_from_drawings"], e["rooted_in"], e["on_steel"], e["climbs"] = q["id"], q["taxon"], q["rooted_in"], q["on_steel"], q["climbs"]
-        colls["S50_BOWER_PLANTING"].objects.link(e)
-        tag(e, CARRIED if CFG["planting"] == "at-the-lines" else GENERATED, "Where a climber is rooted in this configuration. The taxon is carried from drawings-in-code's planting; it is a label, not a check that the plant suits the place.")
-
 
 def cylinder(x, y, r, z0, z1, sides=14):
     return prism(circle(x, y, r, sides), z0, z1)
 
-
-def foundations(colls, mats) -> None:
-    p = GROUND["piles"]
-    plates, piles = [], []
-    for f in GROUND["footings"].values():
-        plates += [prism(plate, FLOOR - f["cap_depth_m"], FLOOR) for plate in f["plates_m"]]
-        for x, y in f["piles_m"]:
-            piles.append(cylinder(x, y, p["shaft_m"] / 2.0, FLOOR - p["length_m"], FLOOR - f["cap_depth_m"]))
-            piles.append(cylinder(x, y, p["helix_m"] / 2.0, FLOOR - p["length_m"] + 0.15, FLOOR - p["length_m"] + 0.165, 20))
-    first = GROUND["footings"]["R1.P1"]
-    clear = round(FLOOR - SOIL - p["cap_depth_m"], 2)
-    if first["kind"] == "cap":
-        note = "Set out by bower/ground.py, which says of itself that no foundation has been designed or sized: the number of piles follows from where the feet stand, not from any load."
-        add_mesh("FT_pile_caps", *merge(plates), colls["S40_FOUNDATIONS"], mats["steel"], GENERATED, f"A steel cap under each pier, {first['steel_area_m2']} m2, its top at the feet and its underside {clear} m clear of the soil. {note}")
-        add_mesh("PL_screw_piles", *merge(piles), colls["S40_FOUNDATIONS"], mats["steel"], GENERATED, f"Three screw piles under each cap, {p['length_m']} m long, {p['spacing_m']} m apart. {note}")
-    else:
-        note = "A proposal authored for this study (set_out_ground.py, frame_footing); not engineered."
-        add_mesh("FT_frames", *merge(plates), colls["S40_FOUNDATIONS"], mats["steel"], PROPOSAL, f"A frame under each opened pier in place of a plate: {first['steel_area_m2']} m2 of steel in {first['hull_area_m2']} m2 of ground, {clear} m clear of the soil. A plate under the two arch legs, three piles tied in a triangle, and a finger out to each lattice leg, leaving the arc between the legs open. {note}" + (f" To review: {first['review']}." if first["review"] else ""))
-        add_mesh("PL_screw_piles", *merge(piles), colls["S40_FOUNDATIONS"], mats["steel"], PROPOSAL, f"Three screw piles under each frame, {p['length_m']} m long, {first['pile_spacing_m']} m apart. {note}")
-
-
-def supports(colls, mats) -> None:
-    r = 0.004
-    thick = "Drawn 8 mm thick so that it can be seen; the cable is 4 mm."
-    lines = GROUND["training_lines"]
-    poly_curve("LN_training_lines", [l["points_m"] for l in lines], r, colls["S45_SUPPORTS"], mats["line"], GENERATED, f"The training lines bower/lines.py strings on the members that stand on the floor: {len(lines)} stretches, {round(sum(l['length_m'] for l in lines), 1)} m of cable, standing off the timber's outer face. They are not in the snapshot; they are worked out again from its design. {thick}")
-    if GROUND["feeders"]:
-        poly_curve("LN_feeders", [l["points_m"] for l in GROUND["feeders"]], r, colls["S45_SUPPORTS"], mats["feeder"], GENERATED, f"The feeders: a plant's way from its root zone up the outside of an arch leg and round to the arch's back. {round(sum(l['length_m'] for l in GROUND['feeders']), 1)} m of cable on the arch legs. {thick}")
-    h = GROUND["handovers"]
-    if h:
-        poly_curve("HO_handovers", [[x["start_m"], x["end_m"]] for x in h], 0.008, colls["S45_SUPPORTS"], mats["tie"], GENERATED, f"Where a gardener leads a shoot from a feeder across to a training line: {len(h)} places, between {min(x['height_m'] for x in h)} and {max(x['height_m'] for x in h)} m above the floor. Nothing is built there. Shown only when the section is on.")
-
-
-def climbers(colls, mats) -> None:
-    """One climber at each place this configuration roots one, as it might go in: a tied stem on its line, with a few leaves. A diagram."""
-    rng = random.Random(5)
-    length = SITE["planting_at_installation"]["cane_height_m"]
-    stems, leaf_v, leaf_f = [], [], []
-    for q in GROUND["plants"]:
-        line = q["route_m"]
-        if not line:
-            continue
-        x, y = q["root_m"]
-        base = q["root_level_m"] + (0.0 if q["on_steel"] else MULCH)
-        foot = Vector(line[0])
-        run = [Vector((x, y, base)), Vector((x, y, base + 0.12)).lerp(foot, 0.35), Vector((x, y, base + 0.3)).lerp(foot, 0.8), foot]
-        gone = sum((b - a).length for a, b in zip(run, run[1:]))
-        for a, b in zip(line, line[1:]):
-            a, b = Vector(a), Vector(b)
-            step = (b - a).length
-            if gone + step >= length:
-                run.append(a.lerp(b, (length - gone) / step))
-                break
-            run.append(b)
-            gone += step
-        stems.append([tuple(v) for v in run])
-        fine = []
-        for a, b in zip(run, run[1:]):
-            steps = max(1, int((b - a).length / 0.1))
-            fine += [a.lerp(b, k / steps) for k in range(steps)]
-        for v in fine[3:]:  # leaves every hand's breadth up the stem, turned at random
-            turn, size = rng.uniform(0, 2 * pi), rng.uniform(0.06, 0.11)
-            out = Vector((cos(turn), sin(turn), -0.45)).normalized()
-            side = Vector((-sin(turn), cos(turn), 0.0)) * size * 0.32
-            base_v = v + out * 0.015
-            k = len(leaf_v)
-            leaf_v += [tuple(base_v), tuple(base_v + out * size * 0.5 + side), tuple(base_v + out * size), tuple(base_v + out * size * 0.5 - side)]
-            leaf_f.append((k, k + 1, k + 2, k + 3))
-    on_steel = sum(1 for q in GROUND["plants"] if q["on_steel"])
-    where = {"root-zones-outside": "each tied to the feeder nearest its root zone", "at-the-lines": "each at the foot of its own training line" + (f"; {on_steel} of them stand on a steel cap, which is the conflict this configuration records" if on_steel else ", in open ground")}[CFG["planting"]]
-    poly_curve("BP_climber_stems", stems, 0.007, colls["S50_BOWER_PLANTING"], mats["stem"], PROPOSAL, f"{len(stems)} climbers as they might go in, {length} m long, {where}. A diagram of an installed plant: not grown, not simulated, and no shade.")
-    add_mesh("BP_climber_leaves", leaf_v, leaf_f, colls["S50_BOWER_PLANTING"], mats["leaf"], PROPOSAL, "Leaves on those stems, to show how little a new plant covers.")
-
-
-def care(colls, mats) -> None:
-    c = SITE["care"]
-    r0, r1 = c["path_radius_m"] - c["path_width_m"] / 2.0, c["path_radius_m"] + c["path_width_m"] / 2.0
-    a = atan2(sqrt(c["path_radius_m"] ** 2 - HW * HW), HW)
-    for side, name in ((1, "east"), (-1, "west")):
-        ring = [(side * x, y) for x, y in arc(r1, -a, a) + list(reversed(arc(r0, -a, a)))]
-        add_mesh(f"CP_care_path_{name}", *prism(ring, SOIL, SOIL + 0.08), colls["S65_CARE"], mats["chips"], PROPOSAL, f"A woodchip path round the back of the {name} bed, {c['path_width_m']} m wide, leaving the approach on the ramp {round(sqrt(c['path_radius_m'] ** 2 - HW * HW) - RING * cos(pi / 6), 1)} m short of the entrance: the way round the outside that crosses neither the entrance nor a bed.")
-    if stations():
-        slabs, steps = [], []
-        w, d = c["station_size_m"]
-        for pier, (cx, cy), b, (sx, sy) in stations():
-            u, t = Vector((cos(b), sin(b))), Vector((-sin(b), cos(b)))
-            quad = [(cx + sa * u.x * d / 2 + sb * t.x * w / 2, cy + sa * u.y * d / 2 + sb * t.y * w / 2) for sa, sb in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
-            slabs.append(prism(quad, SOIL + MULCH - 0.01, SOIL + MULCH + 0.05))
-            steps.append(prism(circle(sx, sy, c["pad_m"] / 2.0, 20), SOIL + MULCH - 0.01, SOIL + MULCH + 0.04))
-        high = [h["height_m"] for h in GROUND["handovers"]]
-        reach = f", since the hand-overs are {min(high)} to {max(high)} m up" if high else ""
-        add_mesh("CP_standing_pads", *merge(slabs), colls["S65_CARE"], mats["pad"], PROPOSAL, f"A standing pad outside each pier, {w} by {d} m, between its two root zones: firm ground for a pair of steps{reach}. It sits on ground the roots would otherwise have.")
-        add_mesh("CP_stepping_pads", *merge(steps), colls["S65_CARE"], mats["pad"], PROPOSAL, "A stepping pad from the care path in to each standing pad, so that the bed is crossed in one place.")
-    else:
-        marks = []
-        for px, py in GROUND["piers"].values():
-            b, half = atan2(py, px), 1.5 / RC
-            band = [(RC - 0.03, b - half + 2 * half * k / 12) for k in range(13)] + [(RC - 0.6, b + half - 2 * half * k / 12) for k in range(13)]
-            marks.append(prism([(r * cos(t), r * sin(t)) for r, t in band], lambda x, y: floor_z(x, y) + 0.003, lambda x, y: floor_z(x, y) + 0.008))
-        edge = add_mesh("CP_tending_edge", *merge(marks), colls["S65_CARE"], mats["pad"], PROPOSAL, "Where the climbers are tended from in this configuration: the floor's edge at each pier, within arm's reach of the foot of every leg. A marking for the drawing's care layer, not a thing that is built; it is left out of the pictures of the room.")
-        edge.hide_render = True
-        edge["study_overlay_only"] = True
-
-
-def water(colls, mats, assets) -> None:
-    w = SITE["water"]
-    sx, sy = w["standpipe_m"]
-    g = ground_z(sx, sy)
-    post = [(sx - 0.045, sy - 0.045), (sx + 0.045, sy - 0.045), (sx + 0.045, sy + 0.045), (sx - 0.045, sy + 0.045)]
-    add_mesh("WA_standpipe", *prism(post, g - 0.05, g + 1.05), colls["S60_WATER"], mats["post"], PROPOSAL, "A standpipe where the care path leaves the approach: the proposed source of water for the establishment years. Where its supply comes from is not known: there is no site.")
-    tap = [(sx + 0.045, sy - 0.02), (sx + 0.16, sy - 0.02), (sx + 0.16, sy + 0.02), (sx + 0.045, sy + 0.02)]
-    add_mesh("WA_tap", *prism(tap, g + 0.86, g + 0.9), colls["S60_WATER"], mats["brass"], PROPOSAL, "The tap.")
-    z = SOIL + MULCH + 0.012
-    r = w["drip_radius_m"]
-    a = atan2(sqrt(r * r - (HW + 0.15) ** 2), HW + 0.15)
-    east = [(x, y, z) for x, y in arc(r, -a, a, 2.0)]
-    west = [(-x, y, z) for x, y, _ in east]
-    under = [(west[0][0], west[0][1], SOIL + 0.02), (east[0][0], east[0][1], SOIL + 0.02)]
-    feed = [(sx, sy, g + 0.2), (sx, sy, g + 0.02), (sx + 0.5, sy + 0.9, SOIL + 0.02), west[0]]
-    watered = [q["root_m"] for q in GROUND["plants"] if not q["on_steel"]]  # a ring where a climber stands in soil; none round one that stands on steel
-    rings = [[(zx + 0.3 * cos(2 * pi * k / 28), zy + 0.3 * sin(2 * pi * k / 28), z) for k in range(29)] for zx, zy in watered]
-    spurs = []
-    for zx, zy in watered:
-        b = atan2(zy, zx)
-        spurs.append([(r * cos(b), r * sin(b), z), (zx + 0.3 * cos(b), zy + 0.3 * sin(b), z)])
-    poly_curve("WA_drip_line", [east, west, under, feed] + rings + spurs, 0.009, colls["S60_WATER"], mats["drip"], PROPOSAL, f"A drip line from the standpipe round the back of both beds, {round(r - RING, 2)} m outside the piers, with a ring at each climber's roots and a sleeve under the approach: water put where the new roots are, for the establishment years. How much, how often and for how long are the plant side's to say.")
-    hx, hy = w["hollow_m"]
-    wobble = [1.0 + 0.1 * sin(2 * pi * k / 28 * 2 + 0.7) + 0.06 * sin(2 * pi * k / 28 * 3) for k in range(28)]
-    damp = [(hx + (x - hx) * f, hy + (y - hy) * f) for f, (x, y) in zip(wobble, circle(hx, hy, w["hollow_radius_m"] * 0.4, 28))]
-    damp = [(x, y, ground_z(x, y) + 0.015) for x, y in damp]
-    add_mesh("WA_damp_hollow", [(hx, hy, ground_z(hx, hy) + 0.015)] + damp, [(0, 1 + k, 1 + (k + 1) % 28) for k in range(28)], colls["S60_WATER"], mats["damp"], PROPOSAL, f"The low point of the garden, {w['hollow_depth_m']} m down, north-east of the room: where water that the floor sheds and the beds do not hold is meant to go. Its use to other life is an intention, not a finding.")
-    rng = random.Random(3)
-    pts = []
-    while len(pts) < 34:
-        t, d = rng.uniform(0, 2 * pi), w["hollow_radius_m"] * rng.uniform(0.35, 1.05)
-        x, y = hx + d * cos(t), hy + d * sin(t)
-        pts.append((x, y, ground_z(x, y) + 0.06))
-    scatter("WA_hollow_ferns", pts, assets["fern_02"], colls["S60_WATER"], (1.0, 1.8), BORROWED, "Ferns round the damp hollow: a borrowed model (fern_02, Poly Haven, CC0) marking ground that is meant to stay wet.")
 
 
 # --- borrowed things ---------------------------------------------------------------------------------
@@ -857,33 +606,6 @@ def instance(name, source, coll, at, scale, turn_deg, status, note):
     coll.objects.link(e)
     return tag(e, status, note)
 
-
-def garden(colls, assets) -> None:
-    g = SITE["garden"]
-    for k, (x, y, s, t) in enumerate(g["trees"]):
-        instance(f"GD_tree_{k + 1}", assets["tree_small_02"], colls["S70_GARDEN"], (x, y, ground_z(x, y) + 0.04), s * 1.35, t, BORROWED, "A garden tree north or north-east of the room, behind it as you arrive, leaving the south and west open to the sun. A borrowed model (tree_small_02, Poly Haven, CC0) for a small deciduous tree; no species is meant.")
-    b = g["border"]
-    rng = random.Random(8)
-    for k in range(b["count"]):
-        a = radians(b["from_deg"] + (b["to_deg"] - b["from_deg"]) * k / (b["count"] - 1))
-        r = b["radius_m"] + rng.uniform(-0.7, 0.9)
-        x, y = r * cos(a), r * sin(a)
-        instance(f"GD_border_{k + 1}", assets["tree_small_02"], colls["S70_GARDEN"], (x, y, ground_z(x, y) + 0.02), rng.uniform(*b["scale"]) * 1.35, rng.uniform(0, 360), BORROWED, "The border north-west of the room: a back to the care path and cover at the garden's edge, placed so that it does not stand between the beds and the afternoon sun. The same borrowed tree at shrub size; its use to birds and insects is an intention, not a finding.")
-    lx, ly, lt = g["log_m"]
-    instance("GD_log", assets["dead_tree_trunk"], colls["S70_GARDEN"], (lx, ly, ground_z(lx, ly) + 0.02), 1.0, lt, BORROWED, "A log left by the border: dead wood kept on purpose. A borrowed model (dead_tree_trunk, Poly Haven, CC0); what lives in it is not claimed.")
-    c = SITE["care"]
-    r0, r1 = c["path_radius_m"] + c["path_width_m"] / 2.0 + 0.05, SITE["water"]["level_radius_m"]
-    tufts, flowers = [], []
-    while len(tufts) < 420:
-        t, r = rng.uniform(0, 2 * pi), rng.uniform(r0, r1)
-        x, y = r * cos(t), r * sin(t)
-        if abs(x) < HW + 0.5:
-            continue
-        tufts.append((x, y, ground_z(x, y) + 0.02))
-        if len(tufts) % 6 == 0:
-            flowers.append((x + 0.12, y + 0.08, ground_z(x, y) + 0.01))
-    scatter("GD_unmown_strip", tufts, assets["grass_medium_02"], colls["S70_GARDEN"], (1.3, 2.4), BORROWED, f"A strip left unmown outside the care path, {round(r1 - r0, 1)} m wide: longer grass between the beds and the lawn. A borrowed model (grass_medium_02, Poly Haven, CC0); its use to insects is an intention.")
-    scatter("GD_unmown_flowers", flowers, assets["dandelion_01"], colls["S70_GARDEN"], (1.2, 1.9), BORROWED, "Flowers in the unmown strip (dandelion_01, Poly Haven, CC0).")
 
 
 # --- people ------------------------------------------------------------------------------------------
@@ -962,19 +684,6 @@ def figure(colls, avatar: str, pose: str, at, facing_deg: float, does: str, name
     return root
 
 
-def people(colls) -> None:
-    pads = {pier: c for pier, c, _, _ in stations()}
-    for k, entry in enumerate(SITE["people"]):
-        q = {**entry, **entry.get("by_configuration", {}).get(CONFIG, {})}
-        if "at_pad_of" in q:  # on a pier's standing pad, facing the pier
-            cx, cy = pads[q["at_pad_of"]]
-            px, py = GROUND["piers"][q["at_pad_of"]]
-            at, facing = [cx, cy, SOIL + MULCH + 0.05], degrees(atan2(py - cy, px - cx))
-        else:
-            at, facing = list(q["at_m"]), q["facing_deg"]
-        figure(colls, q["avatar"], q["pose"], at, facing, q["does"], f"PP_{k + 1}_{q['does'].split(',')[0].split(' ')[0]}")
-    log(f"people: {len(SITE['people'])} figures")
-
 
 # --- sky, cameras, rendering -------------------------------------------------------------------------
 
@@ -994,7 +703,7 @@ def sky(scene) -> None:
     # A direction at angle a (anticlockwise from east) reads the photograph at u = 0.5 - a / 360, so its sun stands at
     # -phi; turning the mapping by r moves everything by -r. Both were checked against the shadows in two renders.
     # Mirrored, the photograph is read at r - a instead: the same sky with left and right exchanged.
-    want = radians(90.0 - SITE["setting"]["sun_azimuth_deg"])
+    want = radians(SITE["setting"]["sun_stands_deg"])  # where the sun stands, anticlockwise from +X
     if SITE["setting"]["sky_mirrored"]:
         mapping.inputs["Scale"].default_value = (1.0, -1.0, 1.0)
         mapping.inputs["Rotation"].default_value = (0.0, 0.0, want - phi)
@@ -1016,45 +725,8 @@ def sky(scene) -> None:
     link(paper.outputs[0], mix.inputs[2])
     link(mix.outputs[0], out.inputs["Surface"])
     world["study_status"] = BORROWED
-    world["study_note"] = f"meadow_2 (Poly Haven, CC0), {'mirrored and ' if SITE['setting']['sky_mirrored'] else ''}turned so that its sun stands at {SITE['setting']['sun_azimuth_deg']} degrees: its light, its height ({round((SUN_UV[1] - 0.5) * 180)} degrees) and its distant trees are the photograph's. Behind the section it gives way to plain paper."
+    world["study_note"] = f"meadow_2 (Poly Haven, CC0), {'mirrored and ' if SITE['setting']['sky_mirrored'] else ''}turned so that its sun stands toward {SITE['setting']['sun_stands_deg']} degrees in the building's axes: its light, its height ({round((SUN_UV[1] - 0.5) * 180)} degrees) and its distant trees are the photograph's. Behind the section it gives way to plain paper."
 
-
-def cameras(scene, colls) -> dict:
-    made = {}
-    c = SITE["cameras"]
-    a = c["arrival"]
-    data = bpy.data.cameras.new("CAM_arrival")
-    data.lens, data.clip_start, data.clip_end = a["lens_mm"], 0.1, 600.0
-    cam = bpy.data.objects.new("CAM_arrival", data)
-    x, y, eye = a["location_m"]
-    cam.location = (x, y, surface_z(x, y) + eye)
-    cam.rotation_euler = (Vector(a["target_m"]) - cam.location).to_track_quat("-Z", "Y").to_euler()
-    made["arrival"] = tag(cam, PROPOSAL, f"{a['note']} {eye} m above the path.")
-    s = c["section"]
-    data = bpy.data.cameras.new("CAM_section")
-    data.type, data.ortho_scale = "ORTHO", s["width_m"]
-    data.clip_start, data.clip_end = 30.0, 400.0  # the near plane is the cut
-    cam = bpy.data.objects.new("CAM_section", data)
-    cam.location = (s["centre_m"][0], CUT_Y - 30.0, s["centre_m"][1])
-    cam.rotation_euler = (radians(90.0), 0.0, 0.0)
-    made["section"] = tag(cam, PROPOSAL, f"{s['note']} Looking north. Its near clipping plane is the cut; turn the section switch on with it (see `render` in build_scene.py).")
-    data = bpy.data.cameras.new("CAM_site_plan")
-    data.type, data.ortho_scale, data.clip_end = "ORTHO", c["site_plan"]["width_m"], 400.0
-    cam = bpy.data.objects.new("CAM_site_plan", data)
-    cam.location = (0.0, 0.0, 60.0)
-    made["plan"] = tag(cam, PROPOSAL, "The site from above, north up: for checking the two views against one layout.")
-    for key in ("whole", "pier"):
-        v = c[key]
-        data = bpy.data.cameras.new(f"CAM_{key}")
-        data.lens, data.clip_start, data.clip_end = v["lens_mm"], 0.1, 600.0
-        cam = bpy.data.objects.new(f"CAM_{key}", data)
-        cam.location = v["location_m"]
-        cam.rotation_euler = (Vector(v["target_m"]) - cam.location).to_track_quat("-Z", "Y").to_euler()
-        made[key] = tag(cam, PROPOSAL, v["note"])
-    for cam in made.values():
-        colls["S90_CAMERAS"].objects.link(cam)
-    scene.camera = made["arrival"]
-    return made
 
 
 def render_settings(scene, samples: int) -> None:
@@ -1085,29 +757,8 @@ def render_settings(scene, samples: int) -> None:
     scene.render.image_settings.file_format = "PNG"
 
 
-SIZES = {"arrival": (1920, 1200), "section": (3000, 1350), "plan": (1500, 1500)}
-
-
-def render(scene, cams: dict, colls: dict, views: list, samples: int, out_dir: Path) -> None:
-    switch = bpy.data.node_groups["STUDY_section_switch"].nodes
-    notes = colls["S95_SECTION_NOTES"]
-    out_dir.mkdir(parents=True, exist_ok=True)
-    for view in views:
-        scene.camera = cams[view]
-        on = view == "section"
-        switch["section_on"].outputs[0].default_value = 1.0 if on else 0.0
-        notes.hide_render = not on
-        scene.cycles.samples = samples if view == "arrival" else max(32, samples // 2)
-        scene.render.resolution_x, scene.render.resolution_y = SIZES[view]
-        scene.render.filepath = str(out_dir / f"{view}.png")
-        started = time.time()
-        bpy.ops.render.render(write_still=True)
-        log(f"rendered {view} at {SIZES[view]} in {round(time.time() - started)} s")
-    switch["section_on"].outputs[0].default_value = 0.0
-    notes.hide_render = True
-    scene.camera = cams["arrival"]
-
-
+# What follows made the coordinated layers of the first pass's explorable drawing (explore/, package_explorer.py), on the
+# level site. It has NOT been re-made for the designed site: its places and views are the first pass's. `--export` says so.
 LAYERS = {  # what a viewer can pick out, and which objects of the scene each is
     "timber": ("the timber", lambda n: n.startswith("TM_")),
     "footings": ("what it stands on", lambda n: n.startswith(("FT_", "PL_"))),
@@ -1249,6 +900,370 @@ def export_views(scene, cams: dict, out_dir: Path, samples: int, size=(1280, 800
     log(f"exported {CONFIG}: {len(EXPORT_VIEWS)} views, {sum(1 for v in layers.values() if v['objects'])} layers, {len(places)} places")
 
 
+# --- the ground --------------------------------------------------------------------------------------
+
+AXIS = [-150.0, -120.0, -95.0, -75.0, -62.0, -52.0, -45.0, -39.0, -34.0] + [k * 0.4 for k in range(-76, 77)] + [34.0, 39.0, 45.0, 52.0, 62.0, 75.0, 95.0, 120.0, 150.0]
+
+
+def outward(obj):
+    """Turn every face of a closed mesh to face out, so that a section paints its inside and not its outside."""
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    bm.to_mesh(obj.data)
+    bm.free()
+    return obj
+
+
+def strip(left, right, top, bottom):
+    """A closed solid between two plan lines of the same length; top and bottom are functions of (x, y)."""
+    n = len(left)
+    verts = [(x, y, top(x, y)) for x, y in left] + [(x, y, top(x, y)) for x, y in right] + [(x, y, bottom(x, y)) for x, y in left] + [(x, y, bottom(x, y)) for x, y in right]
+    faces = [(0, n, 3 * n, 2 * n), (n - 1, 2 * n - 1, 4 * n - 1, 3 * n - 1)]
+    for k in range(n - 1):
+        faces += [(k, k + 1, n + k + 1, n + k), (2 * n + k, 3 * n + k, 3 * n + k + 1, 2 * n + k + 1), (k, 2 * n + k, 2 * n + k + 1, k + 1), (n + k, n + k + 1, 3 * n + k + 1, 3 * n + k)]
+    return verts, faces
+
+
+def ribbon(points, half, top, bottom):
+    """A closed strip along a plan line, `half` wide each side."""
+    left, right = [], []
+    for k, (x, y) in enumerate(points):
+        ax, ay = points[max(k - 1, 0)]
+        bx, by = points[min(k + 1, len(points) - 1)]
+        d = hypot(bx - ax, by - ay) or 1.0
+        nx, ny = -(by - ay) / d * half, (bx - ax) / d * half
+        left.append((x + nx, y + ny))
+        right.append((x - nx, y - ny))
+    return strip(left, right, top, bottom)
+
+
+def band(a0, a1, r_in, r_out, top, bottom, step_deg=3.0):
+    """A closed solid on part of a ring about the crown; either radius may be a function of the angle."""
+    n = max(2, int(abs(a1 - a0) / radians(step_deg)) + 1)
+    angles = [a0 + (a1 - a0) * k / (n - 1) for k in range(n)]
+    ri = r_in if callable(r_in) else (lambda a: r_in)
+    ro = r_out if callable(r_out) else (lambda a: r_out)
+    return strip([(ro(a) * cos(a), ro(a) * sin(a)) for a in angles], [(ri(a) * cos(a), ri(a) * sin(a)) for a in angles], top, bottom)
+
+
+def slab(name, top, bottom, coll, materials, slot_of, status, note):
+    """A solid on the terrain's grid between two surfaces; `slot_of(x, y)` picks the material of each top face."""
+    n = len(AXIS)
+    verts = [(x, y, top(x, y)) for y in AXIS for x in AXIS] + [(x, y, bottom(x, y)) for y in AXIS for x in AXIS]
+    faces, slots = [], []
+    for j in range(n - 1):
+        for i in range(n - 1):
+            a = j * n + i
+            faces.append((a, a + 1, a + n + 1, a + n))
+            slots.append(slot_of((AXIS[i] + AXIS[i + 1]) / 2.0, (AXIS[j] + AXIS[j + 1]) / 2.0))
+            b = n * n + a
+            faces.append((b, b + n, b + n + 1, b + 1))
+            slots.append(1)
+    rim = [j * n for j in range(n)] + [(n - 1) * n + i for i in range(1, n)] + [j * n + n - 1 for j in range(n - 2, -1, -1)] + [i for i in range(n - 2, 0, -1)]
+    for a, b in zip(rim, rim[1:] + rim[:1]):
+        faces.append((a, b, n * n + b, n * n + a))  # the rim, facing out
+        slots.append(1)
+    obj = add_mesh(name, verts, faces, coll, materials, status, note)
+    obj.data.polygons.foreach_set("material_index", slots)
+    obj.data.update()
+    return obj
+
+
+def terrain(colls, mats) -> None:
+    fall = round(1.0 / LAND["fall"])
+    slab("GR_soil", ground_z, lambda x, y: plane(x, y) - DEPTH, colls["S10_TERRAIN"], [mats["lawn"], mats["soil"], mats["meadow"], mats["litter"]], lambda x, y: (0, 2, 3)[kind_of_ground(x, y)], PROPOSAL, f"The ground of the designed site, {DEPTH} m of its soil drawn: an even fall of 1 in {fall} with a swale and a hollow cut into it, mown grass on the garden side, meadow on the other and leaf litter under the woodland. At each pier it is feet_below_soil_m (site.json) above the pier's feet, so the timber comes straight out of the soil. Nothing is known of a real soil.")
+    slab("GR_subsoil", lambda x, y: plane(x, y) - DEPTH, lambda x, y: Z0 - 8.0, colls["S10_TERRAIN"], [mats["subsoil"], mats["subsoil"]], lambda x, y: 0, PROPOSAL, "The ground below the cultivated soil, drawn so that the piles have something to stand in. Nothing is known of it.")
+    # Behind a cut the drawn soil is closed off, so that a section does not look through it at what stands in the ground beyond.
+    y, xs = CUT_Y + BEYOND_M + 0.5, [k * 0.4 for k in range(-90, 91)]
+    m = len(xs)
+    wall = [(x, y, ground_z(x, y) - 0.004) for x in xs] + [(x, y, plane(x, y) - DEPTH) for x in xs] + [(x, y, Z0 - 8.0) for x in xs]
+    faces = [(i, i + 1, m + i + 1, m + i) for i in range(m - 1)] + [(m + i, m + i + 1, 2 * m + i + 1, 2 * m + i) for i in range(m - 1)]
+    back = add_mesh("GR_cut_backing", wall, faces, colls["S10_TERRAIN"], [mats["back_soil"], mats["back_subsoil"]], PROPOSAL, f"A drawing device, not a thing: the soil's cut colour on a plane {BEYOND_M + 0.5} m behind the section, so that the cut ground reads as solid. Invisible unless a section is on.")
+    back.data.polygons.foreach_set("material_index", [0] * (m - 1) + [1] * (m - 1))
+    back.data.update()
+
+
+def room_ground(colls, mats) -> None:
+    fall = round(1.0 / LAND["fall"])
+    top = lambda x, y: plane(x, y) + BUILDUP  # noqa: E731
+    add_mesh("RG_floor", *prism(circle(0.0, 0.0, RF, 96), lambda x, y: plane(x, y) - 0.15, top), colls["S20_ROOM_GROUND"], mats["floor"], PROPOSAL, f"The room's floor: a round of bound gravel {2 * RF} m across that follows the ground, 1 in {fall}, with no step at its edge and no platform under it. Whether 1 in {fall} is comfortable to stand and talk on for long is to be found out. No furniture.")
+    path = SITE["paths"]["arrival"]
+    outward(add_mesh("RG_arrival_path", *ribbon(ARRIVAL, path["width_m"] / 2.0, lambda x, y: plane(x, y) + BUILDUP - 0.004, lambda x, y: plane(x, y) - 0.12), colls["S20_ROOM_GROUND"], mats["floor"], PROPOSAL, path["note"] + f" Bound gravel, {path['width_m']} m wide, falling with the ground."))
+    reach = LAND["swale"]["radius_m"]
+    over = [p for p in ARRIVAL if abs(hypot(*p) - reach) < 1.5]
+    outward(add_mesh("RG_swale_crossing", *ribbon(over, path["width_m"] / 2.0 + 0.18, lambda x, y: plane(x, y) + BUILDUP + 0.02, lambda x, y: plane(x, y) - 0.1), colls["S20_ROOM_GROUND"], mats["pad"], PROPOSAL, "A stone slab where the arrival path crosses the swale: you step over the water's way on the way in."))
+    mown = SITE["paths"]["mown"]
+    outward(add_mesh("RG_mown_path", *ribbon(MOWN, mown["width_m"] / 2.0, lambda x, y: ground_z(x, y) + 0.02, lambda x, y: ground_z(x, y) - 0.03), colls["S20_ROOM_GROUND"], mats["mown"], PROPOSAL, mown["note"]))
+    w = SITE["wall"]
+    (wx, wy), a = w["through_m"], radians(w["along_deg"])
+    for name, s0, s1 in (("south", w["from_m"], -w["gate_m"] / 2.0), ("north", w["gate_m"] / 2.0, w["to_m"])):
+        n = max(2, int(abs(s1 - s0)))
+        line = [(wx + (s0 + (s1 - s0) * k / n) * cos(a), wy + (s0 + (s1 - s0) * k / n) * sin(a)) for k in range(n + 1)]
+        outward(add_mesh(f"GD_wall_{name}", *ribbon(line, w["thickness_m"] / 2.0, lambda x, y: ground_z(x, y) + w["height_m"], lambda x, y: ground_z(x, y) - 0.4), colls["S70_GARDEN"], mats["wall"], PROPOSAL, w["note"] + f" {w['height_m']} m high, with a gate {w['gate_m']} m wide where the path comes through."))
+
+
+def bed_edges():
+    """The two beds: (name, from, to, outer radius as a function of the angle)."""
+    return (
+        ("sheltered", ENTRY + OPENING, LOOKOUT - OPENING, lambda a: RB_SHELTER + 0.35 * sin(3.0 * a)),
+        ("sunny", LOOKOUT + OPENING, ENTRY + 2 * pi - OPENING, lambda a: RB_SUN + 0.25 * sin(4.0 * a)),
+    )
+
+
+def in_bed(x, y) -> str:
+    r, a = hypot(x, y), atan2(y, x)
+    for name, a0, a1, outer in bed_edges():
+        t = a
+        while t < a0:
+            t += 2 * pi
+        if t <= a1 and RF < r < outer(t):
+            return name
+    return ""
+
+
+def beds(colls, mats, assets) -> None:
+    rng = random.Random(11)
+    roots = [p["root_m"] for p in GROUND["plants"]]
+    feet = [c for pier in GROUND["feet"].values() for f in pier for c in f["corners_m"]]
+    for name, a0, a1, outer in bed_edges():
+        outward(add_mesh(f"BD_bed_{name}", *band(a0, a1, RF, outer, lambda x, y: plane(x, y) + MULCH, lambda x, y: plane(x, y) - 0.01), colls["S30_BEDS"], mats["mulch"], PROPOSAL, SITE["beds"]["note"] + f" Mulched {MULCH} m deep."))
+        outward(add_mesh(f"BD_loosened_soil_{name}", *band(a0, a1, RF, outer, lambda x, y: plane(x, y) - 0.012, lambda x, y: plane(x, y) - DEPTH + 0.01), colls["S30_BEDS"], mats["loam"], PROPOSAL, f"The bed's soil, loosened {DEPTH} m deep and not boxed in: it is the same ground as the lawn and the meadow beside it, and runs on over, under and between the bars of every pier's buried sole. {GROUND['quantities']['loosened_soil_m3']['says']}. Seen only in a section."))
+        want = {"sheltered": {"shrub_01": 16, "shrub_04": 14, "fern_02": 70, "periwinkle_plant": 60}, "sunny": {"periwinkle_plant": 90, "dandelion_01": 30, "fern_02": 10}}[name]
+        scales = {"periwinkle_plant": (0.9, 1.5), "fern_02": (0.8, 1.4), "shrub_01": (1.5, 2.6), "shrub_04": (1.6, 2.7), "dandelion_01": (1.2, 1.9)}
+        for kind, count in want.items():
+            points = []
+            while len(points) < count:
+                a = rng.uniform(a0, a1)
+                tall = kind.startswith("shrub")
+                r = rng.uniform(RING + 1.1, outer(a) - 0.4) if tall else rng.uniform(RF + 0.25, outer(a) - 0.2)
+                x, y = r * cos(a), r * sin(a)
+                if any(hypot(x - q[0], y - q[1]) < 0.45 for q in roots) or any(hypot(x - q[0], y - q[1]) < 0.3 for q in feet):
+                    continue  # the climbers' own ground, and the feet, are left clear
+                points.append((x, y, plane(x, y) + MULCH))
+            scatter(f"BD_{name}_{kind}", points, assets[kind], colls["S30_BEDS"], scales[kind], BORROWED, seed=len(kind) + len(name), note=f"Planting on the {name} bed as newly planted: {'shrubs and ferns for shelter on the woodland side' if name == 'sheltered' else 'low planting, so the sun and the view come in'}. A borrowed model ({kind}, Poly Haven, CC0) standing in for a planting nobody has designed; not a species choice.")
+    balls = [cylinder(p["root_m"][0], p["root_m"][1], SITE["planting_at_installation"]["root_ball_m"] / 2.0, plane(*p["root_m"]) + MULCH - 0.32, plane(*p["root_m"]) + MULCH - 0.02) for p in GROUND["plants"]]
+    add_mesh("BP_root_balls", *merge(balls), colls["S50_BOWER_PLANTING"], mats["root"], PROPOSAL, f"Each climber's root ball as it goes in, {SITE['planting_at_installation']['root_ball_m']} m across: a drawing assumption, not a horticultural requirement. All it has on the day it is planted; the soil round it is what it grows into. Seen only in a section.")
+
+
+def foundations(colls, mats) -> None:
+    p = GROUND["piles"]
+    plates, piles = [], []
+    for pid, f in GROUND["footings"].items():
+        top = LEVEL[pid]
+        plates += [prism(plate, top - f["cap_depth_m"], top) for plate in f["plates_m"]]
+        for x, y in f["piles_m"]:
+            tip = plane(x, y) - p["length_m"]
+            piles.append(cylinder(x, y, p["shaft_m"] / 2.0, tip, top - f["cap_depth_m"]))
+            piles.append(cylinder(x, y, p["helix_m"] / 2.0, tip + 0.15, tip + 0.165, 20))
+    first = next(iter(GROUND["footings"].values()))
+    note = "A proposal authored for this study (set_out_meadow.py, sole_footing); not engineered: no load, no soil and no thrust from the arches has been looked at."
+    add_mesh("FT_soles", *merge(plates), colls["S40_FOUNDATIONS"], mats["steel"], PROPOSAL, f"A steel sole under each pier, at that pier's own level and buried: a plate under the two arch legs, one curved beam under the six lattice legs and two ties. The timber feet stand on it {round(SUNK * 1000)} mm under the soil, so no footing is seen. {GROUND['quantities']['steel_over_the_ground_m2']['says']}. Timber in the ground is a durability question this study does not answer. Seen only in a section. {note}")
+    add_mesh("PL_screw_piles", *merge(piles), colls["S40_FOUNDATIONS"], mats["steel"], PROPOSAL, f"Three screw piles under each sole, {p['length_m']} m into the ground: {first['pile_spacing_m']} m apart at the least, no foot more than {first['furthest_foot_from_a_pile_m']} m from one and none nearer than {first['nearest_pile_to_a_climber_m']} m to a climber, which meets the ground draft's three rules. {note}")
+
+
+def supports(colls, mats) -> None:
+    lines, c = GROUND["training_lines"], GROUND["cable"]
+    q = GROUND["quantities"]
+    poly_curve("LN_trunk_cables", [l["points_m"] for l in lines], 0.004, colls["S45_SUPPORTS"], mats["line"], GENERATED, f"The cables for the stems that grow thick, strung by bower/lines.py on the legs: {q['cable_m']['says']}. Each stands {c['foot_gap_m']} m off the timber at a foot and comes in to {c['gap_m']} m over {c['foot_taper_m']} m of the leg, so that a trunk cannot bear on a member or work into a joint. That gap is a provisional allowance: no girth figure stands behind it. Thin growth is tied to the timber itself, by hand, and is not drawn. Drawn 8 mm thick so that it can be seen; the cable is 4 mm.")
+    poly_curve("LN_standoffs", [pair for l in lines for pair in l["standoffs_m"]], 0.005, colls["S45_SUPPORTS"], mats["line"], GENERATED, f"The standoffs that hold the cables off the timber: {q['standoffs']['says']}.")
+    verts, faces = [], []
+    for s in GROUND["mesh_sleeves"]:
+        at, u, v, w = Vector(s["at_m"]), Vector(s["across"]), Vector(s["up"]), Vector(s["along"])
+        a, b, c2 = s["size_m"][0] / 2.0, s["size_m"][1] / 2.0, s["size_m"][2] / 2.0
+        k = len(verts)
+        verts += [tuple(at + u * (a * i) + v * (b * j) + w * (c2 * m)) for m in (-1, 1) for j in (-1, 1) for i in (-1, 1)]
+        faces += [(k, k + 1, k + 5, k + 4), (k + 2, k + 6, k + 7, k + 3), (k, k + 4, k + 6, k + 2), (k + 1, k + 3, k + 7, k + 5)]  # a sleeve: four sides, open at both ends
+    add_mesh("MS_joint_mesh", verts, faces, colls["S45_SUPPORTS"], mats["mesh"], PROPOSAL, f"A sleeve of fine mesh round each member at each joint, to keep growth out of it: {q['joints']['says']}. A proposal. What it is made of, how it is fixed and whether it holds water against the timber are not known.")
+
+
+def climbers(colls, mats) -> None:
+    """One climber at each place one is planted, as it might go in: a tied stem on its cable, with a few leaves. A diagram."""
+    rng = random.Random(5)
+    length = SITE["planting_at_installation"]["cane_height_m"]
+    stems, leaf_v, leaf_f = [], [], []
+    for q in GROUND["plants"]:
+        line = q["route_m"]
+        x, y = q["root_m"]
+        base = plane(x, y) + MULCH
+        foot = Vector(line[0])
+        run = [Vector((x, y, base)), Vector((x, y, base + 0.12)).lerp(foot, 0.35), Vector((x, y, base + 0.3)).lerp(foot, 0.8), foot]
+        gone = sum((b - a).length for a, b in zip(run, run[1:]))
+        for a, b in zip(line, line[1:]):
+            a, b = Vector(a), Vector(b)
+            step = (b - a).length
+            if gone + step >= length:
+                run.append(a.lerp(b, (length - gone) / step))
+                break
+            run.append(b)
+            gone += step
+        stems.append([tuple(v) for v in run])
+        fine = []
+        for a, b in zip(run, run[1:]):
+            steps = max(1, int((b - a).length / 0.1))
+            fine += [a.lerp(b, k / steps) for k in range(steps)]
+        for v in fine[3:]:  # leaves every hand's breadth up the stem, turned at random
+            turn, size = rng.uniform(0, 2 * pi), rng.uniform(0.06, 0.11)
+            out = Vector((cos(turn), sin(turn), -0.45)).normalized()
+            side = Vector((-sin(turn), cos(turn), 0.0)) * size * 0.32
+            base_v = v + out * 0.015
+            k = len(leaf_v)
+            leaf_v += [tuple(base_v), tuple(base_v + out * size * 0.5 + side), tuple(base_v + out * size), tuple(base_v + out * size * 0.5 - side)]
+            leaf_f.append((k, k + 1, k + 2, k + 3))
+    poly_curve("BP_climber_stems", stems, 0.007, colls["S50_BOWER_PLANTING"], mats["stem"], PROPOSAL, f"{len(stems)} climbers as they might go in, {length} m long, each planted {CFG['plant_in_m']} m from the foot of its own cable, in the bed's soil, and tied up it. A diagram of an installed plant: not grown, not simulated, and no shade.")
+    add_mesh("BP_climber_leaves", leaf_v, leaf_f, colls["S50_BOWER_PLANTING"], mats["leaf"], PROPOSAL, "Leaves on those stems, to show how little a new plant covers.")
+
+
+def water(colls, mats, assets) -> None:
+    w, h, s = SITE["water"], LAND["hollow"], LAND["swale"]
+    sx, sy = w["standpipe_m"]
+    g = ground_z(sx, sy)
+    post = [(sx - 0.045, sy - 0.045), (sx + 0.045, sy - 0.045), (sx + 0.045, sy + 0.045), (sx - 0.045, sy + 0.045)]
+    add_mesh("WA_standpipe", *prism(post, g - 0.05, g + 1.05), colls["S60_WATER"], mats["post"], PROPOSAL, "A standpipe beside the way in: the proposed source of water for the establishment years, and where a can is filled. Where its supply comes from is not known.")
+    tap = [(sx + 0.045, sy - 0.02), (sx + 0.16, sy - 0.02), (sx + 0.16, sy + 0.02), (sx + 0.045, sy + 0.02)]
+    add_mesh("WA_tap", *prism(tap, g + 0.86, g + 0.9), colls["S60_WATER"], mats["brass"], PROPOSAL, "The tap.")
+    r = w["drip_radius_m"]
+    lift = lambda x, y: (x, y, plane(x, y) + MULCH + 0.012)  # noqa: E731
+    runs = [[lift(r * cos(a0 + (a1 - a0) * k / 60), r * sin(a0 + (a1 - a0) * k / 60)) for k in range(61)] for _, a0, a1, _ in bed_edges()]
+    runs.append([(sx, sy, g + 0.2), (sx, sy, g + 0.02), runs[0][0]])
+    for q in GROUND["plants"]:
+        zx, zy = q["root_m"]
+        b = atan2(zy, zx)
+        runs.append([lift(zx + 0.26 * cos(2 * pi * k / 24), zy + 0.26 * sin(2 * pi * k / 24)) for k in range(25)])
+        runs.append([lift(r * cos(b), r * sin(b)), lift(zx + 0.26 * cos(b), zy + 0.26 * sin(b))])
+    poly_curve("WA_drip_line", runs, 0.009, colls["S60_WATER"], mats["drip"], PROPOSAL, w["note"])
+    outward(add_mesh("WA_swale_bed", *ribbon(SWALE[:-1], 0.28, lambda x, y: ground_z(x, y) + 0.015, lambda x, y: ground_z(x, y) - 0.03), colls["S60_WATER"], mats["pebble"], PROPOSAL, f"The bed of the swale, in pebbles: a shallow cut {s['depth_m']} m deep round the uphill side of the room, which takes what runs off the garden round it instead of through it, and falls both ways to the meadow and the hollow. A drainage proposal; no rainfall or soil is known."))
+    outward(add_mesh("WA_rill", *ribbon(RILL, 0.16, lambda x, y: ground_z(x, y) + 0.018, lambda x, y: ground_z(x, y) - 0.03), colls["S60_WATER"], mats["pebble"], PROPOSAL, "A line of pebbles from the low edge of the floor to the hollow: where the floor's own water goes, made visible."))
+    hx, hy = h["at_m"]
+    wobble = [1.0 + 0.1 * sin(2 * pi * k / 28 * 2 + 0.7) + 0.06 * sin(2 * pi * k / 28 * 3) for k in range(28)]
+    damp = [(hx + (x - hx) * f, hy + (y - hy) * f) for f, (x, y) in zip(wobble, circle(hx, hy, h["radius_m"] * 0.42, 28))]
+    damp = [(x, y, ground_z(x, y) + 0.015) for x, y in damp]
+    add_mesh("WA_damp_hollow", [(hx, hy, ground_z(hx, hy) + 0.015)] + damp, [(0, 1 + k, 1 + (k + 1) % 28) for k in range(28)], colls["S60_WATER"], mats["damp"], PROPOSAL, f"The planted hollow below the room, {h['depth_m']} m down: where the swale and the rill end, and water stands for a while after rain. Its use to other life is an intention, not a finding.")
+    rng = random.Random(3)
+    ferns, rushes = [], []
+    while len(ferns) < 46:
+        t, d = rng.uniform(0, 2 * pi), h["radius_m"] * rng.uniform(0.3, 1.0)
+        x, y = hx + d * cos(t), hy + d * sin(t)
+        (ferns if len(ferns) <= len(rushes) * 1.2 else rushes).append((x, y, ground_z(x, y) + 0.04))
+    for k, (x, y) in enumerate(SWALE[:-1]):
+        if k % 3 == 0 and not on_arrival(x, y, 1.2):
+            ferns.append((x + rng.uniform(-0.5, 0.5), y + rng.uniform(-0.5, 0.5), ground_z(x, y) + 0.05))
+    scatter("WA_hollow_ferns", ferns, assets["fern_02"], colls["S60_WATER"], (1.0, 1.9), BORROWED, "Ferns in the hollow and along the swale: a borrowed model (fern_02, Poly Haven, CC0) marking ground that is meant to stay damp.")
+    scatter("WA_hollow_grass", rushes, assets["grass_medium_02"], colls["S60_WATER"], (1.8, 3.0), BORROWED, "Tall grass in the hollow (grass_medium_02, Poly Haven, CC0), standing in for whatever likes wet feet there.")
+
+
+def garden(colls, assets) -> None:
+    rng = random.Random(8)
+    wood, veil = SITE["woodland"], SITE["veil"]
+    trees, x = 0, wood["from_x_m"]
+    while x <= wood["to_x_m"]:
+        y = wood["edge_y_m"] + 1.6
+        while y <= wood["edge_y_m"] + wood["depth_m"]:
+            px, py = x + rng.uniform(-1.9, 1.9), y + rng.uniform(-1.9, 1.9)
+            if rng.random() < 0.82:
+                trees += 1
+                instance(f"GD_wood_{trees:03d}", assets["tree_small_02"], colls["S70_GARDEN"], (px, py, ground_z(px, py) - 0.05), rng.uniform(*wood["scale"]), rng.uniform(0, 360), BORROWED, "A tree of the woodland along the north-east edge. A borrowed model (tree_small_02, Poly Haven, CC0) for a small deciduous tree, at several sizes; no species is meant.")
+            y += wood["spacing_m"]
+        x += wood["spacing_m"]
+    for k, (tx, ty, s, t) in enumerate(veil["trees"]):
+        instance(f"GD_veil_tree_{k + 1}", assets["tree_small_02"], colls["S70_GARDEN"], (tx, ty, ground_z(tx, ty) - 0.03), s * 1.35, t, BORROWED, veil["note"] + " A borrowed tree (tree_small_02, Poly Haven, CC0).")
+    shrubs = [(sx, sy, ground_z(sx, sy)) for sx, sy in veil["shrubs"]]
+    low = []
+    for sx, sy in veil["shrubs"]:
+        for _ in range(5):
+            px, py = sx + rng.uniform(-1.3, 1.3), sy + rng.uniform(-1.3, 1.3)
+            if not on_arrival(px, py, 0.4):
+                low.append((px, py, ground_z(px, py)))
+    scatter("GD_veil_shrubs", shrubs, assets["shrub_01"], colls["S70_GARDEN"], (2.2, 3.4), BORROWED, veil["note"] + " Borrowed shrubs (shrub_01, Poly Haven, CC0).", seed=4)
+    scatter("GD_veil_ferns", low, assets["fern_02"], colls["S70_GARDEN"], (1.0, 1.7), BORROWED, "Low planting under the veil (fern_02, Poly Haven, CC0).", seed=6)
+    edge, under = [], []
+    for _ in range(170):
+        px = rng.uniform(wood["from_x_m"] + 8.0, wood["to_x_m"] - 8.0)
+        py = wood["edge_y_m"] + 1.3 * sin(0.3 * px) + rng.uniform(-1.4, 3.0)
+        (edge if rng.random() < 0.3 else under).append((px, py, ground_z(px, py)))
+    scatter("GD_wood_edge_shrubs", edge, assets["shrub_04"], colls["S70_GARDEN"], (2.0, 3.6), BORROWED, "Shrubs at the woodland's edge: cover between the trees and the open ground. Borrowed (shrub_04, Poly Haven, CC0); its use to birds and insects is an intention, not a finding.", seed=9)
+    scatter("GD_wood_edge_ferns", under, assets["fern_02"], colls["S70_GARDEN"], (1.1, 2.0), BORROWED, "Ferns at the woodland's edge (fern_02, Poly Haven, CC0).", seed=10)
+    lx, ly = -11.5, 11.2
+    instance("GD_log", assets["dead_tree_trunk"], colls["S70_GARDEN"], (lx, ly, ground_z(lx, ly) + 0.02), 1.0, 70.0, BORROWED, "A log left at the woodland's edge: dead wood kept on purpose. A borrowed model (dead_tree_trunk, Poly Haven, CC0); what lives in it is not claimed.")
+    m = SITE["meadow"]
+    tufts, flowers = [], []
+    tries = 0
+    while len(tufts) < m["tufts"] and tries < 60000:
+        tries += 1
+        d, t = m["reach_m"] * sqrt(rng.random()) , rng.uniform(LOOKOUT - 1.25, LOOKOUT + 1.25)
+        px, py = d * cos(t), d * sin(t)
+        if kind_of_ground(px, py) != 1 or _to_line(px, py, MOWN) < SITE["paths"]["mown"]["width_m"] / 2.0 + 0.25 or _to_line(px, py, RILL) < 0.3:
+            continue
+        tufts.append((px, py, ground_z(px, py) + 0.01))
+        if len(tufts) % 9 == 0:
+            flowers.append((px + 0.15, py + 0.1, ground_z(px, py) + 0.01))
+    scatter("GD_meadow_grass", tufts, assets["grass_medium_02"], colls["S70_GARDEN"], (2.0, 3.8), BORROWED, m["note"] + f" {len(tufts)} tufts of a borrowed model (grass_medium_02, Poly Haven, CC0), thickest toward the look-out; a meadow's own mix of plants is not modelled, and its use to insects is an intention.", seed=12)
+    scatter("GD_meadow_flowers", flowers, assets["dandelion_01"], colls["S70_GARDEN"], (1.3, 2.2), BORROWED, "Flowers in the meadow (dandelion_01, Poly Haven, CC0).", seed=13)
+    log(f"garden: {trees} woodland trees, {len(tufts)} meadow tufts")
+
+
+def people(colls) -> None:
+    for k, q in enumerate(SITE["people"]):
+        figure(colls, q["avatar"], q["pose"], list(q["at_m"]), q["facing_deg"], q["does"], f"PP_{k + 1}_{q['does'].split(',')[0].split(' ')[0]}")
+    log(f"people: {len(SITE['people'])} figures")
+
+
+def cameras(scene, colls) -> dict:
+    made = {}
+    for key, v in SITE["cameras"].items():
+        data = bpy.data.cameras.new(f"CAM_{key}")
+        cam = bpy.data.objects.new(f"CAM_{key}", data)
+        if v.get("section"):  # looking along +Y: its near clipping plane is the cut
+            data.type = "ORTHO"
+            data.ortho_scale = v["width_m"] * max(1.0, v["size_px"][1] / v["size_px"][0])  # Blender measures the longer side
+            data.clip_start, data.clip_end = 30.0, 400.0
+            cam.location = (v["centre_m"][0], v["cut_y_m"] - 30.0, v["centre_m"][1])
+            cam.rotation_euler = (radians(90.0), 0.0, 0.0)
+            note = v["note"] + " Its near clipping plane is the cut; turn the section switch on with it (see `render` in build_scene.py)."
+        elif v.get("plan"):
+            data.type, data.ortho_scale, data.clip_end = "ORTHO", v["width_m"], 400.0
+            cam.location = (v["centre_m"][0], v["centre_m"][1], 80.0)
+            note = v["note"]
+        else:
+            data.lens, data.clip_start, data.clip_end = v["lens_mm"], 0.1, 800.0
+            if "at_m" in v:  # an eye: so far above whatever is stood on there
+                x, y = v["at_m"]
+                cam.location = (x, y, surface_z(x, y) + v["eye_m"])
+                note = v["note"] + f" {v['eye_m']} m above the ground there."
+            else:
+                cam.location = v["location_m"]
+                note = v["note"]
+            cam.rotation_euler = (Vector(v["target_m"]) - cam.location).to_track_quat("-Z", "Y").to_euler()
+        made[key] = tag(cam, PROPOSAL, note)
+        colls["S90_CAMERAS"].objects.link(cam)
+    scene.camera = made["arrival"]
+    return made
+
+
+def render(scene, cams: dict, colls: dict, views: list, samples: int, out_dir: Path, scale: float = 1.0) -> None:
+    switch = bpy.data.node_groups["STUDY_section_switch"].nodes
+    notes = {"section": colls["S95_SECTION_NOTES"], "plant": colls["S96_PLANT_NOTES"]}
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for view in views:
+        v = SITE["cameras"][view]
+        scene.camera = cams[view]
+        on = bool(v.get("section"))
+        switch["section_on"].outputs[0].default_value = 1.0 if on else 0.0
+        switch["section_y"].outputs[0].default_value = v.get("cut_y_m", CUT_Y)
+        for key, coll in notes.items():
+            coll.hide_render = key != view
+        scene.cycles.samples = max(24, samples // 2) if on or v.get("plan") else samples
+        scene.render.resolution_x, scene.render.resolution_y = (int(s * scale) for s in v["size_px"])
+        scene.render.filepath = str(out_dir / f"{view}.png")
+        started = time.time()
+        bpy.ops.render.render(write_still=True)
+        log(f"rendered {view} at {scene.render.resolution_x} x {scene.render.resolution_y} in {round(time.time() - started)} s")
+    switch["section_on"].outputs[0].default_value = 0.0
+    for coll in notes.values():
+        coll.hide_render = True
+    scene.camera = cams["arrival"]
+
+
 # --- the whole ---------------------------------------------------------------------------------------
 
 
@@ -1270,32 +1285,28 @@ def build(samples: int = 96):
     foundations(colls, mats)
     supports(colls, mats)
     climbers(colls, mats)
-    care(colls, mats)
     water(colls, mats, assets)
     garden(colls, assets)
     people(colls)
     sky(scene)
     cams = cameras(scene, colls)
     render_settings(scene, samples)
-    view = bpy.context.view_layer
-    for name in ("S99_ASSET_SOURCES",):
-        layer_of(view.layer_collection, name).exclude = True
-    if CONFIG == SITE["default_configuration"]:  # the section's labels are written for the corrected baseline
-        sys.path.insert(0, str(HERE))
-        import section_notes
+    layer_of(bpy.context.view_layer.layer_collection, "S99_ASSET_SOURCES").exclude = True
+    sys.path.insert(0, str(HERE))
+    import place_notes
 
-        section_notes.add(colls["S95_SECTION_NOTES"], SITE, GROUND, CUT_Y, tag, PROPOSAL)
-    colls["S95_SECTION_NOTES"].hide_render = True
-    scene["study"] = "inhabited-room: the six-bay Bower as a place, at installation"
+    place_notes.add(colls, SITE, GROUND, {"plane": plane, "ground_z": ground_z, "tag": tag, "status": PROPOSAL})
+    for name in ("S95_SECTION_NOTES", "S96_PLANT_NOTES"):
+        colls[name].hide_render = True
+    scene["study"] = "inhabited-room: the six-bay Bower as a place, on the day it is planted"
+    scene["study_site"] = SITE["intention"]
     scene["study_configuration"] = f"{CONFIG}: {CFG['what']}"
     scene["study_baseline"] = f"releases/{SNAPSHOT}, linked"
-    scene["study_section"] = "Set node group STUDY_section_switch > section_on to 1 and look through CAM_section; show S95_SECTION_NOTES."
-    scene["study_statuses"] = " | ".join((LINKED, GENERATED, PROPOSAL, BORROWED))
+    scene["study_section"] = "Set node group STUDY_section_switch > section_on to 1 and look through CAM_section or CAM_plant; show S95_SECTION_NOTES or S96_PLANT_NOTES."
+    scene["study_statuses"] = " | ".join((LINKED, GENERATED, PROPOSAL, BORROWED, CARRIED))
     bpy.ops.wm.save_mainfile()
     log(f"saved {BLEND.name}: {len(bpy.data.objects)} objects")
     return scene, colls, cams
-
-
 def pose_sheet(out_dir: Path) -> None:
     """Every figure in its pose, in a row: for checking the poses before they go into the scene."""
     bpy.ops.wm.read_homefile(use_empty=True, use_factory_startup=True)
@@ -1328,14 +1339,15 @@ def main(argv=None) -> None:
     try:
         samples = int(argv[argv.index("--samples") + 1]) if "--samples" in argv else 96
         views = argv[argv.index("--render") + 1].split(",") if "--render" in argv else []
-        out_dir = Path(argv[argv.index("--out") + 1]) if "--out" in argv else HERE / "views"
+        out_dir = HERE / argv[argv.index("--out") + 1] if "--out" in argv else HERE / "views"  # a relative folder is beside this file, wherever Blender was started
         if "--poses" in argv:
             pose_sheet(out_dir)
             return
-        scene, colls, cams = build(samples)
-        render(scene, cams, colls, views, samples, out_dir)
         if "--export" in argv:
-            export_views(scene, cams, Path(argv[argv.index("--export") + 1]), samples)
+            raise RuntimeError("the coordinated layers have not been re-made for the designed site: see the note above LAYERS")
+        scale = float(argv[argv.index("--scale") + 1]) if "--scale" in argv else 1.0  # smaller pictures, for a cheap look
+        scene, colls, cams = build(samples)
+        render(scene, cams, colls, views, samples, out_dir, scale)
         bpy.ops.wm.save_mainfile()
         log("done")
     except Exception:

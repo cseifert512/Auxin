@@ -1,0 +1,358 @@
+{
+ "note": "The site of the inhabited-room study: designed, not surveyed. A cultivated garden opens into a meadow, with woodland along one edge, and the Bower stands at the threshold between them. Everything here is an authored proposal and every size is provisional. Positions are in the building's own axes, in metres; angles are anticlockwise from +X. The first pass of this study stood on an illustrative level garden: that site is kept beside this one as site.first-pass.json, with the three scenes and the drawing that were made from it.",
+ "intention": "A threshold between garden and landscape: a place to pause, look out and feel sheltered.",
+ "setting": {
+  "north_deg": 135.0,
+  "compass_note": "North lies toward 135 degrees in the building's axes, so +Y is north-east and -X is north-west. The woodland runs along the north-east; the garden and its wall lie to the east and south-east; the meadow falls away to the west.",
+  "sun_stands_deg": 262.0,
+  "sun_note": "A particular afternoon: the sun in the south-west, 27 degrees up, over the open side. The sky is a photograph (assets.json), turned so that its sun stands there; its height is the photograph's, and no date or latitude is modelled.",
+  "sky_mirrored": true
+ },
+ "ground": {
+  "note": "One even fall, 1 in 25 toward the west-north-west, on which the room stands without a levelled platform: each pier's feet are at that pier's own ground, and run feet_below_soil_m (about 3 in) into it, so the timber comes straight out of the soil and no footing is seen. The steel sole is buried under the feet. Soil is continuous round every pier. A swale on the uphill side takes what runs off the garden round the room; it and the floor's own water end in a planted hollow below. No soil, water table or rainfall is known.",
+  "fall": 0.04,
+  "fall_towards_deg": 195.0,
+  "even_to_m": 45.0,
+  "soil_depth_m": 0.6,
+  "swale": {
+   "radius_m": 11.2,
+   "from_deg": -105.0,
+   "to_deg": 158.0,
+   "depth_m": 0.24,
+   "half_width_m": 0.6
+  },
+  "hollow": {
+   "at_m": [
+    -15.5,
+    -1.5
+   ],
+   "radius_m": 4.4,
+   "depth_m": 0.6
+  },
+  "rill_from_deg": 196.0,
+  "feet_below_soil_m": 0.075
+ },
+ "room": {
+  "entry_bay": "R1.B3",
+  "entry_deg": 30.0,
+  "lookout_bay": "R1.B6",
+  "lookout_deg": 210.0,
+  "note": "You come in from the garden through one bay and look out to the meadow through the one opposite. The other four bays are planted across: deeper and taller on the woodland side, low on the sunny side."
+ },
+ "floor": {
+  "radius_m": 4.55,
+  "buildup_m": 0.03,
+  "note": "Bound gravel that follows the fall of the ground, 1 in 25, with no step at its edge. No furniture."
+ },
+ "paths": {
+  "arrival": {
+   "centre_m": [
+    17.0,
+    -8.66
+   ],
+   "radius_m": 16.0,
+   "from_deg": 60.0,
+   "to_deg": 120.0,
+   "width_m": 1.8,
+   "note": "From a gate in the garden wall, one gentle bend to the left, 17 m long: the Bower is first seen across the inside of the bend, through planting, and comes straight ahead only at the end, with the meadow through it."
+  },
+  "mown": {
+   "width_m": 1.6,
+   "length_m": 30.0,
+   "bend_deg": -24.0,
+   "note": "A mown path on from the look-out into the meadow."
+  }
+ },
+ "beds": {
+  "outer_radius_m": 8.0,
+  "sheltered_outer_radius_m": 9.3,
+  "opening_half_deg": 17.0,
+  "mulch_m": 0.05,
+  "note": "Two beds, one each side of the way through, in the garden's own soil: loosened and mulched in place, not contained. Every pier stands in one."
+ },
+ "wall": {
+  "through_m": [
+   25.0,
+   5.2
+  ],
+  "along_deg": 60.0,
+  "from_m": -14.0,
+  "to_m": 15.0,
+  "gate_m": 2.4,
+  "height_m": 2.0,
+  "thickness_m": 0.36,
+  "note": "A garden wall with a gate, standing for the house and garden behind it."
+ },
+ "woodland": {
+  "edge_y_m": 14.5,
+  "depth_m": 34.0,
+  "from_x_m": -52.0,
+  "to_x_m": 52.0,
+  "spacing_m": 5.2,
+  "scale": [
+   1.5,
+   2.7
+  ],
+  "note": "Woodland along the north-east edge: shelter and a backdrop, leaving the south and west open to the sun."
+ },
+ "meadow": {
+  "begins_m": 8.6,
+  "tufts": 4600,
+  "reach_m": 34.0,
+  "note": "Unmown grass beyond the room on the look-out side."
+ },
+ "veil": {
+  "note": "Garden planting on the inside of the path's bend, between someone arriving and the Bower. Each tree is x, y, scale, turn.",
+  "trees": [
+   [
+    15.3,
+    4.2,
+    1.1,
+    40
+   ],
+   [
+    12.4,
+    1.3,
+    0.95,
+    200
+   ],
+   [
+    19.6,
+    1.2,
+    1.2,
+    130
+   ]
+  ],
+  "shrubs": [
+   [
+    16.5,
+    5.6
+   ],
+   [
+    15.2,
+    3.0
+   ],
+   [
+    13.9,
+    4.9
+   ],
+   [
+    13.0,
+    2.8
+   ],
+   [
+    11.5,
+    3.5
+   ],
+   [
+    17.2,
+    3.6
+   ],
+   [
+    18.4,
+    5.2
+   ],
+   [
+    14.6,
+    1.6
+   ]
+  ]
+ },
+ "water": {
+  "standpipe_m": [
+   6.3,
+   5.85
+  ],
+  "drip_radius_m": 6.85,
+  "note": "For the establishment years: a standpipe beside the way in and a drip line through both beds, with a ring at each climber. How much, how often and for how long are the plant side's to say. Rain is not piped: the swale and the rill show where it goes."
+ },
+ "planting_at_installation": {
+  "cane_height_m": 2.5,
+  "note": "One climber at each place a configuration roots one, drawn as a tied stem with a few leaves: a diagram of a plant put in at 2 to 3 m, not a grown or simulated one. root_ball_m is a drawing assumption used only to say whether a climber stands wholly on steel; it is not a horticultural requirement.",
+  "root_ball_m": 0.3
+ },
+ "people": [
+  {
+   "avatar": "Female_Adult_01",
+   "pose": "walk",
+   "at_m": [
+    13.13,
+    6.86
+   ],
+   "facing_deg": 194.0,
+   "does": "arriving"
+  },
+  {
+   "avatar": "Male_Child_01",
+   "pose": "walk_b",
+   "at_m": [
+    11.75,
+    6.05
+   ],
+   "facing_deg": 199.0,
+   "does": "arriving, a step ahead"
+  },
+  {
+   "avatar": "Male_Adult_04",
+   "pose": "stand",
+   "at_m": [
+    -3.3,
+    -1.35
+   ],
+   "facing_deg": 204.0,
+   "does": "pausing at the look-out"
+  },
+  {
+   "avatar": "Female_Adult_08",
+   "pose": "talk",
+   "at_m": [
+    -2.6,
+    -2.3
+   ],
+   "facing_deg": 172.0,
+   "does": "pausing at the look-out, talking"
+  },
+  {
+   "avatar": "Male_Adult_02",
+   "pose": "look_up",
+   "at_m": [
+    -1.3,
+    1.5
+   ],
+   "facing_deg": 250.0,
+   "does": "looking up into the crown"
+  },
+  {
+   "avatar": "Gardener_Male_01",
+   "pose": "tend",
+   "at_m": [
+    4.2,
+    0.62
+   ],
+   "facing_deg": 2.0,
+   "does": "tending a climber at the uphill pier, from the floor"
+  }
+ ],
+ "cameras": {
+  "arrival": {
+   "at_m": [
+    18.67,
+    7.25
+   ],
+   "eye_m": 1.6,
+   "target_m": [
+    1.0,
+    0.8,
+    2.3
+   ],
+   "lens_mm": 32.0,
+   "size_px": [
+    1920,
+    1200
+   ],
+   "note": "The eye of someone on the bend of the arrival path: the Bower across the inside of the bend, through planting."
+  },
+  "lookout": {
+   "at_m": [
+    3.1,
+    1.75
+   ],
+   "eye_m": 1.6,
+   "target_m": [
+    -14.0,
+    -8.6,
+    0.6
+   ],
+   "lens_mm": 26.0,
+   "size_px": [
+    1920,
+    1200
+   ],
+   "note": "Just inside the entry, looking through the room and out to the meadow."
+  },
+  "whole": {
+   "location_m": [
+    -5.0,
+    -30.0,
+    18.5
+   ],
+   "target_m": [
+    2.5,
+    2.5,
+    0.0
+   ],
+   "lens_mm": 36.0,
+   "size_px": [
+    1920,
+    1200
+   ],
+   "note": "The whole place from the sunny side, raised."
+  },
+  "section": {
+   "section": true,
+   "cut_y_m": -0.25,
+   "centre_m": [
+    -3.5,
+    3.0
+   ],
+   "width_m": 36.0,
+   "size_px": [
+    3000,
+    1350
+   ],
+   "note": "A vertical cut through the uphill and the downhill pier, R1.P3 and R1.P6, looking north-east to the woodland."
+  },
+  "plant": {
+   "section": true,
+   "cut_y_m": -0.25,
+   "centre_m": [
+    5.25,
+    1.9
+   ],
+   "width_m": 5.2,
+   "size_px": [
+    1500,
+    1875
+   ],
+   "note": "The plant's view: the same cut at the uphill pier, from under the roots to above the first joints."
+  },
+  "plan": {
+   "plan": true,
+   "centre_m": [
+    3.0,
+    2.0
+   ],
+   "width_m": 64.0,
+   "size_px": [
+    1600,
+    1600
+   ],
+   "note": "The site from above, in the building's axes: for checking the views against one layout."
+  }
+ },
+ "configurations": {
+  "meadow": {
+   "label": "Designed for the plant",
+   "snapshot": "six-bay-meadow-v1",
+   "planting_from": "six-bay-radial-open-pier",
+   "footing": "sole",
+   "sole": {
+    "hub_margin_m": 0.1,
+    "beam_width_m": 0.14,
+    "tie_width_m": 0.1,
+    "pile_head_m": 0.3,
+    "pile_out_m": 0.12,
+    "pile_at_deg": 35.0
+   },
+   "planting": "at-the-cables",
+   "plant_in_m": 0.12,
+   "mesh": {
+    "below_m": 99.0,
+    "length_m": 0.16,
+    "proud_m": 0.008
+   },
+   "what": "The pier designed for the plant on the designed site: legs cut to each pier's ground and run a little way into it, a buried steel sole on three screw piles that nobody sees, a trunk cable held off each leg with a climber rooted at its foot, and fine mesh round the joints the climbers reach."
+  }
+ },
+ "default_configuration": "meadow"
+}

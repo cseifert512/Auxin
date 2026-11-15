@@ -6,7 +6,7 @@ $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $log = Join-Path $here "build.log"
 Remove-Item $log -ErrorAction SilentlyContinue
 $blender = Join-Path $env:LOCALAPPDATA "Microsoft\WindowsApps\blender-launcher.exe"   # the Microsoft Store Blender: its blender.exe cannot be started directly
-$arguments = @("--background", "--factory-startup", "--disable-autoexec", "--python", "`"$(Join-Path $here 'build_scene.py')`"", "--") + $args
+$arguments = @("--background", "--factory-startup", "--disable-autoexec", "--python", "`"$(Join-Path $here 'build_scene.py')`"", "--") + @($args | ForEach-Object { "$_" })   # every argument as text: a bare number is not one
 Start-Process $blender -ArgumentList $arguments -WindowStyle Hidden
 $waited = 0
 while ($waited -lt 1500) {
