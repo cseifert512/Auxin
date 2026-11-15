@@ -34,28 +34,27 @@
     $('stops2').append(b);
   });
 
-  // the table: closed, opened, change, and where each number is written
-  const head = $('rows').createTHead().insertRow();
-  for (const t of ['', S.stops[0], S.stops[1], 'Change']) head.append(Object.assign(document.createElement('th'), { textContent: t }));
-  const body = $('rows').createTBody();
+  // the figures: a name, the two values large, the change; where each is written goes in one line at the foot
+  const head = document.createElement('div'); head.className = 'cols';
+  head.innerHTML = `<span></span><span>${S.stops[0]}</span><span>${S.stops[1]}</span>`;
+  $('rows').append(head);
   let group = null;
   for (const r of S.rows) {
-    if (r.group !== group && r.group === 'before') {
-      const row = body.insertRow(); row.className = 'sub';
-      Object.assign(row.insertCell(), { textContent: 'Earlier, and the cost', colSpan: 4 });
-    }
+    if (r.group !== group && r.group === 'before') $('rows').append(Object.assign(document.createElement('p'), { className: 'sub', textContent: 'Earlier, and the cost' }));
     group = r.group;
-    const row = body.insertRow();
-    row.append(Object.assign(document.createElement('th'), { textContent: r.label }));
-    for (const k of ['closed', 'opened', 'change']) { const td = row.insertCell(); td.textContent = r[k]; td.dataset.col = k; }
-    const src = body.insertRow(); src.className = 'src';
-    Object.assign(src.insertCell(), { textContent: r.from, colSpan: 4 });
+    const row = document.createElement('div'); row.className = 'fig';
+    row.innerHTML = '<span class="name"></span><em></em><b data-col="closed"></b><b data-col="opened"></b>';
+    row.children[0].textContent = r.label; row.children[1].textContent = r.change;
+    row.children[2].textContent = r.closed; row.children[3].textContent = r.opened;
+    $('rows').append(row);
   }
-  if (!S.rows.length) Object.assign(body.insertRow().insertCell(), { textContent: 'Placeholder: no reported figures found.', colSpan: 4 });
+  if (!S.rows.length) $('rows').textContent = 'Placeholder: no reported figures found.';
+  $('sources').replaceChildren(...S.rows.map((r) => Object.assign(document.createElement('li'), { textContent: `${r.label}: ${r.from}` })));
+  $('srcbtn').addEventListener('click', () => { const open = $('sources').hidden; $('sources').hidden = !open; $('srcbtn').setAttribute('aria-expanded', String(open)); });
 
   function draw() {
     for (const b of $('stops2').children) b.setAttribute('aria-checked', String(b.dataset.state === chosen));
-    for (const td of $('rows').querySelectorAll('td[data-col]')) td.classList.toggle('now', td.dataset.col === chosen);
+    for (const v of $('rows').querySelectorAll('b[data-col]')) v.classList.toggle('now', v.dataset.col === chosen);
     const shots = S.shots[chosen][stage] ?? [];
     $('shots').replaceChildren(...(shots.length ? shots.map((s) => {
       const img = new Image(); img.src = s.src; img.alt = ''; img.style.aspectRatio = `${s.size[0]} / ${s.size[1]}`; return img;
