@@ -21,8 +21,11 @@
     content.querySelectorAll('a[href="https://www.bowerbuild.org/designx/v7"]').forEach(link => { link.href = 'v8/'; link.textContent = 'Bower · Edition 08 ↗'; });
     if (item.baseSlide === 4) {
       const mode = item.growthMode || 'time';
-      const image = mode === 'time' ? 'v8/assets/studies/seasonal-summer.webp' : `pieces/04-plants-make-space-timber/frames/${mode}-${mode === 'light' ? '18' : '07'}.webp`;
-      template.innerHTML = `<section class="v7-scene v8-growth-scene v8-growth-${mode}"><h2 class="v7-title">${esc(item.title)}</h2><div class="v8-growth-slot"><div class="v8-growth-print"><img src="${image}" alt="${esc(item.title)}: ${mode === 'light' ? 'installation, establishing and mature planting at midsummer noon' : 'established summer scenario'}">${mode === 'light' ? '<div class="v8-print-stages"><span>At installation</span><span>Establishing</span><span>Mature</span></div>' : ''}</div><div class="v8-study-host slide-interaction" data-v8-study="growth" data-growth-mode="${mode}" aria-label="${esc(item.title)}"></div></div><p class="v8-growth-print-status">Pre-rendered growth scenario on provisional assumptions. Authored occupation; no measured outcomes.</p></section>`;
+      const image = mode === 'time' ? 'v8/assets/approach-ink/approach-ink-16x9.jpg' : mode === 'light' ? 'v8/assets/light-establishment/frames/light-18.webp' : 'pieces/04-plants-make-space-timber/frames/space-07.webp';
+      const staticImage = mode === 'light'
+        ? `<div class="v8-light-print-panels">${[0,1,2].map(i => `<div style="--panel:${i}"><img src="${image}" alt="${['Installation','Establishing','Mature'][i]} at midsummer noon"></div>`).join('')}</div>`
+        : `<img src="${image}" alt="${esc(item.title)}: established summer scenario">${mode === 'time' ? '<div class="v8-print-occupants" aria-label="Authored ghost inhabitants"><span></span><span></span></div>' : ''}`;
+      template.innerHTML = `<section class="v7-scene v8-growth-scene v8-growth-${mode}"><h2 class="v7-title">${esc(item.title)}</h2><div class="v8-growth-slot"><div class="v8-growth-print">${staticImage}${mode === 'light' ? '<div class="v8-print-stages"><span>At installation</span><span>Establishing</span><span>Mature</span></div>' : ''}</div><div class="v8-study-host slide-interaction" data-v8-study="growth" data-growth-mode="${mode}" aria-label="${esc(item.title)}"></div></div><p class="v8-growth-print-status">Pre-rendered growth scenario on provisional assumptions. Authored occupation; no measured outcomes.</p></section>`;
     }
     if (item.baseSlide === 5) {
       const slot = content.querySelector('.v7-anatomy-drawing'); slot.classList.add('v8-pier-slot');

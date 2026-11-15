@@ -29,10 +29,10 @@ window.DESIGNX_V8_STORY = [
     "baseSlide": 4,
     "title": "A room through time",
     "theme": "v7-growth-slide",
-    "purpose": "See how one inhabitable room develops from installation through establishment and seasons.",
-    "stays": "The Space, Light and Time structure and explorable drawing controls. Keep the ability to choose a view, pause, linger and return to the presentation.",
-    "drawing": "One large Inside view autoplays from installation. Pause or scrub to linger; secondary views and the optional short assembly sequence sit in Inspect.",
-    "status": "Pre-rendered growth scenario based on provisional assumptions, with a separate authored occupation layer. No live plant geometry or measured performance.",
+    "purpose": "Watch the room assemble at eye level, then inhabit its changing growth and seasons.",
+    "stays": "The original approach-ink camera and full assembly-to-growth timing, with the recent timber Above, Approach and Inside views retained in Inspect.",
+    "drawing": "The original 51-second ink film autoplays, with authored walking silhouettes in the open threshold after assembly. An Argesta italic title overlays the full-slide drawing. Pause, scrub or switch to a retained timber view.",
+    "status": "Original pre-rendered film, imported unchanged; only its baked interface is cropped. Occupation is authored. Growth assumptions remain provisional, and the generated assembly sequence is not a validated erection method.",
     "transition": "The changing room also changes the light falling on its floor.",
     "speakerBridge": "The character of the room depends on more than what we see overhead. It begins in the ground and in the conditions we provide for life.",
     "growthMode": "time"
@@ -40,13 +40,13 @@ window.DESIGNX_V8_STORY = [
   {
     "baseSlide": 4,
     "stays": "The existing six-bay timber and planting images, source assumptions and inspectable timeline.",
-    "status": "Pre-rendered scenario on provisional assumptions; not a measured outcome or forecast.",
+    "status": "Pre-rendered scenario on provisional assumptions. The selected middle state gives 50.6% of mature additional noon shadow in a digital image comparison, not physical canopy coverage, a measured outcome or a forecast.",
     "number": 4,
     "growthMode": "light",
     "title": "Light through the day",
     "theme": "v8-light-slide",
     "purpose": "Compare the light at installation, during establishment and with mature planting at the same moment of a midsummer day.",
-    "drawing": "Three aligned growth stages remain visible together. A single autoplaying timeline moves the sun through the day; pause or scrub to compare their shadows.",
+    "drawing": "Three aligned growth stages share the same midsummer-day timeline. The establishment panel uses the existing 2033 simulated state, selected for a roughly half-developed shadow pattern. The two outer panels and all sun positions stay unchanged; an italic title overlays the full-slide field.",
     "transition": "Move from the shadow plan to the enclosure experienced inside the room."
   },
   {

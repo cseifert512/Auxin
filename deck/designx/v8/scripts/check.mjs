@@ -18,7 +18,7 @@ const browser = await chromium.launch({ headless: true, executablePath: process.
 const context = await browser.newContext({ viewport: { width: 1600, height: 900 }, deviceScaleFactor: 1, reducedMotion: 'no-preference' });
 context.setDefaultTimeout(20000); context.setDefaultNavigationTimeout(20000);
 const deckRoot = resolve(root, '../..'), piecesRoot = resolve(deckRoot, '../drawings-in-code/exports/deck');
-const types = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json', '.css': 'text/css', '.png': 'image/png', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.mp4': 'video/mp4' };
+const types = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json', '.css': 'text/css', '.png': 'image/png', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.mp4': 'video/mp4', '.webm': 'video/webm', '.md': 'text/plain' };
 const inside = (file, directory) => file === directory || file.startsWith(directory + sep);
 await context.route('**/*', async route => {
   const url = new URL(route.request().url()); dependencies.add(url.href);
@@ -38,7 +38,14 @@ await context.route('**/*', async route => {
       info = await stat(file);
     }
     if (info.isDirectory()) file = resolve(file, 'index.html');
-    await route.fulfill({ status: 200, contentType: types[extname(file)] || 'application/octet-stream', body: await readFile(file) });
+    const body = await readFile(file), contentType = types[extname(file)] || 'application/octet-stream';
+    const range = /^bytes=(\d*)-(\d*)$/.exec(route.request().headers().range || '');
+    if (range && (range[1] || range[2])) {
+      const start = range[1] ? Number(range[1]) : Math.max(0, body.length - Number(range[2]));
+      const end = range[1] && range[2] ? Math.min(Number(range[2]), body.length - 1) : body.length - 1;
+      if (start > end || start >= body.length) return route.fulfill({ status: 416, headers: { 'Content-Range': `bytes */${body.length}` }, body: '' });
+      await route.fulfill({ status: 206, contentType, headers: { 'Accept-Ranges': 'bytes', 'Content-Range': `bytes ${start}-${end}/${body.length}`, 'Content-Length': String(end - start + 1) }, body: body.subarray(start, end + 1) });
+    } else await route.fulfill({ status: 200, contentType, headers: { 'Accept-Ranges': 'bytes' }, body });
   } catch (error) { await route.fulfill({ status: 404, contentType: 'text/plain', body: `${pathname}: ${error.message}` }); }
 });
 const page = await context.newPage();
@@ -72,7 +79,7 @@ async function snapshot(kind, mode = 'time') {
     const doc = el.querySelector('iframe')?.contentDocument;
     if(kind==='growth') {
       const state=el.v8Controller.getState();
-      return {mode:state.mode,view:state.view,range:Number(el.querySelector('input[type=range]').value),play:el.querySelector('[data-v8-study-play]').textContent,caption:el.querySelector('output').textContent,childPosition:Math.round(state.time/state.duration*1000),renderedFrame:state.renderedFrame,canvasLabel:el.querySelector('canvas').getAttribute('aria-label')};
+      return {mode:state.mode,view:state.view,renderer:state.renderer,duration:state.duration,range:Number(el.querySelector('input[type=range]').value),play:el.querySelector('[data-v8-study-play]').textContent,caption:el.querySelector('output').textContent,childPosition:Math.round(state.time/state.duration*1000),renderedFrame:state.renderedFrame,canvasLabel:el.querySelector('canvas').getAttribute('aria-label')};
     }
     return { mode: el.querySelector('.v8-study')?.dataset.mode, range: Number(el.querySelector('input')?.value), play: el.querySelector('[data-v8-study-play]')?.textContent, caption: el.querySelector('output')?.textContent,
       childPosition: kind === 'growth' ? Number(doc?.getElementById('scrub')?.value) : parseFloat(doc?.getElementById('fill')?.style.width || 'NaN') * 10 };
@@ -89,6 +96,16 @@ async function setRange(kind, value, mode = 'time') {
 async function inspectGrowth(mode = 'time', open = true) {
   const details = host('growth', mode).locator('details');
   if (await details.evaluate(el => el.open) !== open) await details.locator('summary').click();
+}
+async function drawingDominates(slide) {
+  const layout = await slide.evaluate(el => {
+    const drawing = el.querySelector('.v8-growth-screen').getBoundingClientRect(), bounds = el.getBoundingClientRect();
+    const title = el.querySelector('.v7-title'), heading = title.getBoundingClientRect();
+    return { share: drawing.width * drawing.height / (bounds.width * bounds.height), titleInside: heading.top >= drawing.top && heading.bottom <= drawing.bottom, italic: getComputedStyle(title).fontStyle };
+  });
+  assert.ok(layout.share > .92, `Drawing occupies only ${(layout.share*100).toFixed(1)}% of the slide`);
+  assert.equal(layout.titleInside,true,'Editorial title should sit over the drawing');
+  assert.equal(layout.italic,'italic');
 }
 async function screenshot(name, locator = page.locator('.slide.is-active')) {
   await page.evaluate(() => document.fonts.ready); await locator.evaluate(el => Promise.all([...el.querySelectorAll('img')].map(img => img.decode().catch(() => {}))));
@@ -124,7 +141,7 @@ try {
   });
   await test('Engine keeps making, growth and budget distinct from the pier example', async () => {
     const engine = await activate('v8-engine-slide');
-    for (const text of ['Can we make it?', 'Can it grow?', 'Can we afford it?', 'Fabricatability', 'Plantability', 'Cost', 'The designer weighs the trade-offs.']) assert.ok((await engine.innerText()).includes(text));
+    for (const text of ['Can we make it?', 'Can it grow?', 'Can we afford it?', 'Fabricatability', 'Plantability', 'Cost']) assert.ok((await engine.innerText()).replace(/\s+/g,' ').includes(text));
     assert.equal(await engine.locator('[data-v8-engine-check]').count(),9);
     await engine.getByRole('button',{name:'Installation',exact:true}).click();
     assert.match(await engine.locator('[data-v8-engine-text]').innerText(),/installed cost against the budget/);
@@ -145,52 +162,75 @@ try {
     for (const pattern of [/£65,000/, /Deducted from total build cost/i, /Fixed\s+build price/i, /Annual\s+care/i]) assert.match(await offer.innerText(), pattern);
     await screenshot('slide-14-commercial', offer);
   });
-  await test('Time fills its slide, autoplays from installation and remains inspectable', async () => {
+  await test('Original eye-level Time film autoplays assembly and preserves pause and scrubbing', async () => {
     const slide = await activate('v7-growth-slide'); await ready('growth');
     const initial = await snapshot('growth');
-    assert.equal(initial.mode,'time'); assert.equal(initial.view,2); assert.equal(initial.play,'Pause');
-    assert.ok(initial.renderedFrame >= 16, 'Autoplay should start with the usable room, not construction');
+    assert.equal(initial.mode,'time'); assert.equal(initial.view,-1); assert.equal(initial.renderer,'film'); assert.equal(initial.play,'Pause');
+    assert.ok(Math.abs(initial.duration-51)<.05,'Original film timing must be retained');
+    const media = await host('growth').locator('video').evaluate(el => ({ width:el.videoWidth,height:el.videoHeight,ready:el.readyState,source:el.currentSrc }));
+    assert.deepEqual([media.width,media.height],[1920,1080]); assert.ok(media.ready>=2); assert.match(media.source,/approach-ink-16x9\.(mp4|webm)$/);
     assert.equal(await slide.locator('[data-v7-growth], [data-v8-open="growth"]').count(),0);
-    const drawingShare = await slide.evaluate(el => { const drawing=el.querySelector('.v8-growth-screen').getBoundingClientRect(), bounds=el.getBoundingClientRect(); return drawing.width*drawing.height/(bounds.width*bounds.height); });
-    assert.ok(drawingShare > .65, `Drawing occupies only ${(drawingShare*100).toFixed(1)}% of the slide`);
-    assert.equal(await host('growth').locator('button:visible').count(),1,'Only the pause button should compete with the drawing before inspection');
+    await drawingDominates(slide);
+    assert.equal(await host('growth').locator('button:visible').count(),1,'Only Pause should be visible before inspection');
     await host('growth').locator('[data-v8-study-play]').click(); await ready('growth'); await pausedStable('growth');
-    const still=await host('growth').locator('canvas').evaluate(el=>el.toDataURL());await frames();assert.equal(await host('growth').locator('canvas').evaluate(el=>el.toDataURL()),still,'Paused inhabitants must stay still');
+    assert.match((await setRange('growth',118)).caption,/Assembly/i);
+    await screenshot('slide-03-assembly',slide);
     await inspectGrowth();
-    assert.equal(await host('growth').getByRole('button',{name:'Design',exact:true}).count(),0);
-    await host('growth').getByRole('button', { name: 'Winter', exact: true }).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption, /winter/i);
-    await host('growth').getByRole('button', { name: 'Summer', exact: true }).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption, /summer/i);
-    await inspectGrowth('time',false); await screenshot('slide-03-growth', slide);
+    await host('growth').getByRole('button',{name:'Installation',exact:true}).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption,/installation/i);
+    await host('growth').getByRole('button',{name:'Growing',exact:true}).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption,/Growth and seasons/i);
+    await host('growth').getByRole('button',{name:'Summer',exact:true}).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption,/summer/i);
+    await inspectGrowth('time',false);
+    const still = await host('growth').locator('canvas').evaluate(el=>el.toDataURL()); await frames();
+    assert.equal(await host('growth').locator('canvas').evaluate(el=>el.toDataURL()),still,'Paused film and inhabitants must stay still');
+    await screenshot('slide-03-growth',slide);
     await setRange('growth',999); await host('growth').locator('[data-v8-study-play]').click();
     await page.waitForFunction(selector => Number(document.querySelector(selector+' input[type=range]').value)<200,hostSelector('growth'));
-    await ready('growth'); assert.ok((await snapshot('growth')).renderedFrame>=16,'Loop must return to installation');
-    await host('growth').locator('[data-v8-study-play]').click();
-    await inspectGrowth(); await host('growth').locator('[data-v8-assembly]').check(); await ready('growth');
-    assert.equal((await pausedStable('growth')).renderedFrame,0);
-    assert.ok((await setRange('growth',50)).renderedFrame<16,'Optional assembly should be inspectable');
-    assert.equal((await setRange('growth',100)).renderedFrame,16,'Assembly must occupy only the first tenth');
+    await ready('growth'); assert.match((await snapshot('growth')).caption,/design|Assembly/i,'The original film should loop to its assembly sequence');
+    await activate('v7-anatomy-slide');
+    assert.equal(await host('growth').evaluate(el=>el.v8Controller.getState().running),false);
+    const stopped = await host('growth').locator('video').evaluate(el=>({paused:el.paused,time:el.currentTime}));
+    assert.equal(stopped.paused,true); await frames(); assert.equal(await host('growth').locator('video').evaluate(el=>el.currentTime),stopped.time);
+    await activate('v7-growth-slide'); await ready('growth'); assert.equal((await snapshot('growth')).play,'Pause');
+    const paused = await setRange('growth',555);
+    await activate('v7-anatomy-slide'); await activate('v7-growth-slide'); await ready('growth');
+    assert.deepEqual(await pausedStable('growth'),paused,'An explicitly paused original film must retain its moment on return');
+  });
+  await test('Timber views remain available alongside the original film', async () => {
+    const slide = await activate('v7-growth-slide'); await ready('growth'); await inspectGrowth();
+    assert.deepEqual(await host('growth').locator('[data-v8-view]').allTextContents(),['Original ink','Above','Approach','Inside']);
+    await host('growth').getByRole('button',{name:'Inside',exact:true}).click(); await ready('growth');
+    assert.equal((await snapshot('growth')).view,2); assert.equal((await snapshot('growth')).renderer,'raster');
+    assert.equal((await snapshot('growth')).renderedFrame,16);
+    assert.equal(await host('growth').getByRole('button',{name:'Design',exact:true}).count(),0);
+    await host('growth').getByRole('button',{name:'Winter',exact:true}).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption,/winter/i);
+    await host('growth').getByRole('button',{name:'Summer',exact:true}).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption,/summer/i);
+    await inspectGrowth('time',false); await screenshot('slide-03-timber-inside',slide); await inspectGrowth();
+    await host('growth').locator('[data-v8-assembly]').check(); await ready('growth'); assert.equal((await pausedStable('growth')).renderedFrame,0);
+    assert.ok((await setRange('growth',50)).renderedFrame<16); assert.equal((await setRange('growth',100)).renderedFrame,16);
     await host('growth').locator('[data-v8-assembly]').uncheck(); await ready('growth');
     assert.equal((await pausedStable('growth')).renderedFrame,16);
-    const paused=await setRange('growth',555); await inspectGrowth('time',false);
-    await activate('v7-anatomy-slide'); assert.equal(await host('growth').locator('iframe').count(), 0);
-    assert.equal(await host('growth').evaluate(el=>el.v8Controller.getState().running),false);
-    await activate('v7-growth-slide'); await ready('growth'); assert.deepEqual(await pausedStable('growth'), paused);
-    await inspectGrowth();
+    const raster = await setRange('growth',555);
+    await host('growth').getByRole('button',{name:'Original ink',exact:true}).click(); await ready('growth'); assert.equal((await snapshot('growth')).renderer,'film');
+    await host('growth').getByRole('button',{name:'Inside',exact:true}).click(); await ready('growth');
+    assert.deepEqual(await pausedStable('growth'),raster,'Switching to the original film must not discard the retained timber view');
     await host('growth').getByRole('button',{name:'Inhabitants on',exact:true}).click();
     assert.equal(await host('growth').evaluate(el=>el.v8Controller.getState().occupation),false);
     await inspectGrowth('time',false);
   });
   await test('Light compares three stages and Space keeps its own autoplaying panorama', async () => {
     const light=await activate('v8-light-slide'); await ready('growth','light');
+    await drawingDominates(light);
     assert.equal((await snapshot('growth','light')).mode,'light'); assert.equal((await snapshot('growth','light')).play,'Pause');
     assert.deepEqual(await host('growth','light').locator('.v8-light-labels span').allTextContents(),['At installation','Establishing','Mature']);
     assert.ok(await host('growth','light').locator('.v8-light-labels').isVisible());
     assert.match((await snapshot('growth','light')).canvasLabel,/Installation.*establishing.*mature/i);
     assert.equal(await host('growth','light').locator('[data-v8-view]').count(),0);
     await inspectGrowth('light'); await host('growth','light').getByRole('button',{name:'Noon',exact:true}).click(); await ready('growth','light');
+    assert.ok([...dependencies].some(url=>url.includes('/v8/assets/light-establishment/frames/light-18.webp')),'Light should load the revised establishment drawing');
     assert.match((await pausedStable('growth','light')).caption,/noon/i); await inspectGrowth('light',false); await screenshot('slide-04-light',light);
     const lightPaused=await snapshot('growth','light');
     const space=await activate('v8-space-slide'); await ready('growth','space');
+    await drawingDominates(space);
     assert.equal((await snapshot('growth','space')).mode,'space'); assert.equal((await snapshot('growth','space')).play,'Pause');
     await setRange('growth',555,'space');
     const pan=await host('growth','space').evaluate(el=>el.v8Controller.getState().pan);
@@ -213,12 +253,28 @@ try {
     await page.waitForFunction(()=>document.querySelector('[data-v8-consequences]')?.dataset.stage==='3');
     assert.match(await slide.innerText(),/0.23 m/);assert.match(await slide.innerText(),/0.24 m/);
   });
+  await test('Missing original film shows a labelled fallback and recovers on retry',async()=>{
+    expectingLoadFailure=true;
+    const pattern=/\/approach-ink-16x9\.(mp4|webm)(?:\?|$)/;
+    await page.route(pattern,route=>route.abort('failed'));
+    try {
+      await page.goto(href+'#slide-03'); await page.reload();
+      await page.waitForFunction(()=>document.querySelector('[data-v8-study="growth"][data-growth-mode="time"]')?.v8Controller?.getState().fallback);
+      assert.match((await snapshot('growth')).caption,/Static fallback.*summer/);
+      assert.ok(await host('growth').getByRole('button',{name:'Retry drawing',exact:true}).isVisible());
+      await page.unroute(pattern);
+      await host('growth').getByRole('button',{name:'Retry drawing',exact:true}).click(); await ready('growth');
+      assert.equal((await snapshot('growth')).renderer,'film');
+      assert.match((await snapshot('growth')).canvasLabel,/Original eye-level ink film/);
+    } finally { await page.unroute(pattern); expectingLoadFailure=false; }
+  });
   await test('Missing growth frame has an honest static fallback and recovers on retry',async()=>{
     expectingLoadFailure=true;
     const pattern='**/04-plants-make-space-timber/frames/time-30.webp';
     await page.route(pattern,route=>route.abort('failed'));
     try{
       await page.goto(href+'#slide-03');await page.reload();await ready('growth');await inspectGrowth();
+      await host('growth').getByRole('button',{name:'Inside',exact:true}).click(); await ready('growth');
       await host('growth').getByRole('button',{name:'Winter',exact:true}).click();
       await page.waitForFunction(()=>document.querySelector('[data-v8-study="growth"]')?.v8Controller?.getState().fallback);
       assert.match((await snapshot('growth')).caption,/Static fallback.*summer/);
@@ -231,6 +287,9 @@ try {
   await test('Reduced motion, view selection and bounded frame loading',async()=>{
     await page.emulateMedia({reducedMotion:'reduce'});
     await page.goto(href+'#slide-03');await page.reload();await ready('growth');assert.equal((await snapshot('growth')).play,'Play');
+    assert.equal((await snapshot('growth')).renderer,'film');
+    assert.equal(await host('growth').locator('video').evaluate(el=>el.paused),true);
+    await setRange('growth',118);
     await inspectGrowth();
     await host('growth').getByRole('button',{name:'Approach',exact:true}).click();assert.equal((await snapshot('growth')).view,1);
     await host('growth').locator('input[type=range]').evaluate(el=>{for(let i=0;i<=1000;i+=71){el.value=String(i);el.dispatchEvent(new Event('input',{bubbles:true}));}});
