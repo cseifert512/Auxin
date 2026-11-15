@@ -18,7 +18,7 @@
       },
       "hard_prune": {
         "visits": 13,
-        "stemRemovedM": 267
+        "stemRemovedM": 270
       },
       "monitor": {
         "visits": 20,
@@ -26,15 +26,15 @@
       },
       "shorten_side_shoots": {
         "visits": 82,
-        "stemRemovedM": 6369
+        "stemRemovedM": 5472
       },
       "spur_prune": {
         "visits": 38,
-        "stemRemovedM": 202
+        "stemRemovedM": 180
       },
       "trim_to_bounds": {
         "visits": 129,
-        "stemRemovedM": 1940
+        "stemRemovedM": 1662
       },
       "deadhead_or_select_flowers": {
         "visits": 90,
@@ -116,43 +116,43 @@
       },
       "vine: shorten_side_shoots": {
         "visits": 30,
-        "stemRemovedM": 5083
+        "stemRemovedM": 4250
       },
       "wisteria: spur_prune": {
         "visits": 19,
-        "stemRemovedM": 78
+        "stemRemovedM": 76
       },
       "japanese-wisteria: spur_prune": {
         "visits": 19,
-        "stemRemovedM": 124
+        "stemRemovedM": 104
       },
       "rose: shorten_side_shoots": {
         "visits": 18,
-        "stemRemovedM": 110
+        "stemRemovedM": 102
       },
       "summer-clematis: hard_prune": {
         "visits": 9,
-        "stemRemovedM": 258
+        "stemRemovedM": 260
       },
       "ivy: trim_to_bounds": {
         "visits": 18,
-        "stemRemovedM": 42
+        "stemRemovedM": 37
       },
       "honeysuckle: trim_to_bounds": {
         "visits": 18,
-        "stemRemovedM": 48
+        "stemRemovedM": 53
       },
       "winter-clematis: trim_to_bounds": {
         "visits": 18,
-        "stemRemovedM": 94
+        "stemRemovedM": 80
       },
       "star-jasmine: trim_to_bounds": {
         "visits": 18,
-        "stemRemovedM": 37
+        "stemRemovedM": 28
       },
       "spring-clematis: trim_to_bounds": {
         "visits": 9,
-        "stemRemovedM": 404
+        "stemRemovedM": 251
       },
       "rose: deadhead_or_select_flowers": {
         "visits": 90,
@@ -160,15 +160,15 @@
       },
       "honeysuckle: shorten_side_shoots": {
         "visits": 18,
-        "stemRemovedM": 1140
+        "stemRemovedM": 1096
       },
       "trumpet-vine: shorten_side_shoots": {
         "visits": 8,
-        "stemRemovedM": 34
+        "stemRemovedM": 21
       },
       "akebia: trim_to_bounds": {
         "visits": 48,
-        "stemRemovedM": 1316
+        "stemRemovedM": 1214
       },
       "ivy: shorten_side_shoots": {
         "visits": 8,
@@ -181,7 +181,9 @@
     "branch": "main",
     "commit": "02ee7820f6de0f5fe57a648e6b3376c33e51fae3"
   },
-  "toCheck": [],
+  "toCheck": [
+    "the site section gives no latitude and longitude: southern England is assumed for the sun"
+  ],
   "notModelledOrAssumed": [
     "P1.wisteria: the shoots of Wisteria sinensis that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant",
     "P1.wisteria: the long shoots of Wisteria sinensis set out from their stems as the generic side shoot does, not as its own: its growth model gives no value for sideShoots.branchAngleDeg, organs.alternateDivergenceDeg. The angles they leave at are not findings about this plant",
@@ -237,7 +239,7 @@
     "P6.vine: the shoots of Vitis coignetiae that stand clear of the structure are drawn with the generic shoot of a woody climber, not its own: its growth model gives no value for mechanics.leanDeg, mechanics.leafWeightOffsetShare. How far they stand out, where they droop and what they reach are not findings about this plant",
     "P6.vine: the leaves of Vitis coignetiae turn away from the support and towards the open and the light as the generic leaf does, not as its own: its growth model gives no value for organs.leafTurnToOpenShare. How far each blade faces out is not a finding about this plant"
   ],
-  "reseated": "83542 supported stem points: 7.9% stood more than 10 mm inside the real timber and 39.3% were moved by more than 5 mm (the furthest 106 mm); 56.5% could not be placed on a member and follow their neighbours",
-  "thinned": "1014741 stem points recorded, 493140 kept: unsupported shoots thinned to one point every 25 mm",
-  "cleared": "7.4% of stem points stood more than 5 mm inside the timber; 21233 stretches of stem were taken out of it (the furthest moved 155 mm), leaving 0.2%"
+  "reseated": "82058 supported stem points: 8.1% stood more than 10 mm inside the real timber and 39.4% were moved by more than 5 mm (the furthest 106 mm); 56.5% could not be placed on a member and follow their neighbours",
+  "thinned": "939577 stem points recorded, 449488 kept: unsupported shoots thinned to one point every 25 mm",
+  "cleared": "7.7% of stem points stood more than 5 mm inside the timber; 20014 stretches of stem were taken out of it (the furthest moved 163 mm), leaving 0.2%"
 }

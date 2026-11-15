@@ -25,6 +25,9 @@ Every picture exists at five moments: `planted` (March 2027), `year-1`, `year-3`
 | `site.json` | The site and the moments, as authored |
 | `ground/meadow.json` | The pier as set out, with every quantity quoted below and where it comes from |
 | `ground/meadow.growth.json` | What the grown run has on the plants at each moment |
+| `ground/openings.json` | The pier opened by degrees: what each opening does to sun, the way in and the footing |
+| `drawings-in-code/exports/deck/opening-the-pier/index.html` | That study as a drawing in code, for the deck |
+| `views/timelapse/<view>/` | Each view on 41 days across the ten years (made by `--timelapse`; not in git) |
 
 ## The site
 
@@ -36,11 +39,15 @@ mown grass stops.
 
 - **Arrival.** A path from a gate in the garden wall makes one gentle bend to the left, 17 m long.
   The Bower is first seen across the inside of the bend, through planting, and comes straight ahead
-  only at the end, with the meadow visible through it. The path steps over the swale on a stone slab.
+  only at the end, with the meadow visible through it. The path is not a built thing: it is the
+  same grass as the garden, kept clear of taller plants.
 - **The room.** You come in through one bay and look out through the one opposite. The other four
   bays are planted across. A mown path goes on from the look-out into the meadow.
-- **Light.** Woodland to the north and east, open sky to the south and west, and one afternoon: the
-  sun in the south-west, 27 degrees up. The sky is a photograph; no date or latitude is modelled.
+- **Light.** Woodland to the north and east, open sky to the south and west. The pictures are lit by
+  one afternoon: the sun in the south-west, 27 degrees up, from a photograph of a sky. The plant
+  simulator is told more: an assumed latitude of 51.5 degrees, which way the building is turned,
+  and what stands near enough to shade it (the woodland's front rows, the trees on the bend of the
+  path, the garden wall). `grow_inputs.py` writes that from `site.json`.
 - **Ground.** One even fall of 1 in 25, 0.48 m across the room. Nothing is levelled: the floor is
   bound gravel that follows the ground, and each pier's legs are cut to that pier's own level. The
   timber runs 75 mm (about 3 in) into the soil and comes straight out of it. No footing is seen.
@@ -80,6 +87,38 @@ from the ground up, and room for its stem to thicken for decades without bearing
 
 The ground draft's three rules for piles are all met: piles 1.26 m apart at the least, no foot more
 than 0.56 m from one in plan, none nearer than 0.55 m to a climber.
+
+## How far to open the pier
+
+The design opens each pier: its legs stand in a ring 1.2 m in radius, not bunched at 0.34 m. How
+far to open it was a judgement. `study_openings.py` puts numbers beside it. For six openings it
+makes the building, sets its pier out as above, hands the simulator that building on this site, and
+grows it for ten years. No Blender is needed. `ground/openings.json` holds what came back.
+
+| Ring of legs, radius | Feet apart | Way in | June sun on a climber, mean of 24 | In full sun | Stem by year 10 | Footing draft's rules |
+|---|---|---|---|---|---|---|
+| 0.34 m | 0.15 m | 4.92 m | 1.25 h | 0 | 2,182 m | not met: piles 0.62 m apart; a pile 0.06 m from a climber |
+| 0.6 m | 0.17 m | 4.83 m | 1.51 h | 0 | 2,153 m | not met |
+| 0.8 m | 0.26 m | 4.41 m | 3.14 h | 2 | 2,031 m | not met: piles 0.86 m apart |
+| 1.0 m | 0.34 m | 4.00 m | 3.58 h | 2 | 2,112 m | met |
+| **1.2 m, the design** | 0.43 m | 3.60 m | 4.05 h | 5 | 2,081 m | met |
+| 1.4 m | 0.51 m | 3.19 m | 4.50 h | 6 | 2,088 m | not met: a foot 0.63 m from its nearest pile |
+
+- **What it supports.** Opening the pier from 0.34 m to 1.2 m about triples the direct sun that
+  reaches a climber's planting place in June, in the simulator's light model. Each step wider gives
+  more sun and a narrower way in. 1.2 m is the widest opening at which this study's sole still
+  meets the ground draft's rules.
+- **What it does not support.** More growth. Stem by year 10 is about the same at every opening:
+  in this simulator, on these provisional numbers, light is not what limits these climbers.
+- **What stands behind it.** One run and one seed for each opening. The light model is provisional
+  and the latitude assumed. The footing rules are the ground draft's, not an engineer's.
+
+```powershell
+python study_openings.py            # about ten minutes; --keep reads runs that are already there
+```
+
+The trial buildings are written to `releases/trial-meadow-pier-*`, which git ignores: they are not
+snapshots.
 
 ## Time
 
@@ -131,7 +170,14 @@ rules (`roots.py`, checked by `check_roots.py`): a few far-running shallow later
 feeders near the surface and one to three sinkers, growing outward over the ten years and steered
 clear of the stubs, piles and sole. How far a climber's roots reach is set from the thickest stem
 the run gave it, by an authored rule (`site.json`, `growth.roots`). Nothing stands behind it: it is
-there so that the picture shows the plant below ground too, not as evidence about any plant.
+there so that the picture shows the plant below ground too, not as evidence about any plant. The
+root ball it was planted with is drawn for the first 60 days only.
+
+**The time-lapse.** `--timelapse` renders the views on 41 days: the day of planting, then four days
+in each year (late April, mid June, early August, late October). The arrival and look-out cameras
+travel a little as the years pass. Each day's climbers are drawn, rendered and thrown away, so the
+scene file stays small. `views/timelapse/frames.json` lists what was made and where the named
+places fall in every frame.
 
 ## What we would need to learn from building it
 
@@ -220,6 +266,7 @@ python set_out_ground.py                                # ground/meadow.json fro
 .\run_headless.ps1 --render arrival,lookout,plant --samples 48 --scale 0.75      # every moment
 .\run_headless.ps1 --render section,whole,plan --moments planted,year-10
 .\run_headless.ps1 --render arrival --moments year-3 --samples 24 --scale 0.5 --out _preview    # a cheap look
+.\run_headless.ps1 --timelapse arrival,lookout,plant,whole,section                              # 41 days; about two and a half hours
 ```
 
 To grow the climbers again, after a change to the building, the cables or the planting places:
@@ -268,9 +315,10 @@ shows the first pass. It has not been re-made on this site, and `build_scene.py 
 - The site does not change with the date; only the climbers do.
 - No claim about other life is a finding.
 - The planting, the meadow and the woodland are borrowed models in a manner of planting, not a
-  planting design. `views/` was rendered before the beds were removed: its pictures still show two
-  beds, a pebble swale and the cables in blue. They are to be rendered again once the form of the
-  explorable drawing is agreed.
+  planting design.
+- The pictures are lit by a photograph of a sky, the simulator by a sun worked out for an assumed
+  latitude. The two are not the same afternoon.
 - Manufacturing is counted (members, scarfs, standoffs, joints), not planned.
 - Daniel has not reviewed the sole.
-- The explorable drawing has not been re-made on this site.
+- The explorable page of this site (`place/`, packed to `drawings-in-code/exports/deck/the-place/`)
+  is parked: pictures with targets on them did not make a drawing to explore.
