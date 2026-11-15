@@ -5,21 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Opening the pier</title>
 <!--
-  Deck slides 7 and 8 as one drawing. One picture, one idea: open the legs of the piers, and sun reaches the
-  climbers planted at their feet. Nothing moves unless the legs move.
+  For the pier study. One picture, one idea: the same pier and the same four climbers, grown twice by the plant
+  simulator, side by side for ten years. On the left the pier's legs stand together; on the right they stand apart,
+  as the design has them, and the sun reaches the climbers at their feet.
 
-  One fixed view of one bay from outside and above: two piers, their climbers, the gap between them. The ground
-  carries a cool shade where timber keeps direct sun short on 21 June, and at each climber a pool of light whose
-  area is that climber's simulated June hours; both change only as the legs open. The rail along the bottom is the six openings the study grew, with
-  the simulator's June sun per climber rising and the gap between the piers falling; the stops the footing draft
-  rejects are struck in red and the design's is ringed. The large number is the simulator's, at the opening in hand.
+  Two fixed views at one scale: pier R1.P1 straight on, from outside the room, looking at its centre; orthographic
+  elevations from just below the soil, sharing one soil line. Only time moves: ten years in about 75 seconds, both
+  sides in step, holding on June of the tenth year before it loops. Under the pictures, the study: the six openings
+  of the pier in plan, the climbers that get their light and the way in between the piers, the ones the footing draft
+  rejects struck in red, the design ringed. The rail is the ten years.
 
-  Everything drawn comes from data.js, which `node pipeline/vignette.mjs opening-the-pier` writes (data.mjs says
-  how). Members, feet and the gap between the legs: the building model, at six openings, interpolated between. The
-  map: worked out at gather time for one day, the simulator's way, from the timber, cables and the site's trees and
-  wall. Every number: the growth simulator's. Footing rules: the study's ground draft.
-  Drag the handle, or sideways on the picture, to open and close the legs; ten seconds after you let go it carries on.
-  ?embed (no title, no keys) ?still. Hooks: __setT(seconds) (draws at once), __play(), __duration, __ready.
+  Everything drawn comes from data.js, which `node pipeline/vignette.mjs opening-the-pier` writes (data.mjs says how):
+  two runs of the plant simulator cut down to this pier, and the building model's timber at this pier in each
+  opening. What is on a plant on a day is decided here by the simulator's own rules (presence.ts, as grown.py ports
+  them). Drag the handle, or sideways on the pictures, to move through the years; ten seconds after you let go it
+  carries on. ?embed (no title, no keys) ?still. Hooks: __setT(seconds) (draws at once), __play(), __duration, __ready.
 -->
 <style>
   @font-face { font-family: 'Safiro'; src: url('../../4/assets/fonts/safiro-regular-webfont.woff2') format('woff2'), url('../../../../deck/designx/4/assets/fonts/safiro-regular-webfont.woff2') format('woff2'); font-weight: 400; }
@@ -31,13 +31,11 @@
   button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
   #stage { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; transform: translate(-50%, -50%) scale(var(--k)); overflow: hidden; background: var(--paper); }
   canvas { position: absolute; inset: 0; width: 1600px; height: 900px; display: block; cursor: ew-resize; touch-action: none; }
-  h1 { position: absolute; left: 52px; top: 40px; margin: 0; font: italic 400 40px/1.08 var(--display); letter-spacing: -.03em; pointer-events: none; text-shadow: 0 1px 14px var(--paper); }
-  .embed h1 { display: none; }
   #inspect { position: absolute; right: 52px; top: 40px; text-align: right; }
   #realbtn { font: 400 17px/1.3 var(--sans); color: var(--muted); padding: 6px 0; text-shadow: 0 1px 6px var(--paper); }
   #realbtn::after { content: ' +'; }
   #realbtn[aria-expanded="true"]::after { content: ' \2212'; }
-  #real { position: absolute; right: 0; top: 38px; width: 540px; text-align: left; background: #eef3eafa; border: 1px solid #b1c1b5; padding: 22px 26px; box-shadow: 0 8px 25px #10282015; color: #284639; font: 400 15px/1.45 var(--sans); z-index: 2; }
+  #real { position: absolute; right: 0; top: 38px; width: 560px; text-align: left; background: #eef3eafa; border: 1px solid #b1c1b5; padding: 22px 26px; box-shadow: 0 8px 25px #10282015; color: #284639; font: 400 15px/1.45 var(--sans); z-index: 2; }
   #real p { margin: 0 0 9px; }
   #real p:last-child { margin: 0; }
   button:focus-visible { outline: 2px solid #789951; outline-offset: 5px; }
@@ -46,8 +44,7 @@
 </head>
 <body>
 <div id="stage">
-  <canvas id="c" aria-label="One bay of the Bower from above: as the legs of its two piers open, the shade on the climbers at their feet gives way to sun"></canvas>
-  <h1>Opening the pier</h1>
+  <canvas id="c" aria-label="The same pier of the Bower and the same four climbers grown twice over ten years, side by side: on the left its legs stand together, on the right apart; below, the six openings of the pier that were studied"></canvas>
   <div id="inspect">
     <button id="realbtn" type="button" aria-expanded="false">What is real</button>
     <div id="real" hidden></div>
@@ -62,335 +59,328 @@
   const query = new URLSearchParams(location.search), EMBED = query.has('embed');
   if (EMBED) document.documentElement.classList.add('embed');
   const STILL = query.has('still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const W = 1600, H = 900, TAU = Math.PI * 2, RAD = Math.PI / 180;
-  const INK = '16,40,32', RED = '180,73,47', GOLD = '214,146,38', PAPER = '#EEF3EA';
+  const W = 1600, H = 900, TAU = Math.PI * 2;
+  const INK = '16,40,32', RED = '180,73,47', PAPER = '#EEF3EA', STEM = 'rgb(88,70,52)';
   const SANS = "'Safiro', 'Segoe UI', system-ui, sans-serif", DISPLAY = "'Argesta Display', Georgia, serif";
 
-  // <pure> ---- small pure functions (tested from node) ----
+  // <pure> ---- small pure functions ----
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, k) => a + (b - a) * k;
-  const seg = (t, a, b) => clamp((t - a) / (b - a));
-  const ease = (u) => { u = clamp(u); return u * u * (3 - 2 * u); };
-  /** An orthographic view from above: turned by a about the vertical, looking down at e. Screen x, y, and nearness. */
-  function project(p, cam) {
-    const x = p[0] - cam.c[0], y = p[1] - cam.c[1], z = p[2] - cam.c[2], ca = Math.cos(cam.a), sa = Math.sin(cam.a), d = x * sa + y * ca;
-    return [cam.x + (x * ca - y * sa) * cam.s, cam.y + (d * Math.sin(cam.e) - z * Math.cos(cam.e)) * cam.s, d * Math.cos(cam.e) + z * Math.sin(cam.e)];
+  const hex = (h) => [1, 3, 5].map((k) => parseInt(h.slice(k, k + 2), 16));
+  const mix = (a, b, k) => a.map((v, i) => Math.round(lerp(v, b[i], k)));
+  /** presence.ts leafState, as grown.py ports it: [how far open, how far turned], or null. Days are the run's. */
+  function leafState(L, s, day) {
+    if (!s) return null;
+    const [, , , , , , , , first, lastRaw, ever, born, gone, jit] = L, last = lastRaw || null, j = jit / 1000, year = s.year;
+    if (day < born || (gone >= 0 && day >= gone)) return null;
+    const before = s.leafFallBefore;
+    if (before && !ever && first < year && (last === null || last >= year - 1)) {
+      if (day <= before[0] + j * (before[1] - before[0])) { const turn = s.autumnColourBefore || [before[0], before[0]]; return [1, clamp((day - turn[0] - j * 10) / Math.max(1, turn[1] - turn[0]))]; }
+    }
+    if (year < first || (last !== null && year > last)) return null;
+    const [f0, f1] = s.leafFlush, from = Math.max(f0, born), over = born > f0 ? 21 : Math.max(1, f1 - f0);
+    if (ever) { if (year === first) return day < from ? null : [clamp((day - from) / over), 0]; return [1, 0]; }
+    if (day < from) return null;
+    const [l0, l1] = s.leafFall;
+    if (day > l0 + j * (l1 - l0)) {
+      const after = s.leafFlushAfter;
+      if (after && day >= after[0] && (last === null || last > year)) return [clamp((day - after[0]) / Math.max(1, after[1] - after[0])), 0];
+      return null;
+    }
+    const [t0, t1] = s.autumnColour;
+    return [clamp((day - from) / over), clamp((day - t0 - j * 10) / Math.max(1, t1 - t0))];
   }
   // </pure>
 
-  // ---- the six openings, and the room at any opening between them ----
-  const N = D.openings.length, M = D.members.length, NP = 16, OP = D.openings, CH = D.chosen;
-  const ptsOf = OP.map((o) => Float32Array.from(o.pts, (v) => v / 1000));
-  const rootsOf = OP.map((o) => o.roots.map((r) => r.map((v) => v / 1000)));
-  const LEG = D.members.map((m) => m.w / 1000);
-  const PL = D.plants;
-  const span = (u) => { const i = clamp(Math.floor(u), 0, N - 2), k = clamp(u - i, 0, 1); return [i, k]; };
-  const nearestIndex = (u) => clamp(Math.round(u), 0, N - 1);
-  function roomAt(u) { const [i, k] = span(u), a = ptsOf[i], b = ptsOf[i + 1], out = new Float32Array(a.length); for (let j = 0; j < a.length; j++) out[j] = a[j] + (b[j] - a[j]) * k; return out; }
-  const rootsAt = (u) => { const [i, k] = span(u); return rootsOf[i].map((r, j) => r.map((v, c) => lerp(v, rootsOf[i + 1][j][c], k))); };
-  const groundAt = (u) => { const [i, k] = span(u); return OP[i].ground.map((g, c) => lerp(g, OP[i + 1].ground[c], k)); };
-  const gapAt = (u) => { const [i, k] = span(u); return [0, 1].map((e) => [0, 1].map((c) => lerp(OP[i].gapPts[e][c], OP[i + 1].gapPts[e][c], k))); };
-  const juneAt = (u, j) => { const [i, k] = span(u); return lerp(OP[i].sun.june[j], OP[i + 1].sun.june[j], k); };   // only a sprig's colour while the legs move
-  const gz = (g, x, y) => g[0] + g[1] * x + g[2] * y;
+  // ---- the calendar ----
+  const YS = D.yearStart, Y0 = 2027, Y1 = 2037;
+  const yearOf = (day) => { let y = Y0; while (YS[y + 1] !== undefined && day >= YS[y + 1]) y++; return y; };
+  const PLANTED = D.planted, LASTDAY = Math.min(...D.sides.map((s) => s.lastDay));
+  const JUNE10 = YS[2036] + 166;   // 15 June 2036, the tenth summer
 
-  // ---- one fixed view: the bay from outside and above (50 degrees down), the pier that gains most nearer and large ----
-  const [PA, PB] = D.piersInView.map((id) => D.piers[id]);
-  const gainOf = (id) => PL.reduce((s, p, j) => s + (p.pier === id ? OP[CH].sun.june[j] - OP[0].sun.june[j] : 0), 0);
-  const NEAR = gainOf(D.piersInView[0]) >= gainOf(D.piersInView[1]) ? PA : PB;
-  const MID = [(PA[0] + PB[0]) / 2, (PA[1] + PB[1]) / 2], OUTA = Math.atan2(MID[1], MID[0]);
-  const toward = Math.sign(Math.sin(Math.atan2(NEAR[1], NEAR[0]) - OUTA)) || 1;
-  const LOOK = OUTA + 0.3 * toward;   // the eye stands outside the bay, a little round toward the nearer pier
-  const CAM = { c: [lerp(MID[0], NEAR[0], 0.15), lerp(MID[1], NEAR[1], 0.15), 0], s: 165, x: W * 0.46, y: H * 0.45, a: Math.PI / 2 - LOOK, e: 62 * RAD };
-  const P = (p) => project(p, CAM);
+  // ---- the elevations: millimetres to the stage, one scale for both ----
+  const S = 100, GY = 690, MIN_W = 0.018 * S;  // px per metre; the soil line; no stem drawn thinner than 18 mm across
+  const UX = [420, 1260];                         // where each pier stands across; the two pictures meet at 800 px
+  const HALF = [[0, 800], [800, 1600]];
+  const WORDS = [52, 852];                        // where each side's title stands: left of its pier's top, clear of the leaves
 
-  // ---- the hours-of-sun map on the ground: one smooth picture per opening, faded at its edge ----
-  const G = D.grid, UP = 6;
-  const OPEN = D.openings[0].map.reduce((a, b) => Math.max(a, b), 0) / 10;   // hours where nothing stands in the way
-  const tint = (h) => [58, 84, 92, 0.6 * ease(clamp((OPEN * 0.58 - h) / (OPEN * 0.42)))];   // shade only: the paper is the sun, and a cool tone gathers where timber takes more than two fifths of the day
-  const MAPS = OP.map((o) => {
-    const c = document.createElement('canvas'), w = (G.nx - 1) * UP + 1, h = (G.ny - 1) * UP + 1;
-    c.width = w; c.height = h;
-    const x = c.getContext('2d'), img = x.createImageData(w, h), v = (i, j) => o.map[j * G.nx + i] / 10;
-    for (let py = 0; py < h; py++) for (let px = 0; px < w; px++) {
-      const fi = px / UP, fj = py / UP, i = Math.min(G.nx - 2, Math.floor(fi)), j = Math.min(G.ny - 2, Math.floor(fj)), a = fi - i, b = fj - j;
-      const hrs = (v(i, j) * (1 - a) + v(i + 1, j) * a) * (1 - b) + (v(i, j + 1) * (1 - a) + v(i + 1, j + 1) * a) * b;
-      // shown round the two piers only, fading out between them: the ground the legs decide
-      const wx = G.origin[0] + G.across[0] * fi * G.cell + G.out[0] * fj * G.cell, wy = G.origin[1] + G.across[1] * fi * G.cell + G.out[1] * fj * G.cell;
-      const near = Math.min(Math.hypot(wx - PA[0], wy - PA[1]), Math.hypot(wx - PB[0], wy - PB[1]));
-      const [r, g, bl, al] = tint(hrs), edge = ease(Math.min(1, Math.min(fi, G.nx - 1 - fi) / 5, Math.min(fj, G.ny - 1 - fj) / 5)) * (1 - 0.75 * ease(seg(near, 2.0, 3.6)));
-      const k = 4 * (py * w + px); img.data[k] = r; img.data[k + 1] = g; img.data[k + 2] = bl; img.data[k + 3] = 255 * al * edge;
+  const COLOURS = [], colour = (s) => { let i = COLOURS.indexOf(s); if (i < 0) { i = COLOURS.length; COLOURS.push(s); } return i; };
+  const STEMC = colour(STEM);
+
+  // ---- each side made ready once: decoded, sorted into depth layers, colours ----
+  const SIDES = D.sides.map((sd, n) => {
+    const G = sd.ground / 1000;
+    const sx = (u) => UX[n] + (u / 1000) * S, sy = (z) => GY - (z / 1000 - G) * S;
+    for (const l of sd.leaves) { l[8] += Y0; l[9] = l[9] < 0 ? 0 : l[9] + Y0; l[3] *= 10; }
+    for (const f of sd.flowers) f[3] *= 10;
+    const PL = sd.plants;
+    const LEAFC = PL.map((p) => [0, 1, 2].map((t) => [0, 1, 2, 3, 4, 5].map((a) => { const g = mix(hex(p.look.green[0]), hex(p.look.green[1]), t / 2), au = mix(hex(p.look.autumn[0]), hex(p.look.autumn[1]), t / 2); return colour(`rgb(${mix(g, au, a / 5)})`); })));
+    const FLOWC = PL.map((p) => [0, 1, 2].map((t) => colour(`rgb(${mix(hex(p.look.flower[0]), hex(p.look.flower[1]), t / 2)})`)));
+    // each leaf's place on the stage, and the last day it could be on the plant (by the end of the year after its last)
+    for (const l of sd.leaves) l.push(sx(l[1]), sy(l[2]), l[12] >= 0 ? l[12] : l[9] ? YS[l[9] + 2] ?? Infinity : Infinity);
+    const LEAFW = PL.map((p) => ({ pinnate: 0.42, simple: 0.4, three: 0.5 }[p.look.leaf] ?? 0.4));
+    const NL = 6;
+    let dmin = Infinity, dmax = -Infinity;
+    for (const s of sd.stems) for (let i = 0; i < s.born.length; i++) { dmin = Math.min(dmin, s.pts[3 * i + 2]); dmax = Math.max(dmax, s.pts[3 * i + 2]); }
+    const layerOf = (d) => NL - 1 - clamp(Math.floor((d - dmin) / (dmax - dmin + 1) * NL), 0, NL - 1);   // 0 farthest
+    const LAYERS = Array.from({ length: NL }, () => ({ segs: [], leaves: [], flowers: [] }));
+    sd.stems.forEach((s, k) => { if (s.from) LAYERS[layerOf(s.pts[2])].segs.push([k, -1]); for (let i = 1; i < s.born.length; i++) LAYERS[layerOf((s.pts[3 * i - 1] + s.pts[3 * i + 2]) / 2)].segs.push([k, i]); });
+    sd.leaves.forEach((l) => LAYERS[layerOf(l[3])].leaves.push(l));     // in born-day order (data.mjs sorts them)
+    sd.flowers.forEach((f) => LAYERS[layerOf(f[3])].flowers.push(f));   // in opening-day order
+    // stems as segments with their stage ends, so a frame only checks days and widths
+    for (const Lr of LAYERS) Lr.segs = Lr.segs.map(([k, i]) => {
+      const s = sd.stems[k], a = i < 0 ? s.from : s.pts.slice(3 * i - 3, 3 * i), b = s.pts.slice(3 * Math.max(0, i), 3 * Math.max(0, i) + 3), j = Math.max(0, i);
+      return { x0: sx(a[0]), y0: sy(a[1]), x1: sx(b[0]), y1: sy(b[1]), bornA: i < 0 ? s.born[0] : s.born[i - 1], goneA: i < 0 ? s.gone[0] : s.gone[i - 1], born: s.born[j], gone: s.gone[j], rad: s.rad[j] / 10 };
+    });
+    // and for each calendar year, only what could be alive in it, so a frame in the tenth year does not walk the first
+    for (const Lr of LAYERS) {
+      Lr.years = {};
+      for (let y = Y0; y < Y1 + 1; y++) {
+        const a = YS[y], b = YS[y + 1] ?? Infinity, endOf = (g, ga) => Math.min(g < 0 ? Infinity : g, ga < 0 ? Infinity : ga);
+        Lr.years[y] = {
+          segs: Lr.segs.filter((g) => Math.max(g.born, g.bornA) < b && endOf(g.gone, g.goneA) > a),
+          leaves: Lr.leaves.filter((l) => l[11] < b && l[16] > a),
+          flowers: Lr.flowers.filter((f) => f[5] < b && (f[6] < 0 || f[6] > a)),
+        };
+      }
     }
-    x.putImageData(img, 0, 0);
-    return c;
+    return { sd, n, sx, sy, G, PL, LEAFC, FLOWC, LEAFW, LAYERS, SEA: sd.seasons, TIP: sd.thickening.tipRadiusMm, POW: sd.thickening.exponent, LAST: sd.lastDay };
   });
-  function drawMap(u, g) {
-    const [i, k] = span(u), at = (gi, gj) => { const x = G.origin[0] + G.across[0] * gi * G.cell + G.out[0] * gj * G.cell, y = G.origin[1] + G.across[1] * gi * G.cell + G.out[1] * gj * G.cell; return P([x, y, gz(g, x, y)]); };
-    const o = at(0, 0), ax = at(1 / UP, 0), ay = at(0, 1 / UP);
-    ctx.save();
-    ctx.transform(ax[0] - o[0], ax[1] - o[1], ay[0] - o[0], ay[1] - o[1], o[0], o[1]);
-    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-    ctx.globalAlpha = 1 - k; ctx.drawImage(MAPS[i], 0, 0);   // while the legs move, the two neighbouring openings' maps cross-fade
-    if (k > 0.001) { ctx.globalAlpha = k; ctx.drawImage(MAPS[i + 1], 0, 0); }
-    ctx.restore();
-  }
 
-  // ---- the loop when nobody touches it: slow, and the legs are all that move ----
-  // hold together 5 s; open to the design's over 12 s, resting a second at each stop; hold 7 s; on to the widest
-  // and hold 3 s; back to the design's and hold 6 s; close over 8 s
-  const KEYS = [[0, 0], [5, 0]];
-  for (let i = 1; i <= CH; i++) { const t1 = 5 + i * (12 / CH); KEYS.push([t1 - 1, i], [t1, i]); }
-  { const t = KEYS.at(-1)[0]; KEYS.push([t + 7, CH], [t + 9, N - 1], [t + 12, N - 1], [t + 14, CH], [t + 20, CH], [t + 28, 0]); }
-  const DUR = KEYS.at(-1)[0] + 0.01;
-  function openingAt(t) { for (let i = 0; i < KEYS.length - 1; i++) { const [a, ua] = KEYS[i], [b, ub] = KEYS[i + 1]; if (t <= b) return lerp(ua, ub, ease(seg(t, a, b))); } return 0; }
+  // ---- time when nobody touches it: the planting day to June of the tenth year, then a hold, then again ----
+  const MOVE = 69, HOLD = 6, RAMP = 5, DUR = MOVE + HOLD;
+  /** The day at time t: a trapezoid of speed, easing in from the planting day and out into the hold. */
+  function dayAt(t) {
+    if (t >= MOVE) return JUNE10;
+    const Dd = JUNE10 - PLANTED, v = Dd / (MOVE - RAMP);
+    if (t < RAMP) return PLANTED + v * t * t / (2 * RAMP);
+    if (t > MOVE - RAMP) return JUNE10 - v * (MOVE - t) ** 2 / (2 * RAMP);
+    return PLANTED + v * (RAMP / 2 + t - RAMP);
+  }
+  const timeOf = (day) => { let a = 0, b = MOVE; for (let k = 0; k < 40; k++) { const m = (a + b) / 2; if (dayAt(m) < day) a = m; else b = m; } return a; };
 
   // ---- drawing ----
   const canvas = $('c'), ctx = canvas.getContext('2d');
+  const back = document.createElement('canvas'), bctx = back.getContext('2d');   // what never changes, drawn once
   let K = 1;
-  const RAIL = { x0: 470, x1: 1500, y: 818, top: 748 };
-  const stopX = (u) => RAIL.x0 + (RAIL.x1 - RAIL.x0) * u / (N - 1);
-  function poly(pts) { ctx.beginPath(); pts.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]))); ctx.closePath(); }
-  function line(pts) { ctx.beginPath(); pts.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]))); ctx.stroke(); }
-  const circleOn = (g, c, r, n = 96) => Array.from({ length: n }, (_, i) => { const x = c[0] + r * Math.cos(i / n * TAU), y = c[1] + r * Math.sin(i / n * TAU); return [x, y, gz(g, x, y)]; });
-  const mixRgb = (a, b, k) => `rgb(${a.map((v, i) => Math.round(lerp(v, b[i], clamp(k)))).join(',')})`;
-  const h1 = (v) => (Math.round(v * 10 + 1e-6) / 10).toFixed(1);   // 4.05 h reads 4.1, as the study rounds it
-
-  /** The drawing for the opening in hand, u (an index, fractional while the legs move); held: a hand holds it. */
-  function frame(u, held) {
-    const g = groundAt(u), room = roomAt(u), roots = rootsAt(u), here = nearestIndex(u), moving = Math.abs(u - here) > 0.04;
-    ctx.setTransform(K, 0, 0, K, 0, 0);
-    ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H);
-    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-    poly(circleOn(g, [0, 0], D.site.floorR).map(P)); ctx.strokeStyle = `rgba(${INK},.3)`; ctx.lineWidth = 1; ctx.stroke();
-    drawMap(u, g);
-    const hoursOf = (j) => (moving ? juneAt(u, j) : OP[here].sun.june[j]);
-    roots.forEach((r, j) => { if (Math.hypot(r[0] - MID[0], r[1] - MID[1]) <= 5.5) pool([r[0], r[1], gz(g, r[0], r[1])], hoursOf(j)); });
-
-    // the timber and the climbers, back to front; the rest of the room fades away from the bay
-    const items = [];
-    for (let m = 0; m < M; m++) {
-      const base = m * NP * 3;
-      for (let c0 = 0; c0 < NP - 1; c0 += 3) {
-        const sc = []; let near = 0, z = 0, x = 0, y = 0, n = 0;
-        for (let i = c0; i <= Math.min(NP - 1, c0 + 3); i++, n++) { const p = [room[base + i * 3], room[base + i * 3 + 1], room[base + i * 3 + 2]], q = P(p); sc.push(q); near += q[2] - 0.3 * p[2]; z += p[2]; x += p[0]; y += p[1]; }
-        const a = 1 - seg(Math.hypot(x / n - MID[0], y / n - MID[1]), 4.4, 6.4);
-        if (a > 0.02) items.push({ kind: 'm', sc, near: near / n, z: z / n, w: LEG[m], a });
-      }
-    }
-    roots.forEach((r, j) => { if (Math.hypot(r[0] - MID[0], r[1] - MID[1]) > 5.5) return; const p = [r[0], r[1], gz(g, r[0], r[1])], q = P(p); items.push({ kind: 'c', j, p, near: q[2] - 0.3 * p[2] + 0.03 }); });
-    items.sort((a, b) => a.near - b.near);
-    for (const it of items) {
-      if (it.kind === 'm') {
-        const face = Math.max(1.2, it.w * CAM.s), k = clamp((it.z - 0.8) / 3.2);
-        ctx.globalAlpha = it.a; ctx.lineCap = 'butt';
-        ctx.strokeStyle = `rgb(${INK})`; ctx.lineWidth = face + 2.2; line(it.sc);
-        ctx.strokeStyle = mixRgb([205, 184, 146], [241, 234, 216], k); ctx.lineWidth = face; line(it.sc);
-        ctx.lineCap = 'round'; ctx.globalAlpha = 1;
-      }
-    }
-    // the climbers last, so that each reads as a plant even where the legs stand round it
-    for (const it of items) if (it.kind === 'c') sprig(it.p, hoursOf(it.j));
-    gap(u, g, here);
-
-    // paper under the words
-    let fade = ctx.createLinearGradient(0, H - 230, 0, H);
-    fade.addColorStop(0, 'rgba(238,243,234,0)'); fade.addColorStop(0.4, 'rgba(238,243,234,.9)'); fade.addColorStop(1, 'rgba(238,243,234,.97)');
-    ctx.fillStyle = fade; ctx.fillRect(0, H - 230, W, 230);
-    fade = ctx.createLinearGradient(0, 0, 0, 240);
-    fade.addColorStop(0, 'rgba(238,243,234,.9)'); fade.addColorStop(1, 'rgba(238,243,234,0)');
-    ctx.fillStyle = fade; ctx.fillRect(0, 0, W, 240);
-
-    hero(here, moving);
-    sentence(u, here, moving, held);
-    legend();
-    rail(u);
+  const RAIL = { x0: 120, x1: 1500, y: 864 };
+  const railX = (d) => RAIL.x0 + (RAIL.x1 - RAIL.x0) * (d - YS[Y0]) / (YS[Y1] - YS[Y0]);
+  const STRIP = { y: 736, x: (i) => UX[0] + i * (UX[1] - UX[0]) / 4, PS: 18, head: 330 };   // the plans: the first under the left pier, the fifth under the right; what each row says, to their left
+  function line(c, pts) { c.beginPath(); pts.forEach((q, i) => (i ? c.lineTo(q[0], q[1]) : c.moveTo(q[0], q[1]))); c.stroke(); }
+  function text(c, s, x, y, size, color, face = SANS, align = 'left', style = '', halo = 0) {
+    c.font = `${style} 400 ${size}px ${face}`; c.textAlign = align; c.textBaseline = 'alphabetic';
+    if (halo) { c.lineJoin = 'round'; c.strokeStyle = PAPER; c.lineWidth = halo; c.strokeText(s, x, y); }
+    c.fillStyle = color; c.fillText(s, x, y);
   }
 
-  /** The sun a climber gets, as a pool of light on the ground where it is planted: its area is its simulated June hours. */
-  const POOL = 0.27;   // metres of radius at one hour
-  function pool(p, hours) {
-    const c = P(p), r = POOL * Math.sqrt(Math.max(0, hours)) * CAM.s;
-    if (r < 1) return;
-    ctx.save(); ctx.translate(c[0], c[1]); ctx.scale(1, Math.sin(CAM.e));
-    const b = 0.25 + 0.75 * clamp(hours / 6), glow = ctx.createRadialGradient(0, 0, 0, 0, 0, r);   // fainter as well as smaller where the sun is short
-    glow.addColorStop(0, `rgba(250,196,72,${0.66 * b})`); glow.addColorStop(0.7, `rgba(250,200,84,${0.36 * b})`); glow.addColorStop(1, 'rgba(250,204,96,0)');
-    ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(0, 0, r, 0, TAU); ctx.fill();
+  /** The back: paper, the timber of each side, the soil, the study, the sentence, the rail without its handle. */
+  function drawBack() {
+    back.width = canvas.width; back.height = canvas.height;
+    const c = bctx;
+    c.setTransform(K, 0, 0, K, 0, 0);
+    c.fillStyle = PAPER; c.fillRect(0, 0, W, H);
+    c.lineJoin = 'round';
+    for (const sd of SIDES) {   // the timber and cables at this pier: pale, behind, into the soil only as far as the feet go (75 mm)
+      const { sx, sy } = sd, [h0, h1] = HALF[sd.n];
+      c.save(); c.beginPath(); c.rect(h0 + 6, 0, h1 - h0 - 12, GY + 0.075 * S); c.clip();
+      c.lineCap = 'round';
+      for (const cb of sd.sd.cables) { c.strokeStyle = `rgba(${INK},.22)`; c.lineWidth = 1; line(c, Array.from({ length: cb.length / 3 }, (_, i) => [sx(cb[3 * i]), sy(cb[3 * i + 1])])); }
+      c.lineCap = 'butt';
+      const byDepth = [...sd.sd.members].sort((a, b) => b.pts[2] + b.pts.at(-1) - a.pts[2] - a.pts.at(-1));
+      for (const m of byDepth) {
+        const pts = Array.from({ length: m.pts.length / 3 }, (_, i) => [sx(m.pts[3 * i]), sy(m.pts[3 * i + 1])]), w = Math.max(2, m.w / 1000 * S);
+        c.strokeStyle = `rgba(${INK},.16)`; c.lineWidth = w + 1.6; line(c, pts);
+        c.strokeStyle = 'rgb(232,228,214)'; c.lineWidth = w; line(c, pts);
+      }
+      c.restore();
+    }
+    c.lineCap = 'round';
+    c.strokeStyle = `rgba(${INK},.45)`; c.lineWidth = 1; line(c, [[0, GY], [W, GY]]);   // one soil line across the slide
+
+    // the study: the six openings in plan, each just the pier's feet in their ring, the ring widening left to right
+    const { y, PS } = STRIP;
+    D.study.forEach((o, i) => {
+      const x = STRIP.x(i);
+      c.strokeStyle = `rgba(${INK},.18)`; c.lineWidth = 1; c.beginPath(); c.arc(x, y, o.ring * PS, 0, TAU); c.stroke();
+      c.fillStyle = `rgba(${INK},.8)`;
+      for (const q of o.feet) { c.beginPath(); for (let k = 0; k < 4; k++) c[k ? 'lineTo' : 'moveTo'](x + q[2 * k] / 1000 * PS, y - q[2 * k + 1] / 1000 * PS); c.closePath(); c.fill(); }
+      if (o.design) { c.strokeStyle = `rgb(${INK})`; c.lineWidth = 1.2; c.beginPath(); c.arc(x, y, o.ring * PS + 9, 0, TAU); c.stroke(); }
+      text(c, `${o.light} of 24`, x, y + 52, 18, `rgb(${INK})`, SANS, 'center');
+      text(c, `${o.wayIn.toFixed(1)} m`, x, y + 76, 18, `rgb(${INK})`, SANS, 'center');
+      text(c, o.ok ? (o.design ? 'fits: the design' : 'fits') : 'does not fit', x, y + 100, 18, o.ok ? `rgb(${INK})` : `rgb(${RED})`, SANS, 'center');   // the footing draft's verdict, in the one red where it rejects
+    });
+    // what each row of the study says
+    text(c, 'Six openings tried', STRIP.head, y + 6, 18, `rgb(${INK})`, SANS, 'right');
+    text(c, 'climbers in the sun they ask for', STRIP.head, y + 52, 18, `rgba(${INK},.85)`, SANS, 'right');
+    text(c, 'way in between piers', STRIP.head, y + 76, 18, `rgba(${INK},.85)`, SANS, 'right');
+    text(c, 'buried footing', STRIP.head, y + 100, 18, `rgba(${INK},.85)`, SANS, 'right');
+    // the first plan is the left picture's opening and the fifth the right's: a fine line up to each pier's foot
+    for (const [i, n] of [[0, 0], [4, 1]]) { c.strokeStyle = `rgba(${INK},.28)`; c.lineWidth = 1; line(c, [[STRIP.x(i), GY + 0.075 * S + 4], [STRIP.x(i), y - D.study[i].ring * PS - (D.study[i].design ? 14 : 6)]]); }
+
+    // the one sentence, between the two pictures it joins; and the rail: the ten years
+    ['The same pier and the same', 'four climbers, grown twice', 'by the plant simulator.'].forEach((s, i) => text(c, s, (UX[0] + UX[1]) / 2, 392 + i * 34, 24, `rgb(${INK})`, SANS, 'center', '', 10));
+    const { x0, x1 } = RAIL, ry = RAIL.y;
+    c.strokeStyle = `rgb(${INK})`; c.lineWidth = 1; line(c, [[x0, ry], [x1, ry]]);
+    for (let yr = Y0; yr <= Y1; yr++) {
+      c.strokeStyle = `rgba(${INK},.6)`; line(c, [[railX(YS[yr]), ry - 4], [railX(YS[yr]), ry + 4]]);
+      if (yr < Y1) text(c, String(yr), railX((YS[yr] + YS[yr + 1]) / 2), ry + 27, 17, `rgba(${INK},.85)`, SANS, 'center');
+    }
+  }
+
+  // buckets: one path per colour and width (a quarter pixel), so tens of thousands of marks are a few hundred strokes
+  const BK = [], ACTIVE = [];
+  const bucket = (c, w) => { const wi = Math.min(63, Math.round(w * 4)), key = c * 64 + wi; let b = BK[key]; if (!b) b = BK[key] = { style: COLOURS[c], w: wi / 4, xy: [] }; if (!b.xy.length) ACTIVE.push(b); return b; };
+  function flush(fill) {
+    for (const b of ACTIVE) {
+      const xy = b.xy;
+      ctx.beginPath();
+      if (fill) { ctx.fillStyle = b.style; for (let i = 0; i < xy.length; i += 3) { ctx.moveTo(xy[i] + xy[i + 2], xy[i + 1]); ctx.arc(xy[i], xy[i + 1], xy[i + 2], 0, TAU); } ctx.fill(); ctx.strokeStyle = 'rgba(16,40,32,.25)'; ctx.lineWidth = 0.6; ctx.stroke(); }
+      else { ctx.strokeStyle = b.style; ctx.lineWidth = b.w; for (let i = 0; i < xy.length; i += 4) { ctx.moveTo(xy[i], xy[i + 1]); ctx.lineTo(xy[i + 2], xy[i + 3]); } ctx.stroke(); }
+      xy.length = 0;
+    }
+    ACTIVE.length = 0;
+  }
+
+  /** One side's climbers on a (whole) day, far layers first. */
+  function climbers(sd, day) {
+    const { sx, sy, LAYERS, SEA, LEAFC, FLOWC, LEAFW, PL, TIP, POW, LAST } = sd;
+    const year = yearOf(day), sea = SEA.map((s) => s[year]);
+    const [h0, h1] = HALF[sd.n];
+    ctx.save(); ctx.beginPath(); ctx.rect(h0 + 6, 0, h1 - h0 - 12, GY + 2); ctx.clip();
+    for (const Ly of LAYERS) {
+      const Lr = Ly.years[year];
+      ctx.lineCap = 'round';
+      for (const g of Lr.segs) {
+        if (g.bornA > day || g.born > day || (g.gone >= 0 && day >= g.gone) || (g.goneA >= 0 && day >= g.goneA)) continue;
+        const age = clamp((day - g.born) / Math.max(1, LAST - g.born)), r = (TIP + Math.max(0, g.rad - TIP) * age ** POW) / 1000 * S;
+        bucket(STEMC, Math.max(MIN_W, 2 * r)).xy.push(g.x0, g.y0, g.x1, g.y1);
+      }
+      flush(false);
+      ctx.lineCap = 'butt';
+      for (const l of Lr.leaves) {   // a plain mark along the stalk, as long as the leaf is open, coloured as far as it has turned
+        if (l[11] > day) break;
+        if (day >= l[16]) continue;
+        const st = leafState(l, sea[l[0]], day);
+        if (!st || st[0] <= 0.02) continue;
+        const open = st[0], len = Math.max(1.5, l[7] / 1000 * (0.25 + 0.75 * open) * S * (l[6] / 100)), x = l[14], y = l[15];
+        bucket(LEAFC[l[0]][Math.min(2, Math.floor(l[13] / 1000 * 3))][Math.round(st[1] * 5)], Math.max(1.4, l[7] / 1000 * LEAFW[l[0]] * S * (0.4 + 0.6 * open))).xy.push(x, y, x + l[4] / 100 * len, y - l[5] / 100 * len);
+      }
+      flush(false);
+      ctx.lineCap = 'round';
+      for (const f of Lr.flowers) {
+        if (f[5] > day) break;
+        if (f[6] >= 0 && day >= f[6]) continue;
+        const c = FLOWC[f[0]][Math.min(2, Math.floor(f[7] / 1000 * 3))], x = sx(f[1]), y = sy(f[2]), len = f[4] / 1000 * S;
+        if (PL[f[0]].look.bloom === 'raceme') bucket(c, Math.max(2.5, len * 0.2)).xy.push(x, y, x, y + len);
+      }
+      flush(false);
+      for (const f of Lr.flowers) {
+        if (f[5] > day) break;
+        if ((f[6] >= 0 && day >= f[6]) || PL[f[0]].look.bloom === 'raceme') continue;
+        bucket(FLOWC[f[0]][Math.min(2, Math.floor(f[7] / 1000 * 3))], 0).xy.push(sx(f[1]), sy(f[2]), Math.max(1.8, f[4] / 2000 * S));
+      }
+      flush(true);
+    }
     ctx.restore();
   }
 
-  /** A climber: a stem and a few leaves, dull in shade and bright in sun by its own simulated June hours. */
-  function sprig(p, hours) {
-    const k = clamp((hours - 1) / 5), base = P(p), tip = P([p[0], p[1], p[2] + 0.8]), leaf = 10;
-    const fill = mixRgb([140, 148, 132], [108, 166, 50], k), edge = mixRgb([90, 100, 92], [58, 98, 28], k);
-    ctx.strokeStyle = edge; ctx.lineWidth = 2; line([base, tip]);
-    for (let n = 0; n < 6; n++) {
-      const f = 0.25 + n * 0.14, x = lerp(base[0], tip[0], f), y = lerp(base[1], tip[1], f), side = n % 2 ? 1 : -1;
-      ctx.beginPath(); ctx.ellipse(x + side * leaf, y - leaf * 0.25, leaf, leaf * 0.48, side * -0.55, 0, TAU);
-      ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = edge; ctx.lineWidth = 0.8; ctx.stroke();
-    }
-    ctx.beginPath(); ctx.ellipse(tip[0], tip[1], leaf * 0.7, leaf * 0.5, 0, 0, TAU); ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = edge; ctx.stroke();
+  /** The highest these four have reached by a day, metres above the soil. */
+  function reached(sd, day) {
+    const r = sd.sd.reached;
+    let lo = 0, hi = r.length - 1, best = -1;
+    while (lo <= hi) { const m = (lo + hi) >> 1; if (r[m][0] <= day) { best = m; lo = m + 1; } else hi = m - 1; }
+    return best < 0 ? 0 : r[best][1] / 100;
   }
 
-  /** One dimension across the gap between the piers, with its number, and two people standing in it for scale. */
-  function gap(u, g, here) {
-    const [a, b] = gapAt(u), A = P([a[0], a[1], gz(g, a[0], a[1])]), B = P([b[0], b[1], gz(g, b[0], b[1])]);
-    const dx = B[0] - A[0], dy = B[1] - A[1], l = Math.hypot(dx, dy) || 1, s = dy / l * 46 > 0 ? 1 : -1, nx = dy / l * 46 * s, ny = -dx / l * 46 * s;
-    const a2 = [A[0] + nx, A[1] + ny], b2 = [B[0] + nx, B[1] + ny];
-    for (const [f, h, side] of [[0.4, 1.74, 0.3], [0.58, 1.6, -0.15]]) {   // two people, standing still
-      const x = lerp(a[0], b[0], f) + G.out[0] * side, y = lerp(a[1], b[1], f) + G.out[1] * side, z = gz(g, x, y);
-      const at = (o, zz) => P([x + G.across[0] * o, y + G.across[1] * o, z + zz]), head = at(0, h * 0.93), foot = at(0, 0);
-      ctx.beginPath(); ctx.ellipse(foot[0], foot[1], 0.24 * CAM.s, 0.24 * CAM.s * Math.sin(CAM.e) * 0.5, 0, 0, TAU); ctx.fillStyle = 'rgba(58,84,92,.16)'; ctx.fill();   // the ground it stands on
-      poly([at(-0.18, h * 0.8), at(-0.06, h * 0.855), at(0.06, h * 0.855), at(0.18, h * 0.8), at(0.2, h * 0.5), at(0.14, h * 0.47), at(0.1, 0), at(0.02, 0), at(0, h * 0.44), at(-0.02, 0), at(-0.1, 0), at(-0.14, h * 0.47), at(-0.2, h * 0.5)]);   // a plain figure, filled
-      ctx.fillStyle = 'rgb(98,118,108)'; ctx.fill();
-      ctx.beginPath(); ctx.arc(head[0], head[1], 0.085 * CAM.s, 0, TAU); ctx.fill();
+  let drawn = null, lastMs = 0;
+  /** The picture on a day: only the plants, the running words and the handle change. */
+  function frame(dayF) {
+    const day = Math.floor(clamp(dayF, PLANTED, LASTDAY));
+    const t0 = performance.now();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(back, 0, 0);
+    ctx.setTransform(K, 0, 0, K, 0, 0);
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    for (const sd of SIDES) climbers(sd, day);
+    // over each half, top left: its title, how many of its climbers are in their light, and how high they have reached
+    for (const sd of SIDES) {
+      const x = WORDS[sd.n];
+      text(ctx, sd.sd.title, x, 70, 44, `rgb(${INK})`, DISPLAY, 'left', 'italic', 8);
+      text(ctx, `${sd.sd.inLight} of 4 get the sun they ask for`, x, 102, 20, `rgb(${INK})`, SANS, 'left', '', 6);
+      text(ctx, `reached ${reached(sd, day).toFixed(1)} m`, x, 128, 20, `rgba(${INK},.85)`, SANS, 'left', '', 6);
+      if (sd.sd.placeholder) text(ctx, 'PLACEHOLDER: not the legs-together run', (HALF[sd.n][0] + HALF[sd.n][1]) / 2, 400, 28, `rgb(${RED})`, SANS, 'center', '', 8);
     }
-    ctx.strokeStyle = `rgb(${INK})`; ctx.lineWidth = 1;
-    line([A, [A[0] + nx * 1.15, A[1] + ny * 1.15]]); line([B, [B[0] + nx * 1.15, B[1] + ny * 1.15]]);
-    ctx.lineWidth = 1.5; line([a2, b2]);
-    for (const e of [a2, b2]) line([[e[0] - 6, e[1] + 6], [e[0] + 6, e[1] - 6]]);
-    const m = [(a2[0] + b2[0]) / 2 + nx * 0.6, (a2[1] + b2[1]) / 2 + ny * 0.6];
-    text(`${OP[here].gap.toFixed(2)} m`, m[0], m[1] + 12, 34, `rgb(${INK})`, DISPLAY, 'center', true, 'italic');
-    text('between the piers', m[0], m[1] + 38, 17, `rgb(${INK})`, SANS, 'center', true);
+    // the handle
+    const hx = railX(day + 0.5);
+    ctx.fillStyle = `rgb(${INK})`; ctx.fillRect(hx - 4.5, RAIL.y - 11, 9, 22);
+    lastMs = performance.now() - t0;
+    drawn = day;
   }
 
-  function hero(here, moving) {
-    ctx.globalAlpha = moving ? 0.4 : 1;
-    ctx.shadowColor = PAPER; ctx.shadowBlur = 22;
-    for (let k = 0; k < 2; k++) {
-      text(`${h1(OP[here].sun.mean)} h`, W - 56, EMBED ? 150 : 176, 104, `rgb(${INK})`, DISPLAY, 'right', false, 'italic');
-      text('June sun on each climber', W - 58, EMBED ? 186 : 212, 20, `rgb(${INK})`, SANS, 'right');
-    }
-    ctx.shadowBlur = 0; ctx.globalAlpha = 1;
-  }
-  /** One sentence for the state the legs are in. */
-  function sentence(u, here, moving, held) {
-    let s;
-    if (here === N - 1 && !moving) s = 'Wider, and the footing no longer fits.';
-    else if (here === CH && !moving) s = `${OP[CH].across.toFixed(1)} m across: the most sun the footing allows.`;
-    else if (held && OP[here].footing && !moving) s = 'Closer, and the piles crowd the roots.';
-    else if (u < 0.15) s = 'Legs together. The climbers stand in shade.';
-    else s = 'Open the legs and sun reaches them.';
-    text(s, 52, RAIL.top - 44, 26, `rgb(${INK})`, SANS, 'left');
-  }
-  function legend() {
-    const x = 1500, y = RAIL.top - 52;   // what a pool of light is, said once
-    const glow = ctx.createRadialGradient(x - 12, y, 0, x - 12, y, 12);
-    glow.addColorStop(0, 'rgba(250,196,72,.8)'); glow.addColorStop(1, 'rgba(250,204,96,.15)');
-    ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(x - 12, y, 12, 0, TAU); ctx.fill();
-    ctx.strokeStyle = `rgba(${GOLD},.6)`; ctx.lineWidth = 1; ctx.stroke();
-    text('the sun each climber gets', x - 34, y + 6, 17, `rgba(${INK},.85)`, SANS, 'right');
-  }
-  function rail(u) {
-    const { x0, x1, y, top } = RAIL, maxSun = Math.max(...OP.map((o) => o.sun.mean)), ways = OP.map((o) => o.gap), wlo = Math.min(...ways), whi = Math.max(...ways);
-    const sy = (v) => y - 4 - (y - top - 6) * v / maxSun, wy = (v) => y - 12 - 40 * (v - wlo) / (whi - wlo || 1);
-    const pts = OP.map((o, i) => [stopX(i), sy(o.sun.mean)]);
-    ctx.beginPath(); ctx.moveTo(x0, y); pts.forEach((q) => ctx.lineTo(q[0], q[1])); ctx.lineTo(x1, y); ctx.closePath();
-    const warm = ctx.createLinearGradient(0, top, 0, y); warm.addColorStop(0, `rgba(${GOLD},.42)`); warm.addColorStop(1, `rgba(${GOLD},.06)`);
-    ctx.fillStyle = warm; ctx.fill();
-    ctx.strokeStyle = `rgba(${GOLD},.95)`; ctx.lineWidth = 1.6; line(pts);
-    ctx.strokeStyle = `rgba(${INK},.7)`; ctx.lineWidth = 1; line(OP.map((o, i) => [stopX(i), wy(o.gap)]));
-    for (let i = 0; i < N; i++) { ctx.beginPath(); ctx.arc(stopX(i), sy(OP[i].sun.mean), 3.4, 0, TAU); ctx.fillStyle = `rgb(${GOLD})`; ctx.fill(); ctx.beginPath(); ctx.arc(stopX(i), wy(OP[i].gap), 2.4, 0, TAU); ctx.fillStyle = `rgb(${INK})`; ctx.fill(); }
-    text('June sun per climber', x0 - 46, y - 6, 17, 'rgb(150,98,18)', SANS, 'right');
-    text('between the piers', x0 - 46, wy(OP[0].gap) - 2, 17, `rgba(${INK},.85)`, SANS, 'right');
-    ctx.strokeStyle = `rgb(${INK})`; ctx.lineWidth = 1; line([[x0, y], [x1, y]]);
-    text('legs, measured across', x0 - 46, y + 30, 17, `rgba(${INK},.85)`, SANS, 'right');
-    OP.forEach((o, i) => {
-      const x = stopX(i);
-      ctx.strokeStyle = `rgb(${INK})`; ctx.lineWidth = 1; line([[x, y - 5], [x, y + 5]]);
-      text(`${o.across.toFixed(1)} m`, x, y + 32, 21, `rgb(${INK})`, DISPLAY, 'center', false, 'italic');
-      if (o.footing) {   // the footing draft rejects it: struck through with a short red hatch
-        ctx.strokeStyle = `rgb(${RED})`; ctx.lineWidth = 1.5;
-        for (let k = -1; k <= 1; k++) line([[x + k * 7 - 5, y + 7], [x + k * 7 + 5, y - 7]]);
-        line([[x - 24, y + 25], [x + 24, y + 25]]);
-      }
-      if (i === CH) { ctx.beginPath(); ctx.arc(x, y, 9, 0, TAU); ctx.strokeStyle = `rgb(${INK})`; ctx.lineWidth = 1.2; ctx.stroke(); }
-    });
-    const groups = [];
-    OP.forEach((o, i) => { if (!o.footing) return; const last = groups.at(-1); if (last && last.kind === o.footing && last.to === i - 1) last.to = i; else groups.push({ kind: o.footing, from: i, to: i }); });
-    for (const gr of groups) {
-      const a = stopX(gr.from), b = stopX(gr.to), words = gr.kind === 'reach' ? 'foot too far from its pile' : 'piles too close', right = gr.to === N - 1 && gr.from === gr.to;
-      text(words, right ? b + 30 : (a + b) / 2, y + 62, 17, `rgb(${RED})`, SANS, right ? 'right' : 'center');
-    }
-    text('the design', stopX(CH), y - 18, 17, `rgb(${INK})`, SANS, 'center', true);
-    const hx = stopX(u);
-    ctx.strokeStyle = `rgba(${INK},.35)`; ctx.lineWidth = 1; line([[hx, top - 4], [hx, y]]);
-    ctx.fillStyle = `rgb(${INK})`; ctx.fillRect(hx - 4.5, y - 11, 9, 22);
-  }
-  function text(s, x, y, size, color, face = SANS, align = 'left', boxed = false, style = '') {
-    ctx.font = `${style} 400 ${size}px ${face}`; ctx.textAlign = align; ctx.textBaseline = 'alphabetic';
-    if (boxed) { const w = ctx.measureText(s).width, x0 = align === 'center' ? x - w / 2 : align === 'right' ? x - w : x; ctx.fillStyle = PAPER; ctx.fillRect(x0 - 4, y - size * 0.82, w + 8, size * 1.08); }
-    ctx.fillStyle = color; ctx.fillText(s, x, y);
-  }
-
-  // ---- playing: the slow loop, and the hand that takes over ----
+  // ---- playing: the slow ten years, and the hand that takes over ----
   let paused = false, hand = null, tp = 0, clock = 0, last = performance.now();
   const RESUME = 10;
-  function current() {
-    if (STILL) return { u: CH, held: false };
-    if (!hand) return { u: openingAt(tp), held: false };
-    const settle = hand.down ? 0 : ease(seg(clock - hand.up, 0, 0.6));   // let go, and it settles on the nearest opening grown
-    return { u: lerp(hand.u, Math.round(hand.u), settle), held: true };
-  }
-  function draw() { const s = current(); frame(s.u, s.held); }
+  const current = () => (STILL ? JUNE10 : hand ? hand.day : dayAt(tp));
+  function draw(force) { const d = current(); if (force || Math.floor(clamp(d, PLANTED, LASTDAY)) !== drawn) frame(d); }
   function loop(ms) {
     const dt = Math.min(0.1, (ms - last) / 1000); last = ms;
     if (!paused) {
       clock += dt;
-      if (hand && !hand.down && clock - hand.up > RESUME) {   // nobody's hand for ten seconds: carry on from where it stands
-        const u = Math.round(hand.u); hand = null;
-        tp = (KEYS.find(([, k], i) => k === u && i > 0) ?? [0])[0];
-      } else if (!hand) tp = (tp + dt) % DUR;
+      if (hand && !hand.down && clock - hand.up > RESUME) { tp = hand.day >= JUNE10 ? MOVE : timeOf(hand.day); hand = null; }   // nobody's hand for ten seconds: carry on from where it stands
+      else if (!hand) tp = (tp + dt) % DUR;
     }
-    draw();
+    draw(false);
     requestAnimationFrame(loop);
   }
-  function take(u, down) {
-    if (!hand) hand = { u: openingAt(tp), down: true, up: clock };
-    hand.u = clamp(u, 0, N - 1); hand.down = down; if (!down) hand.up = clock;
-    paused = false; draw();
+  function take(day, down) {
+    if (!hand) hand = { day: dayAt(tp), down: true, up: clock };
+    hand.day = clamp(day, PLANTED, LASTDAY); hand.down = down; if (!down) hand.up = clock;
+    paused = false; draw(false);
   }
   const toStage = (e) => { const r = canvas.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * W, (e.clientY - r.top) / r.height * H]; };
+  const railDay = (x) => YS[Y0] + (x - RAIL.x0) / (RAIL.x1 - RAIL.x0) * (YS[Y1] - YS[Y0]);
   let drag = null;
   canvas.addEventListener('pointerdown', (e) => {
     if (STILL) return;
     canvas.setPointerCapture(e.pointerId);
-    const [x, y] = toStage(e), onRail = y > RAIL.top - 20;
+    const [x, y] = toStage(e), onRail = y > RAIL.y - 30;
+    if (!onRail && y > GY) return;   // the study and the sentence do not take a hand
     drag = { x, onRail };
-    take(onRail ? (x - RAIL.x0) / (RAIL.x1 - RAIL.x0) * (N - 1) : hand ? hand.u : openingAt(tp), true);
+    take(onRail ? railDay(x) : hand ? hand.day : dayAt(tp), true);
   });
   canvas.addEventListener('pointermove', (e) => {
     if (!drag) return;
     const [x] = toStage(e);
-    take(drag.onRail ? (x - RAIL.x0) / (RAIL.x1 - RAIL.x0) * (N - 1) : hand.u + (x - drag.x) / 220, true);
+    take(drag.onRail ? railDay(x) : hand.day + (x - drag.x) * (YS[Y1] - YS[Y0]) / (RAIL.x1 - RAIL.x0), true);
     drag.x = x;
   });
-  const release = () => { if (!drag) return; drag = null; take(hand.u, false); };
+  const release = () => { if (!drag) return; drag = null; take(hand.day, false); };
   canvas.addEventListener('pointerup', release); canvas.addEventListener('pointercancel', release);
-  if (!EMBED) addEventListener('keydown', (e) => {
-    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-    e.preventDefault(); take(Math.round(hand ? hand.u : openingAt(tp)) + (e.key === 'ArrowRight' ? 1 : -1), false);
-  });
 
   $('realbtn').onclick = () => { const open = $('real').hidden; $('real').hidden = !open; $('realbtn').setAttribute('aria-expanded', String(open)); };
+  const thinned = D.kept < 1 ? ` To keep the page light, ${Math.round((1 - D.kept) * 100)} in every hundred leaves are left out, evenly and the same on both sides.` : '';
   [
-    `Members and feet at ${N} openings: generated by the building model. Between them the drawing interpolates.`,
-    `The shade on the ground: where direct sun is short on ${D.mapDay}, worked out here the simulator's way, from the timber, its cables, and the site's trees and wall. One day, and not the other climbers' leaf.`,
-    `The pools of light and the number: the growth simulator's June sun at each planting place, a pool's area being that climber's hours. One run and one seed per opening, a provisional light model, latitude ${D.site.latitude}° assumed.`,
-    'The footing rules: this study’s ground draft, not engineering.',
+    `Every stem, leaf and flower is the plant simulator’s: two runs, one seed each, the same planting on two versions of the building, on this study’s designed site. The species numbers are provisional assumptions, not measured on plants.${D.sides[0].placeholder ? ' For now the left picture is the design run again, marked as a placeholder, until the legs-together run is gathered.' : ''}`,
+    `Leaves and flowers are plain marks in each species’ colour, when and where the runs put them, not portraits. Stems are as thick as the runs make them, but none thinner than 18 mm, so the young ones read.${thinned} Both pictures are drawn at ${S} px to the metre on the slide: the left pier about its legs together (a ring 0.7 m across), the right about its legs apart (2.4 m).`,
+    'The strip’s figures are the simulator’s reading of each species’ light against its own provisional profile, the building model’s way in between the piers, and this study’s ground draft for the footing, which is not engineering. One run and one seed for each opening.',
+    'Across the room the two runs end with about the same total length of stem; what differs is light, height and flower. The timber and cables are the building model’s, at this pier. A scenario, not a forecast.',
   ].forEach((s) => $('real').append(Object.assign(document.createElement('p'), { textContent: s })));
 
   function fit() {
     const k = Math.min(innerWidth / W, innerHeight / H), dpr = window.devicePixelRatio || 1;
     document.documentElement.style.setProperty('--k', k);
     K = Math.min(3, k * dpr); canvas.width = Math.round(W * K); canvas.height = Math.round(H * K);
-    draw();
+    drawBack(); draw(true);
   }
   addEventListener('resize', fit);
   window.__duration = DUR;
-  window.__setT = (t) => { hand = null; tp = clamp(t, 0, DUR - 0.001); paused = true; draw(); };   // draws at once
-  window.__play = () => { hand = null; paused = false; draw(); };
+  window.__setT = (t) => { hand = null; tp = clamp(t, 0, DUR - 0.001); paused = true; draw(true); };   // draws at once
+  window.__play = () => { hand = null; paused = false; draw(true); };
+  window.__frameMs = () => lastMs;   // the last frame's drawing time, measured around the draw
+  window.__dayAt = dayAt;
   fit();
   if (!STILL) requestAnimationFrame(loop);
-  document.fonts?.ready.then(() => draw());
+  document.fonts?.ready.then(() => { drawBack(); draw(true); });
   window.__ready = true;
 })();
 </script>
