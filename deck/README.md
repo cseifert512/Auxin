@@ -41,7 +41,7 @@ The copy is kept as it came so that it can always be compared with the website's
 
 | Version | What it is |
 |---|---|
-| [`designx/v8/`](designx/v8/README.md) | The first of ours: edition 07 with the dynamic drawings in. Still the deck, 16:9, nothing of 07 taken out; the pieces made in `../drawings-in-code` sit in the places 07 kept for them, and those with no place have a slide each. |
+| [`designx/v8/`](designx/v8/README.md) | The current working deck: v7's eighteen scenes carried into a continuous story, with two new drawing spaces for ground and care. Preserves customer, commercial, computational and manufacturing material. The [slide-by-slide story map](designx/v8/story-map.html) records what stays, the drawings and each transition. |
 
 The drawings are not copied into the deck. `serve.mjs` answers `/designx/pieces/<name>/` from `../drawings-in-code/exports/deck/<name>/`, where they are made, so a piece that is remade shows at the next reload. `node deck/pieces.mjs` makes a copy in `designx/pieces/` (not in git) for when the deck has to stand without this server.
 
