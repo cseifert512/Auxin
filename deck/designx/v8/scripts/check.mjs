@@ -11,7 +11,7 @@ const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'C:/BOWER/Bower_Web/node_modules/playwright');
 const href = process.env.DECK_URL || 'http://localhost:5312/designx/v8/';
 const origin = new URL(href).origin;
-const expectedThemes = ['cover', 'v7-growth-slide', 'v8-time-experiment-slide', 'v8-light-slide', 'v8-space-slide', 'v8-ground-slide', 'variability-slide', 'factory-slide', 'factory-focus-slide', 'buyers-slide', 'commercial-loop-slide', 'v7-commercial-model-slide', 'v8-care-slide', 'v7-learning-flow-slide', 'team-slide', 'material-problem-slide', 'v7-future-slide', 'closing'];
+const expectedThemes = ['cover', 'v7-growth-slide', 'v8-time-experiment-slide', 'v8-canopy-orbit-slide', 'v8-light-slide', 'v8-space-slide', 'v8-ground-slide', 'variability-slide', 'factory-slide', 'factory-focus-slide', 'buyers-slide', 'commercial-loop-slide', 'v7-commercial-model-slide', 'v8-care-slide', 'v7-learning-flow-slide', 'team-slide', 'material-problem-slide', 'v7-future-slide', 'closing'];
 const result = { passed: [], failures: [], errors: [], missingAssets: [], failedRequests: [], externalRequests: [], slides: [] };
 const dependencies = new Set();
 const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_PATH || 'C:/Users/cseif/AppData/Local/ms-playwright/chromium_headless_shell-1223/chrome-headless-shell-win64/chrome-headless-shell.exe' });
@@ -148,11 +148,49 @@ await mkdir(resolve(root, '.qa'), { recursive: true });
 try {
   console.log('[v8 QA] Loading edition 08'); await page.goto(href); await page.waitForFunction(() => Boolean(window.DESIGNX && window.DESIGNX_V8_STORY));
   result.slides = await page.evaluate(() => window.DESIGNX_SLIDES.map((slide, i) => ({ number: i + 1, title: slide.title, theme: slide.theme })));
-  await test('Eighteen-slide narrative preserves the original Time drawing beside its experiment', async () => {
+  await test('Nineteen-slide narrative preserves the existing Time drawings beside the canopy test', async () => {
     assert.equal(await page.locator('.slide.v8-engine-slide, .slide.v8-learning-questions-slide').count(),0);
     assert.equal(await page.locator('[data-v7-flow]').count(),1);
     assert.deepEqual(result.slides.map(slide => slide.theme.split(' ')[0]), expectedThemes); assert.equal(await page.evaluate(() => window.DESIGNX_V8_STORY.length), expectedThemes.length);
     assert.match(await page.locator('body').getAttribute('class'), /designx-v7/); assert.match(await page.locator('body').getAttribute('class'), /designx-v8/);
+  });
+  await test('Canopy comparison autoplays, scrubs and preserves its moment between projections', async () => {
+    const slide=await activate('v8-canopy-orbit-slide'),host=page.locator('[data-v8-canopy]');
+    const ready=()=>page.waitForFunction(()=>document.querySelector('[data-v8-canopy]')?.v8Controller?.getState().ready);
+    const state=()=>host.evaluate(el=>el.v8Controller.getState());
+    const seek=async time=>{await host.locator('input').evaluate((el,t)=>{el.value=t;el.dispatchEvent(new Event('input',{bubbles:true}));},time);await ready();assert.ok(Math.abs((await state()).time-time)<.05);};
+    await ready();assert.equal((await state()).playing,true);assert.equal((await state()).duration,55);
+    assert.deepEqual(await host.locator('[data-canopy-projection]').allTextContents(),['Perspective','Axonometric']);
+    const before=(await state()).time;await page.waitForFunction(t=>document.querySelector('[data-v8-canopy]').v8Controller.getState().time>t+.15,before);
+    await host.getByRole('button',{name:'Pause drawing',exact:true}).click();
+    const footprint=await host.evaluate(el=>{const a=el.getBoundingClientRect(),b=el.closest('.slide').getBoundingClientRect();return a.width*a.height/(b.width*b.height);});assert.ok(footprint>.98);
+    for(const projection of ['perspective','axonometric']){
+      const prior=(await state()).time;await host.locator(`[data-canopy-projection="${projection}"]`).click();await ready();
+      assert.ok(Math.abs((await state()).time-prior)<.05,'Projection switching should preserve the selected moment');
+      for(const time of [8,24,36,49]){await seek(time);await screenshot(`canopy-${projection}-${time}`,slide);}
+      assert.match(await host.locator('[data-canopy-date]').textContent(),/Jun 2036.*Overhead hold/);
+      await seek(53);const paused=(await state()).time;await frames();assert.equal((await state()).time,paused);
+    }
+    await activate('v8-time-experiment-slide');assert.equal((await state()).running,false);assert.ok(await host.locator('video').evaluate(v=>v.paused));
+    await activate('v8-canopy-orbit-slide');await ready();assert.equal((await state()).time,53);
+    await page.emulateMedia({media:'print'});assert.equal(await host.isVisible(),false);assert.equal(await slide.locator('.v8-canopy-print-caption').isVisible(),true);await page.emulateMedia({media:'screen'});
+    await page.emulateMedia({reducedMotion:'reduce'});await page.goto(href+'#slide-04');await page.reload();await ready();
+    assert.equal((await state()).time,49);assert.equal((await state()).playing,false);
+    await page.emulateMedia({reducedMotion:'no-preference'});
+    assert.equal(await page.locator('.slide.v7-growth-slide').count(),1);assert.equal(await page.locator('.slide.v8-time-experiment-slide').count(),1);
+    assert.deepEqual([...dependencies].filter(url=>/canopy-orbit\/.*\.(glb|fbx|growth)$/.test(url)),[]);
+  });
+  await test('Canopy load failure retains a still and recovers without changing existing slides', async () => {
+    expectingLoadFailure=true;const pattern=/\/assets\/canopy-orbit\/.*\.mp4(?:\?|$)/;
+    await page.route(pattern,route=>route.abort('failed'));
+    try{
+      await page.goto(href+'#slide-04');await page.reload();
+      const host=page.locator('[data-v8-canopy]');await page.waitForFunction(()=>document.querySelector('[data-v8-canopy]')?.v8Controller?.getState().error);
+      await page.locator('.v8-canopy-poster').evaluate(el=>el.decode());assert.ok(await page.locator('.v8-canopy-poster').isVisible());
+      assert.match(await host.locator('.v8-canopy-message').textContent(),/still shows the final overhead/);
+      await page.unroute(pattern);await host.getByRole('button',{name:'Retry drawing',exact:true}).click();
+      await page.waitForFunction(()=>document.querySelector('[data-v8-canopy]').v8Controller.getState().ready);
+    }finally{await page.unroute(pattern);expectingLoadFailure=false;}
   });
   await test('Learning phases remain clear in the original complex flowchart', async () => {
     const learning = await activate('v7-learning-flow-slide');
@@ -578,7 +616,7 @@ try {
     assert.ok(seen.share > .98, 'The place page should fill its slide'); assert.equal(seen.title, 'The living place'); assert.equal(seen.station, 'whole'); assert.ok(seen.veils.every(d => d === 'none'), 'No fade of paper over the picture');
     await screenshot('slide-06-living-place', slide);
     await slide.evaluate(el => el.querySelector('[data-v8-place] iframe').contentWindow.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })));
-    await page.waitForFunction(() => window.DESIGNX.current === 7); assert.equal(await page.locator('[data-v8-place] iframe').count(), 0, 'The place page is let go when its slide is left');
+    await page.waitForFunction(() => window.DESIGNX_SLIDES[window.DESIGNX.current-1].theme === 'variability-slide'); assert.equal(await page.locator('[data-v8-place] iframe').count(), 0, 'The place page is let go when its slide is left');
   });
   await test('Index, notes, new drawing slots and print link remain usable', async () => {
     await screenshot('slide-06-ground', await activate('v8-ground-slide')); await screenshot('slide-13-care', await activate('v8-care-slide'));
@@ -587,7 +625,7 @@ try {
     await page.locator('#show-notes').click(); assert.match(await page.locator('#notes-content').innerText(), /Story connection|Continue to the next slide|Drawing plan/); await page.locator('[data-close-dialog="speaker-notes"]').click();
     const print = new URL(await page.locator('#pdf-link').getAttribute('href'), href); assert.equal(print.searchParams.get('print'), '1'); assert.ok(print.pathname.includes('/v8'));
   });
-  await test('Static reading view has eighteen scenes, complete factory diagrams and no broken images', async () => {
+  await test('Static reading view has nineteen scenes, complete factory diagrams and no broken images', async () => {
     const print = new URL(href); print.search = '?print=1'; await page.goto(print.href); await page.waitForFunction(() => Boolean(window.DESIGNX));
     await page.evaluate(() => Promise.race([Promise.all([window.DESIGNX_READY, window.DESIGNX_FACTORY_READY]), new Promise((_, reject) => setTimeout(() => reject(new Error('Static factory preparation exceeded 20 seconds')), 20000))]));
     assert.equal(await page.locator('.slide.is-active').count(), expectedThemes.length); assert.equal(await page.locator('[data-v8-place] iframe').count(), 0, 'The place page must not load in the reading view'); assert.equal(await page.locator('[data-v8-study] iframe').count(), 0); assert.equal(await page.locator('[data-factory-poster] svg').count(), 4);

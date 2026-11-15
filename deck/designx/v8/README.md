@@ -14,6 +14,8 @@ The eighteen-slide sequence is: Bower → original room through time → Time ca
 
 ## What is present
 
+- **Additional camera test (slide 04): From room to canopy.** `canopy-orbit.js` inserts one separate test after the existing Time comparison, giving nineteen displayed slides while preserving all eighteen existing slide definitions. Perspective and Axonometric follow the same full orbit, vary in height, and finish directly overhead with a six-second hold. Both are full-model films with authored people and birds rendered into the geometry; the browser loads no meshes. Projection switching preserves the current moment. See [camera-test provenance](assets/canopy-orbit/SOURCES.md). The original Time players, films and controls are unchanged; subsequent displayed slide numbers move on by one.
+
 - The original customer settings as three still images, four organisations named under “In conversation with” (Eden Project, The Newt, 25hours and Canary Wharf Group), the proposed £65,000 commission credited against the build, fixed build price and annual care. Speaker notes distinguish the earlier Canary Wharf Group contact from the other customer meetings.
 - A computational consequence drawing using the scene owner's existing handoff, the original complex learning flow, customer-discovery context in speaker notes, both founder theses, team and future imagery.
 - Daniel's original factory map, fourteen stations, Form/Measure/Machine views, playback, notes and print drawings. This uses the v7 factory system, without a second implementation.
