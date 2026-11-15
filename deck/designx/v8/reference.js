@@ -18,10 +18,6 @@
         <figure class="v8-reference-visual" aria-labelledby="v8-reference-caption">
           <img src="v8/assets/scene-drafts/arrival.png" alt="Provisional design render of the Bower, with people approaching through its garden. The same view resolves from a faint ghost into full colour." width="1920" height="1200">
           <figcaption id="v8-reference-caption">A place they can <em>visit.</em></figcaption>
-          <div class="v8-reference-controls slide-interaction">
-            <button type="button" data-reference-play aria-label="Replay the Bower reveal">Replay ↺</button>
-            <input data-reference-seek type="range" min="0" max="1000" value="1000" aria-label="Bower reveal, from ghost to full colour">
-          </div>
         </figure>
       </div>
       <aside class="v7-drawing-note v8-reference-note" aria-label="Drawing brief">
@@ -38,8 +34,6 @@
     const scene = root.querySelector('.v8-reference-scene');
     if (!scene) return;
     const picture = scene.querySelector('.v8-reference-visual img');
-    const play = scene.querySelector('[data-reference-play]');
-    const seek = scene.querySelector('[data-reference-seek]');
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     const printing = new URL(location.href).searchParams.get('print') === '1';
     const duration = 6500;
@@ -48,41 +42,28 @@
       { opacity:.12, filter:'grayscale(1)', offset:.15 },
       { opacity:1, filter:'grayscale(0)', offset:1 }
     ], { duration, fill:'both', easing:'ease-in-out' });
-    animation.pause(); animation.currentTime = duration;
-    let active = false, started = false, wantsPlay = false, frame = 0, printEvent = false;
-    const finished = () => Number(animation.currentTime) >= duration;
-    function update() {
-      seek.value = String(Math.round(Number(animation.currentTime) / duration * 1000));
-      play.textContent = finished() ? 'Replay ↺' : wantsPlay ? 'Pause' : 'Play';
-      play.setAttribute('aria-label', finished() ? 'Replay the Bower reveal' : wantsPlay ? 'Pause the Bower reveal' : 'Play the Bower reveal');
+    animation.pause(); animation.currentTime = 0;
+    let active = false, complete = false, printEvent = false;
+    function holdFinal() {
+      complete = true;
+      picture.style.opacity = '1';
+      picture.style.filter = 'none';
+      animation.cancel();
     }
-    function tick() { update(); if (animation.playState === 'running') frame = requestAnimationFrame(tick); }
     function sync() {
-      cancelAnimationFrame(frame);
-      if (active && wantsPlay && !document.hidden && !printing && !printEvent) {
-        animation.play(); frame = requestAnimationFrame(tick);
-      } else animation.pause();
-      update();
+      if (complete) return;
+      if (active && !document.hidden && !printing && !printEvent) animation.play();
+      else animation.pause();
     }
-    animation.onfinish = () => { wantsPlay = false; update(); };
-    play.onclick = () => {
-      if (finished()) animation.currentTime = 0;
-      wantsPlay = !wantsPlay; sync();
-    };
-    seek.oninput = () => { wantsPlay = false; animation.currentTime = Number(seek.value) / 1000 * duration; sync(); };
-    scene.querySelector('.v8-reference-controls').addEventListener('keydown', event => event.stopPropagation());
+    animation.onfinish = holdFinal;
+    if (printing || reduced.matches) holdFinal();
     document.addEventListener('designx:slidechange', event => {
       active = event.detail.element === scene.closest('.slide');
-      if (active && !started) {
-        started = true;
-        if (!reduced.matches && !printing) { animation.currentTime = 0; wantsPlay = true; }
-      }
       sync();
     });
     document.addEventListener('visibilitychange', sync);
-    reduced.addEventListener('change', () => { if (reduced.matches) { wantsPlay = false; animation.currentTime = duration; sync(); } });
+    reduced.addEventListener('change', () => { if (reduced.matches) holdFinal(); });
     window.addEventListener('beforeprint', () => { printEvent = true; sync(); });
     window.addEventListener('afterprint', () => { printEvent = false; sync(); });
-    update();
   });
 })();

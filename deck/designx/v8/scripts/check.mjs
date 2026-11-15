@@ -11,7 +11,7 @@ const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'C:/BOWER/Bower_Web/node_modules/playwright');
 const href = process.env.DECK_URL || 'http://localhost:5312/designx/v8/';
 const origin = new URL(href).origin;
-const expectedThemes = ['cover', 'buyers-slide', 'v7-growth-slide', 'v8-light-slide', 'v8-space-slide', 'v8-ground-slide', 'v7-anatomy-slide', 'v7-computation-slide', 'v8-engine-slide', 'variability-slide', 'factory-slide', 'factory-focus-slide', 'commercial-loop-slide', 'v7-commercial-model-slide', 'v8-care-slide', 'v7-learning-flow-slide', 'team-slide', 'material-problem-slide', 'v7-future-slide', 'closing'];
+const expectedThemes = ['cover', 'v7-growth-slide', 'v8-light-slide', 'v8-space-slide', 'v8-ground-slide', 'v7-anatomy-slide', 'v7-computation-slide', 'v8-engine-slide', 'variability-slide', 'factory-slide', 'factory-focus-slide', 'buyers-slide', 'commercial-loop-slide', 'v7-commercial-model-slide', 'v8-care-slide', 'v7-learning-flow-slide', 'team-slide', 'material-problem-slide', 'v7-future-slide', 'closing'];
 const result = { passed: [], failures: [], errors: [], missingAssets: [], failedRequests: [], externalRequests: [], slides: [] };
 const dependencies = new Set();
 const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_PATH || 'C:/Users/cseif/AppData/Local/ms-playwright/chromium_headless_shell-1223/chrome-headless-shell-win64/chrome-headless-shell.exe' });
@@ -139,6 +139,18 @@ try {
     assert.equal(await learning.locator('[data-v7flow-select="growing"]').getAttribute('aria-pressed'),'true');
     await screenshot('slide-16-learning-initial',learning);
   });
+  await test('Reference reveal plays once and holds its final image without controls', async () => {
+    const reference = await activate('v8-reference-slide');
+    const picture = reference.locator('.v8-reference-visual img');
+    assert.equal(await reference.locator('input,button').count(),0);
+    await page.waitForFunction(() => document.querySelector('.v8-reference-visual img').style.opacity === '1', null, {timeout:12000});
+    assert.equal(await picture.evaluate(el=>getComputedStyle(el).opacity),'1');
+    assert.equal(await picture.evaluate(el=>el.getAnimations().length),0);
+    await activate('buyers-slide'); await activate('v8-reference-slide'); await frames(12);
+    assert.equal(await picture.evaluate(el=>getComputedStyle(el).opacity),'1');
+    assert.equal(await picture.evaluate(el=>el.getAnimations().length),0);
+    await screenshot('slide-13-reference-complete',reference);
+  });
   await test('Engine keeps making, growth and budget distinct from the pier example', async () => {
     const engine = await activate('v8-engine-slide');
     for (const text of ['Can we make it?', 'Can it grow?', 'Can we afford it?', 'Fabricatability', 'Plantability', 'Cost']) assert.ok((await engine.innerText()).replace(/\s+/g,' ').includes(text));
@@ -148,7 +160,7 @@ try {
     assert.equal(await engine.locator('[aria-pressed="true"]').count(),1);
     await engine.getByRole('button',{name:'Light',exact:true}).click();
     assert.match(await engine.locator('[data-v8-engine-text]').innerText(),/orientation and openings/);
-    await screenshot('slide-09-engine',engine);
+    await screenshot('slide-08-engine',engine);
     await activate('v7-computation-slide');
     assert.equal(await page.locator('[data-v8-engine]').count(),1);
     assert.equal(await page.locator('[data-v8-consequences]').count(),1);
@@ -156,8 +168,11 @@ try {
   await test('Customer discussions and proposed commercial terms remain intact', async () => {
     const buyers = await activate('buyers-slide');
     for (const label of ['Private gardens', 'Cultural destinations', 'Hospitality', 'In discussion']) assert.match(await buyers.innerText(), new RegExp(label, 'i'));
-    for (const name of ['Eden Project', 'The Newt', '25hours']) assert.equal(await buyers.getByRole('img', { name, exact: true }).count(), 1);
-    assert.match(await buyers.innerText(), /not signed commissions/i); await screenshot('slide-02-customers', buyers);
+    for (const name of ['Eden Project', 'The Newt', '25hours', 'Canary Wharf Group']) assert.equal(await buyers.getByRole('img', { name, exact: true }).count(), 1);
+    assert.equal(await buyers.locator('video, [data-customer-play], .film-explore').count(),0);
+    assert.equal(await buyers.locator('.buyer-triptych figure').count(),3);
+    assert.match(await buyers.locator('.prospect-logo-canary').innerText(),/Meeting scheduled/);
+    assert.match(await buyers.innerText(), /not signed commissions/i); await screenshot('slide-12-customers', buyers);
     const offer = await activate('v7-commercial-model-slide');
     for (const pattern of [/£65,000/, /Deducted from total build cost/i, /Fixed\s+build price/i, /Annual\s+care/i]) assert.match(await offer.innerText(), pattern);
     await screenshot('slide-14-commercial', offer);
@@ -174,7 +189,7 @@ try {
     assert.equal(await host('growth').locator('button:visible').count(),1,'Only Pause should be visible before inspection');
     await host('growth').locator('[data-v8-study-play]').click(); await ready('growth'); await pausedStable('growth');
     assert.match((await setRange('growth',118)).caption,/Assembly/i);
-    await screenshot('slide-03-assembly',slide);
+    await screenshot('slide-02-assembly',slide);
     await inspectGrowth();
     await host('growth').getByRole('button',{name:'Installation',exact:true}).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption,/installation/i);
     await host('growth').getByRole('button',{name:'Growing',exact:true}).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption,/Growth and seasons/i);
@@ -182,7 +197,7 @@ try {
     await inspectGrowth('time',false);
     const still = await host('growth').locator('canvas').evaluate(el=>el.toDataURL()); await frames();
     assert.equal(await host('growth').locator('canvas').evaluate(el=>el.toDataURL()),still,'Paused film and inhabitants must stay still');
-    await screenshot('slide-03-growth',slide);
+    await screenshot('slide-02-growth',slide);
     await setRange('growth',999); await host('growth').locator('[data-v8-study-play]').click();
     await page.waitForFunction(selector => Number(document.querySelector(selector+' input[type=range]').value)<200,hostSelector('growth'));
     await ready('growth'); assert.match((await snapshot('growth')).caption,/design|Assembly/i,'The original film should loop to its assembly sequence');
@@ -204,7 +219,7 @@ try {
     assert.equal(await host('growth').getByRole('button',{name:'Design',exact:true}).count(),0);
     await host('growth').getByRole('button',{name:'Winter',exact:true}).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption,/winter/i);
     await host('growth').getByRole('button',{name:'Summer',exact:true}).click(); await ready('growth'); assert.match((await pausedStable('growth')).caption,/summer/i);
-    await inspectGrowth('time',false); await screenshot('slide-03-timber-inside',slide); await inspectGrowth();
+    await inspectGrowth('time',false); await screenshot('slide-02-timber-inside',slide); await inspectGrowth();
     await host('growth').locator('[data-v8-assembly]').check(); await ready('growth'); assert.equal((await pausedStable('growth')).renderedFrame,0);
     assert.ok((await setRange('growth',50)).renderedFrame<16); assert.equal((await setRange('growth',100)).renderedFrame,16);
     await host('growth').locator('[data-v8-assembly]').uncheck(); await ready('growth');
@@ -227,7 +242,7 @@ try {
     assert.equal(await host('growth','light').locator('[data-v8-view]').count(),0);
     await inspectGrowth('light'); await host('growth','light').getByRole('button',{name:'Noon',exact:true}).click(); await ready('growth','light');
     assert.ok([...dependencies].some(url=>url.includes('/v8/assets/light-establishment/frames/light-18.webp')),'Light should load the revised establishment drawing');
-    assert.match((await pausedStable('growth','light')).caption,/noon/i); await inspectGrowth('light',false); await screenshot('slide-04-light',light);
+    assert.match((await pausedStable('growth','light')).caption,/noon/i); await inspectGrowth('light',false); await screenshot('slide-03-light',light);
     const lightPaused=await snapshot('growth','light');
     const space=await activate('v8-space-slide'); await ready('growth','space');
     await drawingDominates(space);
@@ -236,7 +251,7 @@ try {
     const pan=await host('growth','space').evaluate(el=>el.v8Controller.getState().pan);
     await host('growth','space').locator('canvas').press('Shift+ArrowRight');
     assert.notEqual(await host('growth','space').evaluate(el=>el.v8Controller.getState().pan),pan,'Panorama should remain turnable');
-    await pausedStable('growth','space'); await screenshot('slide-05-space',space);
+    await pausedStable('growth','space'); await screenshot('slide-04-space',space);
     await activate('v8-light-slide'); await ready('growth','light'); assert.deepEqual(await pausedStable('growth','light'),lightPaused,'Each drawing keeps its own paused moment');
     assert.equal(await host('growth','space').evaluate(el=>el.v8Controller.getState().running),false);
   });
@@ -248,7 +263,7 @@ try {
     assert.match(await slide.innerText(),/3.61 m between the legs/);
     await slide.getByRole('button',{name:'Baseline',exact:true}).click();
     await page.waitForFunction(()=>document.querySelector('[data-v8-consequences]')?.dataset.configuration==='baseline');
-    assert.match(await slide.innerText(),/4.87 m between the legs/);await screenshot('slide-08-consequences',slide);
+    assert.match(await slide.innerText(),/4.87 m between the legs/);await screenshot('slide-07-consequences',slide);
     await slide.getByRole('button',{name:'Opened pier',exact:true}).click();await slide.getByRole('button',{name:'Designer review',exact:true}).click();
     await page.waitForFunction(()=>document.querySelector('[data-v8-consequences]')?.dataset.stage==='3');
     assert.match(await slide.innerText(),/0.23 m/);assert.match(await slide.innerText(),/0.24 m/);
@@ -258,7 +273,7 @@ try {
     const pattern=/\/approach-ink-16x9\.(mp4|webm)(?:\?|$)/;
     await page.route(pattern,route=>route.abort('failed'));
     try {
-      await page.goto(href+'#slide-03'); await page.reload();
+      await page.goto(href+'#slide-02'); await page.reload();
       await page.waitForFunction(()=>document.querySelector('[data-v8-study="growth"][data-growth-mode="time"]')?.v8Controller?.getState().fallback);
       assert.match((await snapshot('growth')).caption,/Static fallback.*summer/);
       assert.ok(await host('growth').getByRole('button',{name:'Retry drawing',exact:true}).isVisible());
@@ -273,7 +288,7 @@ try {
     const pattern='**/04-plants-make-space-timber/frames/time-30.webp';
     await page.route(pattern,route=>route.abort('failed'));
     try{
-      await page.goto(href+'#slide-03');await page.reload();await ready('growth');await inspectGrowth();
+      await page.goto(href+'#slide-02');await page.reload();await ready('growth');await inspectGrowth();
       await host('growth').getByRole('button',{name:'Inside',exact:true}).click(); await ready('growth');
       await host('growth').getByRole('button',{name:'Winter',exact:true}).click();
       await page.waitForFunction(()=>document.querySelector('[data-v8-study="growth"]')?.v8Controller?.getState().fallback);
@@ -286,7 +301,7 @@ try {
   });
   await test('Reduced motion, view selection and bounded frame loading',async()=>{
     await page.emulateMedia({reducedMotion:'reduce'});
-    await page.goto(href+'#slide-03');await page.reload();await ready('growth');assert.equal((await snapshot('growth')).play,'Play');
+    await page.goto(href+'#slide-02');await page.reload();await ready('growth');assert.equal((await snapshot('growth')).play,'Play');
     assert.equal((await snapshot('growth')).renderer,'film');
     assert.equal(await host('growth').locator('video').evaluate(el=>el.paused),true);
     await setRange('growth',118);
@@ -310,14 +325,14 @@ try {
   await test('Pier exploration preserves time and other intentions remain placeholders', async () => {
     const slide = await activate('v7-anatomy-slide'); await slide.locator('[data-v7-intent="1"]').click();
     assert.equal(await slide.locator('.v7-drawing-note').isVisible(), true); assert.equal(await slide.locator('.v8-pier-example').isVisible(), false);
-    await slide.locator('[data-v7-intent="0"]').click(); assert.equal(await slide.locator('.v8-pier-example').isVisible(), true); await screenshot('slide-07-pier', slide); await openStudy('pier');
+    await slide.locator('[data-v7-intent="0"]').click(); assert.equal(await slide.locator('.v8-pier-example').isVisible(), true); await screenshot('slide-06-pier', slide); await openStudy('pier');
     for (const name of ['Planted', 'Shaded', 'Piers open', 'Grown again']) { await host('pier').getByRole('button', { name, exact: true }).click(); assert.ok((await pausedStable('pier')).caption.length); }
     await setRange('pier', 555); await host('pier').locator('[data-v8-study-play]').click(); await page.waitForFunction(() => Number(document.querySelector('[data-v8-study="pier"] input').value) > 555);
     await host('pier').locator('[data-v8-study-play]').click(); const before = await pausedStable('pier'); await screenshot('pier-enlarged', page.locator('.v8-study-dialog[open]'));
     await closeStudy(); await openStudy('pier'); assert.deepEqual(await pausedStable('pier'), before, 'Reopening must retain the paused pier'); await closeStudy();
   });
   await test('Original factory overview and Form / Measure / Machine controls work', async () => {
-    const overview = await activate('factory-slide'); await factoryReady('overview', 'overview'); await screenshot('slide-11-factory', overview);
+    const overview = await activate('factory-slide'); await factoryReady('overview', 'overview'); await screenshot('slide-10-factory', overview);
     assert.equal(await overview.locator('[data-factory-focus]').count(), 1); await overview.locator('[data-factory-notes]').click(); await page.locator('#factory-notes[open]').waitFor();
     await page.locator('#factory-notes').getByRole('button', { name: 'Close drawing dialog', exact: true }).click();
     await page.frameLocator('.slide.is-active [data-factory-surface] iframe').locator('[data-factory-station="05-press"]').press('Enter');
@@ -331,10 +346,10 @@ try {
     await focus.locator('[data-factory-seek]').evaluate(el => { el.value = '42'; el.dispatchEvent(new Event('input', { bubbles: true })); });
     await page.waitForFunction(() => { const state = window.DESIGNX_FACTORY.getStates().find(item => item.viewer === 'focus'); return Math.abs(state.time / state.duration - .42) < .001 && !state.playing; });
     const before = await page.evaluate(() => window.DESIGNX_FACTORY.getStates().find(item => item.viewer === 'focus').time); await frames();
-    assert.equal(await page.evaluate(() => window.DESIGNX_FACTORY.getStates().find(item => item.viewer === 'focus').time), before); await screenshot('slide-12-factory-focus', focus);
+    assert.equal(await page.evaluate(() => window.DESIGNX_FACTORY.getStates().find(item => item.viewer === 'focus').time), before); await screenshot('slide-11-factory-focus', focus);
   });
   await test('Index, notes, new drawing slots and print link remain usable', async () => {
-    await screenshot('slide-06-ground', await activate('v8-ground-slide')); await screenshot('slide-15-care', await activate('v8-care-slide'));
+    await screenshot('slide-05-ground', await activate('v8-ground-slide')); await screenshot('slide-15-care', await activate('v8-care-slide'));
     await page.locator('#open-index').click(); assert.equal(await page.locator('#slide-index[open] [data-go]').count(), 20);
     await page.locator('#slide-index [data-go]').last().click(); assert.equal(await page.evaluate(() => window.DESIGNX.current), 20);
     await page.locator('#show-notes').click(); assert.match(await page.locator('#notes-content').innerText(), /Story connection|Continue to the next slide|Drawing plan/); await page.locator('[data-close-dialog="speaker-notes"]').click();
@@ -347,11 +362,11 @@ try {
     assert.equal(await page.locator('.slide.is-active').count(), 20); assert.equal(await page.locator('[data-v8-study] iframe').count(), 0); assert.equal(await page.locator('[data-factory-poster] svg').count(), 4);
     const images = await page.locator('.slide img').evaluateAll(images => images.map(img => ({ src: img.currentSrc || img.src, complete: img.complete, width: img.naturalWidth })));
     assert.ok(images.length); assert.deepEqual(images.filter(img => !img.complete || !img.width), []);
-    await screenshot('print-03-time',page.locator('#slide-03'));
-    await screenshot('print-04-light',page.locator('#slide-04'));
-    await screenshot('print-05-space',page.locator('#slide-05'));
-    await screenshot('print-08-consequences',page.locator('#slide-08'));
-    await screenshot('print-12-manufacturing',page.locator('#slide-12'));
+    await screenshot('print-02-time',page.locator('#slide-02'));
+    await screenshot('print-03-light',page.locator('#slide-03'));
+    await screenshot('print-04-space',page.locator('#slide-04'));
+    await screenshot('print-07-consequences',page.locator('#slide-07'));
+    await screenshot('print-11-manufacturing',page.locator('#slide-11'));
   });
   await test('Story map loads and no edition 09 dependencies remain', async () => {
     await page.goto(new URL('story-map.html', href).href); await page.waitForLoadState('domcontentloaded'); assert.match(await page.locator('body').innerText(), /story|presentation|drawing/i);

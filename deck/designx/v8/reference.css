@@ -9,15 +9,10 @@
 .designx-v8 .v8-reference-visual{position:relative;min-width:0;margin:0}
 .designx-v8 .v8-reference-visual img{display:block;width:100%;height:455px;object-fit:cover;object-position:center 49%;background:#EEF3EA}
 .designx-v8 .v8-reference-visual figcaption{margin-top:17px;font:400 46px/1.07 var(--display);letter-spacing:-.025em}
-.designx-v8 .v8-reference-controls{display:flex;align-items:center;gap:15px;position:absolute;right:0;bottom:2px;width:245px;color:#4D6559}
-.designx-v8 .v8-reference-controls button{border:0;background:none;padding:4px 0;color:inherit;font:400 17px/1.2 var(--sans);flex:0 0 auto;min-width:70px;white-space:nowrap;text-align:left;cursor:pointer}
-.designx-v8 .v8-reference-controls input{width:155px;min-width:0;accent-color:#4D6559;height:14px;cursor:pointer}
-.designx-v8 .v8-reference-controls button:focus-visible,.designx-v8 .v8-reference-controls input:focus-visible{outline:2px solid #789951;outline-offset:4px}
 .designx-v8 .v8-reference-note{left:85px;right:auto;bottom:70px;width:395px;padding:22px 25px;transform:rotate(-1.5deg)}
 .designx-v8 .v8-reference-note strong{font-size:23px}
 .designx-v8 .v8-reference-note p{font-size:20px;line-height:1.35;margin:11px 0 0}
 .designx-v8 .v8-reference-note .v8-reference-draft{font-size:16px;line-height:1.3;margin-top:16px;color:#4D6559}
 .designx-v8 .v8-reference-scene~.folio{color:#4D6559}
 .designx-v8.print-mode .v8-reference-visual img{opacity:1!important;filter:none!important}
-.designx-v8.print-mode .v8-reference-controls{display:none}
-@media print{.designx-v8 .v8-reference-visual img{opacity:1!important;filter:none!important}.designx-v8 .v8-reference-controls{display:none}}
+@media print{.designx-v8 .v8-reference-visual img{opacity:1!important;filter:none!important}}

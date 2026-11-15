@@ -1,4 +1,4 @@
-/* Edition 08: twenty scenes, including the engine and a particular design decision. */
+/* Edition 08: twenty scenes, from the living place to its first customers and continuing life. */
 window.DESIGNX_V8_STORY = [
   {
     "number": 1,
@@ -9,23 +9,11 @@ window.DESIGNX_V8_STORY = [
     "stays": "The Bower identity, “And the means to make many,” and the first-product proposition. The engineered timber frame provides the initial space and structural load path.",
     "drawing": "Keep the v7 cover while the first arrival draft is composed for the presentation. Review bower-blender/studies/inhabited-room/views/arrival.png: the furniture-free room, its ground, planting and people. Use the finished arrival on this slide and return to it on the closing slide.",
     "status": "Existing v7 architectural concept retained. First scene arrival and section drafts exist; presentation composition and integration are pending. The scene uses six-bay-radial-v1 with provisional authored site proposals; it is not evidence of a completed Bower.",
-    "transition": "Having made the proposition desirable, identify who might want the first one and why.",
-    "speakerBridge": "We are beginning with an inhabitable garden room. The first question is who would value this kind of place enough to help bring it into being."
+    "transition": "Enter the room and see how it comes into being, from assembly to establishment and seasons.",
+    "speakerBridge": "We begin with an inhabitable garden room. Here is how that place comes into being and how its character develops."
   },
   {
     "number": 2,
-    "baseSlide": 12,
-    "title": "The first customers.",
-    "theme": "buyers-slide",
-    "purpose": "Give that desire a practical setting: private gardens, cultural destinations and hospitality, with existing prospective conversations showing where the first commission might begin.",
-    "stays": "The three prospective settings, the existing concept images and the founder-approved “In discussion with” names: Eden Project, The Newt and 25hours.",
-    "drawing": "Keep the existing customer contexts. Explain the experience each might value without implying that the new study room is a design commissioned by any named organisation.",
-    "status": "Prospective conversations, not signed commissions or endorsements. Active-discussion wording was founder-confirmed on 13 November 2026. Images are Bower concepts, not work for the named organisations.",
-    "transition": "Return from prospective customers to the experience they would be buying: space shaped by a living architecture.",
-    "speakerBridge": "These conversations are about the experience a Bower could offer. Let us look more closely at what makes that experience different."
-  },
-  {
-    "number": 3,
     "baseSlide": 4,
     "title": "A room through time",
     "theme": "v7-growth-slide",
@@ -41,7 +29,7 @@ window.DESIGNX_V8_STORY = [
     "baseSlide": 4,
     "stays": "The existing six-bay timber and planting images, source assumptions and inspectable timeline.",
     "status": "Pre-rendered scenario on provisional assumptions. The selected middle state gives 50.6% of mature additional noon shadow in a digital image comparison, not physical canopy coverage, a measured outcome or a forecast.",
-    "number": 4,
+    "number": 3,
     "growthMode": "light",
     "title": "Light through the day",
     "theme": "v8-light-slide",
@@ -53,7 +41,7 @@ window.DESIGNX_V8_STORY = [
     "baseSlide": 4,
     "stays": "The existing six-bay timber and planting images, source assumptions and inspectable timeline.",
     "status": "Pre-rendered scenario on provisional assumptions; not a measured outcome or forecast.",
-    "number": 5,
+    "number": 4,
     "growthMode": "space",
     "title": "Plants make space",
     "theme": "v8-space-slide",
@@ -62,7 +50,7 @@ window.DESIGNX_V8_STORY = [
     "transition": "The room depends on relationships below and around it: ground, roots, water and foundations."
   },
   {
-    "number": 6,
+    "number": 5,
     "baseSlide": null,
     "title": "The ground sustains the room",
     "theme": "v8-ground-slide",
@@ -74,7 +62,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "Once we draw these relationships together, they begin to change the design. The pier gives us a concrete example."
   },
   {
-    "number": 7,
+    "number": 6,
     "baseSlide": 5,
     "title": "Growth changes the geometry.",
     "theme": "v7-anatomy-slide",
@@ -86,7 +74,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "We cannot judge this change from the plant study alone. We also have to ask what it means for making, cost and the way people enter."
   },
   {
-    "number": 8,
+    "number": 7,
     "baseSlide": 6,
     "title": "One change, several consequences",
     "theme": "v7-computation-slide",
@@ -98,7 +86,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "The pier drawing makes the consequences visible. The engine is the method we are developing to assess making, growth and budget together."
   },
   {
-    "number": 9,
+    "number": 8,
     "baseSlide": 6,
     "engine": true,
     "title": "Can we make it? Can it grow? Can we afford it?",
@@ -111,7 +99,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "The aim is to reconcile these questions within an agreed budget while preserving what makes each place particular. That means making variability manufacturable."
   },
   {
-    "number": 10,
+    "number": 9,
     "baseSlide": 2,
     "title": "Nature builds by growing.",
     "theme": "variability-slide",
@@ -123,7 +111,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "Variability is the essence of nature and the enemy of industry. Bower’s bet is to make variability manufacturable."
   },
   {
-    "number": 11,
+    "number": 10,
     "baseSlide": 7,
     "title": "Different parts. A repeatable process.",
     "theme": "factory-slide v5-factory-overview",
@@ -135,7 +123,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "The parts can differ while the method repeats. Forming, measuring and machining show how we intend to carry the design through that process."
   },
   {
-    "number": 12,
+    "number": 11,
     "baseSlide": 8,
     "title": "Form. Measure. Machine.",
     "theme": "factory-focus-slide v5-factory-focus",
@@ -143,8 +131,20 @@ window.DESIGNX_V8_STORY = [
     "stays": "The existing Form, Measure and Machine studies, their controls and the distinction between established techniques and Bower’s proposed integration.",
     "drawing": "Retain the three selected stations with a compact Argesta heading, shared annotation hierarchy and bottom playback controls. Each selected operation explains its consequence for the room or assembly. Geometry, source timing, fourteen-station exploration and original notes remain unchanged.",
     "status": "Existing authored process animations. Scan deviations are schematic, not measurements from Bower production. The line has not been built.",
-    "transition": "A route to making needs a first commission. The England conversations explain what prospective clients still need to see.",
-    "speakerBridge": "We have been discussing Bowers with prospective clients. A repeated request is to see one completed place."
+    "transition": "A credible way of making the Bower gives us a route to delivering it. Who are the first people and places that might commission one?",
+    "speakerBridge": "These processes support a practical first commission. The conversations we are having show where that commission might begin."
+  },
+  {
+    "number": 12,
+    "baseSlide": 12,
+    "title": "The first customers.",
+    "theme": "buyers-slide",
+    "purpose": "Introduce prospective buyers after the audience has encountered the room, its design decisions and the means of making it.",
+    "stays": "The three customer settings, existing still concept images and original layout. Retain Eden Project, The Newt and 25hours, and add Canary Wharf Group with an upcoming-meeting status.",
+    "drawing": "Keep the three customer images as stills. Remove the hospitality film and all its controls. Add the official Canary Wharf Group mark beside the other prospects, preserving the slide’s visual language.",
+    "status": "Existing discussions with Eden Project, The Newt and 25hours were founder-confirmed on 13 November 2026. On 15 November the founder reported an upcoming Canary Wharf Group meeting and requested its logo. No signed commissions or endorsements. The images are Bower concepts, not designs commissioned by these organisations.",
+    "transition": "The England conversations identified a concrete barrier: prospects wanted a completed Bower they could see.",
+    "speakerBridge": "Many of our conversations in England returned to the same condition: they wanted to see one built. That gives the first project a specific commercial role."
   },
   {
     "number": 13,
@@ -153,7 +153,7 @@ window.DESIGNX_V8_STORY = [
     "theme": "commercial-loop-slide",
     "purpose": "Explain the specific commercial barrier found in England conversations: prospective clients want a completed Bower they can visit and assess.",
     "stays": "The value of a built reference, grounded in founder-reported conversations with cultural institutions, estate owners and private prospects.",
-    "drawing": "A provisional timing sketch reveals the same inhabited-room arrival image from a pale ghost into full colour, then holds it. Pause, replay or scrub. “A place they can visit” is the editorial caption. The sticky note briefs the final coordinated drawing; the current render is an early scene draft.",
+    "drawing": "A provisional timing sketch reveals the same inhabited-room arrival image from a pale ghost into full colour, then holds it at full opacity. It plays once, without controls. “A place they can visit” is the editorial caption. The sticky note briefs the final coordinated drawing; the current render is an early scene draft.",
     "status": "Founder-reported customer discovery supplied in November 2026. Repeated interest conditional on seeing a completed Bower; no orders or guaranteed conversion are asserted. The first built reference remains to be delivered. The reveal changes opacity and colour in an existing design render; it is not a completed-project photograph, construction sequence or growth simulation.",
     "transition": "The missing reference gives the first commission a concrete purpose. Explain how a client would commission and receive that place.",
     "speakerBridge": "The first Bower needs to work for its client and be a place others can experience. This is the proposed route to commissioning it."
