@@ -13,6 +13,9 @@ the building: it is derived from the members and the joints, and regenerates wit
         face                 outer | inner: the face of the section the line stands off. Outer is the
                              roof's upper side (the back of an arch), inner the room's
         gap_m                from that face to the middle of the cable
+        foot_gap_m           optional: the gap at the foot of a member that stands on the floor, where a woody stem is
+                             thickest. The cable stands this far off there and comes in to gap_m over foot_taper_m
+                             of the member's length. Leave it out and the gap is gap_m all the way.
         cable_diameter_m
         standoff_spacing_m   the furthest apart two standoffs stand
         standoff_sag_m       a cable is straight from one standoff to the next. On a bend they are set
@@ -52,6 +55,7 @@ from .centreline import add, dot, mul, norm, sub
 from .joints import Cut, Joint, find_joints
 from .member import Member
 from .timber import LATTICE, build_design_timber
+from .floor import Floor, level_at
 from .topology import DesignError
 
 DEFAULTS = {
@@ -61,6 +65,8 @@ DEFAULTS = {
     "without": [],
     "face": "outer",
     "gap_m": 0.075,
+    "foot_gap_m": None,
+    "foot_taper_m": 2.5,
     "cable_diameter_m": 0.004,
     "standoff_spacing_m": 0.9,
     "standoff_sag_m": 0.012,
@@ -144,20 +150,27 @@ def settings(timber: dict) -> dict | None:
         raise DesignError(f"timber.training_lines.standoff_spacing_m must be at least {2.0 * MIN_SPACING_M} m")
     if cfg["clear_m"] >= cfg["gap_m"]:
         raise DesignError("timber.training_lines.clear_m must be less than gap_m, or no line could stand off its own member")
+    if cfg["foot_gap_m"] is not None and (cfg["foot_gap_m"] < cfg["gap_m"] or not cfg["foot_taper_m"] > 0.0):
+        raise DesignError("timber.training_lines.foot_gap_m cannot be less than gap_m, and foot_taper_m must be more than 0")
     return cfg
 
 
 # --- which members, and what is near them ---------------------------------------------------------
 
 
-def _floor(members: list[Member]) -> float:
-    return min(m.path.anchors[0].co[2] for m in members)
+def _floor(members: list[Member]) -> Floor:
+    return Floor(members)
 
 
 def on_floor(member: Member, floor: float) -> tuple[bool, bool]:
-    """Whether the member's start, and its end, stands on the floor as a leg (as bower/joints.py finds a base)."""
+    """Whether the member's start, and its end, stands on the floor as a leg (as bower/joints.py finds a base).
+    The floor is the level the feet stand at near that end: one level for a room on level ground, each pier's own on a slope."""
     start, end = member.path.station_at(0.0), member.path.station_at(member.path.length)
-    return (abs(start.point[2] - floor) < 1e-6 and start.tangent[2] > 0.9, abs(end.point[2] - floor) < 1e-6 and -end.tangent[2] > 0.9)
+    return (abs(start.point[2] - level_at(floor, start.point)) < 1e-6 and start.tangent[2] > 0.9, abs(end.point[2] - level_at(floor, end.point)) < 1e-6 and -end.tangent[2] > 0.9)
+
+
+def _widest_gap(cfg: dict) -> float:
+    return max(cfg["gap_m"], cfg.get("foot_gap_m") or 0.0)
 
 
 def _closed(member: Member) -> bool:
@@ -303,7 +316,15 @@ def _line(member: Member, cfg: dict, bodies: Bodies, cuts: list, floor: float, f
         stations = [member.path.station_at(lo)] + stations + [member.path.station_at(hi)]
     ss = [st.s for st in stations]
     offs = [_off(member, st, face, centre) for st in stations]
-    course = [add(st.point, mul(axis, half + gap)) for st, (axis, half) in zip(stations, offs)]
+
+    def gap_at(s: float) -> float:
+        """The cable's gap at a station: wider near a foot, where a stem thickens most, if the design asks for that."""
+        if cfg.get("foot_gap_m") is None or kind != "training":
+            return gap
+        from_foot = min(s if grounded[0] else math.inf, length - s if grounded[1] else math.inf)
+        return gap + (cfg["foot_gap_m"] - gap) * max(0.0, 1.0 - from_foot / cfg["foot_taper_m"])
+
+    course = [add(st.point, mul(axis, half + gap_at(st.s))) for st, (axis, half) in zip(stations, offs)]
     # and clear of every other member
     near = [bodies.clearance(p, skip=member.id) for p in course]
     free = [c >= clear for c, _ in near]
@@ -382,7 +403,7 @@ def training_lines(members: list[Member], timber: dict, joints=()) -> list[Line]
     chosen = carriers(members, cfg)
     if not chosen:
         return []
-    bodies, floor = Bodies(members, max(REACH_M, cfg["gap_m"] + cfg["standoff_sag_m"] + 0.02)), _floor(members)
+    bodies, floor = Bodies(members, max(REACH_M, _widest_gap(cfg) + cfg["standoff_sag_m"] + 0.02)), _floor(members)
     cuts = defaultdict(list)
     for joint in joints:
         for cut in joint.cuts:
@@ -442,7 +463,7 @@ def check_lines(lines: list[Line], members: list[Member], timber: dict, step: fl
     """
     cfg = settings(timber) or dict(DEFAULTS, carry="none")
     by_id = {m.id: m for m in members}
-    bodies = Bodies(members, max(REACH_M, cfg["gap_m"] + 2.0 * cfg["standoff_sag_m"] + 0.02))
+    bodies = Bodies(members, max(REACH_M, _widest_gap(cfg) + 2.0 * cfg["standoff_sag_m"] + 0.02))
     report = {"lines": len(lines), "members_with_a_line": len({line.member for line in lines}), "length_m": round(sum(line.length_m for line in lines), 1), "standoffs": sum(len(line.standoffs) for line in lines)}
     nearest, own_lo, own_hi = (bodies.within, "", ""), bodies.within, 0.0
     runs = []  # (line index, a, b) for every straight run of cable
@@ -467,7 +488,7 @@ def check_lines(lines: list[Line], members: list[Member], timber: dict, step: fl
     report["feeders"] = sum(1 for line in lines if line.kind == "feeder")
     report["carriers_without_a_line"] = [m.id for m in carriers(members, cfg) if m.id not in have]
     report["lines_cut_back"] = sorted(line.id for line in lines if line.review.startswith("cut back"))
-    starts = [line.standoffs[0].head[2] - floor for line in lines if line.kind == "training" and any(on_floor(by_id[line.member], floor))]
+    starts = [line.standoffs[0].head[2] - floor.at(line.standoffs[0].head) for line in lines if line.kind == "training" and any(on_floor(by_id[line.member], floor))]
     report["lines_from_the_floor"] = sum(1 for z in starts if z <= cfg["foot_clear_m"] + 1e-3)
     report["highest_start_above_floor_m"] = round(max(starts), 3) if starts else None
     # where two cables cross: found among runs that share a neighbourhood

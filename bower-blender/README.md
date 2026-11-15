@@ -239,6 +239,7 @@ from the members and their joints and regenerate with them. A design without
 | `standoff_spacing_m`, `standoff_sag_m` | metres | the furthest apart two standoffs stand, and how far the cable, which is straight between two, may stray from the member's curve: on a bend they stand closer |
 | `clear_m` | metres | a line keeps this far from every other member; where it cannot, it is cut back and the schedule says why |
 | `foot_clear_m`, `end_clear_m` | metres | how far above the floor a line starts, and how far short of any other end of its member it stops |
+| `foot_gap_m`, `foot_taper_m` | metres | optional. The gap at the foot of a member that stands on the floor, and the length of the member over which the cable comes in from it to `gap_m`. For a stem that grows thick: held this far off, it cannot bear on the timber or work into a joint. Left out, the gap is `gap_m` all the way |
 
 What is written: one curve per line, `LN_<member>.line`, in `40_CABLES`, with
 the cable and its standoffs at their true size; `output/line_schedule.csv`, one
@@ -316,6 +317,36 @@ What the draft shows at `R1.P6`, and what it leaves open:
   slender piles in soft planting soil is not looked at; nothing is known of
   the soil; and root zones are not in snapshots.
 
+## A room on sloping ground
+
+A room is generated standing on one level, `floor_z_m`. A pier may give
+`foot_z_m`, lower than that: every member that stands at that pier then runs
+on, straight along the way it already stands, until its foot is at that level
+(`on_their_own_ground` in `bower/timber.py`). Nothing else moves, no member is
+shortened, and a room that names no foot levels is built exactly as before.
+
+```json
+"piers": [{"id": "R1.P6", "position_m": [-6.2, 0.0], "foot_z_m": -0.479}]
+```
+
+`bower/floor.py` is the level the members stand at: one number on level
+ground, as it always was, and each pier's own on a slope. Base joints,
+training lines, feeders, footings and root zones are all found and set out
+from it, so each sits at its own pier's level.
+
+`design/six_bay_meadow.json` is the six-bay radial room with opened piers on
+ground that falls 1 in 25, for `studies/inhabited-room/`.
+
+What this does not do:
+
+- The floor itself is not generated: the ground a room stands on is authored
+  in a study, and the design only carries each pier's level.
+- A longer leg can take a member past `max_piece_length_m`, and then it is
+  spliced once more: on the meadow design, seven hoops gain a scarf.
+- Piers that two joined rooms share must be given the same `foot_z_m` in both.
+- Hand-overs and the upper pieces of a cut-back line stay where they were on
+  the roof, so they are higher above ground that has fallen away.
+
 ## A tour of forms
 
 `scripts/tour_states.py <tour.json>` builds every state between a list of forms of one room, for a drawing
@@ -391,6 +422,7 @@ python tests/test_rooms.py
 python tests/test_controls.py
 python tests/test_lines.py
 python tests/test_ground.py
+python tests/test_slope.py
 python tests/survey_envelope_validity.py     # slower: random walks of edits
 ```
 

@@ -52,6 +52,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 
 from .centreline import cross, dot, norm, sub, unit
+from .floor import Floor
 from .member import Member, Notch, block, box, fit_notches
 from .timber import LATTICE
 
@@ -310,7 +311,7 @@ def find_joints(members: list[Member], timber: dict) -> tuple[list[Joint], dict,
         """The volume to mill out of a host for the end of `guest`: the guest's own section, a clearance larger."""
         return block(guest.path, lo, hi, guest.width / 2.0 + clearance, guest.depth / 2.0 + clearance, lo_plane=lo_plane, hi_plane=hi_plane, stations=meshed[guest.id])
 
-    floor = min(m.path.anchors[0].co[2] for m in members)
+    floor = Floor(members)
     for m in members:
         start, end = m.path.station_at(0.0), m.path.station_at(m.path.length)
         layer = lap_layer(m)
@@ -354,7 +355,7 @@ def find_joints(members: list[Member], timber: dict) -> tuple[list[Joint], dict,
                     if mode == "milled":
                         cutters[host.id].append(pocket(m, m.path.length - 0.3, m.path.length, hi_plane=(tuple(end.point[k] + clearance * end.tangent[k] for k in range(3)), end.tangent)))
         for tag, st, at, upright in (("", start, 0.0, start.tangent[2]), (":end", end, m.path.length, -end.tangent[2])):
-            if abs(st.point[2] - floor) < 1e-6 and upright > 0.9:  # stands on the floor, upright or nearly
+            if floor.stands(st.point) and upright > 0.9:  # stands on the floor, upright or nearly, at its own pier's level
                 joints.append(Joint(f"base:{m.id}{tag}", "base", (m.id, ""), point(st.point), 90.0, (Cut(m.id, "square", round(at, 3), 0.0, "end" if tag else "start", 0.0, 0.0),)))
         closed = norm(sub(start.point, end.point)) < 1e-6
         pieces = max(2 if closed else 1, math.ceil(m.path.length / longest))
@@ -393,9 +394,9 @@ def find_joints(members: list[Member], timber: dict) -> tuple[list[Joint], dict,
                     det = da[0] * db[1] - da[1] * db[0]
                     if abs(det) > 1e-6:
                         t = ((fb[0] - fa[0]) * db[1] - (fb[1] - fa[1]) * db[0]) / det
-                        axis = (fa[0] + da[0] * t, fa[1] + da[1] * t, floor - 0.1)
+                        axis = (fa[0] + da[0] * t, fa[1] + da[1] * t, floor.at(fa) - 0.1)
                     else:  # the two arches run straight through the pier: its axis is half-way between their legs
-                        axis = ((fa[0] + fb[0]) / 2.0, (fa[1] + fb[1]) / 2.0, floor - 0.1)
+                        axis = ((fa[0] + fb[0]) / 2.0, (fa[1] + fb[1]) / 2.0, floor.at(fa) - 0.1)
                     # With more than two legs at a pier each keeps what lies nearer its own arch than any other's,
                     # which is what cutting it back to the halving plane against every other leg leaves.
                     toward_b = unit((db[0] - da[0], db[1] - da[1], 0.0))

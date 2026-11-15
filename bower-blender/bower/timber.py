@@ -68,6 +68,7 @@ from __future__ import annotations
 import copy
 import math
 from collections import defaultdict
+from dataclasses import replace
 
 from .centreline import Anchor, BezierPath, arc_path, cross, dot, mul, norm, plane_path, sub, unit
 from .envelope import Roof, arch_profile, closed_spline, cubic_at, spline
@@ -663,10 +664,54 @@ def build_design_timber(design: dict) -> list[dict]:
         for room_id in rooms:
             b, arches = stages[room_id]
             arches.members()
-            members += b.members
+            members += on_their_own_ground(next(room for room in design["rooms"] if room["id"] == room_id), b.members)
             room_of.update({m.id: room_id for m in b.members})
         groups.append({"rooms": rooms, "members": members, "room_of": room_of})
     return groups
+
+
+FOOT_REACH_M = 2.0  # a foot belongs to the pier it stands within this distance of, in plan
+
+
+def on_their_own_ground(room: dict, members: list) -> list:
+    """The members of a room whose piers stand at their own levels: every leg lengthened down to its pier's.
+
+    A room is generated standing on one level, `floor_z_m`. Where a pier gives `foot_z_m`, lower than that, each
+    member that stands at that pier runs on, straight along the way it already stands, until its foot is at that
+    level. Nothing else about it changes, and no member is ever shortened: the roof is where it was, and a room
+    that names no foot levels comes back untouched. So a room can stand on sloping ground with legs of its own
+    length at each pier.
+    """
+    lower = [(tuple(p["position_m"]), float(p["foot_z_m"])) for p in room["piers"] if p.get("foot_z_m") is not None]
+    z0 = room["floor_z_m"]
+    if any(level > z0 + 1e-9 for _, level in lower):
+        raise DesignError(f"{room['id']}: a pier's foot_z_m is above the room's floor_z_m ({z0}); a leg can be lengthened, not shortened")
+    lower = [(at, level) for at, level in lower if level < z0 - 1e-9]
+    if not lower:
+        return members
+    out = []
+    for m in members:
+        anchors = list(m.path.anchors)
+        for end, s, sign in ((0, 0.0, 1.0), (-1, m.path.length, -1.0)):
+            st = m.path.station_at(s)
+            if abs(st.point[2] - z0) > 1e-6 or sign * st.tangent[2] <= 0.9:
+                continue  # not a foot
+            at, level = min(lower, key=lambda pier: math.hypot(pier[0][0] - st.point[0], pier[0][1] - st.point[1]))
+            if math.hypot(at[0] - st.point[0], at[1] - st.point[1]) > FOOT_REACH_M:
+                continue  # stands at a pier that keeps the room's level
+            down = tuple(-sign * c for c in st.tangent)  # the way the leg runs on, downward
+            run = (z0 - level) / -down[2]
+            foot = tuple(st.point[k] + down[k] * run for k in range(3))
+            third = tuple(down[k] * run / 3.0 for k in range(3))
+            old = anchors[end]
+            if end == 0:
+                anchors[0] = replace(old, handle_left=tuple(old.co[k] + third[k] for k in range(3)))
+                anchors.insert(0, Anchor(foot, foot, tuple(foot[k] - third[k] for k in range(3)), old.depth_axis))
+            else:
+                anchors[-1] = replace(old, handle_right=tuple(old.co[k] + third[k] for k in range(3)))
+                anchors.append(Anchor(foot, tuple(foot[k] - third[k] for k in range(3)), foot, old.depth_axis))
+        out.append(replace(m, path=BezierPath(anchors)) if len(anchors) != len(m.path.anchors) else m)
+    return out
 
 
 # --- diagnostics -----------------------------------------------------------------------

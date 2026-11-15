@@ -24,6 +24,7 @@ from math import cos, pi, sin
 import bpy
 
 from .blender_scene import _collection, _place, _remove_stale
+from .floor import Floor
 from .ground import settings
 from .lines import design_lines
 
@@ -70,12 +71,13 @@ def build_ground(scene, design: dict, groups=None) -> dict:
         laid = group.get("ground")
         if not laid:
             continue
-        floor = min(m.path.anchors[0].co[2] for m in group["members"])
+        levels = Floor(group["members"])  # each pier's feet stand at their own level on sloping ground
         room = group["rooms"][0]
         room_of_pier = {p["id"]: r["id"] for r in design["rooms"] for p in r["piers"]}
         planting, footings = _collection(scene, PLANTING), _collection(scene, FOOTINGS)
         piles = cfg["footings"]["piles"]
         for pier_id, footing in laid["footings"].items():
+            floor = levels.at(footing.outline[0])
             tags = {"bower_room": room_of_pier.get(pier_id, room), "bower_id": pier_id, "bower_footing": footing.kind}
             props = {**tags, "bower_kind": "footing", "bower_area_m2": footing.area_m2, "bower_piles": len(footing.piles), "bower_review": footing.review}
             cap = _prisms(f"{pier_id}.footing", [(footing.outline, floor - footing.depth_m, floor)], "steel" if footing.kind == "piles" else "footing")
@@ -92,6 +94,7 @@ def build_ground(scene, design: dict, groups=None) -> dict:
                 built.append(_place(f"PL_{pier_id}", _prisms(f"{pier_id}.piles", parts, "steel"), footings, {**tags, "bower_kind": "piles", "bower_length_m": piles["length_m"]}))
         for zone in laid["root_zones"]:
             tags = {"bower_room": room_of_pier.get(zone.pier, room), "bower_id": zone.id, "bower_pier": zone.pier, "bower_plant": zone.plant, "bower_soil_m3": zone.soil_m3, "bower_review": zone.review}
+            floor = levels.at(zone.position)
             top = floor - zone.top_m if zone.top_m else floor + 0.03  # beside a pad the soil is at the feet's level: drawn just proud of the ground
             drum = _prisms(f"{zone.id}.soil", [(_ring(zone.position, zone.radius_m, 48), top - zone.depth_m, top)], "soil")
             built.append(_place(f"RZ_{zone.id}", drum, planting, {**tags, "bower_kind": "root_zone"}))

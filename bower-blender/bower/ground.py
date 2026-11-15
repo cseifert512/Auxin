@@ -431,7 +431,7 @@ def lay(design: dict, group: dict, joints, lines: list) -> dict:
     cfg = {**cfg, "root_zones": mine}  # the zones that are this group's to deal with
     footings = _footings(cfg, at)
     soil = _soil(cfg, footings)
-    bodies = L.Bodies(members, max(L.REACH_M, line_cfg["gap_m"] + line_cfg["standoff_sag_m"] + 0.02))
+    bodies = L.Bodies(members, max(L.REACH_M, L._widest_gap(line_cfg) + line_cfg["standoff_sag_m"] + 0.02))
     cuts = {}
     for joint in joints:
         for cut in joint.cuts:
@@ -558,7 +558,7 @@ def lay(design: dict, group: dict, joints, lines: list) -> dict:
         "feeder_length_m": round(sum(line.length_m for line in feeders), 2),
         "handovers": len(handovers),
         "handover_gap_m": [min(h.gap_m for h in handovers), max(h.gap_m for h in handovers)] if handovers else None,
-        "handover_height_m": [round(min(h.end[2] for h in handovers) - floor, 2), round(max(h.end[2] for h in handovers) - floor, 2)] if handovers else None,
+        "handover_height_m": [round(min(h.end[2] - floor.at(h.end) for h in handovers), 2), round(max(h.end[2] - floor.at(h.end) for h in handovers), 2)] if handovers else None,
         "training_line_below_handovers_m": round(sum(h.below_m for h in handovers), 1),
         "narrowest_entrance_m": min((e["between_root_zones_m"] for e in entrances), default=None),
         "to_review": {**{z.id: z.review for z in zones if z.review}, **{f"footing at {p}": ft.review for p, ft in footings.items() if ft.review}, **{f"entrance {e['bay']}": e["review"] for e in entrances if e["review"]}},
