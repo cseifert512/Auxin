@@ -314,6 +314,28 @@ try {
     assert.equal(await canvas.evaluate(el=>el.toDataURL()),image,'Scrubbing back must reproduce the same authored moment');
     await screenshot('slide-03-time-inhabitants-and-bird',slide);
   });
+  await test('Time renders one coherent pose per person without double exposure', async () => {
+    const slide=await activate('v8-time-experiment-slide');await experimentReady();
+    await page.waitForFunction(()=>document.querySelector('[data-v8-time-experiment]').dataset.gesturesReady==='true');
+    await page.evaluate(()=>{
+      const proto=CanvasRenderingContext2D.prototype,draw=proto.drawImage,clear=proto.clearRect,counts=new WeakMap();
+      window.personPoseCounts=[];
+      const sprite=canvas=>!canvas.isConnected&&canvas.width===112&&canvas.height===176;
+      proto.clearRect=function(...args){if(sprite(this.canvas))counts.set(this,0);return clear.apply(this,args);};
+      proto.drawImage=function(image,...args){
+        if(sprite(this.canvas))counts.set(this,(counts.get(this)||0)+1);
+        if(image instanceof HTMLCanvasElement&&sprite(image)&&this.canvas.closest('[data-v8-time-experiment]'))window.personPoseCounts.push(counts.get(image.getContext('2d')));
+        return draw.call(this,image,...args);
+      };
+      window.restorePoseCount=()=>{proto.drawImage=draw;proto.clearRect=clear;};
+    });
+    try{
+      for(const time of [13.3,18.2,19.8,24.4,40.2,49.25,50.2])await experimentSeek(time/51);
+      const counts=await page.evaluate(()=>window.personPoseCounts);
+      assert.ok(counts.length>=7);assert.ok(counts.every(n=>n===1),'Each person must use one complete pose, not overlaid views or animation frames');
+      await screenshot('slide-03-single-flower-visitor',slide);
+    }finally{await page.evaluate(()=>window.restorePoseCount());}
+  });
   await test('Time camera alternatives preserve the selected year and original drawing', async () => {
     const slide = await activate('v8-time-experiment-slide'); await experimentReady();
     const moment = await experimentSeek(.64);

@@ -30,6 +30,16 @@ assert.ok(upper.target[2]-lower.target[2]>.35,'The hummingbird should move betwe
 for(const bird of [lower,upper])assert.ok(distance(bird.point,bird.target)<.24,'The hover should be beside the flower');
 assert.equal(hummingbirdAt(50.8).feeding,false);assert.equal(hummingbirdAt(51),null);
 assert.equal(JSON.stringify(occupationAt(50)),JSON.stringify(occupationAt(50)));
+assert.deepEqual(Array.from(occupationAt(49.25),p=>p.id),['around'],'The flower visitor must not coincide with a repeat crossing');
+const cameras=JSON.parse(await readFile(new URL('../assets/time-experiment/manifest.json',import.meta.url),'utf8')).variants;
+const project=(m,p)=>{const [x,n,z]=p,w=m[3]*x+m[7]*z-m[11]*n+m[15];return {x:(m[0]*x+m[4]*z-m[8]*n+m[12])/w*800,y:(m[1]*x+m[5]*z-m[9]*n+m[13])/w*450};};
+for(const camera of cameras)for(let time=13;time<51;time+=.1){
+  const people=occupationAt(time).filter(p=>p.alpha>.1);if(people.length!==2)continue;
+  const frame=camera.cameraFrames.reduce((a,b)=>b.time<=time?b:a,camera.cameraFrames[0]);
+  const bounds=people.map(p=>{const foot=project(frame.matrix,p.point),head=project(frame.matrix,[p.point[0],p.point[1],1.72]);return {...foot,height:Math.abs(head.y-foot.y)};});
+  const [a,b]=bounds;
+  assert.ok(Math.abs(a.x-b.x)>(a.height+b.height)*.35||a.y+a.height<b.y||b.y+b.height<a.y,`${camera.id}: people should not stack in the same projected space at ${time}`);
+}
 // Pace changes should be perceptible, continuous and safely below a jog.
 for(const id of ['through','around']){
   const speeds=[];
@@ -49,4 +59,4 @@ assert.equal(depthVisibility(depth,2,2,0,0,10),0,'A person behind timber must be
 assert.equal(depthVisibility(depth,2,2,0,1,10),1,'A person in front of timber must remain visible');
 assert.equal(depthVisibility(depth,2,2,1,0,10),1,'Clear background must preserve the person');
 assert.equal(depthVisibility(depth,2,2,.5,0,10),.5,'The edge should mix visibility, not invent intermediate geometry');
-console.log('PASS: depth ordering and edge coverage; varied walking pace and smooth turns; grounded pauses; distinct birds and flower visits.');
+console.log('PASS: separated projected silhouettes in all cameras; depth ordering; varied pace and smooth turns; grounded pauses; distinct birds and flower visits.');
