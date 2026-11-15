@@ -30,7 +30,7 @@
  },
  "stations": [
   {
-   "id": "whole", "view": "whole", "title": "The place",
+   "id": "whole", "view": "whole", "title": "The living place",
    "caption": {
     "default": "A room at the edge of a meadow",
     "planted": "Just planted: 24 climbers, 3 m tall",

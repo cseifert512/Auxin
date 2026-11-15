@@ -131,7 +131,7 @@
     const v = view(s), first = v.frames[0].day, last = v.frames.at(-1).day;
     $('title').textContent = s.title;
     $('back').hidden = s.id === P.start;
-    document.title = s.id === P.start ? 'The place' : `${s.title}: the place`;
+    document.title = s.id === P.start ? s.title : `${s.title}: the living place`;
     Object.assign($('scrub'), { min: first, max: last, disabled: first === last });
     const width = $('ticks').clientWidth, days = new Set(v.frames.map((f) => f.day));
     $('ticks').replaceChildren(...P.moments.filter((m) => m.day >= first && m.day <= last).map((m) => {
@@ -275,8 +275,16 @@
   $('reallines').replaceChildren(...P.real.lines.map((t) => Object.assign(document.createElement('li'), { textContent: t })));
   $('realfrom').textContent = `From ${P.real.from}`;
   $('realbtn').addEventListener('click', () => { const open = $('real').hidden; $('real').hidden = !open; $('realbtn').setAttribute('aria-expanded', String(open)); });
+  // Inside a deck's slide (?embed) the deck owns the keys that turn its slides and open its index and notes: they are
+  // handed up to it, so that a click on this page does not strand the presenter here. Escape still comes back out of a view.
+  const embedded = query.has('embed') && parent !== window;
   addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && state.station !== P.start) goTo(P.start);
+    if (e.key === 'Escape' && state.station !== P.start) { goTo(P.start); return; }
+    if (embedded && ['ArrowRight', 'ArrowLeft', 'PageDown', 'PageUp', 'Home', 'End', ' ', 'g', 'G', 'n', 'N', 'f', 'F'].includes(e.key) && !e.altKey && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      try { parent.document.body.dispatchEvent(new KeyboardEvent('keydown', { key: e.key, code: e.code, bubbles: true, cancelable: true })); parent.focus(); } catch { /* another origin: the keys stay here */ }
+      return;
+    }
     if (e.target === $('scrub')) return;   // the slider steps itself
     if (e.key === 'ArrowRight') nudge(1);
     if (e.key === 'ArrowLeft') nudge(-1);
