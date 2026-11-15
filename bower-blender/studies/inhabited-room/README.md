@@ -130,18 +130,18 @@ and pruned by the simulator's gardener for ten years. The scene holds them on fi
 | Moment | Stem | Thickest stem | Leaves | Flowers |
 |---|---|---|---|---|
 | The day after planting, March 2027 | 62 m | 5 mm | 65 | 0 |
-| First summer, July 2027 | 93 m | 6 mm | 1,241 | 14 |
-| Year 3, June 2029 | 577 m | 15 mm | 9,252 | 284 |
-| Year 6, June 2032 | 2,627 m | 38 mm | 32,530 | 1,370 |
-| Year 10, June 2036 | 6,687 m | 77 mm | 67,721 | 3,074 |
+| First summer, July 2027 | 86 m | 6 mm | 1,232 | 14 |
+| Year 3, June 2029 | 507 m | 15 mm | 8,451 | 254 |
+| Year 6, June 2032 | 2,289 m | 36 mm | 29,463 | 1,233 |
+| Year 10, June 2036 | 6,349 m | 73 mm | 65,188 | 2,900 |
 
 (Counted from the light copy of the run that is drawn, which leaves out twigs and thins crowded
-leaves. In ten years the gardener cut off 8.8 km of growth.)
+leaves. In ten years the gardener cut off 7.6 km of growth.)
 
 **What comes back from the run.** This is the return trip from a grown result to the building:
 
 - The cable's 200 mm gap at a foot was an allowance with no number behind it. In this run the
-  thickest stem is 77 mm across after ten years; the gap would take a stem of about 390 mm. So the
+  thickest stem is 73 mm across after ten years; the gap would take a stem of about 390 mm. So the
   allowance is generous for the first decade. What a forty-year wisteria needs, the run does not say.
 - The growth reaches the crown by year 6 (7 m) and covers the roof by year 10. The room is in full
   sun for its first three summers.
@@ -181,7 +181,7 @@ places fall in every frame.
 
 ## What we would need to learn from building it
 
-1. **How thick each stem gets at its foot, and how fast.** The run gives 77 mm in ten years on
+1. **How thick each stem gets at its foot, and how fast.** The run gives 73 mm in ten years on
    provisional numbers. Measure it every year on a built pier.
 2. **Whether a stem takes the cable.** A twiner 200 mm from a timber leg may take the leg. How much
    of the gardener's time does it take to keep thick growth on the cable and thin growth on the
