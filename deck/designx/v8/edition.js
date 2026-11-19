@@ -5,24 +5,25 @@
   const prior = window.DESIGNX_SLIDES;
   const story = window.DESIGNX_V8_STORY;
   const esc = value => String(value).replace(/[&<>"']/g,c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  if (prior.length !== 18 || story.length !== 18) throw new Error('Edition 08 expects eighteen source scenes and eighteen story scenes.');
+  if (prior.length !== 18) throw new Error('Edition 08 expects eighteen source scenes from edition 07.');
   const poster = (src,alt,label) => `<figure><img src="v8/assets/studies/${src}" alt="${alt}"><figcaption>${label}</figcaption></figure>`;
-  // the two pier slides are set aside (set-aside.js), so the variability thesis (7) stands alone between the place and the making
-  const chapter = number => number <= 6 ? 'A living place' : number === 7 ? 'Designing the place' : number <= 9 ? 'Making the Bower' : number <= 12 ? 'The first commission' : number <= 14 ? 'Care and learning' : number === 15 ? 'The people' : 'The wider ambition';
-  // Slide 6 is the place itself: the inhabited-room study's rendered views, packed as pieces/the-place. The page fills
-  // the slide and carries its own title and time line; a still of it stands in for print and where it cannot load.
-  const placeDrawing = item => ({
-    title:item.title,theme:item.theme,act:'The living place',sourceIndex:3,
-    html:`<section class="v7-scene v8-place-scene" aria-label="${esc(item.title)}"><div class="v8-place-print"><img src="pieces/the-place/frames/tl/whole/038.webp" alt="The Bower on its site in its tenth summer, seen from above: a timber room grown over with climbers, in planting that runs from a garden wall to a meadow, with woodland behind."></div><h2 class="v7-title">${esc(item.title)}</h2><div class="v8-place-host slide-interaction" data-v8-place></div><p class="v8-growth-print-status">Rendered scene of a designed site, with climbers from one simulator run on provisional assumptions. Ground, water and foundation arrangements are proposals, not engineering.</p></section>`,
-    notes:item.purpose,source:'Inhabited-room study (bower-blender/studies/inhabited-room): snapshot six-bay-meadow-v2 on a designed, sloping site. site.json and ground/meadow.json are provisional proposals. Climbers are one run of the plant simulator; roots are a sketch by a stated rule. Nothing is measured or engineered.'
-  });
-  const newDrawing = item => item.theme === 'v8-ground-slide' ? placeDrawing(item) : ({
-    title:item.title,theme:item.theme,act:item.theme === 'v8-ground-slide' ? 'The living place' : 'The life of the Bower',sourceIndex:3,
-    html:`<section class="v7-scene v8-drawing-brief"><h2 class="v7-title">${esc(item.title)}</h2><p class="v8-drawing-intention">${item.theme === 'v8-ground-slide' ? 'Rooting ground, water, foundations and care access shape the room above.' : 'Establishment, training and tending sustain the place the customer commissioned.'}</p><div class="v8-reserved-drawing"><aside class="v7-drawing-note"><strong>${item.theme === 'v8-ground-slide' ? 'The same room, opened up' : 'The life of the room'}</strong><p>${item.theme === 'v8-ground-slide' ? 'Compose the section around the relationship between roots, footings, water and the entrance. First scene drafts are available for review.' : 'Show establishment and tending in the same room, with a clear route for care and continuing occupation.'}</p></aside></div><p class="v7-status">${item.theme === 'v8-ground-slide' ? 'Working scene drafts exist; presentation drawing in development. Ground, water and foundation arrangements are provisional proposals.' : 'Care drawing in development. Proposed care service; scope, delivery and pricing remain to be defined.'}</p></section>`,
-    notes:item.purpose,source:item.theme === 'v8-ground-slide' ? 'Inhabited-room scene: six-bay-radial-v1 baseline; site.json and ground.json contain provisional design proposals. First arrival and section renders are linked in the story map.' : 'V7 proposed annual-care offer and the inhabited-room scene brief. No operating service or observed outcomes asserted.'
+  const chapter = number => number <= 9 ? 'A living place' : number === 10 ? 'Designing the place' : number <= 12 ? 'Making the Bower' : number <= 15 ? 'The first commission' : number <= 17 ? 'Care and learning' : number === 18 ? 'The people' : 'The wider ambition';
+
+  const careDrawing = item => ({
+    title:item.title,theme:item.theme,sourceIndex:3,
+    html:`<section class="v7-scene v8-drawing-brief"><h2 class="v7-title">${esc(item.title)}</h2><p class="v8-drawing-intention">Establishment, training and tending sustain the place the customer commissioned.</p><div class="v8-reserved-drawing"><aside class="v7-drawing-note"><strong>The life of the room</strong><p>Show establishment and tending in the same room, with a clear route for care and continuing occupation.</p></aside></div><p class="v7-status">Care drawing in development. Proposed care service; scope, delivery and pricing remain to be defined.</p></section>`,
+    notes:item.purpose,source:'V7 proposed annual-care offer and the inhabited-room scene brief. No operating service or observed outcomes asserted.'
   });
   window.DESIGNX_SLIDES = story.map(item => {
-    const slide = item.baseSlide === 1 ? window.DESIGNX_V8_PROBLEM(prior[item.baseSlide - 1]) : item.baseSlide === 12 ? window.DESIGNX_V8_CUSTOMERS(prior[item.baseSlide - 1]) : item.baseSlide === 14 ? { ...prior[item.baseSlide - 1], ...window.DESIGNX_V8_REFERENCE } : item.baseSlide === 17 ? { ...prior[item.baseSlide - 1], ...window.DESIGNX_V8_FUTURE } : item.baseSlide ? prior[item.baseSlide - 1] : newDrawing(item);
+    if (item.ecologyDrawing) {
+      return {
+        title: item.title, theme: item.theme, act: 'A living place', sourceIndex: 3, comparisonIndex: 3,
+        html: window.DESIGNX_V8_ECOLOGY.html(item),
+        notes: `${esc(item.purpose)}<br><br><strong>Drawing</strong><br>${esc(item.drawing)}<br><br><strong>Evidence status</strong><br>${esc(item.status)}<br><br><strong>Continue to the next slide</strong><br>${esc(item.transition)}`,
+        source: 'Bower ecology working drawings, draft 20. See v8/assets/ecology-drawings/SOURCES.md for provenance.'
+      };
+    }
+    const slide = item.baseSlide === 1 ? window.DESIGNX_V8_PROBLEM(prior[item.baseSlide - 1]) : item.baseSlide === 12 ? window.DESIGNX_V8_CUSTOMERS(prior[item.baseSlide - 1]) : item.baseSlide === 14 ? { ...prior[item.baseSlide - 1], ...window.DESIGNX_V8_REFERENCE } : item.baseSlide === 17 ? { ...prior[item.baseSlide - 1], ...window.DESIGNX_V8_FUTURE } : item.baseSlide ? prior[item.baseSlide - 1] : careDrawing(item);
     const template = document.createElement('template'); template.innerHTML = slide.html;
     if (item.baseSlide === 6) template.innerHTML = window.DESIGNX_V8_COMPUTATION.html;
     const content = template.content;
@@ -46,12 +47,12 @@
       slot.querySelector('.v7-drawing-note').hidden = true;
       content.querySelector('.v7-status').textContent = 'The existing pier study connects planting conditions and entrance clearance. Provisional light model; ground integration is the next drawing.';
     }
-    return { ...slide, title:item.title, theme:item.baseSlide === 4 ? item.theme : slide.theme, act:chapter(item.number), comparisonIndex:item.baseSlide ? item.baseSlide - 1 : item.theme === 'v8-ground-slide' ? 3 : 12,
+    return { ...slide, title:item.title, theme:item.baseSlide === 4 ? item.theme : slide.theme, act:chapter(item.number), comparisonIndex:item.baseSlide ? item.baseSlide - 1 : 12,
       source:item.baseSlide === 6 ? 'Inhabited-room export, authored by the scene study: manifest.json, fixed views, layer masks, stable anchors and quantities from configuration geometry. The browser recomputes nothing. Footing proposals remain unengineered.' : slide.source,
       notes: `${item.baseSlide === 6 ? 'Follow one change through plant support, entry, making and designer review. Baseline and opened-pier views, quantities and unresolved checks come from the coordinated inhabited-room handoff. Their threshold widths are measured from digital timber geometry, not a built Bower. The scene study owns these alternatives. This drawing selects existing results and explains consequences; it is not a live design evaluator. Fabricatability remains in development, integrated plantability and calibrated cost checks remain proposed, and the designer is responsible for reconciling the trade-offs.' : item.baseSlide === 11 ? "This one drawing consolidates the shared-model, project-cycle and learning-system explanations. Begin with Growing: the support route is a design hypothesis; a built Bower would let us observe establishment, clearance and the tending required; evidence review would investigate those outcomes before changing support spacing or a care plan. The same process can be explored through Making, where a member is compared with its target, or Cost, where quantities and scoped quotes are compared with actual production effort. Designing each Bower and Making and living with it identify phases of a project. They do not describe software maturity. Digital geometry and growth studies already support design iteration. Integrated checks, calibrated cost evaluation and physical feedback remain in development. No field observations are reported here. The first Bower could provide both a place prospective clients can visit and evidence that improves future designs; those are distinct uses of the same project." : slide.notes}<br><br><strong>Story connection</strong><br>${esc(item.purpose)}<br><br><strong>Continue to the next slide</strong><br>${esc(item.transition)}<br><br><strong>Drawing plan</strong><br>${esc(item.drawing)}<br><br><strong>Evidence status</strong><br>${esc(item.status)}`,
       html:template.innerHTML };
   });
-  window.DESIGNX_META = Object.freeze({...window.DESIGNX_META,edition:8,targetSlideCount:18,exportReady:false,status:'integrated-working-draft'});
+  window.DESIGNX_META = Object.freeze({...window.DESIGNX_META,edition:8,targetSlideCount:story.length,exportReady:false,status:'integrated-working-draft'});
 
   (window.DESIGNX_MOUNTS ||= []).push(root => {
     const printing = new URL(location.href).searchParams.get('print') === '1';
@@ -74,20 +75,6 @@
     dialog.innerHTML = '<header><h2 id="v8-study-title"></h2><button type="button">Return to slide ×</button></header><div class="v8-dialog-surface"></div><p class="v8-dialog-status"></p>';
     document.body.append(dialog);
     let current = null, expanded = null, returnButton = null, beforePrinting = false;
-    // the place page is loaded while its slide is the one on show, and let go when it is left, so that it always
-    // opens on the whole place and plays nothing behind the other slides
-    const placeHost = root.querySelector('[data-v8-place]'), placeSlide = placeHost?.closest('.slide');
-    let placeFrame = null;
-    const place = on => {
-      if (!placeHost || on === !!placeFrame) return;
-      if (on) {
-        placeFrame = document.createElement('iframe');
-        placeFrame.title = 'The living place: the Bower on its site, through ten years';
-        placeFrame.src = new URL('pieces/the-place/index.html?embed', document.baseURI).href;
-        placeHost.append(placeFrame);
-      } else { placeFrame.remove(); placeFrame = null; }
-      placeHost.classList.toggle('v8-mounted', on);
-    };
     const mount = record => {
       if (record.controller) return;
       record.controller = record.kind === 'growth' ? window.DESIGNX_V8_GROWTH.mount(record.host) : window.DESIGNX_V8_STUDIES.mount(record.host,record.kind);
@@ -103,7 +90,6 @@
         record.controller?.setActive(grow);
       }
       pier.controller?.setActive(visible && expanded === pier);
-      place(!beforePrinting && current === placeSlide);
     };
     const move = (record,target) => {
       if (target.moveBefore && record.host.isConnected) target.moveBefore(record.host,null);

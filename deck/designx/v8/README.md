@@ -2,7 +2,7 @@
 
 Open the [story map](http://localhost:5312/designx/v8/story-map.html) or the [main deck](http://localhost:5312/designx). Run `node deck/serve.mjs` from the repository root if needed.
 
-This is the current sixteen-slide main presentation at `/designx`, also available at `/designx/v8/`. It uses v7’s visual system and viewer. The approved orbit is the main Time drawing; its earlier variants are retained in source, and the empty care slide is removed. The living-place study, manufacturing drawings, customer and commercial material, learning flow and wider ambition remain. The selected sequence is listed below. Earlier deck assets and repository-root documents are unchanged.
+The main presentation has 19 slides at `/designx` and `/designx/v8/`. It uses the v7 viewer. Five ecology working drawings follow the opening canopy and light studies.
 
 ## The story
 
@@ -10,13 +10,18 @@ We encounter a Bower and understand why someone would want it. Looking more clos
 
 `story.js` is the slide-by-slide editorial map. Every entry records the source v7 slide, its role, what stays, the intended drawing, current evidence status and the connection to the next slide. `story-map.html` presents that map with links to each slide. The deck's Notes include the same connections and drawing briefs alongside the original source notes.
 
-## Selected main deck — 15 November 2026
+## Current sequence, 19 November 2026
 
-The approved orbit is now the main Time drawing, on slide 02. The two earlier Time slides are set aside from the presentation, with their players, media and original definitions retained in source. The empty care drawing is removed. All other slide content is retained.
+| Slides | In order |
+| --- | --- |
+| 01 to 03 | Cover, From room to canopy, Light through the day |
+| 04 to 08 | *Nature makes space*, *The living place*, *Rooted before it climbs*, *Six piers, six climbers*, *Why these plants* |
+| 09 to 14 | Variability, factory overview, Form / Measure / Machine, customers, the missing reference and invitation, Design / Build / Grow |
+| 15 to 19 | How the system learns, team, construction at scale, future possibilities, close |
 
-The **sixteen-slide** sequence is: Bower → From room to canopy → Light through the day → Nature makes space → The living place → variability → manufacturing → Form/Measure/Machine → customers → the missing reference and invitation → Design/Build/Grow → learning → team → construction at scale → future possibilities → close.
+Slide 02 uses the approved Perspective and Axonometric canopy orbit. Slides 04 and 05 replace the space and site drawings. Slide 06 looks below ground, slide 07 compares the six piers, and slide 08 brings the planting choices together on a single slide.
 
-`canopy-orbit.js` applies this final selection to the source story and edition. The story map, index, keyboard navigation and print view use the same selection. Perspective remains the default, with Axonometric available at the same moment through the quiet projection switch.
+The five ecology drawings loop while visible, without playback controls. Reduced motion shows the finished state, and print uses the full-growth stills. The working drawings use one provisional growth scenario. The asset record documents the source geometry, planting substitutions and limits of the study. [Ecology sources](assets/ecology-drawings/SOURCES.md)
 
 **Publication:** `/designx` and `/designx/` serve this v8 deck. `/designx/v8/` remains an alias. The earlier first edition remains available at `/designx/1/`; its files are retained. The root entry document loads the same v8 modules, because the production host serves directory index files before rewrites. The archived first edition has its own entry under `1/`. Shared assets stay at their existing paths. Repository-root documents are unchanged.
 

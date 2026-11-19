@@ -1,0 +1,47 @@
+.designx-v8 .v8-ecology {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 42px 55px 29px;
+  background: #fdfdfb;
+  color: #102820;
+}
+
+.v8-ecology h2 {
+  margin: 0;
+  font: italic 400 72px/1.05 var(--display);
+  letter-spacing: -.035em;
+}
+
+.v8-ecology figure {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 12px;
+  margin: 0;
+}
+
+.v8-ecology-art {
+  position: relative;
+  min-height: 0;
+}
+
+.v8-ecology-art img, .v8-ecology-art iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.v8-ecology-art img { object-fit: contain; }
+.v8-ecology-art iframe { opacity: 0; pointer-events: none; }
+.v8-ecology-art iframe.is-ready { opacity: 1; }
+.v8-ecology-art[data-ecology-drawing="why-these-plants"] iframe.is-ready { pointer-events: auto; }
+.v8-ecology figcaption { font: 400 23px/1.25 var(--sans); }
+.v8-ecology-note { margin: 0; color: #465850; font: 400 17px/1.35 var(--sans); }
+
+@media print {
+  .v8-ecology-art iframe { display: none; }
+}

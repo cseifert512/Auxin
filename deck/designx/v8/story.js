@@ -1,4 +1,4 @@
-/* Edition 08: eighteen scenes with one complete learning flowchart. The two pier slides are set aside in set-aside.js. */
+/* Edition 08 source story. canopy-orbit.js selects and numbers the live sequence. */
 window.DESIGNX_V8_STORY = [
   {
     "number": 1,
@@ -50,31 +50,77 @@ window.DESIGNX_V8_STORY = [
     "transition": "Move from the shadow plan to the enclosure experienced inside the room."
   },
   {
-    "baseSlide": 4,
-    "stays": "The existing six-bay timber and planting images, source assumptions and inspectable timeline.",
-    "status": "Pre-rendered scenario on provisional assumptions; not a measured outcome or forecast.",
-    "number": 5,
-    "growthMode": "space",
     "title": "Nature makes space",
     "theme": "v8-space-slide",
-    "purpose": "Experience how planting changes the enclosure of the room.",
-    "drawing": "A large unrolled interior panorama autoplays through growth and seasons. Drag to turn; pause or scrub to inspect the changing edge.",
-    "transition": "The room depends on relationships below and around it: ground, roots, water and foundations."
+    "ecologyDrawing": "nature-makes-space",
+    "caption": "Climbers change how much sky is visible between the timber ribs.",
+    "alt": "Three timber bays in elevation. Climbers leaf out, flower, lose their leaves and return in the following summer.",
+    "purpose": "Show how planting can change the enclosure of a timber room through the seasons.",
+    "stays": "The six-bay room and the view through its openings.",
+    "drawing": "An elevation of three bays follows growth and seasonal changes in the climbers.",
+    "status": "Seasonal relationships are illustrative. Stems, leaves and flowers are drawn by eye.",
+    "transition": "Pull back from the bays to see the room in its site.",
+    "baseSlide": null,
+    "number": 5
   },
   {
-    "number": 6,
-    "baseSlide": null,
     "title": "The living place",
     "theme": "v8-ground-slide",
-    "purpose": "Reveal the conditions that sustain the desired room: roots, water, sunlight, supports, foundations and access for care belong to one inhabited place.",
-    "stays": "The same room, site and architectural intention introduced in the growth views, now as one rendered place: the inhabited-room study on its designed, sloping site.",
-    "drawing": "The place page from the inhabited-room study (pieces/the-place) fills the slide. It opens on the whole place from above and plays its ten years by itself; small targets lead to arriving, looking out, one pier cut open from under its roots to its first joints, and the whole place cut through its ground. Each view steps through the ten years on rendered frames.",
-    "status": "Rendered scene of a designed, unsurveyed site on snapshot six-bay-meadow-v2. Climbers are one run of the plant simulator on provisional species numbers; roots are a sketch by a stated rule; sole, piles, water and planting are authored proposals. Nothing is measured or engineered, and the drawing does not establish performance.",
-    "transition": "A place like this is particular: its ground, its light and its plants are its own. Name what that asks of the way it is made.",
-    "speakerBridge": "Every part of this place answers to its own site and its own plants. That is the difficulty, and it is where the making has to begin."
+    "ecologyDrawing": "the-living-place",
+    "caption": "Paths, a swale and an old oak surround the six planted piers.",
+    "alt": "An isometric cutaway of the planted Bower with paths around an oak, a meadow and a swale. The cut ground shows roots and soil layers.",
+    "purpose": "Place the planted room among paths, established trees and water.",
+    "stays": "The room, its planting stations and people moving through the site.",
+    "drawing": "The site turns slowly, revealing the timber arches, planting and ground in section.",
+    "status": "Frame and cable geometry come from the open-pier model. Growth follows one illustrative simulator run. The site and soil are drawn by eye.",
+    "transition": "Look below one pier to see where the climber takes root.",
+    "baseSlide": null,
+    "number": 6
   },
   {
-    "number": 7,
+    "title": "Rooted before it climbs",
+    "theme": "v8-rooted-slide",
+    "ecologyDrawing": "rooted-before-it-climbs",
+    "caption": "A proposed steel frame carries the pier above open rooting ground.",
+    "alt": "A wisteria grows beside a timber pier. In section its roots extend below a steel frame between screw piles, and its stem climbs a cable beside the rib.",
+    "purpose": "Show how a footing proposal could leave soil available to a climber.",
+    "stays": "The open pier, its cable support and the soil beside it.",
+    "drawing": "A section through a pier follows a wisteria above and below ground.",
+    "status": "Working section. The roots are illustrative and the footing has not been engineered.",
+    "transition": "Look up from the root zone to compare the plants and supports at the six piers.",
+    "baseSlide": null,
+    "number": 7
+  },
+  {
+    "title": "Six piers, six climbers",
+    "theme": "v8-six-piers-slide",
+    "ecologyDrawing": "six-piers-six-climbers",
+    "caption": "Six lattice studies show how each climber grips its support or needs tying in.",
+    "alt": "Six close views compare different climbing plants on six lattice forms, with foliage and flowers in colour.",
+    "purpose": "Compare what different climbers look like where they meet their supports.",
+    "stays": "Six planting positions and the illustrated habits of their climbers.",
+    "drawing": "Six parallel views show each plant on a different lattice, seen from inside the room.",
+    "status": "The six lattice forms were invented for this study. Support capacities have not been sized for mature planting.",
+    "transition": "Compare the seasonal contributions of the full planting palette.",
+    "baseSlide": null,
+    "number": 8
+  },
+  {
+    "title": "Why these plants",
+    "theme": "v8-plant-palette-slide",
+    "ecologyDrawing": "why-these-plants",
+    "caption": "Twelve climbers make a different seasonal palette at each pier.",
+    "alt": "Twelve labelled sprigs sit above six seasonal planting bands. The north-west pier has ivy alone.",
+    "purpose": "Compare leaf habit, flowering periods and scent across the six piers.",
+    "stays": "Species records, the six planting positions and the exposed north side in the illustrated scenario.",
+    "drawing": "One planting chart links each species to its seasonal contribution at the piers.",
+    "status": "Months and leaf habit come from the species records. This working palette substitutes star jasmine and ivy for two trial species. Planting approval and horticultural review remain open.",
+    "transition": "These differences from pier to pier lead to the question of making varied parts reliably.",
+    "baseSlide": null,
+    "number": 9
+  },
+  {
+    "number": 10,
     "baseSlide": 2,
     "title": "Nature builds by growing.",
     "theme": "variability-slide",
@@ -86,7 +132,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "Variability is the essence of nature and the enemy of industry. Bower’s bet is to make variability manufacturable."
   },
   {
-    "number": 8,
+    "number": 11,
     "baseSlide": 7,
     "title": "Different parts. A repeatable process.",
     "theme": "factory-slide v5-factory-overview",
@@ -98,7 +144,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "The parts can differ while the method repeats. Forming, measuring and machining show how we intend to carry the design through that process."
   },
   {
-    "number": 9,
+    "number": 12,
     "baseSlide": 8,
     "title": "Form. Measure. Machine.",
     "theme": "factory-focus-slide v5-factory-focus",
@@ -110,7 +156,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "These processes support a practical first commission. The conversations we are having show where that commission might begin."
   },
   {
-    "number": 10,
+    "number": 13,
     "baseSlide": 12,
     "title": "The first customers.",
     "theme": "buyers-slide",
@@ -122,7 +168,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "Across these conversations, people repeatedly wanted to see one completed Bower. That is the next place we are asking people to help bring into being."
   },
   {
-    "number": 11,
+    "number": 14,
     "baseSlide": 14,
     "title": "The first Bower is the missing reference.",
     "theme": "commercial-loop-slide",
@@ -134,7 +180,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "Help us make the first Bower real. This is how we propose to commission, deliver and care for it."
   },
   {
-    "number": 12,
+    "number": 15,
     "baseSlide": 13,
     "title": "One Bower. Three steps.",
     "theme": "v7-commercial-model-slide",
@@ -146,7 +192,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "The third step matters as much as the first two. Care has to be designed into the room, as well as agreed in the offer."
   },
   {
-    "number": 13,
+    "number": 16,
     "baseSlide": null,
     "title": "Care is part of the architecture",
     "theme": "v8-care-slide",
@@ -158,7 +204,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "We already revise designs through our digital studies. Making and caring for a real Bower will give us another kind of evidence."
   },
   {
-    "number": 14,
+    "number": 17,
     "baseSlide": 11,
     "title": "How the system learns.",
     "theme": "v7-learning-flow-slide",
@@ -170,7 +216,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "Connecting design, making and the life of the place is the work we are bringing together as founders."
   },
   {
-    "number": 15,
+    "number": 18,
     "baseSlide": 16,
     "title": "Architecture. Ecology. Software. Manufacturing.",
     "theme": "team-slide",
@@ -182,7 +228,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "This is the team and the work we are beginning with. The reason to develop the method reaches well beyond one garden room."
   },
   {
-    "number": 16,
+    "number": 19,
     "baseSlide": 1,
     "title": "We’re about to build the world again.",
     "theme": "material-problem-slide",
@@ -194,7 +240,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "If we are about to build so much, the way those places participate in the living world matters. A room is where we begin to develop that approach."
   },
   {
-    "number": 17,
+    "number": 20,
     "baseSlide": 17,
     "title": "A room is the beginning.",
     "theme": "v7-future-slide",
@@ -206,7 +252,7 @@ window.DESIGNX_V8_STORY = [
     "speakerBridge": "That is the horizon. The useful next step is to make the first Bower real and establish how we will deliver and learn from it."
   },
   {
-    "number": 18,
+    "number": 21,
     "baseSlide": 18,
     "title": "Buildings that grow.",
     "theme": "closing image-slide",

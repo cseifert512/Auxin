@@ -11,7 +11,8 @@ const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'C:/BOWER/Bower_Web/node_modules/playwright');
 const href = process.env.DECK_URL || 'http://localhost:5312/designx/v8/';
 const origin = new URL(href).origin;
-const expectedThemes = ['cover', 'v8-canopy-orbit-slide', 'v8-light-slide', 'v8-space-slide', 'v8-ground-slide', 'variability-slide', 'factory-slide', 'factory-focus-slide', 'buyers-slide', 'commercial-loop-slide', 'v7-commercial-model-slide', 'v7-learning-flow-slide', 'team-slide', 'material-problem-slide', 'v7-future-slide', 'closing'];
+const expectedThemes = ['cover', 'v8-canopy-orbit-slide', 'v8-light-slide', 'v8-space-slide', 'v8-ground-slide', 'v8-rooted-slide', 'v8-six-piers-slide', 'v8-plant-palette-slide', 'variability-slide', 'factory-slide', 'factory-focus-slide', 'buyers-slide', 'commercial-loop-slide', 'v7-commercial-model-slide', 'v7-learning-flow-slide', 'team-slide', 'material-problem-slide', 'v7-future-slide', 'closing'];
+const ecologySlugs = ['nature-makes-space', 'the-living-place', 'rooted-before-it-climbs', 'six-piers-six-climbers', 'why-these-plants'];
 const result = { passed: [], failures: [], errors: [], missingAssets: [], failedRequests: [], externalRequests: [], slides: [] };
 const dependencies = new Set();
 const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_PATH || 'C:/Users/cseif/AppData/Local/ms-playwright/chromium_headless_shell-1223/chrome-headless-shell-win64/chrome-headless-shell.exe' });
@@ -149,7 +150,7 @@ await mkdir(resolve(root, '.qa'), { recursive: true });
 try {
   console.log('[v8 QA] Loading edition 08'); await page.goto(href); await page.waitForFunction(() => Boolean(window.DESIGNX && window.DESIGNX_V8_STORY));
   result.slides = await page.evaluate(() => window.DESIGNX_SLIDES.map((slide, i) => ({ number: i + 1, title: slide.title, theme: slide.theme })));
-  await test('Sixteen-slide narrative uses the approved orbit and has no empty care slide', async () => {
+  await test('Nineteen-slide narrative uses the approved orbit and five ecology drawings', async () => {
     assert.equal(await page.locator('.slide.v8-engine-slide, .slide.v8-learning-questions-slide').count(),0);
     assert.equal(await page.locator('[data-v7-flow]').count(),1);
     assert.equal(await page.locator('.slide.v7-growth-slide, .slide.v8-time-experiment-slide, .slide.v8-care-slide, .v8-reserved-drawing').count(),0);
@@ -473,7 +474,7 @@ try {
     assert.equal(await host('growth').evaluate(el=>el.v8Controller.getState().occupation),false);
     await inspectGrowth('time',false);
   });
-  await test('Light compares three stages and Space keeps its own autoplaying panorama', async () => {
+  await test('Light compares three stages and preserves its paused moment on return', async () => {
     const light=await activate('v8-light-slide'); await ready('growth','light');
     await drawingDominates(light);
     assert.equal((await snapshot('growth','light')).mode,'light'); assert.equal((await snapshot('growth','light')).play,'Pause');
@@ -483,18 +484,12 @@ try {
     assert.equal(await host('growth','light').locator('[data-v8-view]').count(),0);
     await inspectGrowth('light'); await host('growth','light').getByRole('button',{name:'Noon',exact:true}).click(); await ready('growth','light');
     assert.ok([...dependencies].some(url=>url.includes('/v8/assets/light-establishment/frames/light-18.webp')),'Light should load the revised establishment drawing');
-    assert.match((await pausedStable('growth','light')).caption,/noon/i); await inspectGrowth('light',false); await screenshot('slide-04-light',light);
+    assert.match((await pausedStable('growth','light')).caption,/noon/i); await inspectGrowth('light',false); await screenshot('slide-03-light',light);
     const lightPaused=await snapshot('growth','light');
-    const space=await activate('v8-space-slide'); await ready('growth','space');
-    await drawingDominates(space);
-    assert.equal((await snapshot('growth','space')).mode,'space'); assert.equal((await snapshot('growth','space')).play,'Pause');
-    await setRange('growth',555,'space');
-    const pan=await host('growth','space').evaluate(el=>el.v8Controller.getState().pan);
-    await host('growth','space').locator('canvas').press('Shift+ArrowRight');
-    assert.notEqual(await host('growth','space').evaluate(el=>el.v8Controller.getState().pan),pan,'Panorama should remain turnable');
-    await pausedStable('growth','space'); await screenshot('slide-05-space',space);
-    await activate('v8-light-slide'); await ready('growth','light'); assert.deepEqual(await pausedStable('growth','light'),lightPaused,'Each drawing keeps its own paused moment');
-    assert.equal(await host('growth','space').evaluate(el=>el.v8Controller.getState().running),false);
+    await activate('v8-space-slide');
+    assert.equal(await host('growth','light').evaluate(el => el.v8Controller.getState().running), false);
+    await activate('v8-light-slide'); await ready('growth','light');
+    assert.deepEqual(await pausedStable('growth','light'), lightPaused);
   });
   await setAside('A scene decision changes the drawing, quantities and review flags together',async()=>{
     const slide=await activate('v7-computation-slide');
@@ -611,14 +606,33 @@ try {
     const before = await page.evaluate(() => window.DESIGNX_FACTORY.getStates().find(item => item.viewer === 'focus').time); await frames();
     assert.equal(await page.evaluate(() => window.DESIGNX_FACTORY.getStates().find(item => item.viewer === 'focus').time), before); await screenshot('slide-11-factory-focus', focus);
   });
-  await test('The living place fills its slide, opens on the whole place and hands the keys back', async () => {
-    const slide = await activate('v8-ground-slide');
-    await page.waitForFunction(() => document.querySelector('[data-v8-place] iframe')?.contentWindow?.__ready === true);
-    const seen = await slide.evaluate(el => { const f = el.querySelector('[data-v8-place] iframe'), a = f.getBoundingClientRect(), b = el.getBoundingClientRect(); return { share: a.width * a.height / (b.width * b.height), title: f.contentDocument.getElementById('title').textContent, station: f.contentWindow.__state().station, veils: [...f.contentDocument.querySelectorAll('.veil')].map(v => f.contentWindow.getComputedStyle(v).display) }; });
-    assert.ok(seen.share > .98, 'The place page should fill its slide'); assert.equal(seen.title, 'The living place'); assert.equal(seen.station, 'whole'); assert.ok(seen.veils.every(d => d === 'none'), 'No fade of paper over the picture');
-    await screenshot('slide-06-living-place', slide);
-    await slide.evaluate(el => el.querySelector('[data-v8-place] iframe').contentWindow.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })));
-    await page.waitForFunction(() => window.DESIGNX_SLIDES[window.DESIGNX.current-1].theme === 'variability-slide'); assert.equal(await page.locator('[data-v8-place] iframe').count(), 0, 'The place page is let go when its slide is left');
+  await test('Ecology drawings mount only on the active slide', async () => {
+    assert.deepEqual(await page.evaluate(() => window.DESIGNX_V8_STORY.slice(3, 8).map(item => item.ecologyDrawing)), ecologySlugs);
+    for (const [index, slug] of ecologySlugs.entries()) {
+      const slide = await activate(expectedThemes[3 + index]);
+      const frame = slide.locator('iframe.is-ready');
+      await frame.waitFor();
+      await page.waitForFunction(slug => {
+        const doc = document.querySelector('.slide.is-active iframe')?.contentDocument;
+        return doc?.readyState === 'complete' && doc.location.pathname.endsWith(`/${slug}.html`) && doc.querySelector('canvas, svg');
+      }, slug);
+      assert.equal(await page.locator('[data-ecology-drawing] iframe').count(), 1);
+      assert.equal(await slide.locator('button, input[type=range]').count(), 0);
+      await screenshot(`ecology-${slug}`, slide);
+    }
+    const palette = page.locator('#slide-08');
+    assert.match(await palette.innerText(), /not reviewed by a horticulturist/i);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    try {
+      await palette.locator('iframe').waitFor({ state: 'detached' });
+      assert.ok(await palette.locator('img[src$="/why-these-plants.png"]').isVisible());
+    } finally {
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+    }
+    await palette.locator('iframe.is-ready').waitFor();
+    await palette.frameLocator('iframe').locator('body').press('ArrowRight');
+    await page.waitForFunction(() => window.DESIGNX.current === 9);
+    assert.equal(await page.locator('[data-ecology-drawing] iframe').count(), 0);
   });
   await test('Index, notes, new drawing slots and print link remain usable', async () => {
     await screenshot('slide-05-ground', await activate('v8-ground-slide'));
@@ -627,26 +641,35 @@ try {
     await page.locator('#show-notes').click(); assert.match(await page.locator('#notes-content').innerText(), /Story connection|Continue to the next slide|Drawing plan/); await page.locator('[data-close-dialog="speaker-notes"]').click();
     const print = new URL(await page.locator('#pdf-link').getAttribute('href'), href); assert.equal(print.searchParams.get('print'), '1'); assert.equal(print.pathname,new URL(href).pathname);
   });
-  await test('Static reading view has sixteen scenes, complete factory diagrams and no broken images', async () => {
+  await test('Static reading view has nineteen scenes, complete factory diagrams and no broken images', async () => {
     const print = new URL(href); print.search = '?print=1'; await page.goto(print.href); await page.waitForFunction(() => Boolean(window.DESIGNX));
     await page.evaluate(() => Promise.race([Promise.all([window.DESIGNX_READY, window.DESIGNX_FACTORY_READY]), new Promise((_, reject) => setTimeout(() => reject(new Error('Static factory preparation exceeded 20 seconds')), 20000))]));
-    assert.equal(await page.locator('.slide.is-active').count(), expectedThemes.length); assert.equal(await page.locator('[data-v8-place] iframe').count(), 0, 'The place page must not load in the reading view'); assert.equal(await page.locator('[data-v8-study] iframe').count(), 0); assert.equal(await page.locator('[data-factory-poster] svg').count(), 4);
+    assert.equal(await page.locator('.slide.is-active').count(), expectedThemes.length); assert.equal(await page.locator('[data-ecology-drawing] iframe').count(), 0, 'Ecology animations must not load in the reading view'); assert.equal(await page.locator('[data-v8-study] iframe').count(), 0); assert.equal(await page.locator('[data-factory-poster] svg').count(), 4);
     const images = await page.locator('.slide img').evaluateAll(images => images.map(img => ({ src: img.currentSrc || img.src, complete: img.complete, width: img.naturalWidth })));
     assert.ok(images.length); assert.deepEqual(images.filter(img => !img.complete || !img.width), []);
+    for (const slug of ecologySlugs) {
+      const image = page.locator(`.slide img[src$="/stills/${slug}.png"]`);
+      assert.ok(await image.isVisible(), `The print view shows ${slug}`);
+    }
     const orbitPrint=page.locator('.slide.v8-canopy-orbit-slide');
     assert.ok(await orbitPrint.locator('.v8-canopy-poster').isVisible());
     assert.match(await orbitPrint.locator('.v8-canopy-print-caption').innerText(),/Year\s*9/i);
     assert.equal(await orbitPrint.locator('video').getAttribute('src'),null,'Print must not load an orbit film');
     await screenshot('print-02-canopy',orbitPrint);
-    await screenshot('print-04-light',page.locator('.slide.v8-light-slide'));
-    await screenshot('print-05-space',page.locator('.slide.v8-space-slide'));
-    await screenshot('print-06-living-place',page.locator('.slide.v8-ground-slide'));
+    await screenshot('print-03-light',page.locator('.slide.v8-light-slide'));
+    await screenshot('print-04-space',page.locator('.slide.v8-space-slide'));
+    await screenshot('print-05-living-place',page.locator('.slide.v8-ground-slide'));
     await screenshot('print-09-manufacturing',page.locator('.slide.factory-focus-slide'));
     await screenshot('print-14-learning',page.locator('.slide.v7-learning-flow-slide'));
     await screenshot('print-11-invitation',page.locator('.slide.v8-reference-slide'));
   });
   await test('Story map loads and no edition 09 dependencies remain', async () => {
-    await page.goto(new URL('/designx/v8/story-map.html', href).href); await page.waitForLoadState('domcontentloaded'); assert.match(await page.locator('body').innerText(), /story|presentation|drawing/i);
+    await page.goto(new URL('/designx/v8/story-map.html', href).href); await page.waitForLoadState('domcontentloaded'); assert.equal(await page.locator('#story .row').count(), expectedThemes.length);
+    for (const [index, slug] of ecologySlugs.entries()) {
+      const link = page.locator(`#story-${4 + index} h2 a`);
+      assert.equal(await link.getAttribute('href'), `index.html#slide-${String(4 + index).padStart(2, '0')}`);
+      assert.equal((await link.innerText()).toLowerCase().replace(/,/g, '').replaceAll(' ', '-'), slug);
+    }
     await page.screenshot({ path: resolve(root, '.qa/story-map.png'), fullPage: true }); assert.deepEqual([...dependencies].filter(url => /\/v9(?:\/|$)/.test(new URL(url).pathname)), []);
   });
 } catch (error) { result.failures.push({ name: 'Setup or navigation', message: error.stack || error.message }); }
