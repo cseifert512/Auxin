@@ -5,7 +5,7 @@
    The ground is solid: what is below it shows only on the cut edge of the plug. */
 (function(){
   const canvas=document.getElementById('siteC'),lab=document.getElementById('date5'),MD=window.BW_MODEL;if(!canvas||!MD)return;
-  const W=1600,H=960,k=drawingScale(W,H,1.25),SC=36,PHI=28*Math.PI/180,SPH=Math.sin(PHI),CPH=Math.cos(PHI),CX=640,CY0=506,RB=15.5,DEP=3.6;
+  const W=1600,H=960,k=drawingScale(W,H,1.25),SC=36,PHI=28*Math.PI/180,SPH=Math.sin(PHI),CPH=Math.cos(PHI),CX=800,CY0=506,RB=15.5,DEP=3.6;
   const walker = makeWalker(k);
   canvas.width=W*k;canvas.height=H*k;
   const g=canvas.getContext('2d');g.setTransform(k,0,0,k,0,0);g.lineCap='round';g.lineJoin='round';
@@ -140,15 +140,6 @@
 
   /* ---- people ---- */
   const WALK=[{rad:3.1,v:1.05,a0:.4,h:1.68,o:{skirt:1,bun:1}},{rad:7.45,v:-1.15,a0:2.2,h:1.76,o:{coat:1}},{rad:7.45,v:-1.15,a0:2.33,h:1.16,o:{head:1.28}}];
-
-  /* ---- annotations: one column on the right; leaders deepen while their subject is on that side ---- */
-  const NOTE=[
-    ['Old oak kept. Nothing is dug','inside its root circle.',[OAK[0],OAK[1],1.2]],
-    ['South piers: wisteria, rose,','jasmine. Sun to flower.',[2.9,-5,2.3]],
-    ['North piers: ivy, hydrangea.','Leaf held through winter.',[-2.9,5,2.3]],
-    ['West pier: Japanese wisteria.','Metre-long flowers, clear headroom.',[-5.6,0,2.7]],
-    ['Steel feet on screw piles.','The soil stays open.',[6.2,0,.2]],
-    ['A boardwalk crosses the swale,','which holds the rain.',[SWALE[0],SWALE[1],0]]];
 
   /* leaf sprays and foliage arcs are stamped from one small pre-drawn atlas: thousands a frame would be too slow as paths */
   const AQ=k*1.5,CELL=24,atlas=document.createElement('canvas');atlas.width=Math.ceil(12*CELL*AQ);atlas.height=Math.ceil(5*CELL*AQ);
@@ -347,12 +338,6 @@
     g.globalAlpha=1;
     grass(false);
     for(let i=0;i<3;i++){const x=((sec*(26+i*7)+i*430)%(1250))-40,y=60+i*30+9*Math.sin(sec*.6+i*2),fl=Math.sin(sec*8+i*1.7)*4;[-1,1].forEach(sd=>{g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+sd*4,y-3-fl,x+sd*8,y-fl*.6);g.strokeStyle=ink(.6);g.lineWidth=.8;g.stroke();});}
-    /* annotations and scale */
-    g.textAlign='left';g.textBaseline='alphabetic';
-    NOTE.forEach((n,i)=>{const y=190+i*112,p=P(n[2][0],n[2][1],n[2][2]),on=clamp((p[0]-(CX-60))/170,0,1);
-      {g.beginPath();g.moveTo(1258,y-6);g.lineTo(1232,y-6);g.lineTo(p[0],p[1]);g.strokeStyle=ink(.24+.26*on);g.lineWidth=.8;g.stroke();g.fillStyle=ink(.4+.5*on);g.beginPath();g.arc(p[0],p[1],2.8,0,7);g.fill();}
-      g.font='19px Safiro,Arial,sans-serif';g.fillStyle=ink(.67+.25*on);g.fillText(n[0],1266,y);g.fillText(n[1],1266,y+25);});
-    {const x0=70,y0=926;line([[x0,y0],[x0+10*SC,y0]],2,.95);[0,5,10].forEach(m=>{line([[x0+m*SC,y0-7],[x0+m*SC,y0]],1.3,.95);g.font='14px Safiro,Arial,sans-serif';g.textAlign='center';g.fillStyle=ink(.85);g.fillText(m===10?'10 m':String(m),x0+m*SC,y0-12);});}
     const m=2+Math.round(f*111/3)*3,txt=MN[m%12]+' '+(2027+Math.floor(m/12));if(txt!==shown){shown=txt;lab.textContent=txt;}
   }
   const AZ0=.5,CYC=30000;

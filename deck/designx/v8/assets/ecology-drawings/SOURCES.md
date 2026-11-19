@@ -4,6 +4,8 @@ These five drawings come from draft 20 of the Bower LUMA Studio Pitch ecology se
 
 ## What comes from where
 
+Opening-state stills are captured from the same renderers at elapsed time zero. The live slides use these while loading, so playback begins from the pictured state. Print and reduced motion use the full-growth stills. The site view omits its original annotation column and scale bar, and centers the drawing in the space they occupied.
+
 | What appears in the drawings | Source | How it was used |
 | --- | --- | --- |
 | Timber sections, cables and planting stations in *The living place* | [Room geometry at Auxin commit 641ca40](https://github.com/cseifert512/Auxin/blob/641ca40342fb25da2b41e4819d9e06b6481c438e/drawings-in-code/scenes/six-bay-radial-open-pier/bower.json) | Read from the scene and embedded as `BW_MODEL`. |

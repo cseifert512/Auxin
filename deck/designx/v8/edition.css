@@ -64,6 +64,24 @@
 @media print{.designx-v8 .v8-growth-print-status{display:block}}
 
 /* Keep the 1600px stage inside a phone viewport until the viewer measures it. */
+.designx-v8 .v8-canopy-orbit-scene .v7-title {
+  top: auto;
+  bottom: 177px;
+  left: 58px;
+  right: auto;
+  max-width: 340px;
+  font-size: 56px;
+  line-height: 1.08;
+}
+.designx-v8 .v8-growth-light .v7-title {
+  top: 34px;
+  left: 350px;
+  right: 350px;
+  max-width: none;
+  font-size: 60px;
+  text-align: center;
+}
+
 @media screen and (max-width: 650px) {
   .designx-v8:not(.print-mode) .deck-stage { --deck-scale: .1; }
 }

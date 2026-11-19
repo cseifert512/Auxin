@@ -608,6 +608,23 @@ try {
   });
   await test('Ecology drawings mount only on the active slide', async () => {
     assert.deepEqual(await page.evaluate(() => window.DESIGNX_V8_STORY.slice(3, 8).map(item => item.ecologyDrawing)), ecologySlugs);
+    let releaseOpening;
+    const openingGate = new Promise(resolve => { releaseOpening = resolve; });
+    const holdOpening = async route => { await openingGate; await route.continue(); };
+    await page.route('**/nature-makes-space.js', holdOpening);
+    try {
+      const space = await activate('v8-space-slide');
+      await page.waitForFunction(() => {
+        const image = document.querySelector('.slide.is-active .v8-ecology-art img');
+        return image?.complete && image.currentSrc.endsWith('/nature-makes-space-opening.png');
+      });
+      assert.equal(await space.locator('h2, .v8-ecology-note').count(), 0);
+      assert.equal(await space.locator('iframe.is-ready').count(), 0);
+    } finally {
+      releaseOpening();
+      await page.locator('.slide.is-active iframe.is-ready').waitFor();
+      await page.unroute('**/nature-makes-space.js', holdOpening);
+    }
     for (const [index, slug] of ecologySlugs.entries()) {
       const slide = await activate(expectedThemes[3 + index]);
       const frame = slide.locator('iframe.is-ready');
@@ -618,6 +635,8 @@ try {
       }, slug);
       assert.equal(await page.locator('[data-ecology-drawing] iframe').count(), 1);
       assert.equal(await slide.locator('button, input[type=range]').count(), 0);
+      const preview = await slide.locator('.v8-ecology-art img').evaluate(image => image.currentSrc);
+      assert.ok(preview.endsWith(slug === 'why-these-plants' ? `/${slug}.png` : `/${slug}-opening.png`));
       await screenshot(`ecology-${slug}`, slide);
     }
     const palette = page.locator('#slide-08');
@@ -633,6 +652,8 @@ try {
     await palette.frameLocator('iframe').locator('body').press('ArrowRight');
     await page.waitForFunction(() => window.DESIGNX.current === 9);
     assert.equal(await page.locator('[data-ecology-drawing] iframe').count(), 0);
+    const place = await activate('v8-ground-slide');
+    assert.equal(await place.locator('.v8-ecology-note').count(), 0);
   });
   await test('Index, notes, new drawing slots and print link remain usable', async () => {
     await screenshot('slide-05-ground', await activate('v8-ground-slide'));

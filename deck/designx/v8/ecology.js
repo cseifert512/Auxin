@@ -10,21 +10,35 @@
     const slug = escape(item.ecologyDrawing);
     const space = item.ecologyDrawing === 'nature-makes-space';
     const place = item.ecologyDrawing === 'the-living-place';
-    const layout = space ? 'space' : place ? 'place' : 'standard';
+    const growth = item.ecologyDrawing !== 'why-these-plants';
+    const layouts = {
+      'nature-makes-space': 'space',
+      'the-living-place': 'place',
+      'rooted-before-it-climbs': 'roots',
+      'six-piers-six-climbers': 'piers',
+      'why-these-plants': 'palette'
+    };
+    const layout = layouts[item.ecologyDrawing];
     return `<section class="v8-ecology" data-ecology-layout="${layout}" aria-label="${escape(item.title)}">
       ${space ? '' : `<h2>${escape(item.title)}</h2>`}
       <figure>
         <div class="v8-ecology-art" data-ecology-drawing="${slug}">
-          <img src="${assets}stills/${slug}.png" alt="${escape(item.alt)}" loading="lazy">
+          <picture>
+            ${growth ? `<source media="screen and (prefers-reduced-motion: no-preference)" srcset="${assets}stills/${slug}-opening.png">` : ''}
+            <img src="${assets}stills/${slug}.png" alt="${escape(item.alt)}" loading="lazy">
+          </picture>
         </div>
         <figcaption>${escape(item.caption)}</figcaption>
       </figure>
-      ${space ? '' : '<p class="v8-ecology-note">Working drawing, not reviewed by a horticulturist.</p>'}
+      ${space || place ? '' : '<p class="v8-ecology-note">Working drawing, not reviewed by a horticulturist.</p>'}
     </section>`;
   }
 
-  function mount() {
-    if (location.protocol === 'file:' || document.body.classList.contains('print-mode')) return;
+  function mount(root) {
+    if (location.protocol === 'file:' || document.body.classList.contains('print-mode')) {
+      root.querySelectorAll('.v8-ecology source').forEach(source => { source.media = 'not all'; });
+      return;
+    }
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     let selected = null;
     let frame = null;
