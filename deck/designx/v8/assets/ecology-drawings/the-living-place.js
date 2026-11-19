@@ -9,7 +9,7 @@
   const walker = makeWalker(k);
   canvas.width=W*k;canvas.height=H*k;
   const g=canvas.getContext('2d');g.setTransform(k,0,0,k,0,0);g.lineCap='round';g.lineJoin='round';
-  const r=rng(7117),t=rng(8228);let AC=PAPER,FC=PAPER;
+  const r=rng(7117),t=rng(8228);let AC=PAPER;
   let ca=1,sa=0;
   const P=(x,y,z)=>{const xr=x*ca-y*sa,yr=x*sa+y*ca;return[CX+SC*xr,CY0-SC*(z*CPH+yr*SPH),yr];};
   const key=(x,y,z)=>(x*sa+y*ca)*CPH-z*SPH;
@@ -175,6 +175,51 @@
         if(!row){x.beginPath();x.arc(cx,cy,ra,.1,1.5);x.strokeStyle=ink(.5);x.lineWidth=.9;x.stroke();}}
       x.restore();outline();x.strokeStyle=ink(row?.6:.72);x.lineWidth=row?.7:.8;x.stroke();
       for(let i=0;i<n;i++){x.beginPath();x.moveTo(pts[i][0],pts[i][1]);const an=lobe(i);if(an>-.2&&an<1.9){x.strokeStyle=ink(.88);x.lineWidth=row?1:1.35;x.stroke();}}}}
+  // Each bloom has a fixed screen-space shape. Paint those four original
+  // silhouettes once and reuse them as the camera turns.
+  const flowers = ['', '#9a7fcb', '#b9a3e3', '#e6a93c', '#e4edd6'].map((colour, type) => {
+    if (!type) return null;
+    const resolution = Math.max(2, Math.ceil(k * 2));
+    const sprite = document.createElement('canvas');
+    sprite.width = 16 * resolution;
+    sprite.height = 48 * resolution;
+    const pen = sprite.getContext('2d');
+    pen.setTransform(resolution, 0, 0, resolution, 8 * resolution, 10 * resolution);
+    pen.lineCap = 'round';
+    pen.lineJoin = 'round';
+    function stem(x, y, ex, ey, alpha, width) {
+      pen.beginPath();
+      pen.moveTo(x, y);
+      pen.lineTo(ex, ey);
+      pen.strokeStyle = ink(alpha);
+      pen.lineWidth = width;
+      pen.stroke();
+    }
+    function petal(x, y, radius) {
+      pen.beginPath();
+      pen.arc(x, y, radius, 0, 7);
+      pen.fillStyle = colour;
+      pen.fill();
+      pen.strokeStyle = ink(.7);
+      pen.lineWidth = .45;
+      pen.stroke();
+    }
+    if (type <= 2) {
+      const count = type === 2 ? 13 : 6;
+      stem(0, 0, 0, count * 2.5, .5, .4);
+      for (let i = 0; i < count; i++) petal(i % 2 ? 1.2 : -1.2, 4 + i * 2.4, 1.5 - i * .07);
+    } else if (type === 3) {
+      for (let i = -2; i <= 2; i++) {
+        const angle = -1.57 + i * .45;
+        const x = Math.cos(angle) * 5, y = -3 + Math.sin(angle) * 5;
+        stem(0, -3, x, y, .6, .45);
+        petal(x, y, .9);
+      }
+    } else {
+      for (let i = 0; i < 7; i++) petal(Math.cos(i * .9) * 4.2, -4 + Math.sin(i * .9) * 2, 1.3);
+    }
+    return sprite;
+  });
   const stamp=(row,i,x,y,d)=>g.drawImage(atlas,i*CELL*AQ,row*CELL*AQ,CELL*AQ,CELL*AQ,x-d/2,y-d/2,d,d);
   const line=(pts,w,al,close)=>{g.beginPath();pts.forEach(p=>g.lineTo(p[0],p[1]));if(close)g.closePath();g.strokeStyle=ink(al);g.lineWidth=w;g.stroke();};
   const ring=(cx,cy,rx,ry,rot,z,n)=>{const o=[];for(let i=0;i<=(n||40);i++){const a=i*6.2832/(n||40),x=Math.cos(a)*rx,y=Math.sin(a)*ry;o.push(P(cx+x*Math.cos(rot)-y*Math.sin(rot),cy+x*Math.sin(rot)+y*Math.cos(rot),z||0));}return o;};
@@ -189,7 +234,17 @@
     const BY=CY0+DEP*CPH*SC,RX=RB*SC,RY=RX*SPH;
     /* the cut edge of the plug */
     const front=a=>Math.cos(a)*sa+Math.sin(a)*ca<0,F=(a,z)=>P(Math.cos(a)*RB,Math.sin(a)*RB,z);
-    [0,1,2].forEach(c=>{g.fillStyle=ink([.36,.26,.17][c]);for(let i=0;i<stip.length;i++){const s=stip[i];if(s[2]!==c||!front(s[0]))continue;const p=F(s[0],s[1]);g.fillRect(p[0],p[1],1.15,1.15);}});
+    // Submit the cut-face stipple once per pencil tone.
+    [.36, .26, .17].forEach((alpha, layer) => {
+      g.beginPath();
+      g.fillStyle = ink(alpha);
+      for (const mark of stip) {
+        if (mark[2] !== layer || !front(mark[0])) continue;
+        const p = F(mark[0], mark[1]);
+        g.rect(p[0], p[1], 1.15, 1.15);
+      }
+      g.fill();
+    });
     const band=(z,wob,dash,w,a)=>{g.setLineDash(dash);g.beginPath();let pen=false;for(let i=0;i<=240;i++){const an=i*6.2832/240;if(!front(an)){pen=false;continue;}const p=F(an,z+wob*Math.sin(an*9+z));pen?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);pen=true;}g.strokeStyle=ink(a);g.lineWidth=w;g.stroke();g.setLineDash([]);};
     band(-.45,.05,[12,7],.6,.24);band(-1.5,.07,[12,7],.6,.22);band(-2.62,.02,[11,6],.9,.55);
     g.beginPath();wetl.forEach(s=>{if(!front(s[0])||!front(s[0]+s[2]/RB))return;const p=F(s[0],s[1]),q=F(s[0]+s[2]/RB,s[1]);g.moveTo(p[0],p[1]);g.lineTo(q[0],q[1]);});g.strokeStyle=ink(.22);g.lineWidth=.5;g.stroke();
@@ -212,7 +267,13 @@
     /* marks on the ground: shade under the trees, paths, floor, beds, swale */
     SHADOW.forEach(s=>{const gr=s.gr;if(f<gr.b0)return;g.beginPath();s.sh.forEach(q=>{if(Math.hypot(gr.x0+q[0]*gr.s,gr.y0+q[1]*gr.s)>RB-.1||Math.hypot(gr.x0+q[2]*gr.s,gr.y0+q[3]*gr.s)>RB-.1)return;const p=P(gr.x0+q[0]*gr.s,gr.y0+q[1]*gr.s,0),p2=P(gr.x0+q[2]*gr.s,gr.y0+q[3]*gr.s,0);g.moveTo(p[0],p[1]);g.lineTo(p2[0],p2[1]);});g.strokeStyle=ink(.2);g.lineWidth=.6;g.stroke();});
     {g.setLineDash([7,5]);g.beginPath();let pen=false;for(let i=0;i<=120;i++){const a=i*6.2832/120,x=OAK[0]+Math.cos(a)*RPA,y=OAK[1]+Math.sin(a)*RPA;if(Math.hypot(x,y)>RB-.05){pen=false;continue;}const p=P(x,y,0);pen?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);pen=true;}g.strokeStyle=ink(.6);g.lineWidth=.9;g.stroke();g.setLineDash([]);}
-    g.fillStyle=ink(.3);GRAVEL.forEach(q=>{const p=P(q[0],q[1],0);g.fillRect(p[0],p[1],1,1);});
+    g.beginPath();
+    g.fillStyle = ink(.3);
+    for (const mark of GRAVEL) {
+      const p = P(mark[0], mark[1], 0);
+      g.rect(p[0], p[1], 1, 1);
+    }
+    g.fill();
     EDGE.forEach(run=>line(run.map(q=>P(q[0],q[1],0)),.8,.6));
     g.beginPath();PLANK.forEach(q=>{const p=P(q[0],q[1],.12),p2=P(q[2],q[3],.12);g.moveTo(p[0],p[1]);g.lineTo(p2[0],p2[1]);});g.strokeStyle=ink(.85);g.lineWidth=1.5;g.stroke();
     line(ring(0,0,5.5,5.5,0,0,60),.9,.5);
@@ -230,14 +291,20 @@
     const grass=back=>{[0,1].forEach(tall=>{g.beginPath();tufts.forEach(tf=>{if(tf.b>f||(tf.h>.5?1:0)!==tall)return;const yr=tf.x*sa+tf.y*ca;if((yr>0)!==back)return;const p=P(tf.x,tf.y,0),hh=tf.h*SC*CPH*clamp((f-tf.b)*6,0,1);
           for(let q=0;q<tf.n;q++){const lx=(tf.le+(q-1)*.07)*SC;g.moveTo(p[0]+q*1.3,p[1]);g.quadraticCurveTo(p[0]+q*1.3+lx*.3,p[1]-hh*.6,p[0]+q*1.3+lx,p[1]-hh*(1-.12*q));}});g.strokeStyle=ink((tall?.5:.38)*(.4+.6*al));g.lineWidth=.55;g.stroke();});
       tufts.forEach(tf=>{if(!tf.head||tf.hb>f)return;const yr=tf.x*sa+tf.y*ca;if((yr>0)!==back)return;const p=P(tf.x,tf.y,0),hh=(tf.h+.25)*SC*CPH,x=p[0],y=p[1]-hh;line([[p[0],p[1]],[x,y]],.6,.6*al);
-        if(tf.head===1){for(let z=0;z<8;z++)line([[x,y],[x+Math.cos(z*.785)*3.2,y+Math.sin(z*.785)*3.2]],.5,.6*al);}else if(tf.head===2){g.beginPath();g.arc(x,y,2.2,0,7);g.fillStyle=PAPER;g.fill();g.strokeStyle=ink(.7*al);g.lineWidth=.5;g.stroke();}
+        if(tf.head===1){
+          g.beginPath();
+          for(let z=0;z<8;z++){
+            g.moveTo(x,y);
+            g.lineTo(x+Math.cos(z*.785)*3.2,y+Math.sin(z*.785)*3.2);
+          }
+          g.strokeStyle=ink(.6*al);g.lineWidth=.5;g.stroke();
+        }else if(tf.head===2){g.beginPath();g.arc(x,y,2.2,0,7);g.fillStyle=PAPER;g.fill();g.strokeStyle=ink(.7*al);g.lineWidth=.5;g.stroke();}
         else for(let z=0;z<4;z++){g.beginPath();g.ellipse(x+(z%2?1.4:-1.4),y+z*2.2,1.3,1.8,0,0,7);g.fillStyle=PAPER;g.fill();g.strokeStyle=ink(.7*al);g.lineWidth=.5;g.stroke();}});};
     grass(true);
     const L=[];for(let i=0;i<items.length;i++){const it=items[i];if(it.b>f)continue;const gr=it.gr;it.k=gr?key(gr.x0+(it.mid[0]-gr.x0)*gr.s,gr.y0+(it.mid[1]-gr.y0)*gr.s,it.mid[2]*gr.s):key(it.mid[0],it.mid[1],it.mid[2]);L.push(it);}
     WALK.forEach(w=>{const d=sec*w.v,th=w.a0+d/w.rad,x=Math.cos(th)*w.rad,y=Math.sin(th)*w.rad,p=P(x,y,0),p2=P(Math.cos(th+.02*Math.sign(w.v))*w.rad,Math.sin(th+.02*Math.sign(w.v))*w.rad,0);
       L.push({ty:5,k:key(x,y,.8),x:p[0],y:p[1],h:w.h*SC*CPH*1.06,dir:p2[0]>=p[0]?1:-1,ph:6.283*Math.abs(d)*SC/(.8*w.h*SC),o:w.o,b:0});});
     L.sort((p,q)=>q.k-p.k);
-    const dotc=(x,y,rad)=>{g.beginPath();g.arc(x,y,rad,0,7);g.fillStyle=FC;g.fill();g.strokeStyle=ink(.7);g.lineWidth=.45;g.stroke();};
     const quad=(p,q,r2,s2)=>{g.beginPath();g.moveTo(p[0],p[1]);g.lineTo(q[0],q[1]);g.lineTo(r2[0],r2[1]);g.lineTo(s2[0],s2[1]);g.closePath();};
     const seg=(p,q,w,a)=>{g.beginPath();g.moveTo(p[0],p[1]);g.lineTo(q[0],q[1]);g.strokeStyle=ink(a);g.lineWidth=w;g.stroke();};
     for(let i=0;i<L.length;i++){const it=L[i];g.globalAlpha=it.gr?1:it.b>0?al:1;
@@ -248,7 +315,12 @@
         const far=clamp((it.mid[0]*sa+it.mid[1]*ca-.5)/5,0,1),nr=1-.55*far,lN=sN*dot3(it.N,SUN),lB=sB*dot3(it.B,SUN);
         if(lN<.12){quad(A0,A1,S1,S0);g.fillStyle=ink((lN<-.25?.2:.11)*nr);g.fill();}
         if(lB<.12){quad(A0,A1,U1,U0);g.fillStyle=ink((lB<-.25?.2:.11)*nr);g.fill();}
-        const w=it.big===2?1.5:it.big?1.05:.8;seg(S0,S1,w,.93*nr);seg(U0,U1,w,.93*nr);if(it.big)seg(A0,A1,it.big===2?.6:.45,.5*nr);}
+        const w=it.big===2?1.5:it.big?1.05:.8;
+        g.beginPath();
+        g.moveTo(S0[0],S0[1]);g.lineTo(S1[0],S1[1]);
+        g.moveTo(U0[0],U0[1]);g.lineTo(U1[0],U1[1]);
+        g.strokeStyle=ink(.93*nr);g.lineWidth=w;g.stroke();
+        if(it.big)seg(A0,A1,it.big===2?.6:.45,.5*nr);}
       else if(it.ty===3){ // a limb: tapered, open at its base so it joins the limb it grows from
         const sc=it.gr?it.gr.s:1,pp=it.pts.map(p=>GP(it,p)),n=pp.length-1,wa=it.w0*SC*sc,wb=it.w1*SC*sc;
         if(wa<1.5){g.beginPath();pp.forEach(p=>g.lineTo(p[0],p[1]));g.strokeStyle=ink(.75);g.lineWidth=Math.max(.55,wa);g.stroke();continue;}
@@ -261,9 +333,10 @@
         const lw=wa>7?1.4:wa>3?1.05:.8;g.beginPath();Lf.forEach(p=>g.lineTo(p[0],p[1]));g.strokeStyle=ink(.9);g.lineWidth=lw;g.stroke();g.beginPath();Rt.forEach(p=>g.lineTo(p[0],p[1]));g.stroke();}
       else if(it.ty===1){g.beginPath();it.pts.forEach(p=>{const q=P(p[0],p[1],p[2]);g.lineTo(q[0]+it.ox,q[1]-it.ox*.5);});g.strokeStyle=ink(.85);g.lineWidth=it.woody?1.3+1.5*f:1.1;g.stroke();}
       else if(it.ty===2){const p=P(it.p[0],it.p[1],it.p[2]),s=it.sz*clamp((f-it.b)*9,.35,1),ix=(it.an*1.9099|0)%12;
-        if(it.fl&&f>it.ff){FC=['','#9a7fcb','#b9a3e3','#e6a93c','#e4edd6'][it.fl];if(it.fl<3){const n=it.fl===2?13:6;g.beginPath();g.moveTo(p[0],p[1]);g.lineTo(p[0],p[1]+n*2.5);g.strokeStyle=ink(.5);g.lineWidth=.4;g.stroke();for(let z=0;z<n;z++)dotc(p[0]+(z%2?1.2:-1.2),p[1]+4+z*2.4,1.5-z*.07);}
-          else if(it.fl===3){for(let z=-2;z<=2;z++){const an=-1.57+z*.45;g.beginPath();g.moveTo(p[0],p[1]-3);g.lineTo(p[0]+Math.cos(an)*5,p[1]-3+Math.sin(an)*5);g.strokeStyle=ink(.6);g.lineWidth=.45;g.stroke();dotc(p[0]+Math.cos(an)*5,p[1]-3+Math.sin(an)*5,.9);}}
-          else for(let z=0;z<7;z++)dotc(p[0]+Math.cos(z*.9)*4.2,p[1]-4+Math.sin(z*.9)*2,1.3);}
+        if(it.fl && f > it.ff) {
+          const sprite = flowers[it.fl];
+          g.drawImage(sprite, p[0] - 8, p[1] - 10, 16, 48);
+        }
         stamp(it.row,ix,p[0],p[1],24*s);
         if(it.droop&&s>.6){g.beginPath();g.moveTo(p[0],p[1]);g.lineTo(p[0]+1,p[1]+it.droop);g.strokeStyle=ink(.7);g.lineWidth=.6;g.stroke();stamp(it.row,(ix+5)%12,p[0]+1,p[1]+it.droop,20*s);}}
       else if(it.ty===4){const p=GP(it,it.p),d=CC/R0*it.R*SC*(it.gr?.55+.45*it.gr.s:1);g.drawImage(catlas,it.v*CC*AQ,it.light*CC*AQ,CC*AQ,CC*AQ,p[0]-d/2,p[1]-d/2,d,d);}
