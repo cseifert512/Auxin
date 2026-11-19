@@ -8,15 +8,18 @@
 
   function html(item) {
     const slug = escape(item.ecologyDrawing);
-    return `<section class="v8-ecology">
-      <h2>${escape(item.title)}</h2>
+    const space = item.ecologyDrawing === 'nature-makes-space';
+    const place = item.ecologyDrawing === 'the-living-place';
+    const layout = space ? 'space' : place ? 'place' : 'standard';
+    return `<section class="v8-ecology" data-ecology-layout="${layout}" aria-label="${escape(item.title)}">
+      ${space ? '' : `<h2>${escape(item.title)}</h2>`}
       <figure>
         <div class="v8-ecology-art" data-ecology-drawing="${slug}">
           <img src="${assets}stills/${slug}.png" alt="${escape(item.alt)}" loading="lazy">
         </div>
         <figcaption>${escape(item.caption)}</figcaption>
       </figure>
-      <p class="v8-ecology-note">Working drawing, not reviewed by a horticulturist.</p>
+      ${space ? '' : '<p class="v8-ecology-note">Working drawing, not reviewed by a horticulturist.</p>'}
     </section>`;
   }
 
@@ -36,7 +39,7 @@
       }
       if (!target || frame) return;
       const next = document.createElement('iframe');
-      next.title = target.closest('section').querySelector('h2').textContent;
+      next.title = target.closest('section').getAttribute('aria-label');
       next.tabIndex = -1;
       next.src = assets + target.dataset.ecologyDrawing + '.html';
       next.addEventListener('load', () => {

@@ -42,6 +42,57 @@
 .v8-ecology figcaption { font: 400 23px/1.25 var(--sans); }
 .v8-ecology-note { margin: 0; color: #465850; font: 400 17px/1.35 var(--sans); }
 
+/* The opening drawings use the frame as a field, with copy at its edges. */
+.designx-v8 .v8-ecology[data-ecology-layout="space"],
+.designx-v8 .v8-ecology[data-ecology-layout="place"] {
+  display: block;
+  padding: 0;
+}
+
+.v8-ecology[data-ecology-layout="space"] figure,
+.v8-ecology[data-ecology-layout="place"] figure {
+  display: block;
+}
+
+.v8-ecology[data-ecology-layout="space"] .v8-ecology-art {
+  position: absolute;
+  inset: 12px 28px 68px;
+}
+
+.v8-ecology[data-ecology-layout="space"] figcaption {
+  position: absolute;
+  right: 76px;
+  bottom: 35px;
+  font-size: 21px;
+}
+
+.v8-ecology[data-ecology-layout="place"] .v8-ecology-art {
+  position: absolute;
+  inset: 6px 28px 113px;
+}
+
+.v8-ecology[data-ecology-layout="place"] h2 {
+  position: absolute;
+  left: 58px;
+  bottom: 57px;
+  font-size: 48px;
+}
+
+.v8-ecology[data-ecology-layout="place"] figcaption {
+  position: absolute;
+  left: 650px;
+  right: 78px;
+  bottom: 63px;
+  font-size: 21px;
+}
+
+.v8-ecology[data-ecology-layout="place"] .v8-ecology-note {
+  position: absolute;
+  left: 58px;
+  bottom: 23px;
+  font-size: 15px;
+}
+
 @media print {
   .v8-ecology-art iframe { display: none; }
 }
